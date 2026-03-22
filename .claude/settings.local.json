@@ -32,7 +32,17 @@
       "Bash(cp [lang]/rooms/+page.svelte rooms/)",
       "Bash(mkdir -p gallery)",
       "Bash(cp [lang]/gallery/+page.svelte gallery/)",
-      "Bash(curl -sL http://localhost:5175/)"
+      "Bash(curl -sL http://localhost:5175/)",
+      "Bash(netlify deploy:*)",
+      "Bash(netlify init:*)",
+      "Bash(netlify api:*)",
+      "Bash(netlify link:*)",
+      "Bash(curl -sL https://marrianecottage.netlify.app/)",
+      "Bash(curl -sL https://marrianecottage.netlify.app/rooms)",
+      "Bash(curl -sL https://marrianecottage.netlify.app/ -w \"\\\\nStatus: %{http_code}\\\\n\")",
+      "Bash(curl -sL https://marrianecottage.netlify.app/rooms -w \"\\\\nStatus: %{http_code}\\\\n\")",
+      "Bash(curl -sL https://marrianecottage.netlify.app/gallery -w \"\\\\nStatus: %{http_code}\\\\n\")",
+      "Bash(curl -sL https://marrianecottage.netlify.app/contact -w \"\\\\nStatus: %{http_code}\\\\n\")"
     ]
   }
 }

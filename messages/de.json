@@ -128,7 +128,8 @@
       "booking_com": "Booking.com",
       "tripadvisor": "TripAdvisor",
       "facebook": "Facebook"
-    }
+    },
+    "location_map": "Finden Sie uns auf der Karte"
   },
   "book": {
     "title": "Buchen Sie Ihren Aufenthalt",

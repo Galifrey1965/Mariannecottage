@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { t } from '$lib/i18n';
 	import EnquiryForm from '$lib/components/EnquiryForm.svelte';
+	import LeafletMap from '$lib/components/LeafletMap.svelte';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -92,11 +93,18 @@
 		</div>
 	</div>
 
-	<!-- Static Map placeholder -->
-	<div class="w-full h-96 bg-gray-200 rounded-lg flex items-center justify-center border-2 border-gray-300">
-		<div class="text-center">
-			<div class="text-4xl mb-2">🗺️</div>
-			<p class="text-gray-600">Map will be displayed here - Phase 2</p>
+	<!-- Location Map -->
+	<div>
+		<h2 class="text-2xl font-serif font-semibold text-amber-900 mb-6">{t(messages, 'contact.location_map')}</h2>
+		<div class="rounded-lg overflow-hidden shadow-lg">
+			<LeafletMap
+				markers={[
+					{ lat: 49.1264, lng: -1.0986, title: 'Marianne Cottage', description: '1 La Haye, 50680 Couvains, France', type: 'cottage' }
+				]}
+				center={[49.1264, -1.0986]}
+				zoom={13}
+				height="400px"
+			/>
 		</div>
 	</div>
 </section>
