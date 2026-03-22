@@ -1,0 +1,131 @@
+@import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&family=Source+Sans+3:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+	/* Backgrounds */
+	--color-bg: #fdfbf7;
+	--color-cream: #f5f0e8;
+	--color-cream-dark: #ede6d8;
+
+	/* Accents */
+	--color-sage: #6b8f71;
+	--color-sage-hover: #4a6e50;
+	--color-brown: #8b6f47;
+	--color-brown-light: #a8915f;
+
+	/* Text */
+	--color-text: #2c2c2a;
+	--color-text-muted: #5f5e5a;
+
+	/* Calendar & Status */
+	--color-avail: #7ba96b;
+	--color-unavail: #c4554e;
+
+	/* Accent */
+	--color-gold: #c4a265;
+}
+
+html {
+	font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
+	color: var(--color-text);
+	background-color: var(--color-bg);
+	scroll-behavior: smooth;
+}
+
+body {
+	margin: 0;
+	padding: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	font-family: 'Lora', serif;
+	font-weight: 600;
+	color: var(--color-text);
+}
+
+h1 {
+	font-size: 2.5rem;
+	line-height: 1.1;
+	margin: 1.5rem 0 1rem;
+}
+
+h2 {
+	font-size: 2rem;
+	line-height: 1.2;
+	margin: 1.5rem 0 0.75rem;
+}
+
+h3 {
+	font-size: 1.5rem;
+	margin: 1rem 0 0.5rem;
+}
+
+p {
+	line-height: 1.6;
+	margin: 1rem 0;
+}
+
+a {
+	color: var(--color-sage);
+	text-decoration: none;
+	transition: color 0.2s ease;
+}
+
+a:hover {
+	color: var(--color-sage-hover);
+}
+
+button {
+	font-family: inherit;
+	cursor: pointer;
+}
+
+/* Linen texture for hero sections */
+.linen-texture {
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' /%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.05'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100' height='100' fill='%23f5f0e8' filter='url(%23noise)'/%3E%3C/svg%3E");
+	background-repeat: repeat;
+}
+
+/* Responsive breakpoints - already handled by Tailwind */
+
+/* Animations */
+@media (prefers-reduced-motion: no-preference) {
+	@keyframes fade-in {
+		from {
+			opacity: 0;
+		}
+		to {
+			opacity: 1;
+		}
+	}
+
+	@keyframes slide-up {
+		from {
+			opacity: 0;
+			transform: translateY(2rem);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
+	.fade-in {
+		animation: fade-in 0.5s ease-out;
+	}
+
+	.slide-up {
+		animation: slide-up 0.6s ease-out;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	* {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+	}
+}

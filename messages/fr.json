@@ -1,0 +1,179 @@
+{
+  "meta": {
+    "title": "Marianne Cottage - Chambres d'Hôtes en Normandie",
+    "description": "Charmante maison de ferme du 19ème siècle avec 2 chambres au cœur de la Normandie. WiFi gratuit, parking gratuit et petit-déjeuner inclus."
+  },
+  "nav": {
+    "home": "Accueil",
+    "rooms": "Chambres",
+    "gallery": "Galerie",
+    "explore": "Découvrir",
+    "contact": "Contact",
+    "book": "Réserver",
+    "legal": "Mentions Légales"
+  },
+  "lang": {
+    "en": "English",
+    "fr": "Français",
+    "de": "Deutsch"
+  },
+  "home": {
+    "hero": {
+      "tagline": "Un havre de paix au cœur de la Normandie",
+      "cta": "Réservez Votre Séjour"
+    },
+    "about": {
+      "heading": "Bienvenue à Marianne Cottage",
+      "p1": "Nichée dans la campagne paisible de Normandie, Marianne Cottage est une charmante maison de ferme du 19ème siècle, restaurée avec soin, située sur une route tranquille à quelques kilomètres de certains des sites historiques les plus importants de France. Notre chambre d'hôtes intime offre la base idéale pour explorer la région tout en profitant du confort et de la tranquillité que vous méritez.",
+      "p2": "Les hôtes Mark et Kim ont restauré cette propriété historique avec amour, accueillant les visiteurs pour vivre l'hospitalité authentique de la Normandie. Vous vous retrouverez entouré de champs verts ondulants et vous entendrez les bruits de la nature - de la brise douce aux appels de la faune qui habite la région.",
+      "p3": "Le cottage est situé près des plages du Débarquement et des abbayes historiques de Normandie, ce qui en fait un lieu idéal pour les passionnés d'histoire. Que vous exploriez les sites du patrimoine de la Seconde Guerre mondiale, que vous flâniez dans des villages médiévaux ou que vous profitiez simplement de la tranquillité rurale, Marianne Cottage offre la retraite parfaite."
+    },
+    "highlights": {
+      "wifi": "WiFi Gratuit",
+      "parking": "Parking Gratuit",
+      "breakfast": "Petit-Déjeuner Inclus",
+      "garden": "Jardin Privé",
+      "wildlife": "Faune Sauvage",
+      "nonsmoking": "Non-Fumeurs"
+    },
+    "rooms": {
+      "heading": "Notre Suite",
+      "cta": "Voir les Chambres"
+    },
+    "attractions": {
+      "heading": "À Proximité",
+      "dday": "Plages du Débarquement",
+      "cerisy": "Abbaye de Cerisy",
+      "saintlo": "Saint-Lô",
+      "cta": "Découvrir Plus"
+    },
+    "testimonials": {
+      "heading": "Avis des Clients",
+      "simon": "Accueil chaleureux, chambre charmante, lit confortable, salle de bains moderne spacieuse, excellent petit-déjeuner.",
+      "simon_author": "Simon, Royaume-Uni",
+      "ingrid": "Rien ne manquait pour 5 jours. Chambres impeccables, petit-déjeuner copieux et fraîchement préparé, excellente option de repas du soir.",
+      "ingrid_author": "Ingrid, Pays-Bas",
+      "guest3": "Accueil chaleureux, maison de campagne délicieuse, paisible, proche des sites touristiques, petit-déjeuner sur mesure.",
+      "guest3_author": "Client, France"
+    },
+    "booking": {
+      "heading": "Prêt à Réserver?",
+      "cta": "Vérifier la Disponibilité"
+    }
+  },
+  "rooms": {
+    "title": "Chambres & Équipements",
+    "description": "Notre suite confortable avec 2 chambres et salle de bains moderne",
+    "suite": {
+      "heading": "Suite Spacieuse 2 Chambres",
+      "description": "Notre suite dispose de deux chambres, d'une salle de bains moderne avec douche à l'italienne et de jolies vues sur le jardin. Les lits confortables, le linge frais et les petites attentions font de cet endroit la maison loin de chez vous parfaite."
+    },
+    "amenities": {
+      "heading": "Équipements",
+      "comfortable_beds": "Lits confortables et de qualité",
+      "shower": "Douche à l'italienne moderne et spacieuse",
+      "towels": "Serviettes et draps frais fournis",
+      "kettle": "Bouilloire électrique",
+      "garden_views": "Vues sur le jardin",
+      "wifi": "WiFi haut débit gratuit",
+      "parking": "Parking privé gratuit",
+      "nonsmoke": "Propriété non-fumeurs"
+    },
+    "breakfast": {
+      "heading": "Petit-Déjeuner",
+      "description": "Profitez d'un délicieux buffet et petit-déjeuner continental chaque matin, avec des croissants et baguettes frais de notre boulangerie locale, des fruits de saison, du jus, du yaourt et des confitures maison. Les demandes spéciales (comme les œufs) sont volontiers accommodées sur demande."
+    },
+    "evening_meal": {
+      "heading": "Repas du Soir",
+      "description": "Disponible sur arrangement. Mark prépare un dîner maison à partir de 20€ par personne. Faites-nous part de vos préférences lors de la réservation!"
+    }
+  },
+  "gallery": {
+    "title": "Galerie Photos",
+    "categories": {
+      "all": "Tous",
+      "exterior": "Extérieur",
+      "rooms": "Chambres",
+      "bathroom": "Salle de Bains",
+      "garden": "Jardin",
+      "breakfast": "Petit-Déjeuner",
+      "surroundings": "Alentours"
+    }
+  },
+  "contact": {
+    "title": "Contact & Itinéraire",
+    "address_label": "Adresse",
+    "address": "1 La Haye, 50680 Couvains, France",
+    "email_label": "Email",
+    "email": "mariannecattage@gmail.com",
+    "phone_label": "Téléphone",
+    "phone": "+33 (0)7 80 73 17 04",
+    "airport": "Aéroport le Plus Proche",
+    "airport_info": "Caen–Carpiquet (45 km)",
+    "directions": {
+      "heading": "Comment Arriver",
+      "important": "Important: Arrivez via le village de Couvains. Beaucoup de systèmes de navigation routent via la route de Belleval, qui est un chemin de ferme mal entretenu et plein de nids-de-poule après les 75 premiers mètres. Suivez plutôt les panneaux à travers le village de Couvains."
+    },
+    "form": {
+      "heading": "Envoyez-nous un Message",
+      "name": "Nom",
+      "email": "Email",
+      "message": "Message",
+      "submit": "Envoyer",
+      "success": "Merci! Nous vous répondrons bientôt.",
+      "error": "Erreur lors de l'envoi du message. Veuillez réessayer."
+    },
+    "social": {
+      "heading": "Trouvez-nous en Ligne",
+      "booking_com": "Booking.com",
+      "tripadvisor": "TripAdvisor",
+      "facebook": "Facebook"
+    }
+  },
+  "book": {
+    "title": "Réservez Votre Séjour",
+    "coming_soon": "Système de réservation à venir",
+    "description": "Réservation complète en ligne sera bientôt disponible. Pour le moment, veuillez nous contacter directement ou réserver via l'un de nos sites partenaires.",
+    "contact_us": "Nous Contacter",
+    "booking_com_link": "Réserver sur Booking.com",
+    "heading": "Sélectionnez Vos Dates",
+    "guests": "Nombre de Clients",
+    "rate_plan": "Forfait Tarifaire",
+    "summary": "Résumé",
+    "total": "Total",
+    "per_night": "par nuit",
+    "checkout": "Procéder au Paiement"
+  },
+  "booking_confirm": {
+    "title": "Réservation Confirmée",
+    "thank_you": "Merci d'avoir réservé!",
+    "reference": "Numéro de Réservation",
+    "summary": "Résumé de la Réservation",
+    "dates": "Dates",
+    "guests": "Clients",
+    "total_paid": "Total Payé",
+    "directions": "Itinéraire vers la Propriété",
+    "important": "Veuillez noter: Arrivez via le village de Couvains. Évitez la route de Belleval.",
+    "contact_info": "Des questions? Contactez-nous à mariannecattage@gmail.com ou +33 (0)7 80 73 17 04"
+  },
+  "explore": {
+    "title": "Découvrir la Normandie",
+    "description": "Marianne Cottage est idéalement situé pour explorer la riche histoire et la beauté naturelle de la Normandie. Vous trouverez ci-dessous des attractions allant des sites du patrimoine de la Seconde Guerre mondiale aux charmants villages médiévaux et aux landmarks naturels.",
+    "category": {
+      "ww2": "Histoire de la Seconde Guerre Mondiale",
+      "nature": "Nature & Patrimoine",
+      "towns": "Villes & Culture"
+    }
+  },
+  "legal": {
+    "title": "Mentions Légales",
+    "placeholder": "Les informations légales seront publiées sous peu, y compris le numéro SIRET, les détails de l'entreprise, le fournisseur d'hébergement et la politique de protection des données."
+  },
+  "footer": {
+    "tagline": "Un havre de paix au cœur de la Normandie",
+    "quick_links": "Liens Rapides",
+    "contact": "Contact",
+    "social": "Nous Suivre",
+    "copyright": "© 2024 Marianne Cottage. Tous droits réservés."
+  }
+}

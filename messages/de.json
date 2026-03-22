@@ -1,0 +1,179 @@
+{
+  "meta": {
+    "title": "Marianne Cottage - Bed & Breakfast in der Normandie",
+    "description": "Charmantes Bauernhaus aus dem 19. Jahrhundert mit 2 Schlafzimmern im Herzen der Normandie. Kostenlos WiFi, Parkplatz und Frühstück inbegriffen."
+  },
+  "nav": {
+    "home": "Startseite",
+    "rooms": "Zimmer",
+    "gallery": "Galerie",
+    "explore": "Erkunden",
+    "contact": "Kontakt",
+    "book": "Buchen",
+    "legal": "Impressum"
+  },
+  "lang": {
+    "en": "English",
+    "fr": "Français",
+    "de": "Deutsch"
+  },
+  "home": {
+    "hero": {
+      "tagline": "Ein Hafen des Friedens im Herzen der Normandie",
+      "cta": "Buchen Sie Ihren Aufenthalt"
+    },
+    "about": {
+      "heading": "Willkommen im Marianne Cottage",
+      "p1": "Das Marianne Cottage liegt in der friedlichen Landschaft der Normandie und ist ein wunderschön restauriertes Bauernhaus aus dem 19. Jahrhundert auf einem ruhigen Weg, nur wenige Kilometer von einigen der bedeutendsten historischen Stätten Frankreichs entfernt. Unser intimes Bed & Breakfast bietet die perfekte Basis zum Erkunden der Region und gleichzeitig den Komfort und die Ruhe, die Sie verdienen.",
+      "p2": "Die Gastgeber Mark und Kim haben dieses historische Anwesen liebevoll restauriert und heißen Gäste willkommen, um die authentische Gastfreundschaft der Normandie zu erleben. Sie befinden sich umgeben von grünen Hügeln und genießen die Geräusche der Natur – vom sanften Wind bis zu den Rufen der Tierwelt, die in dieser Gegend beheimatet ist.",
+      "p3": "Das Cottage liegt in der Nähe der D-Day-Strände und historischen Abteien der Normandie und ist somit ein idealer Ort für Geschichtsinteressierte. Egal ob Sie WW2-Stätten erkunden, durch mittelalterliche Dörfer bummeln oder einfach nur die ländliche Ruhe genießen – das Marianne Cottage bietet den perfekten Rückzugsort."
+    },
+    "highlights": {
+      "wifi": "Kostenlos WiFi",
+      "parking": "Kostenlos Parkplatz",
+      "breakfast": "Frühstück Inbegriffen",
+      "garden": "Privater Garten",
+      "wildlife": "Tierschutzgebiet",
+      "nonsmoking": "Nichtraucher"
+    },
+    "rooms": {
+      "heading": "Unser Zimmer",
+      "cta": "Zimmer Ansehen"
+    },
+    "attractions": {
+      "heading": "Erkunden Sie die Umgebung",
+      "dday": "D-Day-Strände",
+      "cerisy": "Abtei von Cerisy",
+      "saintlo": "Saint-Lô",
+      "cta": "Mehr Entdecken"
+    },
+    "testimonials": {
+      "heading": "Gästebewertungen",
+      "simon": "Herzlicher Empfang, schönes Zimmer, komfortables Bett, modernes geräumiges Badezimmer, ausgezeichnetes Frühstück.",
+      "simon_author": "Simon, Großbritannien",
+      "ingrid": "Es fehlte nichts für 5 Tage. Makellose Zimmer, reichhaltiges frisch zubereitetes Frühstück, hervorragende Abendmalzeit.",
+      "ingrid_author": "Ingrid, Niederlande",
+      "guest3": "Herzlicher Empfang, herrliches Landhaus, friedlich, in der Nähe von Sehenswürdigkeiten, maßgeschneidertes Frühstück.",
+      "guest3_author": "Gast, Frankreich"
+    },
+    "booking": {
+      "heading": "Bereit zu Buchen?",
+      "cta": "Verfügbarkeit Prüfen"
+    }
+  },
+  "rooms": {
+    "title": "Zimmer & Ausstattung",
+    "description": "Unser komfortables Zimmer mit 2 Schlafzimmern und modernem Badezimmer",
+    "suite": {
+      "heading": "Geräumige 2-Zimmer Suite",
+      "description": "Unsere Suite verfügt über zwei Schlafzimmer, ein modernes Badezimmer mit begehbarer Dusche und einen schönen Gartenblick. Komfortable Betten, frische Bettwäsche und durchdachte Details machen diesen Ort zum perfekten Zuhause auf Zeit."
+    },
+    "amenities": {
+      "heading": "Ausstattung",
+      "comfortable_beds": "Komfortable, hochwertige Betten",
+      "shower": "Modernes, geräumiges Badezimmer mit Dusche",
+      "towels": "Frische Handtücher und Bettwäsche",
+      "kettle": "Elektrischer Wasserkocher",
+      "garden_views": "Gartenausblick",
+      "wifi": "Kostenlos hochgeschwindigkeits-WiFi",
+      "parking": "Kostenlos privater Parkplatz",
+      "nonsmoke": "Nichtraucher-Anwesen"
+    },
+    "breakfast": {
+      "heading": "Frühstück",
+      "description": "Genießen Sie jeden Morgen ein köstliches Buffet und kontinentales Frühstück mit frischen Croissants und Baguettes von unserer lokalen Bäckerei, saisonalen Früchten, Saft, Joghurt und hausgemachten Konfitüren. Spezielle Wünsche (wie Eier) werden gerne auf Anfrage erfüllt."
+    },
+    "evening_meal": {
+      "heading": "Abendessen",
+      "description": "Nach Absprache erhältlich. Mark bereitet ein hausgemachtes Dinner ab 20€ pro Person zu. Teilen Sie uns Ihre Vorlieben bei der Buchung mit!"
+    }
+  },
+  "gallery": {
+    "title": "Fotogalerie",
+    "categories": {
+      "all": "Alle",
+      "exterior": "Außen",
+      "rooms": "Zimmer",
+      "bathroom": "Badezimmer",
+      "garden": "Garten",
+      "breakfast": "Frühstück",
+      "surroundings": "Umgebung"
+    }
+  },
+  "contact": {
+    "title": "Kontakt & Anfahrt",
+    "address_label": "Adresse",
+    "address": "1 La Haye, 50680 Couvains, Frankreich",
+    "email_label": "Email",
+    "email": "mariannecattage@gmail.com",
+    "phone_label": "Telefon",
+    "phone": "+33 (0)7 80 73 17 04",
+    "airport": "Nächster Flughafen",
+    "airport_info": "Caen–Carpiquet (45 km)",
+    "directions": {
+      "heading": "Anfahrtsweg",
+      "important": "Wichtig: Fahren Sie bitte durch das Dorf Couvains an. Viele Navigationssysteme leiten über die Belleval-Straße, die nach den ersten 75 Metern eine schlecht gepflegte, holprige Feldstraße ist. Folgen Sie stattdessen den Schildern durch das Dorf Couvains."
+    },
+    "form": {
+      "heading": "Senden Sie uns eine Nachricht",
+      "name": "Name",
+      "email": "Email",
+      "message": "Nachricht",
+      "submit": "Senden",
+      "success": "Danke! Wir werden uns bald bei Ihnen melden.",
+      "error": "Fehler beim Senden der Nachricht. Bitte versuchen Sie es später noch einmal."
+    },
+    "social": {
+      "heading": "Finden Sie uns Online",
+      "booking_com": "Booking.com",
+      "tripadvisor": "TripAdvisor",
+      "facebook": "Facebook"
+    }
+  },
+  "book": {
+    "title": "Buchen Sie Ihren Aufenthalt",
+    "coming_soon": "Buchungssystem kommt bald",
+    "description": "Online-Buchung ist bald verfügbar. Kontaktieren Sie uns jetzt direkt oder buchen Sie über eine unserer Partner-Websites.",
+    "contact_us": "Kontaktieren Sie Uns",
+    "booking_com_link": "Auf Booking.com Buchen",
+    "heading": "Wählen Sie Ihre Daten",
+    "guests": "Anzahl der Gäste",
+    "rate_plan": "Tarif",
+    "summary": "Zusammenfassung",
+    "total": "Gesamtbetrag",
+    "per_night": "pro Nacht",
+    "checkout": "Zur Bezahlung"
+  },
+  "booking_confirm": {
+    "title": "Buchung Bestätigt",
+    "thank_you": "Danke für Ihre Buchung!",
+    "reference": "Buchungsreferenz",
+    "summary": "Buchungszusammenfassung",
+    "dates": "Daten",
+    "guests": "Gäste",
+    "total_paid": "Bezahlter Gesamtbetrag",
+    "directions": "Anfahrt zum Anwesen",
+    "important": "Bitte beachten: Fahren Sie über das Dorf Couvains an. Meiden Sie die Belleval-Straße.",
+    "contact_info": "Fragen? Kontaktieren Sie uns unter mariannecattage@gmail.com oder +33 (0)7 80 73 17 04"
+  },
+  "explore": {
+    "title": "Erkunden Sie die Normandie",
+    "description": "Das Marianne Cottage ist ideal gelegen, um die reiche Geschichte und natürliche Schönheit der Normandie zu erkunden. Unten finden Sie Attraktionen von WW2-Stätten bis hin zu charmanten mittelalterlichen Dörfern und Naturdenkmälern.",
+    "category": {
+      "ww2": "WW2-Geschichte",
+      "nature": "Natur & Erbe",
+      "towns": "Städte & Kultur"
+    }
+  },
+  "legal": {
+    "title": "Impressum",
+    "placeholder": "Rechtliche Informationen werden in Kürze veröffentlicht, einschließlich Registernummer, Unternehmensdetails, Hosting-Anbieter und Datenschutzrichtlinie."
+  },
+  "footer": {
+    "tagline": "Ein Hafen des Friedens im Herzen der Normandie",
+    "quick_links": "Schnelllinks",
+    "contact": "Kontakt",
+    "social": "Folgen Sie Uns",
+    "copyright": "© 2024 Marianne Cottage. Alle Rechte vorbehalten."
+  }
+}
