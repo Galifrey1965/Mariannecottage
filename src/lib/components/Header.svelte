@@ -47,7 +47,7 @@
 
 			<!-- Language Switcher + Mobile Menu -->
 			<div class="flex items-center gap-4">
-				<LanguageSwitcher {lang} currentPath={$page.url.pathname} />
+				<LanguageSwitcher {lang} />
 
 				<!-- Mobile menu button -->
 				<button

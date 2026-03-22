@@ -23,7 +23,15 @@
       "Bash(touch .svelte-kit/output/_headers)",
       "Bash(curl -s http://localhost:5175/)",
       "Bash(curl -sL http://localhost:5175/en)",
-      "Bash(curl -sL https://mariannecottage.netlify.app/en)"
+      "Bash(curl -sL https://mariannecottage.netlify.app/en)",
+      "Bash(find src/routes/[lang] -type f -name \"*.svelte\" -o -name \"*.ts\")",
+      "Bash(rm -f src/routes/+layout.server.ts)",
+      "Bash(rm -rf src/routes/[lang])",
+      "Bash(cp [lang]/+page.svelte +page.svelte)",
+      "Bash(mkdir -p rooms)",
+      "Bash(cp [lang]/rooms/+page.svelte rooms/)",
+      "Bash(mkdir -p gallery)",
+      "Bash(cp [lang]/gallery/+page.svelte gallery/)"
     ]
   }
 }

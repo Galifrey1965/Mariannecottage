@@ -34,14 +34,11 @@ export function t(messages: Messages, key: string, params?: Record<string, strin
 }
 
 /**
- * Build a localized path with language prefix
- * @example localePath('fr', '/rooms') => '/fr/rooms'
+ * Identity function — no longer builds language-prefixed paths
+ * @example localePath('fr', '/rooms') => '/rooms'
  */
-export function localePath(locale: Locale, path: string): string {
-	if (path === '/') {
-		return `/${locale}`;
-	}
-	return `/${locale}${path}`;
+export function localePath(_locale: Locale, path: string): string {
+	return path;
 }
 
 /**
