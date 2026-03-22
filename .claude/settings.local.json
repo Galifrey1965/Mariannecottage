@@ -20,7 +20,10 @@
       "Bash(npm ls:*)",
       "Bash(rm -rf .svelte-kit)",
       "Bash(mkdir -p .svelte-kit/output)",
-      "Bash(touch .svelte-kit/output/_headers)"
+      "Bash(touch .svelte-kit/output/_headers)",
+      "Bash(curl -s http://localhost:5175/)",
+      "Bash(curl -sL http://localhost:5175/en)",
+      "Bash(curl -sL https://mariannecottage.netlify.app/en)"
     ]
   }
 }
