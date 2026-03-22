@@ -14,6 +14,7 @@ Charming 1800s farmhouse B&B in Normandy with 2 bedrooms. Multi-language site (E
 |-------|--------|----------|
 | **1: Static Brochure** | ✅ COMPLETE | 7 pages, EN/FR/DE, responsive design, testimonials, gallery |
 | **2: Interactive Maps** | ✅ COMPLETE | Leaflet maps (Explore + Contact), 9 attraction markers, category filtering |
+| **2.5: Material Design 3 System** | 🔲 TODO | Design tokens, Light/Dark themes, M3 components, accessibility |
 | **3: Booking System** | 🔲 TODO | Calendar, availability, email confirmations, Supabase integration |
 | **4: Stripe Payments** | 🔲 TODO | Secure checkout, invoice generation, webhook handling |
 
@@ -156,6 +157,191 @@ package.json                             # UPDATED: @types/leaflet added
 - ✅ Maps responsive on mobile (touch scroll works)
 - ✅ `npm run build` → no TypeScript errors
 - ✅ Deployed live to https://mariannecottage.netlify.app
+
+---
+
+## Phase 2.5: Material Design 3 System (TODO)
+
+**Design Objectives:**
+Modern, accessible, emotionally resonant design system using Material Design 3 (M3) & M3 Expressive update. Derive color palette from Normandy countryside—soft greens, earth tones, sky blues. Support Light/Dark themes with proper WCAG AA contrast ratios.
+
+**1. Design Token System**
+
+Implement full CSS variable architecture following M3 naming conventions:
+
+```css
+/* Reference Tokens (from Normandy palette) */
+--md-ref-palette-primary: #2D6F50      /* Sage green */
+--md-ref-palette-secondary: #8B6F47    /* Warm brown */
+--md-ref-palette-tertiary: #5B8AC5     /* Sky blue */
+--md-ref-palette-error: #C4554E        /* Red */
+--md-ref-palette-neutral: #2C2C2A      /* Charcoal */
+--md-ref-palette-neutral-variant: #7F7F7F
+
+/* System Tokens (light mode) */
+--md-sys-color-primary: #2D6F50
+--md-sys-color-on-primary: #FFFFFF
+--md-sys-color-primary-container: #B0E5C9
+--md-sys-color-on-primary-container: #0B2818
+
+--md-sys-color-secondary: #8B6F47
+--md-sys-color-on-secondary: #FFFFFF
+--md-sys-color-secondary-container: #D4C5A9
+--md-sys-color-on-secondary-container: #2F2416
+
+--md-sys-color-surface: #FDFBF7
+--md-sys-color-surface-dim: #F5F0E8
+--md-sys-color-on-surface: #2C2C2A
+
+/* Dark mode overrides */
+@media (prefers-color-scheme: dark) {
+  --md-sys-color-primary: #7BC9A0        /* Desaturated for contrast */
+  --md-sys-color-surface: #121212        /* Dark grey, not pure black */
+  --md-sys-color-surface-dim: #0F0F0F
+}
+```
+
+**2. Light & Dark Themes**
+
+- **Light Theme:** Warm white surface (#FDFBF7), cream accents (#F5F0E8), sage/brown CTAs
+- **Dark Theme:** Dark grey surface (#121212), desaturated primaries to meet WCAG AA (4.5:1 contrast)
+- **Elevation:** Use semi-transparent color overlays (tonal elevation) instead of shadows only
+  - Higher elevations = lighter surface colors
+  - Example: `background: rgba(45, 111, 80, 0.08)` for elevation +1
+
+**3. Responsive Layout Grid**
+
+- **Mobile (<600px):** Single column, Navigation Bar (bottom)
+- **Tablet (600–840px):** 6-column grid, Navigation Rail (left side)
+- **Desktop (>840px):** 12-column grid, Navigation Rail (left) or top navigation
+
+**4. Navigation Structure**
+
+- **Navigation Bar (mobile):** 3-5 action items (Home, Rooms, Book, Contact, More)
+  - Active indicator: underline + primary color
+  - Touch target: min 48×48 dp
+- **Navigation Rail (tablet/desktop):** Vertical orientation, icons + labels
+  - Supports 2-3 line labels (e.g., "Book Now", "Check Availability")
+  - Improved thumb-reachability for landscape tablets
+
+**5. M3 Expressive Components**
+
+| Component | Usage | Details |
+|-----------|-------|---------|
+| **Extended FAB** | "Book Your Stay" CTA | Position bottom-right (mobile), or inline (desktop). Label + icon. Background: primary, text: on-primary. |
+| **Hero Section** | Page header + tagline | Display scale (extra-large), Headline scale (large). "A haven of peace in the heart of Normandy" |
+| **M3 Cards** | Room suites, attractions, testimonials | Elevated cards with semi-transparent overlays. Corners: medium radius (16dp). Media top, title, supporting text. |
+| **Chips** | Amenities strip (WiFi, Parking, Breakfast, Garden, Wildlife, Non-Smoking) | Outlined style, small shape tokens, icon + label |
+| **Carousel** | Nearby attractions (D-Day, Cerisy, Saint-Lô) | Horizontal scrollable, cards per item, swipe gestures |
+| **List Items** | Contact info, testimonials | Leading icon, headline, supporting text. Dividers between items. |
+| **Buttons** | CTAs throughout | Filled (primary actions), Outlined (secondary), Text (tertiary). Min 48×48 dp touch target. |
+
+**6. Shape System**
+
+M3 defines corner radius tokens:
+- **Extra-Small (4dp):** Form fields, small chips
+- **Small (8dp):** Standard cards, buttons
+- **Medium (16dp):** Large cards, dialog boxes
+- **Large (28dp):** Hero sections, expanded FABs
+- **Extra-Large (none/full):** Fully rounded badges, avatar placeholders
+
+Apply consistent corner radii across all components.
+
+**7. Typography**
+
+| Scale | Font | Size | Weight | Line Height | Usage |
+|-------|------|------|--------|-------------|-------|
+| **Display L** | Lora | 57px | 400 | 64px | Hero headings |
+| **Display M** | Lora | 45px | 400 | 52px | Section titles |
+| **Headline L** | Lora | 32px | 400 | 40px | Page headings |
+| **Headline M** | Lora | 28px | 500 | 36px | Card titles |
+| **Body L** | Source Sans 3 | 16px | 400 | 24px | Body text |
+| **Body M** | Source Sans 3 | 14px | 500 | 20px | Supporting text |
+| **Label L** | Source Sans 3 | 14px | 500 | 20px | Button labels |
+| **Label S** | Source Sans 3 | 11px | 500 | 16px | Chips, small labels |
+
+**8. Accessibility & Motion**
+
+- **Touch Targets:** Minimum 48×48 dp (Material spec)
+- **Contrast Ratios:**
+  - Normal text: 4.5:1 (WCAG AA)
+  - Large text (≥18px): 3:1 (WCAG AA)
+  - Graphics/UI components: 3:1
+- **Motion Physics:**
+  - Standard easing: `cubic-bezier(0.4, 0, 0.2, 1)` (M3 standard)
+  - Durations: 200ms (interactions), 300ms (navigation)
+  - Ripple animations: 225ms
+  - Replace static page transitions with subtle fade/slide effects
+  - `prefers-reduced-motion: reduce` support for accessibility
+
+**9. Component Animations**
+
+```css
+/* Ripple effect (M3) */
+@keyframes ripple {
+  0% { transform: scale(0); opacity: 0.6; }
+  100% { transform: scale(4); opacity: 0; }
+}
+
+/* Page fade transition */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Slide up (mobile nav) */
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+```
+
+**10. Content Integration**
+
+- **Guest Reviews:** Use M3 Cards with medium emphasis (slightly elevated surface, larger text)
+- **Amenities:** Display as Chips in a horizontal scrollable list or grid
+- **Nearby Locations:** Carousel with distance info + distance badge
+- **Room Details:** Two-column layout on desktop (image left, details right), full-width on mobile
+- **Contact Form:** Text fields with focus indicators, floating labels (M3 style), submit button as filled FAB
+
+**11. File Structure**
+
+```
+src/
+  styles/
+    tokens/
+      reference-tokens.css    # Palette definitions
+      light-theme.css         # Light mode system tokens
+      dark-theme.css          # Dark mode system tokens
+      motion.css              # Easing, durations, animations
+    components/
+      button.css              # M3 Button variants
+      card.css                # M3 Card component
+      fab.css                 # Extended FAB
+      chip.css                # M3 Chip
+      navigation-bar.css      # Mobile nav
+      navigation-rail.css     # Tablet/desktop nav
+    layout/
+      responsive-grid.css     # 4/6/12 column system
+      elevation.css           # Tonal overlays
+  lib/
+    components/
+      NavigationBar.svelte    # Mobile bottom nav
+      NavigationRail.svelte   # Desktop left nav
+      M3Button.svelte         # Reusable button component
+      M3Card.svelte           # Reusable card component
+      M3FAB.svelte            # Floating action button
+      M3Chip.svelte           # Chip component
+      Carousel.svelte         # Attraction carousel
+```
+
+**12. Migration Path**
+
+- Phase 2.5a: Token system + light/dark theme CSS
+- Phase 2.5b: Refactor existing components to use tokens
+- Phase 2.5c: Replace custom components with M3-spec versions
+- Phase 2.5d: Implement animations + motion physics
+- Phase 2.5e: Accessibility audit + contrast ratio verification
 
 ---
 
