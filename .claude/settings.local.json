@@ -14,7 +14,13 @@
       "Bash(npm run:*)",
       "Bash(mkdir -p H:/Development/MarianneCottage/.svelte-kit/output)",
       "Bash(touch H:/Development/MarianneCottage/.svelte-kit/output/_headers)",
-      "Bash(touch H:/Development/MarianneCottage/.svelte-kit/output/_redirects)"
+      "Bash(touch H:/Development/MarianneCottage/.svelte-kit/output/_redirects)",
+      "Bash(curl -s -I https://mariannecottage.netlify.app)",
+      "Bash(netlify status:*)",
+      "Bash(npm ls:*)",
+      "Bash(rm -rf .svelte-kit)",
+      "Bash(mkdir -p .svelte-kit/output)",
+      "Bash(touch .svelte-kit/output/_headers)"
     ]
   }
 }
