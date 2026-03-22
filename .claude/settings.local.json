@@ -31,7 +31,8 @@
       "Bash(mkdir -p rooms)",
       "Bash(cp [lang]/rooms/+page.svelte rooms/)",
       "Bash(mkdir -p gallery)",
-      "Bash(cp [lang]/gallery/+page.svelte gallery/)"
+      "Bash(cp [lang]/gallery/+page.svelte gallery/)",
+      "Bash(curl -sL http://localhost:5175/)"
     ]
   }
 }
