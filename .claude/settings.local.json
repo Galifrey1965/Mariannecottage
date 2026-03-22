@@ -42,7 +42,12 @@
       "Bash(curl -sL https://marrianecottage.netlify.app/ -w \"\\\\nStatus: %{http_code}\\\\n\")",
       "Bash(curl -sL https://marrianecottage.netlify.app/rooms -w \"\\\\nStatus: %{http_code}\\\\n\")",
       "Bash(curl -sL https://marrianecottage.netlify.app/gallery -w \"\\\\nStatus: %{http_code}\\\\n\")",
-      "Bash(curl -sL https://marrianecottage.netlify.app/contact -w \"\\\\nStatus: %{http_code}\\\\n\")"
+      "Bash(curl -sL https://marrianecottage.netlify.app/contact -w \"\\\\nStatus: %{http_code}\\\\n\")",
+      "Bash(curl -sL https://marrianecottage.netlify.app/explore -w \"\\\\nStatus: %{http_code}\\\\n\")",
+      "Bash(curl -sL https://marrianecottage.netlify.app/ -w \"Status: %{http_code}\\\\n\")",
+      "Bash(curl -s -I https://mariannecottage.netlify.app/)",
+      "Bash(curl -s -I https://mariannecottage.netlify.app/rooms)",
+      "Bash(find:*)"
     ]
   }
 }

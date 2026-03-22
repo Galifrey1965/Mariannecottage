@@ -1,0 +1,137 @@
+/* Material Design 3 Shape and Motion Tokens */
+
+:root {
+  /* Shape Tokens (corner radius) */
+  --md-shape-corner-none: 0;
+  --md-shape-corner-extra-small: 4px;
+  --md-shape-corner-small: 8px;
+  --md-shape-corner-medium: 16px;
+  --md-shape-corner-large: 28px;
+  --md-shape-corner-extra-large: 32px;
+  --md-shape-corner-full: 9999px;
+
+  /* Typography - Display Scales */
+  --md-typescale-display-large-font-family: 'Lora', serif;
+  --md-typescale-display-large-font-size: 57px;
+  --md-typescale-display-large-font-weight: 400;
+  --md-typescale-display-large-line-height: 64px;
+  --md-typescale-display-large-letter-spacing: -0.25px;
+
+  --md-typescale-display-medium-font-family: 'Lora', serif;
+  --md-typescale-display-medium-font-size: 45px;
+  --md-typescale-display-medium-font-weight: 400;
+  --md-typescale-display-medium-line-height: 52px;
+  --md-typescale-display-medium-letter-spacing: 0px;
+
+  --md-typescale-display-small-font-family: 'Lora', serif;
+  --md-typescale-display-small-font-size: 36px;
+  --md-typescale-display-small-font-weight: 400;
+  --md-typescale-display-small-line-height: 44px;
+  --md-typescale-display-small-letter-spacing: 0px;
+
+  /* Headline Scales */
+  --md-typescale-headline-large-font-family: 'Lora', serif;
+  --md-typescale-headline-large-font-size: 32px;
+  --md-typescale-headline-large-font-weight: 400;
+  --md-typescale-headline-large-line-height: 40px;
+  --md-typescale-headline-large-letter-spacing: 0px;
+
+  --md-typescale-headline-medium-font-family: 'Lora', serif;
+  --md-typescale-headline-medium-font-size: 28px;
+  --md-typescale-headline-medium-font-weight: 500;
+  --md-typescale-headline-medium-line-height: 36px;
+  --md-typescale-headline-medium-letter-spacing: 0px;
+
+  --md-typescale-headline-small-font-family: 'Lora', serif;
+  --md-typescale-headline-small-font-size: 24px;
+  --md-typescale-headline-small-font-weight: 500;
+  --md-typescale-headline-small-line-height: 32px;
+  --md-typescale-headline-small-letter-spacing: 0px;
+
+  /* Title Scales */
+  --md-typescale-title-large-font-family: 'Lora', serif;
+  --md-typescale-title-large-font-size: 22px;
+  --md-typescale-title-large-font-weight: 500;
+  --md-typescale-title-large-line-height: 28px;
+  --md-typescale-title-large-letter-spacing: 0px;
+
+  --md-typescale-title-medium-font-family: 'Source Sans 3', sans-serif;
+  --md-typescale-title-medium-font-size: 16px;
+  --md-typescale-title-medium-font-weight: 500;
+  --md-typescale-title-medium-line-height: 24px;
+  --md-typescale-title-medium-letter-spacing: 0.15px;
+
+  --md-typescale-title-small-font-family: 'Source Sans 3', sans-serif;
+  --md-typescale-title-small-font-size: 14px;
+  --md-typescale-title-small-font-weight: 500;
+  --md-typescale-title-small-line-height: 20px;
+  --md-typescale-title-small-letter-spacing: 0.1px;
+
+  /* Body Scales */
+  --md-typescale-body-large-font-family: 'Source Sans 3', sans-serif;
+  --md-typescale-body-large-font-size: 16px;
+  --md-typescale-body-large-font-weight: 400;
+  --md-typescale-body-large-line-height: 24px;
+  --md-typescale-body-large-letter-spacing: 0.5px;
+
+  --md-typescale-body-medium-font-family: 'Source Sans 3', sans-serif;
+  --md-typescale-body-medium-font-size: 14px;
+  --md-typescale-body-medium-font-weight: 500;
+  --md-typescale-body-medium-line-height: 20px;
+  --md-typescale-body-medium-letter-spacing: 0.25px;
+
+  --md-typescale-body-small-font-family: 'Source Sans 3', sans-serif;
+  --md-typescale-body-small-font-size: 12px;
+  --md-typescale-body-small-font-weight: 400;
+  --md-typescale-body-small-line-height: 16px;
+  --md-typescale-body-small-letter-spacing: 0.4px;
+
+  /* Label Scales */
+  --md-typescale-label-large-font-family: 'Source Sans 3', sans-serif;
+  --md-typescale-label-large-font-size: 14px;
+  --md-typescale-label-large-font-weight: 500;
+  --md-typescale-label-large-line-height: 20px;
+  --md-typescale-label-large-letter-spacing: 0.1px;
+
+  --md-typescale-label-medium-font-family: 'Source Sans 3', sans-serif;
+  --md-typescale-label-medium-font-size: 12px;
+  --md-typescale-label-medium-font-weight: 500;
+  --md-typescale-label-medium-line-height: 16px;
+  --md-typescale-label-medium-letter-spacing: 0.5px;
+
+  --md-typescale-label-small-font-family: 'Source Sans 3', sans-serif;
+  --md-typescale-label-small-font-size: 11px;
+  --md-typescale-label-small-font-weight: 500;
+  --md-typescale-label-small-line-height: 16px;
+  --md-typescale-label-small-letter-spacing: 0.5px;
+
+  /* Motion / Animation Tokens */
+  --md-motion-easing-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --md-motion-easing-standard-accelerate: cubic-bezier(0.4, 0, 1, 1);
+  --md-motion-easing-standard-decelerate: cubic-bezier(0, 0, 0.2, 1);
+  --md-motion-easing-emphasized: cubic-bezier(0.2, 0, 0, 1);
+  --md-motion-easing-emphasized-accelerate: cubic-bezier(0.4, 0, 0.6, 1);
+  --md-motion-easing-emphasized-decelerate: cubic-bezier(0.05, 0.7, 0.1, 1);
+
+  /* Duration Tokens (milliseconds) */
+  --md-motion-duration-short1: 50ms;
+  --md-motion-duration-short2: 100ms;
+  --md-motion-duration-short3: 150ms;
+  --md-motion-duration-short4: 200ms;
+  --md-motion-duration-medium1: 250ms;
+  --md-motion-duration-medium2: 300ms;
+  --md-motion-duration-medium3: 350ms;
+  --md-motion-duration-medium4: 400ms;
+  --md-motion-duration-long1: 450ms;
+  --md-motion-duration-long2: 500ms;
+  --md-motion-duration-long3: 550ms;
+  --md-motion-duration-long4: 600ms;
+
+  /* Elevation Shadows (box-shadow tokens) */
+  --md-elevation-shadow-0: none;
+  --md-elevation-shadow-1: 0px 2px 4px rgba(0, 0, 0, 0.12);
+  --md-elevation-shadow-2: 0px 3px 6px rgba(0, 0, 0, 0.16);
+  --md-elevation-shadow-3: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  --md-elevation-shadow-4: 0px 4px 10px rgba(0, 0, 0, 0.22);
+  --md-elevation-shadow-5: 0px 8px 12px rgba(0, 0, 0, 0.26);
+}
