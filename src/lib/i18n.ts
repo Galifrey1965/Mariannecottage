@@ -53,7 +53,8 @@ export function detectLocale(acceptLanguage: string | null): Locale {
 	const preferred = acceptLanguage
 		.split(',')
 		.map(lang => lang.split(';')[0].trim().toLowerCase())
-		.find(lang => LOCALES.some(l => lang.startsWith(l)));
+		.map(lang => lang.split('-')[0]) // Extract just the language code (en, fr, de)
+		.find(lang => LOCALES.includes(lang as Locale));
 
 	return (preferred as Locale) || DEFAULT_LOCALE;
 }
