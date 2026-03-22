@@ -37,44 +37,70 @@
     `
 	};
 
-	const Container = href ? 'a' : 'div';
+	const baseClass = `group rounded-[var(--md-shape-corner-medium)] overflow-hidden transition-all duration-200 ease-standard ${variantClasses[variant]} ${clickable ? 'cursor-pointer hover:shadow-lg' : ''}`;
 </script>
 
-<svelte:component
-	this={Container}
-	href={href || undefined}
-	class="group rounded-[var(--md-shape-corner-medium)] overflow-hidden transition-all duration-200 ease-standard {variantClasses[variant]} {clickable
-		? 'cursor-pointer hover:shadow-lg'
-		: ''}"
->
-	{#if mediaUrl}
-		<div class="relative w-full h-48 overflow-hidden bg-gray-200">
-			<img
-				src={mediaUrl}
-				alt={mediaAlt}
-				class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-			/>
+{#if href}
+	<a {href} class={baseClass}>
+		{#if mediaUrl}
+			<div class="relative w-full h-48 overflow-hidden bg-gray-200">
+				<img
+					src={mediaUrl}
+					alt={mediaAlt}
+					class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+				/>
+			</div>
+		{/if}
+
+		<div class="p-6">
+			{#if title}
+				<h3
+					class="text-[var(--md-typescale-headline-medium-font-size)] font-[var(--md-typescale-headline-medium-font-weight)] leading-[var(--md-typescale-headline-medium-line-height)] text-[var(--md-sys-color-on-surface)] mb-2"
+				>
+					{title}
+				</h3>
+			{/if}
+
+			{#if supportingText}
+				<p class="text-[var(--md-typescale-body-medium-font-size)] text-[var(--md-sys-color-on-surface-variant)] mb-4">
+					{supportingText}
+				</p>
+			{/if}
+
+			<slot />
 		</div>
-	{/if}
-
-	<div class="p-6">
-		{#if title}
-			<h3
-				class="text-[var(--md-typescale-headline-medium-font-size)] font-[var(--md-typescale-headline-medium-font-weight)] leading-[var(--md-typescale-headline-medium-line-height)] text-[var(--md-sys-color-on-surface)] mb-2"
-			>
-				{title}
-			</h3>
+	</a>
+{:else}
+	<div class={baseClass}>
+		{#if mediaUrl}
+			<div class="relative w-full h-48 overflow-hidden bg-gray-200">
+				<img
+					src={mediaUrl}
+					alt={mediaAlt}
+					class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+				/>
+			</div>
 		{/if}
 
-		{#if supportingText}
-			<p class="text-[var(--md-typescale-body-medium-font-size)] text-[var(--md-sys-color-on-surface-variant)] mb-4">
-				{supportingText}
-			</p>
-		{/if}
+		<div class="p-6">
+			{#if title}
+				<h3
+					class="text-[var(--md-typescale-headline-medium-font-size)] font-[var(--md-typescale-headline-medium-font-weight)] leading-[var(--md-typescale-headline-medium-line-height)] text-[var(--md-sys-color-on-surface)] mb-2"
+				>
+					{title}
+				</h3>
+			{/if}
 
-		<slot />
+			{#if supportingText}
+				<p class="text-[var(--md-typescale-body-medium-font-size)] text-[var(--md-sys-color-on-surface-variant)] mb-4">
+					{supportingText}
+				</p>
+			{/if}
+
+			<slot />
+		</div>
 	</div>
-</svelte:component>
+{/if}
 
 <style>
 	:global(a) {

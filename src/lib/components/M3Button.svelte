@@ -119,12 +119,11 @@
 	};
 </script>
 
-{#if href}
+{#if href && !disabled}
 	<a
 		{href}
 		bind:this={element}
 		class="{baseClasses} {variantClasses[variant]} {sizeClasses[size]} {fullWidth ? 'w-full' : ''}"
-		{disabled}
 		role="button"
 	>
 		<slot />

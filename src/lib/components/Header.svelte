@@ -11,90 +11,62 @@
 
 	let { lang, messages }: Props = $props();
 
-	let mobileMenuOpen = $state(false);
-
 	const navLinks = [
-		{ label: t(messages, 'nav.home'), href: '/' },
-		{ label: t(messages, 'nav.rooms'), href: '/rooms' },
-		{ label: t(messages, 'nav.gallery'), href: '/gallery' },
-		{ label: t(messages, 'nav.explore'), href: '/explore' },
-		{ label: t(messages, 'nav.contact'), href: '/contact' },
-		{ label: t(messages, 'nav.book'), href: '/book' }
+		{ label: t(messages, 'nav.home'), href: '/', icon: '🏠' },
+		{ label: t(messages, 'nav.rooms'), href: '/rooms', icon: '🛏️' },
+		{ label: t(messages, 'nav.gallery'), href: '/gallery', icon: '🖼️' },
+		{ label: t(messages, 'nav.explore'), href: '/explore', icon: '🗺️' },
+		{ label: t(messages, 'nav.contact'), href: '/contact', icon: '📧' },
+		{ label: t(messages, 'nav.book'), href: '/book', icon: '✨' }
 	];
+
+	const isActive = (href: string) => {
+		return $page.url.pathname === href || $page.url.pathname.startsWith(href + '/');
+	};
 </script>
 
-<header class="sticky top-0 z-50 border-b border-amber-200 bg-white/95 backdrop-blur-sm shadow-sm">
-	<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-		<div class="flex items-center justify-between h-16">
+<!-- M3 Header - Desktop only, hides on mobile (navigation bar takes over) -->
+<header
+	class="sticky top-0 z-40 hidden sm:block bg-[var(--md-sys-color-surface)] border-b border-[var(--md-sys-color-outline-variant)] backdrop-blur-sm shadow-sm transition-all duration-200"
+>
+	<div class="mx-auto max-w-7xl px-6 sm:px-12 lg:px-8 h-16">
+		<div class="flex items-center justify-between h-full">
 			<!-- Logo -->
 			<a href={localePath(lang, '/')} class="flex items-center gap-2 flex-shrink-0">
-				<div class="text-2xl font-serif font-semibold text-amber-900">Marianne</div>
-				<div class="text-xs text-amber-700 uppercase tracking-widest hidden sm:block">Cottage</div>
+				<div class="text-xl font-[var(--md-typescale-headline-medium-font-family)] font-[var(--md-typescale-headline-medium-font-weight)] text-[var(--md-sys-color-primary)]">
+					Marianne
+				</div>
+				<div class="text-xs font-bold uppercase tracking-widest text-[var(--md-sys-color-on-surface-variant)] hidden md:block">
+					Cottage
+				</div>
 			</a>
 
 			<!-- Desktop Navigation -->
-			<nav class="hidden lg:flex items-center gap-8">
+			<nav class="hidden lg:flex items-center gap-2">
 				{#each navLinks as link}
 					<a
 						href={localePath(lang, link.href)}
-						class="text-sm font-medium text-gray-700 hover:text-amber-900 transition-colors"
-						class:text-amber-900={$page.url.pathname.endsWith(link.href)}
+						class="relative px-4 py-2 rounded-[var(--md-shape-corner-medium)] transition-all duration-200 ease-standard text-[var(--md-typescale-label-large-font-size)] font-[var(--md-typescale-label-large-font-weight)] {isActive(
+							link.href
+						)
+							? 'bg-[var(--md-sys-color-primary-container)] text-[var(--md-sys-color-primary)]'
+							: 'text-[var(--md-sys-color-on-surface)] hover:bg-[var(--md-sys-color-surface-container-low)]'}"
 					>
 						{link.label}
 					</a>
 				{/each}
 			</nav>
 
-			<!-- Language Switcher + Mobile Menu -->
-			<div class="flex items-center gap-4">
+			<!-- Language Switcher -->
+			<div class="flex items-center gap-2">
 				<LanguageSwitcher {lang} />
-
-				<!-- Mobile menu button -->
-				<button
-					onclick={() => (mobileMenuOpen = !mobileMenuOpen)}
-					class="lg:hidden inline-flex items-center justify-center p-2 rounded-md hover:bg-amber-100"
-					aria-label="Toggle menu"
-				>
-					<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						{#if !mobileMenuOpen}
-							<path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								stroke-width="2"
-								d="M4 6h16M4 12h16M4 18h16"
-							/>
-						{:else}
-							<path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								stroke-width="2"
-								d="M6 18L18 6M6 6l12 12"
-							/>
-						{/if}
-					</svg>
-				</button>
 			</div>
 		</div>
-
-		<!-- Mobile Navigation -->
-		{#if mobileMenuOpen}
-			<nav class="lg:hidden pb-4 border-t border-amber-200">
-				{#each navLinks as link}
-					<a
-						href={localePath(lang, link.href)}
-						class="block px-4 py-2 text-sm font-medium text-gray-700 hover:bg-amber-50 hover:text-amber-900 transition-colors"
-						onclick={() => (mobileMenuOpen = false)}
-					>
-						{link.label}
-					</a>
-				{/each}
-			</nav>
-		{/if}
 	</div>
 </header>
 
 <style>
-	header {
-		--color-bg: #fdfbf7;
+	:global(body) {
+		padding-top: 0;
 	}
 </style>
