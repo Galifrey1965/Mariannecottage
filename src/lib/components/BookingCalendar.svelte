@@ -46,19 +46,19 @@
 
 	const prevMonth = () => { currentMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1); };
 	const nextMonth = () => { currentMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1); };
+	export const goToToday = () => { currentMonth = new Date(); };
 
-	const getDays = () => {
-		const days: (Date | null)[] = [];
+	const days = $derived.by(() => {
+		const result: (Date | null)[] = [];
 		let firstDay = getFirstDayOfMonth(currentMonth);
 		if (mondayStart) firstDay = (firstDay + 6) % 7;
 		const daysCount = daysInMonth(currentMonth);
-		for (let i = 0; i < firstDay; i++) days.push(null);
-		for (let i = 1; i <= daysCount; i++) days.push(new Date(currentMonth.getFullYear(), currentMonth.getMonth(), i));
-		return days;
-	};
+		for (let i = 0; i < firstDay; i++) result.push(null);
+		for (let i = 1; i <= daysCount; i++) result.push(new Date(currentMonth.getFullYear(), currentMonth.getMonth(), i));
+		return result;
+	});
 
 	const monthName = $derived(currentMonth.toLocaleDateString(lang, { month: 'long', year: 'numeric' }));
-	const days = $derived(getDays());
 
 	function dayClass(date: Date): string {
 		if (isPast(date)) return 'day past';

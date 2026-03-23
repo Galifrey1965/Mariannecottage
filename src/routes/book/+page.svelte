@@ -25,6 +25,7 @@
 	let submitting = $state(false);
 	let formError = $state('');
 	let fieldErrors = $state<Record<string, string>>({});
+	let calendarRef: { goToToday: () => void } | undefined = $state();
 
 	const realAvailability: Record<string, boolean> = data.availability || {};
 
@@ -111,7 +112,11 @@
 	<div class="steps">
 		{#each [{ n: 1, label: t(messages, 'book.step_dates') }, { n: 2, label: t(messages, 'book.step_details') }, { n: 3, label: t(messages, 'book.step_review') }] as s}
 			<button
-				onclick={() => { if (s.n === 1 || (s.n === 2 && checkInDate && checkOutDate) || (s.n === 3 && checkInDate && checkOutDate && guestName && guestEmail)) step = s.n as 1 | 2 | 3; }}
+				onclick={() => {
+					if (s.n === 1) { step = 1; calendarRef?.goToToday(); }
+					else if (s.n === 2 && checkInDate && checkOutDate) step = 2;
+					else if (s.n === 3 && checkInDate && checkOutDate && guestName && guestEmail) step = 3;
+				}}
 				class="step-btn"
 				class:active={step === s.n}
 				class:done={step > s.n}
@@ -135,6 +140,7 @@
 				<div>
 					<h2 class="section-heading">{t(messages, 'book.heading')}</h2>
 					<BookingCalendar
+						bind:this={calendarRef}
 						{messages}
 						{lang}
 						availability={realAvailability}
