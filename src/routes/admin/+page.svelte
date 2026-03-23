@@ -290,8 +290,8 @@
 						<div class="status-buttons">
 							{#each ['pending', 'confirmed', 'cancelled'] as s}
 								<button
-									onclick={() => updateBookingStatus(selectedBooking.id, s)}
-									disabled={updatingStatus || selectedBooking.status === s}
+									onclick={() => updateBookingStatus(selectedBooking!.id, s)}
+									disabled={updatingStatus || selectedBooking!.status === s}
 									class="status-toggle {s}"
 									class:active={selectedBooking.status === s}
 								>{s}</button>
@@ -394,7 +394,7 @@
 							<textarea bind:value={notesValue} class="form-input" rows="3" placeholder="Internal notes about this booking..."></textarea>
 							<div class="notes-actions">
 								<button onclick={() => editingNotes = false} class="btn-outline btn-sm">Cancel</button>
-								<button onclick={() => saveNotes(selectedBooking.id)} class="btn-primary btn-sm">Save</button>
+								<button onclick={() => saveNotes(selectedBooking!.id)} class="btn-primary btn-sm">Save</button>
 							</div>
 						{:else if selectedBooking.admin_notes}
 							<p class="note-box">{selectedBooking.admin_notes}</p>

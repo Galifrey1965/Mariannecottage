@@ -21,45 +21,47 @@
 
 	let mapContainer: HTMLDivElement;
 
-	onMount(async () => {
-		const L = (await import('leaflet')).default;
+	onMount(() => {
+		let map: L.Map;
 
-		const map = L.map(mapContainer).setView(center, zoom);
+		import('leaflet').then(({ default: L }) => {
+			map = L.map(mapContainer).setView(center, zoom);
 
-		L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-			attribution:
-				'© <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-			maxZoom: 19
-		}).addTo(map);
+			L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+				attribution:
+					'© <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+				maxZoom: 19
+			}).addTo(map);
 
-		// Color mapping by type
-		const typeColors: Record<string, string> = {
-			cottage: '🏠',
-			ww2: '⚔️',
-			nature: '🌿',
-			towns: '🏛️'
-		};
+			// Color mapping by type
+			const typeColors: Record<string, string> = {
+				cottage: '🏠',
+				ww2: '⚔️',
+				nature: '🌿',
+				towns: '🏛️'
+			};
 
-		// Add markers
-		for (const marker of markers) {
-			const markerColor = marker.type === 'cottage' ? '#b8860b' : '#d2691e';
-			const icon = L.divIcon({
-				className: 'custom-marker',
-				html: `<div style="font-size: 24px; color: ${markerColor};">${typeColors[marker.type] || '📍'}</div>`,
-				iconSize: [32, 32],
-				iconAnchor: [16, 32],
-				popupAnchor: [0, -32]
-			});
+			// Add markers
+			for (const marker of markers) {
+				const markerColor = marker.type === 'cottage' ? '#b8860b' : '#d2691e';
+				const icon = L.divIcon({
+					className: 'custom-marker',
+					html: `<div style="font-size: 24px; color: ${markerColor};">${typeColors[marker.type] || '📍'}</div>`,
+					iconSize: [32, 32],
+					iconAnchor: [16, 32],
+					popupAnchor: [0, -32]
+				});
 
-			const popup = L.popup().setContent(
-				`<div class="text-sm"><strong>${marker.title}</strong><br>${marker.description}</div>`
-			);
+				const popup = L.popup().setContent(
+					`<div class="text-sm"><strong>${marker.title}</strong><br>${marker.description}</div>`
+				);
 
-			L.marker([marker.lat, marker.lng], { icon }).bindPopup(popup).addTo(map);
-		}
+				L.marker([marker.lat, marker.lng], { icon }).bindPopup(popup).addTo(map);
+			}
+		});
 
 		return () => {
-			map.remove();
+			if (map) map.remove();
 		};
 	});
 </script>
