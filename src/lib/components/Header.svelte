@@ -11,6 +11,8 @@
 
 	let { lang, messages }: Props = $props();
 
+	let menuOpen = $state(false);
+
 	const navLinks = [
 		{ label: t(messages, 'nav.home'), href: '/', icon: '🏠' },
 		{ label: t(messages, 'nav.rooms'), href: '/rooms', icon: '🛏️' },
@@ -23,85 +25,86 @@
 	const isActive = (href: string) => {
 		return $page.url.pathname === href || $page.url.pathname.startsWith(href + '/');
 	};
+
+	const closeMenu = () => { menuOpen = false; };
 </script>
 
 <header class="header">
 	<div class="header-inner">
-		<div class="header-content">
-			<a href={localePath(lang, '/')} class="logo">
-				<span class="logo-name">Marianne</span>
-				<span class="logo-subtitle">Cottage</span>
-			</a>
+		<a href={localePath(lang, '/')} class="logo">
+			<span class="logo-name">Marianne</span>
+			<span class="logo-subtitle">Cottage</span>
+		</a>
 
-			<nav class="desktop-nav">
-				{#each navLinks as link}
-					<a
-						href={localePath(lang, link.href)}
-						class="nav-link"
-						class:active={isActive(link.href)}
-					>
-						{link.label}
-					</a>
-				{/each}
-			</nav>
+		<nav class="desktop-nav">
+			{#each navLinks as link}
+				<a
+					href={localePath(lang, link.href)}
+					class="nav-link"
+					class:active={isActive(link.href)}
+				>
+					{link.label}
+				</a>
+			{/each}
+		</nav>
 
-			<div class="header-actions">
-				<LanguageSwitcher {lang} />
-			</div>
+		<div class="header-actions">
+			<LanguageSwitcher {lang} />
+			<button class="menu-toggle" onclick={() => menuOpen = !menuOpen} aria-label="Toggle menu">
+				{#if menuOpen}✕{:else}☰{/if}
+			</button>
 		</div>
 	</div>
 </header>
+
+<!-- Mobile drawer -->
+{#if menuOpen}
+	<div class="overlay" onclick={closeMenu} role="presentation"></div>
+	<nav class="mobile-drawer">
+		{#each navLinks as link}
+			<a
+				href={localePath(lang, link.href)}
+				class="drawer-link"
+				class:active={isActive(link.href)}
+				onclick={closeMenu}
+			>
+				<span class="drawer-icon">{link.icon}</span>
+				{link.label}
+			</a>
+		{/each}
+	</nav>
+{/if}
 
 <style>
 	.header {
 		position: sticky;
 		top: 0;
 		z-index: 40;
-		display: none;
 		background-color: var(--color-bg);
 		border-bottom: 1px solid var(--color-cream-dark);
 		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-		transition: all 0.2s ease;
-	}
-
-	@media (min-width: 600px) {
-		.header {
-			display: block;
-		}
 	}
 
 	.header-inner {
 		max-width: 1280px;
 		margin: 0 auto;
-		padding: 0 1.5rem;
-		height: 64px;
-	}
-
-	@media (min-width: 600px) {
-		.header-inner {
-			padding: 0 3rem;
-		}
-	}
-
-	@media (min-width: 1024px) {
-		.header-inner {
-			padding: 0 2rem;
-		}
-	}
-
-	.header-content {
+		padding: 0 1rem;
+		height: 56px;
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		height: 100%;
+	}
+
+	@media (min-width: 600px) {
+		.header-inner { padding: 0 1.5rem; height: 64px; }
 	}
 
 	.logo {
 		display: flex;
-		align-items: center;
-		gap: 0.5rem;
-		flex-shrink: 0;
+		align-items: baseline;
+		gap: 0.375rem;
 		text-decoration: none;
+		flex-shrink: 0;
 	}
 
 	.logo-name {
@@ -117,40 +120,32 @@
 		text-transform: uppercase;
 		letter-spacing: 0.1em;
 		color: var(--color-text-muted);
-		display: none;
 	}
 
-	@media (min-width: 840px) {
-		.logo-subtitle {
-			display: block;
-		}
-	}
-
+	/* Desktop nav */
 	.desktop-nav {
 		display: none;
 		align-items: center;
-		gap: 0.5rem;
+		gap: 0.25rem;
 	}
 
-	@media (min-width: 1024px) {
-		.desktop-nav {
-			display: flex;
-		}
+	@media (min-width: 840px) {
+		.desktop-nav { display: flex; }
 	}
 
 	.nav-link {
-		padding: 0.5rem 1rem;
+		padding: 0.5rem 0.75rem;
 		border-radius: 12px;
 		transition: all 0.2s ease;
 		font-size: 0.875rem;
 		font-weight: 500;
 		color: var(--color-text);
 		text-decoration: none;
+		white-space: nowrap;
 	}
 
 	.nav-link:hover {
 		background-color: var(--color-cream);
-		color: var(--color-text);
 	}
 
 	.nav-link.active {
@@ -158,9 +153,86 @@
 		color: white;
 	}
 
+	/* Header actions */
 	.header-actions {
 		display: flex;
 		align-items: center;
 		gap: 0.5rem;
+	}
+
+	/* Hamburger toggle */
+	.menu-toggle {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 40px;
+		height: 40px;
+		border: none;
+		background: transparent;
+		font-size: 1.25rem;
+		cursor: pointer;
+		border-radius: 8px;
+		color: var(--color-text);
+		transition: background 0.2s;
+	}
+
+	.menu-toggle:hover {
+		background: var(--color-cream);
+	}
+
+	@media (min-width: 840px) {
+		.menu-toggle { display: none; }
+	}
+
+	/* Overlay */
+	.overlay {
+		position: fixed;
+		inset: 0;
+		background: rgba(0, 0, 0, 0.4);
+		z-index: 45;
+	}
+
+	/* Mobile drawer */
+	.mobile-drawer {
+		position: fixed;
+		top: 56px;
+		right: 0;
+		bottom: 0;
+		width: 260px;
+		background: var(--color-bg);
+		z-index: 50;
+		padding: 1rem 0;
+		box-shadow: -4px 0 12px rgba(0, 0, 0, 0.1);
+		display: flex;
+		flex-direction: column;
+		overflow-y: auto;
+	}
+
+	.drawer-link {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		padding: 0.875rem 1.25rem;
+		font-size: 1rem;
+		font-weight: 500;
+		color: var(--color-text);
+		text-decoration: none;
+		transition: background 0.15s;
+	}
+
+	.drawer-link:hover {
+		background: var(--color-cream);
+	}
+
+	.drawer-link.active {
+		background: rgba(107, 143, 113, 0.15);
+		color: var(--color-sage);
+		font-weight: 600;
+	}
+
+	.drawer-icon {
+		font-size: 1.25rem;
+		width: 1.5rem;
+		text-align: center;
 	}
 </style>
