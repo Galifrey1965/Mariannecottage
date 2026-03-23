@@ -1,20 +1,17 @@
 import { createClient } from '@supabase/supabase-js';
-import {
-	PUBLIC_SUPABASE_URL,
-	PUBLIC_SUPABASE_ANON_KEY
-} from '$env/static/public';
-import { SUPABASE_SERVICE_ROLE_KEY } from '$env/static/private';
+import { env as publicEnv } from '$env/dynamic/public';
+import { env as privateEnv } from '$env/dynamic/private';
 
 // Admin client (server-side only)
 export const adminClient = createClient(
-	PUBLIC_SUPABASE_URL,
-	SUPABASE_SERVICE_ROLE_KEY
+	publicEnv.PUBLIC_SUPABASE_URL!,
+	privateEnv.SUPABASE_SERVICE_ROLE_KEY!
 );
 
 // Anon client (can be used on client or server)
 export const anonClient = createClient(
-	PUBLIC_SUPABASE_URL,
-	PUBLIC_SUPABASE_ANON_KEY
+	publicEnv.PUBLIC_SUPABASE_URL!,
+	publicEnv.PUBLIC_SUPABASE_ANON_KEY!
 );
 
 // Types
