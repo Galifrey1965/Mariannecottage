@@ -44,63 +44,120 @@
 	}
 </script>
 
-<form onsubmit={e => { e.preventDefault(); handleSubmit(); }} class="space-y-4">
+<form onsubmit={e => { e.preventDefault(); handleSubmit(); }} class="form">
 	{#if submitted}
-		<div class="p-4 bg-green-50 border border-green-200 rounded-lg text-green-800">
+		<div class="alert alert-success">
 			{t(messages, 'contact.form.success')}
 		</div>
 	{/if}
 
 	{#if error}
-		<div class="p-4 bg-red-50 border border-red-200 rounded-lg text-red-800">
+		<div class="alert alert-error">
 			{error}
 		</div>
 	{/if}
 
-	<div>
-		<label for="name" class="block text-sm font-medium text-gray-700 mb-1">
-			{t(messages, 'contact.form.name')}
-		</label>
-		<input
-			type="text"
-			id="name"
-			bind:value={formData.name}
-			class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent outline-none transition"
-			required
-		/>
+	<div class="field">
+		<label for="name">{t(messages, 'contact.form.name')}</label>
+		<input type="text" id="name" bind:value={formData.name} required />
 	</div>
 
-	<div>
-		<label for="email" class="block text-sm font-medium text-gray-700 mb-1">
-			{t(messages, 'contact.form.email')}
-		</label>
-		<input
-			type="email"
-			id="email"
-			bind:value={formData.email}
-			class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent outline-none transition"
-			required
-		/>
+	<div class="field">
+		<label for="email">{t(messages, 'contact.form.email')}</label>
+		<input type="email" id="email" bind:value={formData.email} required />
 	</div>
 
-	<div>
-		<label for="message" class="block text-sm font-medium text-gray-700 mb-1">
-			{t(messages, 'contact.form.message')}
-		</label>
-		<textarea
-			id="message"
-			bind:value={formData.message}
-			rows="5"
-			class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent outline-none transition resize-none"
-			required
-		/>
+	<div class="field">
+		<label for="message">{t(messages, 'contact.form.message')}</label>
+		<textarea id="message" bind:value={formData.message} rows="5" required></textarea>
 	</div>
 
-	<button
-		type="submit"
-		disabled={isSubmitting}
-		class="w-full px-6 py-3 bg-amber-600 hover:bg-amber-700 disabled:bg-gray-400 text-white font-semibold rounded-lg transition-colors"
-	>
+	<button type="submit" class="submit-btn" disabled={isSubmitting}>
 		{isSubmitting ? 'Sending...' : t(messages, 'contact.form.submit')}
 	</button>
 </form>
+
+<style>
+	.form {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+	}
+
+	.alert {
+		padding: 1rem;
+		border-radius: 8px;
+		font-size: 0.875rem;
+	}
+
+	.alert-success {
+		background-color: #f0fdf4;
+		border: 1px solid #bbf7d0;
+		color: #166534;
+	}
+
+	.alert-error {
+		background-color: #fef2f2;
+		border: 1px solid #fecaca;
+		color: #991b1b;
+	}
+
+	.field {
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+	}
+
+	.field label {
+		font-size: 0.875rem;
+		font-weight: 500;
+		color: var(--color-text-muted);
+	}
+
+	.field input,
+	.field textarea {
+		width: 100%;
+		padding: 0.625rem 1rem;
+		border: 1px solid var(--color-cream-dark);
+		border-radius: 8px;
+		font-family: inherit;
+		font-size: 1rem;
+		color: var(--color-text);
+		background-color: white;
+		outline: none;
+		transition: border-color 0.2s ease, box-shadow 0.2s ease;
+		box-sizing: border-box;
+	}
+
+	.field input:focus,
+	.field textarea:focus {
+		border-color: var(--color-sage);
+		box-shadow: 0 0 0 2px rgba(107, 143, 113, 0.2);
+	}
+
+	.field textarea {
+		resize: none;
+	}
+
+	.submit-btn {
+		width: 100%;
+		padding: 0.75rem 1.5rem;
+		background-color: var(--color-sage);
+		color: white;
+		font-weight: 600;
+		font-size: 1rem;
+		border: none;
+		border-radius: 8px;
+		cursor: pointer;
+		transition: background-color 0.2s ease;
+	}
+
+	.submit-btn:hover {
+		background-color: var(--color-sage-hover);
+	}
+
+	.submit-btn:disabled {
+		background-color: #9ca3af;
+		cursor: not-allowed;
+	}
+</style>

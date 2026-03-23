@@ -12,16 +12,22 @@
 	let { lang, image, title, description }: Props = $props();
 </script>
 
-<div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
-	<img src={image} alt={title} class="w-full h-48 object-cover" />
-	<div class="p-6">
-		<h3 class="font-serif text-xl font-semibold text-amber-900 mb-2">{title}</h3>
-		<p class="text-gray-600 text-sm mb-4">{description}</p>
-		<a
-			href={localePath(lang, '/rooms')}
-			class="inline-block text-amber-600 hover:text-amber-700 font-semibold text-sm"
-		>
-			→ View Details
-		</a>
+<div class="card">
+	<img src={image} alt={title} class="card-image" />
+	<div class="card-body">
+		<h3 class="card-title">{title}</h3>
+		<p class="card-text">{description}</p>
+		<a href={localePath(lang, '/rooms')} class="card-link">→ View Details</a>
 	</div>
 </div>
+
+<style>
+	.card { background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); overflow: hidden; transition: box-shadow 0.2s ease; }
+	.card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.12); }
+	.card-image { width: 100%; height: 12rem; object-fit: cover; }
+	.card-body { padding: 1.5rem; }
+	.card-title { font-family: 'Lora', serif; font-size: 1.25rem; font-weight: 600; color: var(--color-brown); margin: 0 0 0.5rem; }
+	.card-text { font-size: 0.875rem; color: var(--color-text-muted); margin: 0 0 1rem; }
+	.card-link { font-size: 0.875rem; font-weight: 600; color: var(--color-sage); text-decoration: none; }
+	.card-link:hover { color: var(--color-sage-hover); }
+</style>

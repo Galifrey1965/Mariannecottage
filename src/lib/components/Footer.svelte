@@ -18,44 +18,31 @@
 	];
 </script>
 
-<footer class="bg-amber-900 text-amber-50 mt-16">
-	<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
-		<div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-			<!-- Brand -->
+<footer class="footer">
+	<div class="footer-inner">
+		<div class="footer-grid">
 			<div>
-				<h3 class="text-2xl font-serif font-semibold mb-2">Marianne Cottage</h3>
-				<p class="text-amber-100 text-sm italic">{t(messages, 'footer.tagline')}</p>
+				<h3 class="footer-brand">Marianne Cottage</h3>
+				<p class="footer-tagline">{t(messages, 'footer.tagline')}</p>
 			</div>
 
-			<!-- Quick Links -->
 			<div>
-				<h4 class="font-semibold mb-4">{t(messages, 'footer.quick_links')}</h4>
-				<ul class="space-y-2">
+				<h4 class="footer-heading">{t(messages, 'footer.quick_links')}</h4>
+				<ul class="footer-links">
 					{#each quickLinks as link}
 						<li>
-							<a
-								href={localePath(lang, link.href)}
-								class="text-amber-100 hover:text-white transition-colors text-sm"
-							>
-								{link.label}
-							</a>
+							<a href={localePath(lang, link.href)}>{link.label}</a>
 						</li>
 					{/each}
 					<li>
-						<a
-							href={localePath(lang, '/legal')}
-							class="text-amber-100 hover:text-white transition-colors text-sm"
-						>
-							{t(messages, 'nav.legal')}
-						</a>
+						<a href={localePath(lang, '/legal')}>{t(messages, 'nav.legal')}</a>
 					</li>
 				</ul>
 			</div>
 
-			<!-- Contact Info -->
 			<div>
-				<h4 class="font-semibold mb-4">{t(messages, 'footer.contact')}</h4>
-				<div class="text-sm text-amber-100 space-y-2">
+				<h4 class="footer-heading">{t(messages, 'footer.contact')}</h4>
+				<div class="footer-contact">
 					<p>{t(messages, 'contact.address')}</p>
 					<p>{t(messages, 'contact.email')}</p>
 					<p>{t(messages, 'contact.phone')}</p>
@@ -63,16 +50,112 @@
 			</div>
 		</div>
 
-		<div class="border-t border-amber-800 pt-8">
-			<p class="text-center text-amber-100 text-sm">
-				{t(messages, 'footer.copyright')}
-			</p>
+		<div class="footer-bottom">
+			<p>{t(messages, 'footer.copyright')}</p>
 		</div>
 	</div>
 </footer>
 
 <style>
-	footer {
+	.footer {
 		background-color: #5d3a1a;
+		color: #fef3c7;
+		margin-top: 4rem;
+	}
+
+	.footer-inner {
+		max-width: 1280px;
+		margin: 0 auto;
+		padding: 3rem 1rem;
+	}
+
+	@media (min-width: 600px) {
+		.footer-inner {
+			padding: 3rem 1.5rem;
+		}
+	}
+
+	@media (min-width: 1024px) {
+		.footer-inner {
+			padding: 3rem 2rem;
+		}
+	}
+
+	.footer-grid {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 2rem;
+		margin-bottom: 2rem;
+	}
+
+	@media (min-width: 840px) {
+		.footer-grid {
+			grid-template-columns: repeat(3, 1fr);
+		}
+	}
+
+	.footer-brand {
+		font-family: 'Lora', serif;
+		font-size: 1.5rem;
+		font-weight: 600;
+		margin: 0 0 0.5rem;
+		color: #fef3c7;
+	}
+
+	.footer-tagline {
+		font-size: 0.875rem;
+		font-style: italic;
+		color: #fde68a;
+		margin: 0;
+	}
+
+	.footer-heading {
+		font-weight: 600;
+		margin: 0 0 1rem;
+		color: #fef3c7;
+	}
+
+	.footer-links {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+
+	.footer-links a {
+		color: #fde68a;
+		text-decoration: none;
+		font-size: 0.875rem;
+		transition: color 0.2s ease;
+	}
+
+	.footer-links a:hover {
+		color: white;
+	}
+
+	.footer-contact {
+		font-size: 0.875rem;
+		color: #fde68a;
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+
+	.footer-contact p {
+		margin: 0;
+	}
+
+	.footer-bottom {
+		border-top: 1px solid #7c4a23;
+		padding-top: 2rem;
+		text-align: center;
+	}
+
+	.footer-bottom p {
+		font-size: 0.875rem;
+		color: #fde68a;
+		margin: 0;
 	}
 </style>

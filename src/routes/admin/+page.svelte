@@ -4,13 +4,11 @@
 
 	let { data }: { data: PageData } = $props();
 
-	// Auth state
 	let authed = $state(data.authed);
 	let password = $state('');
 	let loginError = $state('');
 	let loggingIn = $state(false);
 
-	// Dashboard state
 	let bookings = $state<Booking[]>([]);
 	let totalBookings = $state(0);
 	let loading = $state(false);
@@ -18,7 +16,6 @@
 	let searchQuery = $state('');
 	let searchTimeout: ReturnType<typeof setTimeout>;
 
-	// Detail panel
 	let selectedBooking = $state<Booking | null>(null);
 	let editingNotes = $state(false);
 	let notesValue = $state('');
@@ -59,7 +56,6 @@
 			const params = new URLSearchParams();
 			if (statusFilter !== 'all') params.set('status', statusFilter);
 			if (searchQuery) params.set('search', searchQuery);
-
 			const res = await fetch(`/api/admin/bookings?${params}`);
 			const result = await res.json();
 			bookings = result.bookings || [];
@@ -82,9 +78,7 @@
 			const result = await res.json();
 			if (result.success) {
 				await fetchBookings();
-				if (selectedBooking?.id === id) {
-					selectedBooking = result.booking;
-				}
+				if (selectedBooking?.id === id) selectedBooking = result.booking;
 			}
 		} finally {
 			updatingStatus = false;
@@ -102,9 +96,7 @@
 			if (result.success) {
 				editingNotes = false;
 				await fetchBookings();
-				if (selectedBooking?.id === id) {
-					selectedBooking = result.booking;
-				}
+				if (selectedBooking?.id === id) selectedBooking = result.booking;
 			}
 		} catch { /* ignore */ }
 	}
@@ -125,25 +117,8 @@
 		editingNotes = false;
 	}
 
-	// Load bookings on auth
-	$effect(() => {
-		if (authed) fetchBookings();
-	});
-
-	// Refetch on filter change
-	$effect(() => {
-		if (authed) {
-			// Track statusFilter to trigger refetch
-			statusFilter;
-			fetchBookings();
-		}
-	});
-
-	const statusColors: Record<string, string> = {
-		pending: 'bg-amber-100 text-amber-800',
-		confirmed: 'bg-green-100 text-green-800',
-		cancelled: 'bg-red-100 text-red-800'
-	};
+	$effect(() => { if (authed) fetchBookings(); });
+	$effect(() => { if (authed) { statusFilter; fetchBookings(); } });
 
 	const countryFlags: Record<string, string> = {
 		GB: '🇬🇧', FR: '🇫🇷', DE: '🇩🇪', NL: '🇳🇱', BE: '🇧🇪', US: '🇺🇸', CA: '🇨🇦', AU: '🇦🇺'
@@ -151,10 +126,8 @@
 
 	const formatDate = (iso: string) =>
 		new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
-
 	const formatCurrency = (n: number) =>
 		new Intl.NumberFormat('en-US', { style: 'currency', currency: 'EUR' }).format(n);
-
 	const formatRelative = (iso: string) => {
 		const days = Math.ceil((new Date(iso).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
 		if (days < 0) return `${Math.abs(days)}d ago`;
@@ -163,7 +136,6 @@
 		return `in ${days}d`;
 	};
 
-	// Stats
 	const confirmedBookings = $derived(bookings.filter(b => b.status === 'confirmed'));
 	const pendingBookings = $derived(bookings.filter(b => b.status === 'pending'));
 	const totalRevenue = $derived(confirmedBookings.reduce((sum, b) => sum + b.total_cost, 0));
@@ -171,189 +143,127 @@
 </script>
 
 {#if !authed}
-	<!-- Login -->
-	<div class="flex items-center justify-center min-h-[70vh]">
-		<div class="w-full max-w-sm bg-[var(--md-sys-color-surface)] rounded-[var(--md-shape-corner-large)] p-8 shadow-lg">
-			<h2 class="md-headline-medium text-[var(--md-sys-color-on-surface)] mb-6 text-center">Admin Login</h2>
-
+	<div class="login-wrapper">
+		<div class="login-card">
+			<h2 class="login-title">Admin Login</h2>
 			<form onsubmit={(e) => { e.preventDefault(); login(); }}>
-				<label for="password" class="block text-sm font-medium text-[var(--md-sys-color-on-surface)] mb-2">Password</label>
-				<input
-					id="password"
-					type="password"
-					bind:value={password}
-					class="w-full px-4 py-3 border border-[var(--md-sys-color-outline)] rounded-[var(--md-shape-corner-small)] bg-[var(--md-sys-color-surface)] text-[var(--md-sys-color-on-surface)] focus:outline-none focus:ring-2 focus:ring-[var(--md-sys-color-primary)] mb-4"
-					placeholder="Enter admin password"
-					autofocus
-				/>
-
+				<label for="password" class="form-label">Password</label>
+				<input id="password" type="password" bind:value={password} class="form-input" placeholder="Enter admin password" autofocus />
 				{#if loginError}
-					<p class="text-sm text-[var(--md-sys-color-error)] mb-4">{loginError}</p>
+					<p class="error-text">{loginError}</p>
 				{/if}
-
-				<button
-					type="submit"
-					disabled={loggingIn || !password}
-					class="w-full px-6 py-3 bg-[var(--md-sys-color-primary)] text-[var(--md-sys-color-on-primary)] font-semibold rounded-[var(--md-shape-corner-large)] hover:shadow-md transition-all disabled:opacity-50"
-				>
+				<button type="submit" disabled={loggingIn || !password} class="btn-primary full-width">
 					{loggingIn ? 'Signing in...' : 'Sign In'}
 				</button>
 			</form>
 		</div>
 	</div>
 {:else}
-	<!-- Dashboard -->
-	<div class="space-y-6">
-		<!-- Header row -->
-		<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+	<div class="dashboard">
+		<div class="dashboard-header">
 			<div>
-				<h2 class="md-headline-large text-[var(--md-sys-color-on-surface)]">Bookings</h2>
-				<p class="text-sm text-[var(--md-sys-color-on-surface-variant)]">{totalBookings} total bookings</p>
+				<h2 class="page-title">Bookings</h2>
+				<p class="page-subtitle">{totalBookings} total bookings</p>
 			</div>
-			<button
-				onclick={logout}
-				class="self-start px-4 py-2 text-sm border border-[var(--md-sys-color-outline)] text-[var(--md-sys-color-on-surface-variant)] rounded-[var(--md-shape-corner-small)] hover:bg-[var(--md-sys-color-surface-container)]"
-			>
-				Sign Out
-			</button>
+			<button onclick={logout} class="btn-outline">Sign Out</button>
 		</div>
 
-		<!-- Filters -->
-		<div class="flex flex-col sm:flex-row gap-3">
-			<!-- Search -->
-			<div class="flex-1">
-				<input
-					type="text"
-					bind:value={searchQuery}
-					oninput={onSearchInput}
-					placeholder="Search by name, email, or reference..."
-					class="w-full px-4 py-2.5 border border-[var(--md-sys-color-outline)] rounded-[var(--md-shape-corner-small)] bg-[var(--md-sys-color-surface)] text-[var(--md-sys-color-on-surface)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--md-sys-color-primary)]"
-				/>
+		<div class="filters">
+			<div class="search-wrapper">
+				<input type="text" bind:value={searchQuery} oninput={onSearchInput} placeholder="Search by name, email, or reference..." class="form-input" />
 			</div>
-
-			<!-- Status filter -->
-			<div class="flex gap-1 bg-[var(--md-sys-color-surface)] rounded-[var(--md-shape-corner-small)] border border-[var(--md-sys-color-outline-variant)] p-1">
+			<div class="status-filters">
 				{#each ['all', 'pending', 'confirmed', 'cancelled'] as s}
-					<button
-						onclick={() => statusFilter = s}
-						class="px-3 py-1.5 text-sm rounded-[var(--md-shape-corner-extra-small)] transition-colors capitalize
-							{statusFilter === s
-								? 'bg-[var(--md-sys-color-primary)] text-[var(--md-sys-color-on-primary)] font-medium'
-								: 'text-[var(--md-sys-color-on-surface-variant)] hover:bg-[var(--md-sys-color-surface-container)]'}"
-					>
-						{s}
-					</button>
+					<button onclick={() => statusFilter = s} class="filter-btn" class:active={statusFilter === s}>{s}</button>
 				{/each}
 			</div>
 		</div>
 
-		<!-- Stats cards -->
-		<div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-			<div class="bg-[var(--md-sys-color-surface)] rounded-[var(--md-shape-corner-medium)] p-4 border border-[var(--md-sys-color-outline-variant)]">
-				<p class="text-xs text-[var(--md-sys-color-on-surface-variant)]">Confirmed</p>
-				<p class="text-2xl font-bold text-green-700">{confirmedBookings.length}</p>
+		<div class="stats-grid">
+			<div class="stat-card">
+				<p class="stat-label">Confirmed</p>
+				<p class="stat-value" style="color: #166534;">{confirmedBookings.length}</p>
 			</div>
-			<div class="bg-[var(--md-sys-color-surface)] rounded-[var(--md-shape-corner-medium)] p-4 border border-[var(--md-sys-color-outline-variant)]">
-				<p class="text-xs text-[var(--md-sys-color-on-surface-variant)]">Pending</p>
-				<p class="text-2xl font-bold text-amber-700">{pendingBookings.length}</p>
+			<div class="stat-card">
+				<p class="stat-label">Pending</p>
+				<p class="stat-value" style="color: #92400e;">{pendingBookings.length}</p>
 			</div>
-			<div class="bg-[var(--md-sys-color-surface)] rounded-[var(--md-shape-corner-medium)] p-4 border border-[var(--md-sys-color-outline-variant)]">
-				<p class="text-xs text-[var(--md-sys-color-on-surface-variant)]">Revenue</p>
-				<p class="text-2xl font-bold text-[var(--md-sys-color-primary)]">{formatCurrency(totalRevenue)}</p>
+			<div class="stat-card">
+				<p class="stat-label">Revenue</p>
+				<p class="stat-value" style="color: var(--color-sage);">{formatCurrency(totalRevenue)}</p>
 			</div>
-			<div class="bg-[var(--md-sys-color-surface)] rounded-[var(--md-shape-corner-medium)] p-4 border border-[var(--md-sys-color-outline-variant)]">
-				<p class="text-xs text-[var(--md-sys-color-on-surface-variant)]">Upcoming</p>
-				<p class="text-2xl font-bold text-[var(--md-sys-color-tertiary)]">{upcomingBookings.length}</p>
+			<div class="stat-card">
+				<p class="stat-label">Upcoming</p>
+				<p class="stat-value" style="color: #1d4ed8;">{upcomingBookings.length}</p>
 			</div>
 		</div>
 
-		<!-- Bookings table -->
-		<div class="bg-[var(--md-sys-color-surface)] rounded-[var(--md-shape-corner-large)] border border-[var(--md-sys-color-outline-variant)] overflow-hidden">
+		<div class="table-container">
 			{#if loading}
-				<div class="p-12 text-center text-[var(--md-sys-color-on-surface-variant)]">Loading...</div>
+				<div class="empty-state">Loading...</div>
 			{:else if bookings.length === 0}
-				<div class="p-12 text-center text-[var(--md-sys-color-on-surface-variant)]">
-					No bookings found
-				</div>
+				<div class="empty-state">No bookings found</div>
 			{:else}
-				<!-- Desktop table -->
-				<div class="hidden md:block overflow-x-auto">
-					<table class="w-full text-sm">
+				<div class="desktop-table">
+					<table>
 						<thead>
-							<tr class="border-b border-[var(--md-sys-color-outline-variant)] bg-[var(--md-sys-color-surface-container-low)]">
-								<th class="text-left px-4 py-3 font-medium text-[var(--md-sys-color-on-surface-variant)]">Reference</th>
-								<th class="text-left px-4 py-3 font-medium text-[var(--md-sys-color-on-surface-variant)]">Guest</th>
-								<th class="text-left px-4 py-3 font-medium text-[var(--md-sys-color-on-surface-variant)]">Check-in</th>
-								<th class="text-left px-4 py-3 font-medium text-[var(--md-sys-color-on-surface-variant)]">Nights</th>
-								<th class="text-left px-4 py-3 font-medium text-[var(--md-sys-color-on-surface-variant)]">Guests</th>
-								<th class="text-left px-4 py-3 font-medium text-[var(--md-sys-color-on-surface-variant)]">Total</th>
-								<th class="text-left px-4 py-3 font-medium text-[var(--md-sys-color-on-surface-variant)]">Status</th>
-								<th class="px-4 py-3"></th>
+							<tr>
+								<th>Reference</th>
+								<th>Guest</th>
+								<th>Check-in</th>
+								<th>Nights</th>
+								<th>Guests</th>
+								<th>Total</th>
+								<th>Status</th>
+								<th></th>
 							</tr>
 						</thead>
 						<tbody>
 							{#each bookings as booking}
-								<tr
-									class="border-b border-[var(--md-sys-color-outline-variant)] hover:bg-[var(--md-sys-color-surface-container-low)] cursor-pointer transition-colors"
-									onclick={() => selectBooking(booking)}
-								>
-									<td class="px-4 py-3 font-mono text-xs text-[var(--md-sys-color-primary)]">{booking.booking_reference}</td>
-									<td class="px-4 py-3">
-										<div class="flex items-center gap-2">
+								<tr onclick={() => selectBooking(booking)}>
+									<td class="mono">{booking.booking_reference}</td>
+									<td>
+										<div class="guest-cell">
 											{#if booking.guest_country && countryFlags[booking.guest_country]}
 												<span>{countryFlags[booking.guest_country]}</span>
 											{/if}
 											<div>
-												<p class="font-medium text-[var(--md-sys-color-on-surface)]">{booking.guest_name}</p>
-												<p class="text-xs text-[var(--md-sys-color-on-surface-variant)]">{booking.guest_email}</p>
+												<p class="guest-name">{booking.guest_name}</p>
+												<p class="guest-email">{booking.guest_email}</p>
 											</div>
 										</div>
 									</td>
-									<td class="px-4 py-3">
-										<p class="text-[var(--md-sys-color-on-surface)]">{formatDate(booking.check_in_date)}</p>
-										<p class="text-xs text-[var(--md-sys-color-on-surface-variant)]">{formatRelative(booking.check_in_date)}</p>
+									<td>
+										<p>{formatDate(booking.check_in_date)}</p>
+										<p class="sub-text">{formatRelative(booking.check_in_date)}</p>
 									</td>
-									<td class="px-4 py-3 text-[var(--md-sys-color-on-surface)]">{booking.num_nights}</td>
-									<td class="px-4 py-3 text-[var(--md-sys-color-on-surface)]">{booking.num_guests}</td>
-									<td class="px-4 py-3 font-medium text-[var(--md-sys-color-on-surface)]">{formatCurrency(booking.total_cost)}</td>
-									<td class="px-4 py-3">
-										<span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-medium capitalize {statusColors[booking.status] || ''}">
-											{booking.status}
-										</span>
-									</td>
-									<td class="px-4 py-3 text-right">
-										<span class="text-[var(--md-sys-color-on-surface-variant)]">→</span>
-									</td>
+									<td>{booking.num_nights}</td>
+									<td>{booking.num_guests}</td>
+									<td class="bold">{formatCurrency(booking.total_cost)}</td>
+									<td><span class="status-badge {booking.status}">{booking.status}</span></td>
+									<td class="arrow">→</td>
 								</tr>
 							{/each}
 						</tbody>
 					</table>
 				</div>
 
-				<!-- Mobile cards -->
-				<div class="md:hidden divide-y divide-[var(--md-sys-color-outline-variant)]">
+				<div class="mobile-cards">
 					{#each bookings as booking}
-						<button
-							onclick={() => selectBooking(booking)}
-							class="w-full text-left p-4 hover:bg-[var(--md-sys-color-surface-container-low)] transition-colors"
-						>
-							<div class="flex justify-between items-start mb-2">
+						<button onclick={() => selectBooking(booking)} class="mobile-card">
+							<div class="mobile-card-top">
 								<div>
-									<p class="font-medium text-[var(--md-sys-color-on-surface)]">
-										{#if booking.guest_country && countryFlags[booking.guest_country]}
-											{countryFlags[booking.guest_country]}
-										{/if}
+									<p class="guest-name">
+										{#if booking.guest_country && countryFlags[booking.guest_country]}{countryFlags[booking.guest_country]}{/if}
 										{booking.guest_name}
 									</p>
-									<p class="text-xs font-mono text-[var(--md-sys-color-primary)]">{booking.booking_reference}</p>
+									<p class="mono sub-text">{booking.booking_reference}</p>
 								</div>
-								<span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-medium capitalize {statusColors[booking.status] || ''}">
-									{booking.status}
-								</span>
+								<span class="status-badge {booking.status}">{booking.status}</span>
 							</div>
-							<div class="flex justify-between text-sm text-[var(--md-sys-color-on-surface-variant)]">
+							<div class="mobile-card-bottom">
 								<span>{formatDate(booking.check_in_date)} · {booking.num_nights}n · {booking.num_guests}g</span>
-								<span class="font-medium text-[var(--md-sys-color-on-surface)]">{formatCurrency(booking.total_cost)}</span>
+								<span class="bold">{formatCurrency(booking.total_cost)}</span>
 							</div>
 						</button>
 					{/each}
@@ -362,184 +272,134 @@
 		</div>
 	</div>
 
-	<!-- Detail slide-over -->
 	{#if selectedBooking}
-		<div class="fixed inset-0 z-50 flex justify-end">
-			<!-- Backdrop -->
-			<button
-				onclick={closeDetail}
-				class="absolute inset-0 bg-black/30"
-				aria-label="Close"
-			></button>
-
-			<!-- Panel -->
-			<div class="relative w-full max-w-lg bg-[var(--md-sys-color-surface)] shadow-xl overflow-y-auto">
-				<div class="p-6 space-y-6">
-					<!-- Header -->
-					<div class="flex justify-between items-start">
+		<div class="overlay">
+			<button onclick={closeDetail} class="overlay-backdrop" aria-label="Close"></button>
+			<div class="detail-panel">
+				<div class="detail-content">
+					<div class="detail-header">
 						<div>
-							<p class="text-xs font-mono text-[var(--md-sys-color-primary)] mb-1">{selectedBooking.booking_reference}</p>
-							<h3 class="md-headline-medium text-[var(--md-sys-color-on-surface)]">{selectedBooking.guest_name}</h3>
+							<p class="mono sub-text" style="color: var(--color-sage);">{selectedBooking.booking_reference}</p>
+							<h3 class="detail-title">{selectedBooking.guest_name}</h3>
 						</div>
-						<button
-							onclick={closeDetail}
-							class="p-2 rounded-full hover:bg-[var(--md-sys-color-surface-container)] text-[var(--md-sys-color-on-surface-variant)]"
-						>
-							✕
-						</button>
+						<button onclick={closeDetail} class="close-btn">✕</button>
 					</div>
 
-					<!-- Status -->
-					<div>
-						<p class="text-xs text-[var(--md-sys-color-on-surface-variant)] mb-2">Status</p>
-						<div class="flex gap-2">
+					<div class="detail-section">
+						<p class="detail-label">Status</p>
+						<div class="status-buttons">
 							{#each ['pending', 'confirmed', 'cancelled'] as s}
 								<button
 									onclick={() => updateBookingStatus(selectedBooking.id, s)}
 									disabled={updatingStatus || selectedBooking.status === s}
-									class="px-3 py-1.5 text-sm rounded-full capitalize transition-colors
-										{selectedBooking.status === s
-											? statusColors[s] + ' font-semibold ring-2 ring-offset-1 ring-current'
-											: 'border border-[var(--md-sys-color-outline-variant)] text-[var(--md-sys-color-on-surface-variant)] hover:bg-[var(--md-sys-color-surface-container)]'}
-										disabled:opacity-50"
-								>
-									{s}
-								</button>
+									class="status-toggle {s}"
+									class:active={selectedBooking.status === s}
+								>{s}</button>
 							{/each}
 						</div>
 					</div>
 
-					<hr class="border-[var(--md-sys-color-outline-variant)]" />
+					<hr />
 
-					<!-- Guest details -->
-					<div class="space-y-3">
-						<h4 class="text-sm font-semibold text-[var(--md-sys-color-on-surface)]">Guest Details</h4>
-						<div class="grid grid-cols-2 gap-3 text-sm">
+					<div class="detail-section">
+						<h4 class="section-title">Guest Details</h4>
+						<div class="detail-grid">
 							<div>
-								<p class="text-xs text-[var(--md-sys-color-on-surface-variant)]">Email</p>
-								<a href="mailto:{selectedBooking.guest_email}" class="text-[var(--md-sys-color-primary)] hover:underline">{selectedBooking.guest_email}</a>
+								<p class="detail-label">Email</p>
+								<a href="mailto:{selectedBooking.guest_email}">{selectedBooking.guest_email}</a>
 							</div>
 							{#if selectedBooking.guest_phone}
 								<div>
-									<p class="text-xs text-[var(--md-sys-color-on-surface-variant)]">Phone</p>
-									<a href="tel:{selectedBooking.guest_phone}" class="text-[var(--md-sys-color-primary)] hover:underline">{selectedBooking.guest_phone}</a>
+									<p class="detail-label">Phone</p>
+									<a href="tel:{selectedBooking.guest_phone}">{selectedBooking.guest_phone}</a>
 								</div>
 							{/if}
 							{#if selectedBooking.guest_country}
 								<div>
-									<p class="text-xs text-[var(--md-sys-color-on-surface-variant)]">Country</p>
-									<p class="text-[var(--md-sys-color-on-surface)]">
-										{countryFlags[selectedBooking.guest_country] || ''} {selectedBooking.guest_country}
-									</p>
+									<p class="detail-label">Country</p>
+									<p>{countryFlags[selectedBooking.guest_country] || ''} {selectedBooking.guest_country}</p>
 								</div>
 							{/if}
 							<div>
-								<p class="text-xs text-[var(--md-sys-color-on-surface-variant)]">Guests</p>
-								<p class="text-[var(--md-sys-color-on-surface)]">{selectedBooking.num_guests}</p>
+								<p class="detail-label">Guests</p>
+								<p>{selectedBooking.num_guests}</p>
 							</div>
 						</div>
 					</div>
 
-					<hr class="border-[var(--md-sys-color-outline-variant)]" />
+					<hr />
 
-					<!-- Stay details -->
-					<div class="space-y-3">
-						<h4 class="text-sm font-semibold text-[var(--md-sys-color-on-surface)]">Stay Details</h4>
-						<div class="grid grid-cols-2 gap-3 text-sm">
+					<div class="detail-section">
+						<h4 class="section-title">Stay Details</h4>
+						<div class="detail-grid">
 							<div>
-								<p class="text-xs text-[var(--md-sys-color-on-surface-variant)]">Check-in</p>
-								<p class="text-[var(--md-sys-color-on-surface)]">{formatDate(selectedBooking.check_in_date)}</p>
-								<p class="text-xs text-[var(--md-sys-color-on-surface-variant)]">{formatRelative(selectedBooking.check_in_date)}</p>
+								<p class="detail-label">Check-in</p>
+								<p>{formatDate(selectedBooking.check_in_date)}</p>
+								<p class="sub-text">{formatRelative(selectedBooking.check_in_date)}</p>
 							</div>
 							<div>
-								<p class="text-xs text-[var(--md-sys-color-on-surface-variant)]">Check-out</p>
-								<p class="text-[var(--md-sys-color-on-surface)]">{formatDate(selectedBooking.check_out_date)}</p>
+								<p class="detail-label">Check-out</p>
+								<p>{formatDate(selectedBooking.check_out_date)}</p>
 							</div>
 							<div>
-								<p class="text-xs text-[var(--md-sys-color-on-surface-variant)]">Duration</p>
-								<p class="text-[var(--md-sys-color-on-surface)]">{selectedBooking.num_nights} nights</p>
+								<p class="detail-label">Duration</p>
+								<p>{selectedBooking.num_nights} nights</p>
 							</div>
 							<div>
-								<p class="text-xs text-[var(--md-sys-color-on-surface-variant)]">Booked</p>
-								<p class="text-[var(--md-sys-color-on-surface)]">{formatDate(selectedBooking.created_at)}</p>
+								<p class="detail-label">Booked</p>
+								<p>{formatDate(selectedBooking.created_at)}</p>
 							</div>
 						</div>
 					</div>
 
-					<hr class="border-[var(--md-sys-color-outline-variant)]" />
+					<hr />
 
-					<!-- Pricing -->
-					<div class="space-y-2">
-						<h4 class="text-sm font-semibold text-[var(--md-sys-color-on-surface)]">Pricing</h4>
-						<div class="text-sm space-y-1">
-							<div class="flex justify-between text-[var(--md-sys-color-on-surface-variant)]">
+					<div class="detail-section">
+						<h4 class="section-title">Pricing</h4>
+						<div class="pricing-rows">
+							<div class="pricing-row">
 								<span>€{selectedBooking.nightly_rate} × {selectedBooking.num_nights} nights</span>
 								<span>{formatCurrency(selectedBooking.subtotal)}</span>
 							</div>
-							<div class="flex justify-between text-[var(--md-sys-color-on-surface-variant)]">
+							<div class="pricing-row">
 								<span>Tax (10%)</span>
 								<span>{formatCurrency(selectedBooking.tax)}</span>
 							</div>
-							<div class="flex justify-between font-semibold text-[var(--md-sys-color-on-surface)] pt-1 border-t border-[var(--md-sys-color-outline-variant)]">
+							<div class="pricing-row total">
 								<span>Total</span>
-								<span class="text-[var(--md-sys-color-primary)]">{formatCurrency(selectedBooking.total_cost)}</span>
+								<span style="color: var(--color-sage);">{formatCurrency(selectedBooking.total_cost)}</span>
 							</div>
 						</div>
 					</div>
 
-					<!-- Special requests -->
 					{#if selectedBooking.special_requests}
-						<div>
-							<h4 class="text-sm font-semibold text-[var(--md-sys-color-on-surface)] mb-1">Special Requests</h4>
-							<p class="text-sm text-[var(--md-sys-color-on-surface-variant)] bg-[var(--md-sys-color-surface-container-low)] p-3 rounded-[var(--md-shape-corner-small)]">
-								{selectedBooking.special_requests}
-							</p>
+						<div class="detail-section">
+							<h4 class="section-title">Special Requests</h4>
+							<p class="note-box">{selectedBooking.special_requests}</p>
 						</div>
 					{/if}
 
-					<hr class="border-[var(--md-sys-color-outline-variant)]" />
+					<hr />
 
-					<!-- Admin notes -->
-					<div>
-						<div class="flex justify-between items-center mb-2">
-							<h4 class="text-sm font-semibold text-[var(--md-sys-color-on-surface)]">Admin Notes</h4>
+					<div class="detail-section">
+						<div class="notes-header">
+							<h4 class="section-title">Admin Notes</h4>
 							{#if !editingNotes}
-								<button
-									onclick={() => { editingNotes = true; notesValue = selectedBooking?.admin_notes || ''; }}
-									class="text-xs text-[var(--md-sys-color-primary)] hover:underline"
-								>
+								<button onclick={() => { editingNotes = true; notesValue = selectedBooking?.admin_notes || ''; }} class="link-btn">
 									{selectedBooking.admin_notes ? 'Edit' : 'Add note'}
 								</button>
 							{/if}
 						</div>
-
 						{#if editingNotes}
-							<textarea
-								bind:value={notesValue}
-								class="w-full px-3 py-2 text-sm border border-[var(--md-sys-color-outline)] rounded-[var(--md-shape-corner-small)] bg-[var(--md-sys-color-surface)] text-[var(--md-sys-color-on-surface)] focus:outline-none focus:ring-2 focus:ring-[var(--md-sys-color-primary)] resize-none"
-								rows="3"
-								placeholder="Internal notes about this booking..."
-							></textarea>
-							<div class="flex gap-2 mt-2">
-								<button
-									onclick={() => editingNotes = false}
-									class="px-3 py-1.5 text-xs border border-[var(--md-sys-color-outline)] rounded-[var(--md-shape-corner-small)] text-[var(--md-sys-color-on-surface-variant)]"
-								>
-									Cancel
-								</button>
-								<button
-									onclick={() => saveNotes(selectedBooking.id)}
-									class="px-3 py-1.5 text-xs bg-[var(--md-sys-color-primary)] text-[var(--md-sys-color-on-primary)] rounded-[var(--md-shape-corner-small)]"
-								>
-									Save
-								</button>
+							<textarea bind:value={notesValue} class="form-input" rows="3" placeholder="Internal notes about this booking..."></textarea>
+							<div class="notes-actions">
+								<button onclick={() => editingNotes = false} class="btn-outline btn-sm">Cancel</button>
+								<button onclick={() => saveNotes(selectedBooking.id)} class="btn-primary btn-sm">Save</button>
 							</div>
 						{:else if selectedBooking.admin_notes}
-							<p class="text-sm text-[var(--md-sys-color-on-surface-variant)] bg-[var(--md-sys-color-surface-container-low)] p-3 rounded-[var(--md-shape-corner-small)]">
-								{selectedBooking.admin_notes}
-							</p>
+							<p class="note-box">{selectedBooking.admin_notes}</p>
 						{:else}
-							<p class="text-sm text-[var(--md-sys-color-on-surface-variant)] italic">No notes</p>
+							<p class="sub-text" style="font-style: italic;">No notes</p>
 						{/if}
 					</div>
 				</div>
@@ -547,3 +407,134 @@
 		</div>
 	{/if}
 {/if}
+
+<style>
+	/* Login */
+	.login-wrapper { display: flex; align-items: center; justify-content: center; min-height: 70vh; }
+	.login-card { width: 100%; max-width: 24rem; background: var(--color-bg); border-radius: 16px; padding: 2rem; box-shadow: 0 4px 24px rgba(0,0,0,0.1); }
+	.login-title { font-family: 'Lora', serif; text-align: center; margin: 0 0 1.5rem; }
+	.error-text { font-size: 0.875rem; color: #c4554e; margin-bottom: 1rem; }
+
+	/* Form elements */
+	.form-label { display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.5rem; }
+	.form-input {
+		width: 100%; padding: 0.625rem 1rem; border: 1px solid var(--color-cream-dark);
+		border-radius: 8px; font-family: inherit; font-size: 0.875rem;
+		color: var(--color-text); background: white; outline: none;
+		transition: border-color 0.2s ease; box-sizing: border-box; margin-bottom: 1rem;
+	}
+	.form-input:focus { border-color: var(--color-sage); box-shadow: 0 0 0 2px rgba(107,143,113,0.2); }
+
+	/* Buttons */
+	.btn-primary {
+		padding: 0.75rem 1.5rem; background: var(--color-sage); color: white;
+		font-weight: 600; border: none; border-radius: 8px; cursor: pointer;
+		transition: background-color 0.2s ease;
+	}
+	.btn-primary:hover { background: var(--color-sage-hover); }
+	.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+	.btn-outline {
+		padding: 0.5rem 1rem; background: transparent; border: 1px solid var(--color-cream-dark);
+		border-radius: 8px; color: var(--color-text-muted); cursor: pointer; font-size: 0.875rem;
+	}
+	.btn-outline:hover { background: var(--color-cream); }
+	.btn-sm { padding: 0.375rem 0.75rem; font-size: 0.75rem; }
+	.full-width { width: 100%; }
+	.link-btn { background: none; border: none; color: var(--color-sage); font-size: 0.75rem; cursor: pointer; }
+	.link-btn:hover { text-decoration: underline; }
+
+	/* Dashboard */
+	.dashboard { display: flex; flex-direction: column; gap: 1.5rem; }
+	.dashboard-header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 1rem; }
+	.page-title { font-family: 'Lora', serif; font-size: 1.75rem; margin: 0; }
+	.page-subtitle { font-size: 0.875rem; color: var(--color-text-muted); margin: 0.25rem 0 0; }
+
+	/* Filters */
+	.filters { display: flex; flex-direction: column; gap: 0.75rem; }
+	@media (min-width: 600px) { .filters { flex-direction: row; } }
+	.search-wrapper { flex: 1; }
+	.search-wrapper .form-input { margin-bottom: 0; }
+	.status-filters { display: flex; gap: 0.25rem; background: var(--color-bg); border-radius: 8px; border: 1px solid var(--color-cream-dark); padding: 0.25rem; }
+	.filter-btn {
+		padding: 0.375rem 0.75rem; font-size: 0.875rem; border-radius: 6px; border: none;
+		background: transparent; cursor: pointer; text-transform: capitalize; color: var(--color-text-muted);
+	}
+	.filter-btn.active { background: var(--color-sage); color: white; font-weight: 500; }
+
+	/* Stats */
+	.stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
+	@media (min-width: 600px) { .stats-grid { grid-template-columns: repeat(4, 1fr); } }
+	.stat-card { background: var(--color-bg); border-radius: 12px; padding: 1rem; border: 1px solid var(--color-cream-dark); }
+	.stat-label { font-size: 0.75rem; color: var(--color-text-muted); margin: 0; }
+	.stat-value { font-size: 1.5rem; font-weight: 700; margin: 0.25rem 0 0; }
+
+	/* Table */
+	.table-container { background: var(--color-bg); border-radius: 16px; border: 1px solid var(--color-cream-dark); overflow: hidden; }
+	.empty-state { padding: 3rem; text-align: center; color: var(--color-text-muted); }
+	.desktop-table { display: none; overflow-x: auto; }
+	@media (min-width: 840px) { .desktop-table { display: block; } }
+	table { width: 100%; font-size: 0.875rem; border-collapse: collapse; }
+	thead tr { border-bottom: 1px solid var(--color-cream-dark); background: var(--color-cream); }
+	th { text-align: left; padding: 0.75rem 1rem; font-weight: 500; color: var(--color-text-muted); }
+	tbody tr { border-bottom: 1px solid var(--color-cream-dark); cursor: pointer; transition: background 0.15s ease; }
+	tbody tr:hover { background: var(--color-cream); }
+	td { padding: 0.75rem 1rem; }
+	.mono { font-family: monospace; font-size: 0.75rem; color: var(--color-sage); }
+	.bold { font-weight: 600; }
+	.sub-text { font-size: 0.75rem; color: var(--color-text-muted); margin: 0; }
+	.guest-cell { display: flex; align-items: center; gap: 0.5rem; }
+	.guest-name { font-weight: 500; margin: 0; }
+	.guest-email { font-size: 0.75rem; color: var(--color-text-muted); margin: 0; }
+	.arrow { text-align: right; color: var(--color-text-muted); }
+
+	/* Status badges */
+	.status-badge { display: inline-block; padding: 0.125rem 0.625rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 500; text-transform: capitalize; }
+	.status-badge.pending { background: #fef3c7; color: #92400e; }
+	.status-badge.confirmed { background: #dcfce7; color: #166534; }
+	.status-badge.cancelled { background: #fee2e2; color: #991b1b; }
+
+	/* Mobile cards */
+	.mobile-cards { display: block; }
+	@media (min-width: 840px) { .mobile-cards { display: none; } }
+	.mobile-card { width: 100%; text-align: left; padding: 1rem; border: none; background: transparent; border-bottom: 1px solid var(--color-cream-dark); cursor: pointer; }
+	.mobile-card:hover { background: var(--color-cream); }
+	.mobile-card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem; }
+	.mobile-card-bottom { display: flex; justify-content: space-between; font-size: 0.875rem; color: var(--color-text-muted); }
+
+	/* Detail panel */
+	.overlay { position: fixed; inset: 0; z-index: 50; display: flex; justify-content: flex-end; }
+	.overlay-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.3); border: none; cursor: pointer; }
+	.detail-panel { position: relative; width: 100%; max-width: 32rem; background: var(--color-bg); box-shadow: -4px 0 24px rgba(0,0,0,0.1); overflow-y: auto; }
+	.detail-content { padding: 1.5rem; display: flex; flex-direction: column; gap: 1.5rem; }
+	.detail-header { display: flex; justify-content: space-between; align-items: flex-start; }
+	.detail-title { font-family: 'Lora', serif; font-size: 1.5rem; margin: 0.25rem 0 0; }
+	.close-btn { padding: 0.5rem; border-radius: 50%; border: none; background: transparent; cursor: pointer; color: var(--color-text-muted); font-size: 1.25rem; }
+	.close-btn:hover { background: var(--color-cream); }
+	hr { border: none; border-top: 1px solid var(--color-cream-dark); margin: 0; }
+
+	.detail-section { display: flex; flex-direction: column; gap: 0.5rem; }
+	.detail-label { font-size: 0.75rem; color: var(--color-text-muted); margin: 0; }
+	.section-title { font-size: 0.875rem; font-weight: 600; margin: 0; }
+	.detail-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; font-size: 0.875rem; }
+	.detail-grid p { margin: 0; }
+	.detail-grid a { color: var(--color-sage); }
+
+	.status-buttons { display: flex; gap: 0.5rem; }
+	.status-toggle {
+		padding: 0.375rem 0.75rem; font-size: 0.875rem; border-radius: 9999px;
+		text-transform: capitalize; cursor: pointer; transition: all 0.15s ease;
+		border: 1px solid var(--color-cream-dark); background: transparent; color: var(--color-text-muted);
+	}
+	.status-toggle:disabled { opacity: 0.5; cursor: not-allowed; }
+	.status-toggle.active.pending { background: #fef3c7; color: #92400e; border-color: #92400e; font-weight: 600; }
+	.status-toggle.active.confirmed { background: #dcfce7; color: #166534; border-color: #166534; font-weight: 600; }
+	.status-toggle.active.cancelled { background: #fee2e2; color: #991b1b; border-color: #991b1b; font-weight: 600; }
+
+	.pricing-rows { font-size: 0.875rem; display: flex; flex-direction: column; gap: 0.25rem; }
+	.pricing-row { display: flex; justify-content: space-between; color: var(--color-text-muted); }
+	.pricing-row.total { font-weight: 600; color: var(--color-text); padding-top: 0.5rem; border-top: 1px solid var(--color-cream-dark); }
+
+	.note-box { font-size: 0.875rem; color: var(--color-text-muted); background: var(--color-cream); padding: 0.75rem; border-radius: 8px; margin: 0; }
+	.notes-header { display: flex; justify-content: space-between; align-items: center; }
+	.notes-actions { display: flex; gap: 0.5rem; margin-top: 0.5rem; }
+</style>

@@ -10,15 +10,15 @@
 	<title>{t(messages, 'legal.title')}</title>
 </svelte:head>
 
-<section class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-16">
-	<h1 class="text-4xl font-serif font-bold text-amber-900 mb-8">{t(messages, 'legal.title')}</h1>
+<section class="page-section">
+	<h1 class="page-title">{t(messages, 'legal.title')}</h1>
 
-	<div class="prose prose-sm max-w-none text-gray-700 p-8 bg-gray-50 rounded-lg">
+	<div class="legal-content">
 		<p>{t(messages, 'legal.placeholder')}</p>
 
-		<div class="mt-8 space-y-4">
-			<h2 class="text-xl font-semibold text-amber-900">Information to be completed:</h2>
-			<ul class="list-disc list-inside space-y-2 text-sm">
+		<div class="todo-list">
+			<h2>Information to be completed:</h2>
+			<ul>
 				<li>SIRET number</li>
 				<li>Company registration details</li>
 				<li>Hosting provider information</li>
@@ -30,3 +30,12 @@
 		</div>
 	</div>
 </section>
+
+<style>
+	.page-section { max-width: 56rem; margin: 0 auto; padding: 4rem 1rem; }
+	.page-title { font-family: 'Lora', serif; font-size: 2.5rem; font-weight: 700; color: var(--color-brown); margin: 0 0 2rem; }
+	.legal-content { background: var(--color-cream); border-radius: 12px; padding: 2rem; color: var(--color-text-muted); }
+	.todo-list { margin-top: 2rem; }
+	.todo-list h2 { font-size: 1.25rem; font-weight: 600; color: var(--color-brown); margin: 0 0 1rem; }
+	.todo-list ul { list-style: disc; padding-left: 1.5rem; display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.875rem; }
+</style>

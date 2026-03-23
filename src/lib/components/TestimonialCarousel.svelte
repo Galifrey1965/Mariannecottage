@@ -12,57 +12,51 @@
 	let currentIndex = $state(0);
 
 	const testimonials = [
-		{
-			text: t(messages, 'home.testimonials.simon'),
-			author: t(messages, 'home.testimonials.simon_author')
-		},
-		{
-			text: t(messages, 'home.testimonials.ingrid'),
-			author: t(messages, 'home.testimonials.ingrid_author')
-		},
-		{
-			text: t(messages, 'home.testimonials.guest3'),
-			author: t(messages, 'home.testimonials.guest3_author')
-		}
+		{ text: t(messages, 'home.testimonials.simon'), author: t(messages, 'home.testimonials.simon_author') },
+		{ text: t(messages, 'home.testimonials.ingrid'), author: t(messages, 'home.testimonials.ingrid_author') },
+		{ text: t(messages, 'home.testimonials.guest3'), author: t(messages, 'home.testimonials.guest3_author') }
 	];
 
 	onMount(() => {
 		const interval = setInterval(() => {
 			currentIndex = (currentIndex + 1) % testimonials.length;
 		}, 5000);
-
 		return () => clearInterval(interval);
 	});
 </script>
 
-<div class="bg-amber-50 rounded-lg p-8 sm:p-12">
-	<div class="flex items-center justify-between mb-6">
-		<h3 class="font-serif text-2xl font-semibold text-amber-900">
-			{t(messages, 'home.testimonials.heading')}
-		</h3>
-		<div class="flex gap-2">
+<div class="carousel">
+	<div class="carousel-header">
+		<h3 class="carousel-title">{t(messages, 'home.testimonials.heading')}</h3>
+		<div class="dots">
 			{#each testimonials as _, i}
-				<button
-					onclick={() => (currentIndex = i)}
-					class="w-3 h-3 rounded-full transition-all"
-					class:bg-amber-600={currentIndex === i}
-					class:bg-amber-300={currentIndex !== i}
-					aria-label="Go to testimonial {i + 1}"
-				/>
+				<button onclick={() => (currentIndex = i)} class="dot" class:active={currentIndex === i} aria-label="Go to testimonial {i + 1}" />
 			{/each}
 		</div>
 	</div>
 
-	<div class="relative h-32 sm:h-24">
+	<div class="carousel-body">
 		{#each testimonials as testimonial, i}
-			<div
-				class="absolute inset-0 transition-opacity duration-500"
-				class:opacity-0={currentIndex !== i}
-				class:opacity-100={currentIndex === i}
-			>
-				<blockquote class="italic text-gray-700 mb-4">"{testimonial.text}"</blockquote>
-				<p class="font-semibold text-amber-900">— {testimonial.author}</p>
+			<div class="testimonial" class:visible={currentIndex === i}>
+				<blockquote>"{testimonial.text}"</blockquote>
+				<p class="author">— {testimonial.author}</p>
 			</div>
 		{/each}
 	</div>
 </div>
+
+<style>
+	.carousel { background: var(--color-cream); border-radius: 12px; padding: 2rem; }
+	@media (min-width: 600px) { .carousel { padding: 3rem; } }
+	.carousel-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; }
+	.carousel-title { font-family: 'Lora', serif; font-size: 1.5rem; font-weight: 600; color: var(--color-brown); margin: 0; }
+	.dots { display: flex; gap: 0.5rem; }
+	.dot { width: 0.75rem; height: 0.75rem; border-radius: 50%; border: none; cursor: pointer; background: var(--color-cream-dark); transition: background 0.2s ease; }
+	.dot.active { background: var(--color-sage); }
+	.carousel-body { position: relative; height: 8rem; }
+	@media (min-width: 600px) { .carousel-body { height: 6rem; } }
+	.testimonial { position: absolute; inset: 0; opacity: 0; transition: opacity 0.5s ease; }
+	.testimonial.visible { opacity: 1; }
+	blockquote { font-style: italic; color: var(--color-text-muted); margin: 0 0 1rem; }
+	.author { font-weight: 600; color: var(--color-brown); margin: 0; }
+</style>

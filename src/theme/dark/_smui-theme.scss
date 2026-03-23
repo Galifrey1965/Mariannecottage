@@ -1,0 +1,26 @@
+@use 'sass:color';
+
+@use '@material/theme/color-palette';
+
+// Marianne Cottage - Dark Theme
+@use '@material/theme/index' as theme with (
+  $primary: #7bc9a0,
+  $secondary: #d4c5a9,
+  $surface: #1c1b1a,
+  $background: #121212,
+  $error: #f2b8b5
+);
+
+html,
+body {
+  background-color: #121212;
+  color: theme.$on-surface;
+  font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+a {
+  color: #7bc9a0;
+}
+a:visited {
+  color: color.scale(#7bc9a0, $lightness: -20%);
+}

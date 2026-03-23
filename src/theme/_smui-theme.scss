@@ -1,0 +1,26 @@
+@use 'sass:color';
+
+@use '@material/theme/color-palette';
+
+// Marianne Cottage - Normandy countryside palette
+@use '@material/theme/index' as theme with (
+  $primary: #2d6f50,
+  $secondary: #8b6f47,
+  $surface: #fdfbf7,
+  $background: #fdfbf7,
+  $error: #c4554e
+);
+
+html,
+body {
+  background-color: theme.$surface;
+  color: theme.$on-surface;
+  font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+a {
+  color: #2d6f50;
+}
+a:visited {
+  color: color.scale(#2d6f50, $lightness: -20%);
+}

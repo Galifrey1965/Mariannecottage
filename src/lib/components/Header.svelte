@@ -25,40 +25,27 @@
 	};
 </script>
 
-<!-- M3 Header - Desktop only, hides on mobile (navigation bar takes over) -->
-<header
-	class="sticky top-0 z-40 hidden sm:block bg-[var(--md-sys-color-surface)] border-b border-[var(--md-sys-color-outline-variant)] backdrop-blur-sm shadow-sm transition-all duration-200"
->
-	<div class="mx-auto max-w-7xl px-6 sm:px-12 lg:px-8 h-16">
-		<div class="flex items-center justify-between h-full">
-			<!-- Logo -->
-			<a href={localePath(lang, '/')} class="flex items-center gap-2 flex-shrink-0">
-				<div class="text-xl font-[var(--md-typescale-headline-medium-font-family)] font-[var(--md-typescale-headline-medium-font-weight)] text-[var(--md-sys-color-primary)]">
-					Marianne
-				</div>
-				<div class="text-xs font-bold uppercase tracking-widest text-[var(--md-sys-color-on-surface-variant)] hidden md:block">
-					Cottage
-				</div>
+<header class="header">
+	<div class="header-inner">
+		<div class="header-content">
+			<a href={localePath(lang, '/')} class="logo">
+				<span class="logo-name">Marianne</span>
+				<span class="logo-subtitle">Cottage</span>
 			</a>
 
-			<!-- Desktop Navigation -->
-			<nav class="hidden lg:flex items-center gap-2">
+			<nav class="desktop-nav">
 				{#each navLinks as link}
 					<a
 						href={localePath(lang, link.href)}
-						class="relative px-4 py-2 rounded-[var(--md-shape-corner-medium)] transition-all duration-200 ease-standard text-[var(--md-typescale-label-large-font-size)] font-[var(--md-typescale-label-large-font-weight)] {isActive(
-							link.href
-						)
-							? 'bg-[var(--md-sys-color-primary-container)] text-[var(--md-sys-color-primary)]'
-							: 'text-[var(--md-sys-color-on-surface)] hover:bg-[var(--md-sys-color-surface-container-low)]'}"
+						class="nav-link"
+						class:active={isActive(link.href)}
 					>
 						{link.label}
 					</a>
 				{/each}
 			</nav>
 
-			<!-- Language Switcher -->
-			<div class="flex items-center gap-2">
+			<div class="header-actions">
 				<LanguageSwitcher {lang} />
 			</div>
 		</div>
@@ -66,7 +53,114 @@
 </header>
 
 <style>
-	:global(body) {
-		padding-top: 0;
+	.header {
+		position: sticky;
+		top: 0;
+		z-index: 40;
+		display: none;
+		background-color: var(--color-bg);
+		border-bottom: 1px solid var(--color-cream-dark);
+		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+		transition: all 0.2s ease;
+	}
+
+	@media (min-width: 600px) {
+		.header {
+			display: block;
+		}
+	}
+
+	.header-inner {
+		max-width: 1280px;
+		margin: 0 auto;
+		padding: 0 1.5rem;
+		height: 64px;
+	}
+
+	@media (min-width: 600px) {
+		.header-inner {
+			padding: 0 3rem;
+		}
+	}
+
+	@media (min-width: 1024px) {
+		.header-inner {
+			padding: 0 2rem;
+		}
+	}
+
+	.header-content {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		height: 100%;
+	}
+
+	.logo {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		flex-shrink: 0;
+		text-decoration: none;
+	}
+
+	.logo-name {
+		font-size: 1.25rem;
+		font-family: 'Lora', serif;
+		font-weight: 600;
+		color: var(--color-sage);
+	}
+
+	.logo-subtitle {
+		font-size: 0.75rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.1em;
+		color: var(--color-text-muted);
+		display: none;
+	}
+
+	@media (min-width: 840px) {
+		.logo-subtitle {
+			display: block;
+		}
+	}
+
+	.desktop-nav {
+		display: none;
+		align-items: center;
+		gap: 0.5rem;
+	}
+
+	@media (min-width: 1024px) {
+		.desktop-nav {
+			display: flex;
+		}
+	}
+
+	.nav-link {
+		padding: 0.5rem 1rem;
+		border-radius: 12px;
+		transition: all 0.2s ease;
+		font-size: 0.875rem;
+		font-weight: 500;
+		color: var(--color-text);
+		text-decoration: none;
+	}
+
+	.nav-link:hover {
+		background-color: var(--color-cream);
+		color: var(--color-text);
+	}
+
+	.nav-link.active {
+		background-color: var(--color-sage);
+		color: white;
+	}
+
+	.header-actions {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
 	}
 </style>

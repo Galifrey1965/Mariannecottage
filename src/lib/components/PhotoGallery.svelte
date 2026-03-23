@@ -30,85 +30,69 @@
 </script>
 
 <div>
-	<!-- Category Filters -->
-	<div class="flex flex-wrap gap-2 mb-8">
+	<div class="filters">
 		{#each categories as cat}
-			<button
-				onclick={() => {
-					selectedCategory = cat;
-					selectedImageIndex = null;
-				}}
-				class="px-4 py-2 rounded-full text-sm font-medium transition-colors"
-				class:bg-amber-600={selectedCategory === cat}
-				class:text-white={selectedCategory === cat}
-				class:bg-amber-100={selectedCategory !== cat}
-				class:text-amber-900={selectedCategory !== cat}
-			>
+			<button onclick={() => { selectedCategory = cat; selectedImageIndex = null; }} class="filter-chip" class:active={selectedCategory === cat}>
 				{t(messages, `gallery.categories.${cat}`)}
 			</button>
 		{/each}
 	</div>
 
-	<!-- Gallery Grid -->
-	<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+	<div class="gallery-grid">
 		{#each filteredImages as image, i}
-			<button
-				onclick={() => (selectedImageIndex = i)}
-				class="relative group overflow-hidden rounded-lg aspect-square"
-			>
-				<img src={image.src} alt={image.alt} class="w-full h-full object-cover" />
-				<div
-					class="absolute inset-0 bg-black/40 group-hover:bg-black/60 transition-colors flex items-center justify-center"
-				>
-					<span class="text-white text-2xl">🔍</span>
-				</div>
+			<button onclick={() => (selectedImageIndex = i)} class="gallery-item">
+				<img src={image.src} alt={image.alt} />
+				<div class="gallery-overlay"><span>🔍</span></div>
 			</button>
 		{/each}
 	</div>
 
-	<!-- Lightbox -->
 	{#if currentImage && selectedImageIndex !== null}
-		<div
-			class="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4"
-			onclick={() => (selectedImageIndex = null)}
-		>
-			<div class="relative max-w-4xl w-full" onclick={e => e.stopPropagation()}>
-				<img
-					src={currentImage.src}
-					alt={currentImage.alt}
-					class="w-full h-auto rounded-lg"
-				/>
-
-				<!-- Navigation -->
-				<button
-					onclick={() => {
-						selectedImageIndex = selectedImageIndex === 0 ? filteredImages.length - 1 : selectedImageIndex - 1;
-					}}
-					class="absolute left-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/40 text-white p-3 rounded-full transition-colors"
-					aria-label="Previous image"
-				>
-					←
-				</button>
-
-				<button
-					onclick={() => {
-						selectedImageIndex = selectedImageIndex === filteredImages.length - 1 ? 0 : selectedImageIndex + 1;
-					}}
-					class="absolute right-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/40 text-white p-3 rounded-full transition-colors"
-					aria-label="Next image"
-				>
-					→
-				</button>
-
-				<!-- Close button -->
-				<button
-					onclick={() => (selectedImageIndex = null)}
-					class="absolute top-4 right-4 text-white text-2xl"
-					aria-label="Close lightbox"
-				>
-					✕
-				</button>
+		<div class="lightbox" onclick={() => (selectedImageIndex = null)}>
+			<div class="lightbox-content" onclick={e => e.stopPropagation()}>
+				<img src={currentImage.src} alt={currentImage.alt} />
+				<button onclick={() => { selectedImageIndex = selectedImageIndex === 0 ? filteredImages.length - 1 : selectedImageIndex - 1; }} class="lightbox-nav prev" aria-label="Previous">←</button>
+				<button onclick={() => { selectedImageIndex = selectedImageIndex === filteredImages.length - 1 ? 0 : selectedImageIndex + 1; }} class="lightbox-nav next" aria-label="Next">→</button>
+				<button onclick={() => (selectedImageIndex = null)} class="lightbox-close" aria-label="Close">✕</button>
 			</div>
 		</div>
 	{/if}
 </div>
+
+<style>
+	.filters { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 2rem; }
+	.filter-chip {
+		padding: 0.5rem 1rem; border-radius: 9999px; font-size: 0.875rem; font-weight: 500;
+		border: none; cursor: pointer; transition: all 0.2s ease;
+		background: var(--color-cream); color: var(--color-brown);
+	}
+	.filter-chip.active { background: var(--color-sage); color: white; }
+
+	.gallery-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+	@media (min-width: 600px) { .gallery-grid { grid-template-columns: repeat(3, 1fr); } }
+	@media (min-width: 1024px) { .gallery-grid { grid-template-columns: repeat(4, 1fr); } }
+
+	.gallery-item { position: relative; overflow: hidden; border-radius: 12px; aspect-ratio: 1; border: none; padding: 0; cursor: pointer; }
+	.gallery-item img { width: 100%; height: 100%; object-fit: cover; }
+	.gallery-overlay {
+		position: absolute; inset: 0; background: rgba(0,0,0,0.4);
+		display: flex; align-items: center; justify-content: center;
+		transition: background 0.2s ease;
+	}
+	.gallery-overlay span { font-size: 1.5rem; color: white; }
+	.gallery-item:hover .gallery-overlay { background: rgba(0,0,0,0.6); }
+
+	.lightbox { position: fixed; inset: 0; z-index: 50; background: rgba(0,0,0,0.9); display: flex; align-items: center; justify-content: center; padding: 1rem; }
+	.lightbox-content { position: relative; max-width: 56rem; width: 100%; }
+	.lightbox-content img { width: 100%; height: auto; border-radius: 12px; }
+	.lightbox-nav {
+		position: absolute; top: 50%; transform: translateY(-50%);
+		background: rgba(255,255,255,0.2); color: white; border: none;
+		padding: 0.75rem; border-radius: 50%; cursor: pointer; font-size: 1.25rem;
+		transition: background 0.2s ease;
+	}
+	.lightbox-nav:hover { background: rgba(255,255,255,0.4); }
+	.lightbox-nav.prev { left: 1rem; }
+	.lightbox-nav.next { right: 1rem; }
+	.lightbox-close { position: absolute; top: 1rem; right: 1rem; color: white; font-size: 1.5rem; background: none; border: none; cursor: pointer; }
+</style>

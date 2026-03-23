@@ -5,23 +5,39 @@
 	let { children, data }: { children: any; data: LayoutData } = $props();
 </script>
 
-<div class="min-h-screen bg-[var(--md-sys-color-surface-dim)]">
-	<!-- Admin top bar -->
-	<header class="bg-[var(--md-sys-color-surface)] border-b border-[var(--md-sys-color-outline-variant)] px-4 sm:px-6 py-3 flex items-center justify-between">
-		<div class="flex items-center gap-3">
-			<a href="/" class="text-sm text-[var(--md-sys-color-on-surface-variant)] hover:text-[var(--md-sys-color-primary)]">
-				← Back to site
-			</a>
-			<span class="text-[var(--md-sys-color-outline)]">|</span>
-			<h1 class="md-headline-small text-[var(--md-sys-color-on-surface)]">Marianne Cottage Admin</h1>
+<div class="admin-shell">
+	<header class="admin-header">
+		<div class="header-left">
+			<a href="/" class="back-link">← Back to site</a>
+			<span class="divider">|</span>
+			<h1 class="admin-title">Marianne Cottage Admin</h1>
 		</div>
-		<nav class="flex items-center gap-4 text-sm">
-			<a href="/admin" class="text-[var(--md-sys-color-on-surface-variant)] hover:text-[var(--md-sys-color-primary)] font-medium">Bookings</a>
-			<a href="/admin/availability" class="text-[var(--md-sys-color-on-surface-variant)] hover:text-[var(--md-sys-color-primary)]">Availability</a>
+		<nav class="admin-nav">
+			<a href="/admin" class="nav-link">Bookings</a>
+			<a href="/admin/availability" class="nav-link">Availability</a>
 		</nav>
 	</header>
 
-	<main class="max-w-7xl mx-auto px-4 sm:px-6 py-6">
+	<main class="admin-main">
 		{@render children()}
 	</main>
 </div>
+
+<style>
+	.admin-shell { min-height: 100vh; background: var(--color-cream); }
+	.admin-header {
+		background: var(--color-bg); border-bottom: 1px solid var(--color-cream-dark);
+		padding: 0.75rem 1rem; display: flex; align-items: center; justify-content: space-between;
+	}
+	@media (min-width: 600px) { .admin-header { padding: 0.75rem 1.5rem; } }
+	.header-left { display: flex; align-items: center; gap: 0.75rem; }
+	.back-link { font-size: 0.875rem; color: var(--color-text-muted); text-decoration: none; }
+	.back-link:hover { color: var(--color-sage); }
+	.divider { color: var(--color-cream-dark); }
+	.admin-title { font-family: 'Lora', serif; font-size: 1.125rem; margin: 0; }
+	.admin-nav { display: flex; align-items: center; gap: 1rem; font-size: 0.875rem; }
+	.nav-link { color: var(--color-text-muted); text-decoration: none; }
+	.nav-link:hover { color: var(--color-sage); }
+	.admin-main { max-width: 1280px; margin: 0 auto; padding: 1.5rem 1rem; }
+	@media (min-width: 600px) { .admin-main { padding: 1.5rem; } }
+</style>

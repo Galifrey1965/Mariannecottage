@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { localePath, t } from '$lib/i18n';
-	import M3FAB from './M3FAB.svelte';
 	import type { Messages, Locale } from '$lib/i18n';
 
 	interface Props {
@@ -17,48 +16,108 @@
 	let { lang, messages, image, title, description, cta, ctaLink, ctaIcon = '✨' }: Props = $props();
 </script>
 
-<div class="relative w-full h-96 sm:h-[500px] overflow-hidden rounded-[var(--md-shape-corner-large)] shadow-lg">
-	<img src={image} alt={title} class="w-full h-full object-cover" />
-	<!-- Tonal overlay for readability -->
-	<div class="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/50"></div>
-	<div class="absolute inset-0 flex flex-col items-center justify-center text-center px-4 gap-6">
-		<!-- M3 Display Large heading -->
-		<h1 class="md-display-large text-white drop-shadow-lg max-w-4xl leading-tight">
-			{title}
-		</h1>
+<div class="hero">
+	<img src={image} alt={title} class="hero-image" />
+	<div class="hero-gradient"></div>
+	<div class="hero-content">
+		<h1 class="hero-title">{title}</h1>
 
 		{#if description}
-			<p class="md-body-large text-white/90 drop-shadow max-w-2xl">
-				{description}
-			</p>
+			<p class="hero-description">{description}</p>
 		{/if}
 
 		{#if cta && ctaLink}
-			<M3FAB
-				label={cta}
-				icon={ctaIcon}
-				href={localePath(lang, ctaLink)}
-				position="relative"
-				variant="primary"
-			/>
+			<a href={localePath(lang, ctaLink)} class="hero-cta">
+				<span>{ctaIcon}</span>
+				{cta}
+			</a>
 		{/if}
 	</div>
 </div>
 
 <style>
-	:global(.md-display-large) {
-		font-family: var(--md-typescale-display-large-font-family);
-		font-size: var(--md-typescale-display-large-font-size);
-		font-weight: var(--md-typescale-display-large-font-weight);
-		line-height: var(--md-typescale-display-large-line-height);
-		letter-spacing: var(--md-typescale-display-large-letter-spacing);
+	.hero {
+		position: relative;
+		width: 100%;
+		height: 24rem;
+		overflow: hidden;
+		border-radius: 16px;
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 	}
 
-	:global(.md-body-large) {
-		font-family: var(--md-typescale-body-large-font-family);
-		font-size: var(--md-typescale-body-large-font-size);
-		font-weight: var(--md-typescale-body-large-font-weight);
-		line-height: var(--md-typescale-body-large-line-height);
-		letter-spacing: var(--md-typescale-body-large-letter-spacing);
+	@media (min-width: 600px) {
+		.hero {
+			height: 500px;
+		}
+	}
+
+	.hero-image {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+
+	.hero-gradient {
+		position: absolute;
+		inset: 0;
+		background: linear-gradient(to bottom, transparent, transparent 40%, rgba(0, 0, 0, 0.5));
+	}
+
+	.hero-content {
+		position: absolute;
+		inset: 0;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		text-align: center;
+		padding: 1rem;
+		gap: 1.5rem;
+	}
+
+	.hero-title {
+		font-family: 'Lora', serif;
+		font-size: 2.5rem;
+		font-weight: 400;
+		line-height: 1.1;
+		color: white;
+		text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+		max-width: 56rem;
+		margin: 0;
+	}
+
+	@media (min-width: 600px) {
+		.hero-title {
+			font-size: 3.5rem;
+		}
+	}
+
+	.hero-description {
+		font-size: 1.125rem;
+		color: rgba(255, 255, 255, 0.9);
+		text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+		max-width: 42rem;
+		margin: 0;
+	}
+
+	.hero-cta {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.75rem;
+		padding: 0.875rem 1.5rem;
+		background-color: var(--color-sage);
+		color: white;
+		border-radius: 9999px;
+		font-size: 1rem;
+		font-weight: 600;
+		text-decoration: none;
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+		transition: all 0.2s ease;
+	}
+
+	.hero-cta:hover {
+		background-color: var(--color-sage-hover);
+		transform: scale(1.05);
+		color: white;
 	}
 </style>

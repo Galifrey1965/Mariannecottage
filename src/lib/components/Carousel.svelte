@@ -1,10 +1,4 @@
 <script lang="ts">
-	/**
-	 * Material Design 3 Carousel Component
-	 * Horizontal scrollable list with swipe/scroll support
-	 * Used for attractions, testimonials, etc.
-	 */
-
 	interface Props {
 		items: Array<{
 			id: string;
@@ -22,81 +16,78 @@
 
 	const scroll = (direction: 'left' | 'right') => {
 		if (scrollContainer) {
-			const scrollAmount = 300;
-			scrollContainer.scrollBy({
-				left: direction === 'left' ? -scrollAmount : scrollAmount,
-				behavior: 'smooth'
-			});
+			scrollContainer.scrollBy({ left: direction === 'left' ? -300 : 300, behavior: 'smooth' });
 		}
 	};
 </script>
 
-<div class="relative w-full">
-	<!-- Left scroll button -->
-	<button
-		on:click={() => scroll('left')}
-		class="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-[var(--md-sys-color-primary)] text-[var(--md-sys-color-on-primary)] p-2 rounded-full shadow-md hover:shadow-lg transition-shadow hidden sm:flex items-center justify-center w-10 h-10"
-		aria-label="Scroll left"
-	>
-		‹
-	</button>
+<div class="carousel-wrapper">
+	<button onclick={() => scroll('left')} class="scroll-btn left" aria-label="Scroll left">‹</button>
 
-	<!-- Carousel container -->
-	<div
-		bind:this={scrollContainer}
-		class="flex gap-4 overflow-x-auto scroll-smooth px-4 py-4 sm:px-14 snap-x snap-mandatory scrollbar-hide"
-	>
+	<div bind:this={scrollContainer} class="carousel-track">
 		{#each items as item (item.id)}
-			<button
-				on:click={() => onItemClick?.(item.id)}
-				class="flex-shrink-0 w-64 rounded-[var(--md-shape-corner-medium)] overflow-hidden bg-[var(--md-sys-color-surface-container)] hover:shadow-lg transition-shadow duration-200 snap-center"
-			>
+			<button onclick={() => onItemClick?.(item.id)} class="carousel-card">
 				{#if item.image}
-					<div class="relative w-full h-40 overflow-hidden bg-gray-200">
-						<img
-							src={item.image}
-							alt={item.title}
-							class="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-						/>
+					<div class="card-media">
+						<img src={item.image} alt={item.title} />
 						{#if item.distance}
-							<div class="absolute top-2 right-2 bg-[var(--md-sys-color-primary)] text-[var(--md-sys-color-on-primary)] px-2 py-1 rounded-full text-xs font-medium">
-								{item.distance}
-							</div>
+							<span class="distance-badge">{item.distance}</span>
 						{/if}
 					</div>
 				{/if}
-
-				<div class="p-4">
-					<h3 class="font-semibold text-sm text-[var(--md-sys-color-on-surface)] mb-1">
-						{item.title}
-					</h3>
+				<div class="card-content">
+					<h3>{item.title}</h3>
 					{#if item.description}
-						<p class="text-xs text-[var(--md-sys-color-on-surface-variant)] line-clamp-2">
-							{item.description}
-						</p>
+						<p>{item.description}</p>
 					{/if}
 				</div>
 			</button>
 		{/each}
 	</div>
 
-	<!-- Right scroll button -->
-	<button
-		on:click={() => scroll('right')}
-		class="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-[var(--md-sys-color-primary)] text-[var(--md-sys-color-on-primary)] p-2 rounded-full shadow-md hover:shadow-lg transition-shadow hidden sm:flex items-center justify-center w-10 h-10"
-		aria-label="Scroll right"
-	>
-		›
-	</button>
+	<button onclick={() => scroll('right')} class="scroll-btn right" aria-label="Scroll right">›</button>
 </div>
 
 <style>
-	.scrollbar-hide {
-		-ms-overflow-style: none; /* IE and Edge */
-		scrollbar-width: none; /* Firefox */
+	.carousel-wrapper { position: relative; width: 100%; }
+
+	.scroll-btn {
+		position: absolute; top: 50%; transform: translateY(-50%); z-index: 10;
+		background: var(--color-sage); color: white; border: none; width: 2.5rem; height: 2.5rem;
+		border-radius: 50%; cursor: pointer; font-size: 1.25rem;
+		display: none; align-items: center; justify-content: center;
+		box-shadow: 0 2px 8px rgba(0,0,0,0.15); transition: box-shadow 0.2s ease;
+	}
+	.scroll-btn:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+	@media (min-width: 600px) { .scroll-btn { display: flex; } }
+	.scroll-btn.left { left: 0; }
+	.scroll-btn.right { right: 0; }
+
+	.carousel-track {
+		display: flex; gap: 1rem; overflow-x: auto; scroll-behavior: smooth;
+		padding: 1rem; scroll-snap-type: x mandatory;
+		-ms-overflow-style: none; scrollbar-width: none;
+	}
+	@media (min-width: 600px) { .carousel-track { padding: 1rem 3.5rem; } }
+	.carousel-track::-webkit-scrollbar { display: none; }
+
+	.carousel-card {
+		flex-shrink: 0; width: 16rem; border-radius: 12px; overflow: hidden;
+		background: var(--color-cream); border: none; cursor: pointer; text-align: left;
+		transition: box-shadow 0.2s ease; scroll-snap-align: center;
+	}
+	.carousel-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.12); }
+
+	.card-media { position: relative; width: 100%; height: 10rem; overflow: hidden; }
+	.card-media img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease; }
+	.carousel-card:hover .card-media img { transform: scale(1.05); }
+	.distance-badge {
+		position: absolute; top: 0.5rem; right: 0.5rem;
+		background: var(--color-sage); color: white;
+		padding: 0.25rem 0.5rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 500;
 	}
 
-	.scrollbar-hide::-webkit-scrollbar {
-		display: none; /* Chrome, Safari and Opera */
-	}
+	.card-content { padding: 1rem; }
+	.card-content h3 { font-size: 0.875rem; font-weight: 600; margin: 0 0 0.25rem; color: var(--color-text); }
+	.card-content p { font-size: 0.75rem; color: var(--color-text-muted); margin: 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 </style>

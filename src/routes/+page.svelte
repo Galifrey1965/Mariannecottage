@@ -27,11 +27,9 @@
 />
 
 <!-- About Section -->
-<section class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-16">
-	<h2 class="text-3xl font-serif font-semibold text-amber-900 mb-8 text-center">
-		{t(messages, 'home.about.heading')}
-	</h2>
-	<div class="prose prose-sm max-w-none text-gray-700 space-y-4">
+<section class="section-narrow">
+	<h2 class="section-heading center">{t(messages, 'home.about.heading')}</h2>
+	<div class="prose">
 		<p>{t(messages, 'home.about.p1')}</p>
 		<p>{t(messages, 'home.about.p2')}</p>
 		<p>{t(messages, 'home.about.p3')}</p>
@@ -39,16 +37,14 @@
 </section>
 
 <!-- Highlights -->
-<section class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 bg-gradient-to-r from-amber-50 to-amber-100 rounded-lg">
+<section class="section-wide highlights-bg">
 	<HighlightStrip {messages} />
 </section>
 
 <!-- Room Preview -->
-<section class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
-	<h2 class="text-3xl font-serif font-semibold text-amber-900 mb-8 text-center">
-		{t(messages, 'home.rooms.heading')}
-	</h2>
-	<div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+<section class="section-wide">
+	<h2 class="section-heading center">{t(messages, 'home.rooms.heading')}</h2>
+	<div class="rooms-grid">
 		<RoomCard
 			{lang}
 			image="/images/2024-12-15.jpg"
@@ -62,22 +58,15 @@
 			description="Second bedroom with natural light"
 		/>
 	</div>
-	<div class="text-center">
-		<a
-			href={localePath(lang, '/rooms')}
-			class="inline-block px-8 py-3 bg-amber-600 hover:bg-amber-700 text-white font-semibold rounded-lg transition-colors"
-		>
-			{t(messages, 'home.rooms.cta')}
-		</a>
+	<div class="cta-center">
+		<a href={localePath(lang, '/rooms')} class="cta-button">{t(messages, 'home.rooms.cta')}</a>
 	</div>
 </section>
 
 <!-- Attractions Teaser -->
-<section class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 bg-gray-50 rounded-lg">
-	<h2 class="text-3xl font-serif font-semibold text-amber-900 mb-8 text-center">
-		{t(messages, 'home.attractions.heading')}
-	</h2>
-	<div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+<section class="section-wide attractions-bg">
+	<h2 class="section-heading center">{t(messages, 'home.attractions.heading')}</h2>
+	<div class="attractions-grid">
 		<AttractionCard
 			image="/images/2023-05-20.jpg"
 			title={t(messages, 'home.attractions.dday')}
@@ -100,33 +89,54 @@
 			category={t(messages, 'explore.category.towns')}
 		/>
 	</div>
-	<div class="text-center">
-		<a
-			href={localePath(lang, '/explore')}
-			class="inline-block px-8 py-3 bg-amber-600 hover:bg-amber-700 text-white font-semibold rounded-lg transition-colors"
-		>
-			{t(messages, 'home.attractions.cta')}
-		</a>
+	<div class="cta-center">
+		<a href={localePath(lang, '/explore')} class="cta-button">{t(messages, 'home.attractions.cta')}</a>
 	</div>
 </section>
 
 <!-- Testimonials -->
-<section class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-16">
+<section class="section-narrow">
 	<TestimonialCarousel {messages} />
 </section>
 
 <!-- Booking CTA -->
-<section class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-16 text-center">
-	<h2 class="text-3xl font-serif font-semibold text-amber-900 mb-4">
-		{t(messages, 'home.booking.heading')}
-	</h2>
-	<p class="text-gray-600 mb-8 text-lg">
-		{t(messages, 'home.about.p1')}
-	</p>
-	<a
-		href={localePath(lang, '/book')}
-		class="inline-block px-10 py-4 bg-amber-600 hover:bg-amber-700 text-white font-semibold rounded-lg transition-colors text-lg"
-	>
-		{t(messages, 'home.booking.cta')}
-	</a>
+<section class="section-narrow cta-section">
+	<h2 class="section-heading center">{t(messages, 'home.booking.heading')}</h2>
+	<p class="cta-description">{t(messages, 'home.about.p1')}</p>
+	<a href={localePath(lang, '/book')} class="cta-button large">{t(messages, 'home.booking.cta')}</a>
 </section>
+
+<style>
+	.section-narrow { max-width: 56rem; margin: 0 auto; padding: 4rem 1rem; }
+	.section-wide { max-width: 1280px; margin: 0 auto; padding: 4rem 1rem; }
+	@media (min-width: 600px) {
+		.section-narrow { padding: 4rem 1.5rem; }
+		.section-wide { padding: 4rem 1.5rem; }
+	}
+	.section-heading { font-family: 'Lora', serif; font-size: 1.75rem; font-weight: 600; color: var(--color-brown); margin: 0 0 2rem; }
+	.center { text-align: center; }
+
+	.prose { color: var(--color-text-muted); line-height: 1.8; display: flex; flex-direction: column; gap: 1rem; }
+	.prose p { margin: 0; }
+
+	.highlights-bg { background: linear-gradient(135deg, var(--color-cream), var(--color-cream-dark)); border-radius: 12px; }
+
+	.rooms-grid { display: grid; grid-template-columns: 1fr; gap: 2rem; margin-bottom: 2rem; }
+	@media (min-width: 840px) { .rooms-grid { grid-template-columns: 1fr 1fr; } }
+
+	.attractions-bg { background: var(--color-cream); border-radius: 12px; }
+	.attractions-grid { display: grid; grid-template-columns: 1fr; gap: 2rem; margin-bottom: 2rem; }
+	@media (min-width: 840px) { .attractions-grid { grid-template-columns: repeat(3, 1fr); } }
+
+	.cta-center { text-align: center; }
+	.cta-button {
+		display: inline-block; padding: 0.75rem 2rem;
+		background: var(--color-sage); color: white; font-weight: 600;
+		border-radius: 8px; text-decoration: none; transition: opacity 0.2s;
+	}
+	.cta-button:hover { opacity: 0.9; }
+	.cta-button.large { padding: 1rem 2.5rem; font-size: 1.125rem; }
+
+	.cta-section { text-align: center; }
+	.cta-description { color: var(--color-text-muted); font-size: 1.125rem; margin: 0 0 2rem; line-height: 1.6; }
+</style>

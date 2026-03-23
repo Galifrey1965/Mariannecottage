@@ -25,10 +25,14 @@
 	<title>{t(messages, 'gallery.title')}</title>
 </svelte:head>
 
-<section class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
-	<h1 class="text-4xl font-serif font-bold text-amber-900 mb-12 text-center">
-		{t(messages, 'gallery.title')}
-	</h1>
-
+<section class="page-section">
+	<h1 class="page-title center">{t(messages, 'gallery.title')}</h1>
 	<PhotoGallery {messages} {images} />
 </section>
+
+<style>
+	.page-section { max-width: 1280px; margin: 0 auto; padding: 4rem 1rem; }
+	@media (min-width: 600px) { .page-section { padding: 4rem 1.5rem; } }
+	.page-title { font-family: 'Lora', serif; font-size: 2.5rem; font-weight: 700; color: var(--color-brown); margin: 0 0 3rem; }
+	.center { text-align: center; }
+</style>

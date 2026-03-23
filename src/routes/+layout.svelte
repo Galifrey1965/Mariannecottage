@@ -13,12 +13,10 @@
 
 	const { lang, messages } = data;
 
-	// All locales point to same URL for cookie-based routing
 	const baseUrl = 'https://mariannecottage.netlify.app';
 	const currentPath = $page.url.pathname;
 	const alternates = LOCALES.map(l => ({ lang: l, url: `${baseUrl}${currentPath}` }));
 
-	// Navigation items for M3 components
 	const navItems = [
 		{ label: t(messages, 'nav.home'), href: '/', icon: '🏠' },
 		{ label: t(messages, 'nav.rooms'), href: '/rooms', icon: '🛏️' },
@@ -35,11 +33,11 @@
 	<link rel="icon" href="/favicon.png" />
 </svelte:head>
 
-<div class="flex min-h-screen flex-col bg-[var(--md-sys-color-background)] text-[var(--md-sys-color-on-background)]">
+<div class="app-shell">
 	<Header {lang} {messages} />
 	<NavigationRail items={navItems} />
 
-	<main class="flex-1 sm:ml-20">
+	<main class="main-content">
 		{@render children()}
 	</main>
 
@@ -55,5 +53,23 @@
 	:global(body) {
 		margin: 0;
 		padding: 0;
+	}
+
+	.app-shell {
+		display: flex;
+		flex-direction: column;
+		min-height: 100vh;
+		background-color: var(--color-bg);
+		color: var(--color-text);
+	}
+
+	.main-content {
+		flex: 1;
+	}
+
+	@media (min-width: 600px) {
+		.main-content {
+			margin-left: 80px;
+		}
 	}
 </style>
