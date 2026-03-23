@@ -25,19 +25,19 @@
 	});
 </script>
 
-<div class="carousel">
+<div class="carousel" aria-roledescription="carousel" aria-label={t(messages, 'home.testimonials.heading')}>
 	<div class="carousel-header">
 		<h3 class="carousel-title">{t(messages, 'home.testimonials.heading')}</h3>
 		<div class="dots">
 			{#each testimonials as _, i}
-				<button onclick={() => (currentIndex = i)} class="dot" class:active={currentIndex === i} aria-label="Go to testimonial {i + 1}" />
+				<button onclick={() => (currentIndex = i)} class="dot" class:active={currentIndex === i} aria-label={t(messages, 'a11y.go_to_testimonial', { number: String(i + 1) })} />
 			{/each}
 		</div>
 	</div>
 
-	<div class="carousel-body">
+	<div class="carousel-body" aria-live="polite">
 		{#each testimonials as testimonial, i}
-			<div class="testimonial" class:visible={currentIndex === i}>
+			<div class="testimonial" class:visible={currentIndex === i} role="group" aria-roledescription="slide" aria-label="{testimonial.author}">
 				<blockquote>"{testimonial.text}"</blockquote>
 				<p class="author">— {testimonial.author}</p>
 			</div>
@@ -46,7 +46,7 @@
 </div>
 
 <style>
-	.carousel { background: var(--color-cream); border-radius: 12px; padding: 2rem; }
+	.carousel { background: var(--color-cream); border-radius: var(--md-shape-corner-medium); padding: 2rem; }
 	@media (min-width: 600px) { .carousel { padding: 3rem; } }
 	.carousel-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; }
 	.carousel-title { font-family: 'Lora', serif; font-size: 1.5rem; font-weight: 600; color: var(--color-brown); margin: 0; }

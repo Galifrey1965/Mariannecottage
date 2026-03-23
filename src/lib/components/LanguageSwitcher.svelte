@@ -29,7 +29,7 @@
 		font-size: 0.875rem;
 		font-weight: 500;
 		color: var(--color-text);
-		background-color: white;
+		background-color: var(--md-sys-color-surface-container-lowest);
 		border: 1px solid var(--color-cream-dark);
 		border-radius: 8px;
 		cursor: pointer;
@@ -43,6 +43,6 @@
 
 	.lang-select:focus {
 		border-color: var(--color-sage);
-		box-shadow: 0 0 0 2px rgba(107, 143, 113, 0.2);
+		box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-sage) 20%, transparent);
 	}
 </style>

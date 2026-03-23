@@ -16,7 +16,7 @@
 	<meta name="description" content={t(messages, 'meta.description')} />
 </svelte:head>
 
-<!-- Hero Section -->
+<!-- Hero Section (contains h1) -->
 <HeroSection
 	{lang}
 	{messages}
@@ -110,7 +110,7 @@
 
 <style>
 	.section-narrow { max-width: 56rem; margin: 0 auto; padding: 4rem 1rem; }
-	.section-wide { max-width: 1280px; margin: 0 auto; padding: 4rem 1rem; }
+	.section-wide { max-width: 1440px; margin: 0 auto; padding: 4rem 1rem; }
 	@media (min-width: 600px) {
 		.section-narrow { padding: 4rem 1.5rem; }
 		.section-wide { padding: 4rem 1.5rem; }
@@ -121,12 +121,12 @@
 	.prose { color: var(--color-text-muted); line-height: 1.8; display: flex; flex-direction: column; gap: 1rem; }
 	.prose p { margin: 0; }
 
-	.highlights-bg { background: linear-gradient(135deg, var(--color-cream), var(--color-cream-dark)); border-radius: 12px; }
+	.highlights-bg { background: linear-gradient(135deg, var(--color-cream), var(--color-cream-dark)); border-radius: var(--md-shape-corner-medium); }
 
 	.rooms-grid { display: grid; grid-template-columns: 1fr; gap: 2rem; margin-bottom: 2rem; }
 	@media (min-width: 840px) { .rooms-grid { grid-template-columns: 1fr 1fr; } }
 
-	.attractions-bg { background: var(--color-cream); border-radius: 12px; }
+	.attractions-bg { background: var(--color-cream); border-radius: var(--md-shape-corner-medium); }
 	.attractions-grid { display: grid; grid-template-columns: 1fr; gap: 2rem; margin-bottom: 2rem; }
 	@media (min-width: 840px) { .attractions-grid { grid-template-columns: repeat(3, 1fr); } }
 
@@ -134,7 +134,7 @@
 	.cta-button {
 		display: inline-block; padding: 0.75rem 2rem;
 		background: var(--color-sage); color: white; font-weight: 600;
-		border-radius: 8px; text-decoration: none; transition: opacity 0.2s;
+		border-radius: var(--md-shape-corner-small); text-decoration: none; transition: opacity 0.2s;
 	}
 	.cta-button:hover { opacity: 0.9; }
 	.cta-button.large { padding: 1rem 2.5rem; font-size: 1.125rem; }

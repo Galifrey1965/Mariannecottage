@@ -34,7 +34,7 @@
 <style>
 	.page-section { max-width: 56rem; margin: 0 auto; padding: 4rem 1rem; }
 	.page-title { font-family: 'Lora', serif; font-size: 2.5rem; font-weight: 700; color: var(--color-brown); margin: 0 0 2rem; }
-	.legal-content { background: var(--color-cream); border-radius: 12px; padding: 2rem; color: var(--color-text-muted); }
+	.legal-content { background: var(--color-cream); border-radius: var(--md-shape-corner-medium); padding: 2rem; color: var(--color-text-muted); }
 	.todo-list { margin-top: 2rem; }
 	.todo-list h2 { font-size: 1.25rem; font-weight: 600; color: var(--color-brown); margin: 0 0 1rem; }
 	.todo-list ul { list-style: disc; padding-left: 1.5rem; display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.875rem; }

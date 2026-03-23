@@ -23,8 +23,8 @@
 </div>
 
 <style>
-	.card { background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); overflow: hidden; transition: box-shadow 0.2s ease; }
-	.card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.12); }
+	.card { background: var(--md-sys-color-surface-container-lowest); border-radius: var(--md-shape-corner-medium); box-shadow: var(--md-elevation-shadow-1); overflow: hidden; transition: box-shadow 0.2s ease; }
+	.card:hover { box-shadow: var(--md-elevation-shadow-3); }
 	.card-image { width: 100%; height: 10rem; object-fit: cover; }
 	.card-body { padding: 1rem; }
 	.card-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 0.5rem; }

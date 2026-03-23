@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { localePath, t } from '$lib/i18n';
+	import { localePath, t, formatDate, formatCurrency, plural } from '$lib/i18n';
 	import BookingCalendar from '$lib/components/BookingCalendar.svelte';
 	import BookingSummary from '$lib/components/BookingSummary.svelte';
 	import type { PageData } from './$types';
@@ -108,15 +108,17 @@
 	<h1 class="page-title">{t(messages, 'book.title')}</h1>
 
 	<!-- Step indicator -->
-	<div class="steps">
+	<div class="steps" role="group" aria-label={t(messages, 'a11y.booking_steps')}>
 		{#each [{ n: 1, label: t(messages, 'book.step_dates') }, { n: 2, label: t(messages, 'book.step_details') }, { n: 3, label: t(messages, 'book.step_review') }] as s}
 			<button
 				onclick={() => { if (s.n === 1 || (s.n === 2 && checkInDate && checkOutDate) || (s.n === 3 && checkInDate && checkOutDate && guestName && guestEmail)) step = s.n as 1 | 2 | 3; }}
 				class="step-btn"
 				class:active={step === s.n}
 				class:done={step > s.n}
+				aria-current={step === s.n ? 'step' : undefined}
+				aria-label="{s.label} - {step > s.n ? t(messages, 'a11y.completed') : step === s.n ? t(messages, 'a11y.current') : t(messages, 'a11y.pending')}"
 			>
-				<span class="step-number" class:active={step === s.n} class:done={step > s.n}>
+				<span class="step-number" class:active={step === s.n} class:done={step > s.n} aria-hidden="true">
 					{#if step > s.n}✓{:else}{s.n}{/if}
 				</span>
 				<span class="step-label">{s.label}</span>
@@ -136,6 +138,7 @@
 					<h2 class="section-heading">{t(messages, 'book.heading')}</h2>
 					<BookingCalendar
 						{messages}
+						{lang}
 						availability={realAvailability}
 						onDateRangeSelect={handleDateRangeSelect}
 						minDate={new Date()}
@@ -230,21 +233,21 @@
 						<div class="review-rows">
 							<div class="review-row">
 								<span class="review-label">{t(messages, 'book.label_checkin')}</span>
-								<span class="review-value">{checkInDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}</span>
+								<span class="review-value">{formatDate(lang, checkInDate, { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}</span>
 							</div>
 							<div class="review-row">
 								<span class="review-label">{t(messages, 'book.label_checkout')}</span>
-								<span class="review-value">{checkOutDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}</span>
+								<span class="review-value">{formatDate(lang, checkOutDate, { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}</span>
 							</div>
 							<div class="review-row">
 								<span class="review-label">{t(messages, 'book.label_duration')}</span>
-								<span class="review-value">{nights} {nights > 1 ? t(messages, 'book.nights') : t(messages, 'book.night')}</span>
+								<span class="review-value">{plural(messages, 'book.night', 'book.nights', nights)}</span>
 							</div>
 						</div>
 					{/if}
 
 					{#if formError}
-						<div class="error-box">{formError}</div>
+						<div class="error-box" role="alert">{formError}</div>
 					{/if}
 
 					<div class="actions">
@@ -263,6 +266,7 @@
 		<div class="sidebar">
 			<BookingSummary
 				{messages}
+				{lang}
 				checkInDate={checkInDate}
 				checkOutDate={checkOutDate}
 				nightly_rate={nightly_rate}
@@ -291,7 +295,7 @@
 </section>
 
 <style>
-	.page-section { max-width: 1200px; margin: 0 auto; padding: 4rem 1rem; }
+	.page-section { max-width: 1440px; margin: 0 auto; padding: 4rem 1rem; }
 	@media (min-width: 600px) { .page-section { padding: 4rem 1.5rem; } }
 	.page-title { font-family: 'Lora', serif; font-size: 2.5rem; font-weight: 700; color: var(--color-text); margin: 0 0 0.5rem; }
 
@@ -304,7 +308,7 @@
 		background: var(--color-cream); color: var(--color-text-muted); transition: all 0.2s;
 	}
 	.step-btn.active { background: var(--color-sage); color: white; }
-	.step-btn.done { background: rgba(107,143,113,0.2); color: var(--color-sage); }
+	.step-btn.done { background: color-mix(in srgb, var(--color-sage) 20%, transparent); color: var(--color-sage); }
 	.step-number {
 		display: inline-flex; align-items: center; justify-content: center;
 		width: 1.5rem; height: 1.5rem; border-radius: 50%;
@@ -320,7 +324,7 @@
 
 	/* Layout */
 	.layout { display: grid; grid-template-columns: 1fr; gap: 2rem; margin-bottom: 3rem; }
-	@media (min-width: 1200px) { .layout { grid-template-columns: 2fr 1fr; } }
+	@media (min-width: 840px) { .layout { grid-template-columns: 2fr 1fr; } }
 	.main-col { display: flex; flex-direction: column; gap: 1.5rem; }
 	.sidebar { position: sticky; top: 6rem; align-self: start; display: flex; flex-direction: column; gap: 1.5rem; }
 
@@ -337,10 +341,10 @@
 		font-size: 0.875rem; transition: border-color 0.2s;
 		box-sizing: border-box;
 	}
-	.field-input:focus { outline: none; border-color: var(--color-sage); box-shadow: 0 0 0 2px rgba(107,143,113,0.2); }
-	.field-input.error { border-color: #c4554e; }
+	.field-input:focus { outline: none; border-color: var(--color-sage); box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-sage) 20%, transparent); }
+	.field-input.error { border-color: var(--md-sys-color-error); }
 	.field-input.textarea { resize: none; }
-	.field-error { font-size: 0.75rem; color: #c4554e; margin: 0.25rem 0 0; }
+	.field-error { font-size: 0.75rem; color: var(--md-sys-color-error); margin: 0.25rem 0 0; }
 	.field-row { display: grid; grid-template-columns: 1fr; gap: 1rem; }
 	@media (min-width: 600px) { .field-row { grid-template-columns: 1fr 1fr; } }
 
@@ -351,7 +355,7 @@
 	.review-label { color: var(--color-text-muted); }
 	.review-value { font-weight: 500; color: var(--color-text); margin: 0; }
 	.divider { border: none; border-top: 1px solid var(--color-cream-dark); margin: 0 0 1.5rem; }
-	.error-box { padding: 1rem; margin-bottom: 1rem; background: rgba(196,85,78,0.1); color: #c4554e; border-radius: 8px; font-size: 0.875rem; }
+	.error-box { padding: 1rem; margin-bottom: 1rem; background: var(--color-error-bg); color: var(--color-error-text); border-radius: var(--md-shape-corner-small); font-size: 0.875rem; }
 	.cancel-note { font-size: 0.75rem; color: var(--color-text-muted); margin: 1rem 0 0; text-align: center; }
 
 	/* Buttons */

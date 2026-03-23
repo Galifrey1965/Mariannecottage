@@ -86,11 +86,11 @@
 </section>
 
 <style>
-	.page-section { max-width: 1280px; margin: 0 auto; padding: 4rem 1rem; }
+	.page-section { max-width: 1440px; margin: 0 auto; padding: 4rem 1rem; }
 	@media (min-width: 600px) { .page-section { padding: 4rem 1.5rem; } }
 	.page-title { font-family: 'Lora', serif; font-size: 2.5rem; font-weight: 700; color: var(--color-brown); margin: 0 0 1rem; }
 	.page-description { color: var(--color-text-muted); font-size: 1.125rem; margin: 0 0 3rem; line-height: 1.6; }
-	.map-wrapper { margin-bottom: 4rem; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+	.map-wrapper { margin-bottom: 4rem; border-radius: var(--md-shape-corner-medium); overflow: hidden; box-shadow: var(--md-elevation-shadow-2); }
 	.categories { display: flex; flex-direction: column; gap: 4rem; }
 	.category-section {}
 	.category-heading { font-family: 'Lora', serif; font-size: 1.75rem; font-weight: 600; color: var(--color-brown); margin: 0 0 2rem; text-align: center; }

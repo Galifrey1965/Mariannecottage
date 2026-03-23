@@ -1,9 +1,10 @@
 <script lang="ts">
-	import { t } from '$lib/i18n';
-	import type { Messages } from '$lib/i18n';
+	import { t, formatDate, formatCurrency } from '$lib/i18n';
+	import type { Messages, Locale } from '$lib/i18n';
 
 	interface Props {
 		messages: Messages;
+		lang: Locale;
 		checkInDate?: Date;
 		checkOutDate?: Date;
 		nightly_rate?: number;
@@ -11,7 +12,7 @@
 		cancellationPolicy?: string;
 	}
 
-	let { messages, checkInDate, checkOutDate, nightly_rate = 120, guests = 1, cancellationPolicy }: Props = $props();
+	let { messages, lang, checkInDate, checkOutDate, nightly_rate = 120, guests = 1, cancellationPolicy }: Props = $props();
 
 	const nights = $derived(
 		checkInDate && checkOutDate
@@ -23,8 +24,7 @@
 	const tax = $derived(Math.round(subtotal * 0.1 * 100) / 100);
 	const total = $derived(subtotal + tax);
 
-	const formatCurrency = (amount: number) =>
-		new Intl.NumberFormat('en-US', { style: 'currency', currency: 'EUR' }).format(amount);
+	const fmtCurrency = (amount: number) => formatCurrency(lang, amount);
 </script>
 
 <div class="summary">
@@ -32,8 +32,8 @@
 
 	{#if checkInDate && checkOutDate}
 		<div class="summary-rows">
-			<div class="row"><span class="label">{t(messages, 'booking_summary.checkin')}</span><span class="value">{checkInDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}</span></div>
-			<div class="row"><span class="label">{t(messages, 'booking_summary.checkout')}</span><span class="value">{checkOutDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}</span></div>
+			<div class="row"><span class="label">{t(messages, 'booking_summary.checkin')}</span><span class="value">{formatDate(lang, checkInDate, { weekday: 'short', month: 'short', day: 'numeric' })}</span></div>
+			<div class="row"><span class="label">{t(messages, 'booking_summary.checkout')}</span><span class="value">{formatDate(lang, checkOutDate, { weekday: 'short', month: 'short', day: 'numeric' })}</span></div>
 			<div class="row"><span class="label">{t(messages, 'booking_summary.nights')}</span><span class="value">{nights}</span></div>
 			<div class="row"><span class="label">{t(messages, 'booking_summary.guests')}</span><span class="value">{guests}</span></div>
 		</div>
@@ -41,15 +41,15 @@
 		<hr />
 
 		<div class="summary-rows">
-			<div class="row"><span class="label">{nightly_rate}€ × {nights} nights</span><span class="value">{formatCurrency(subtotal)}</span></div>
-			<div class="row"><span class="label">{t(messages, 'booking_summary.tax')}</span><span class="value">{formatCurrency(tax)}</span></div>
+			<div class="row"><span class="label">{nightly_rate}€ × {nights} nights</span><span class="value">{fmtCurrency(subtotal)}</span></div>
+			<div class="row"><span class="label">{t(messages, 'booking_summary.tax')}</span><span class="value">{fmtCurrency(tax)}</span></div>
 		</div>
 
 		<hr />
 
 		<div class="total-row">
 			<span>{t(messages, 'booking_summary.total')}</span>
-			<span class="total-value">{formatCurrency(total)}</span>
+			<span class="total-value">{fmtCurrency(total)}</span>
 		</div>
 
 		{#if cancellationPolicy}
@@ -63,7 +63,7 @@
 </div>
 
 <style>
-	.summary { background: var(--color-cream); border-radius: 16px; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.08); display: flex; flex-direction: column; gap: 1.5rem; }
+	.summary { background: var(--color-cream); border-radius: var(--md-shape-corner-medium); padding: 1.5rem; box-shadow: var(--md-elevation-shadow-1); display: flex; flex-direction: column; gap: 1.5rem; }
 	.summary-title { font-family: 'Lora', serif; font-size: 1.25rem; font-weight: 600; margin: 0; }
 	.summary-rows { display: flex; flex-direction: column; gap: 0.5rem; }
 	.row { display: flex; justify-content: space-between; font-size: 0.875rem; }
@@ -73,6 +73,6 @@
 	.total-row { display: flex; justify-content: space-between; align-items: center; }
 	.total-row span:first-child { font-family: 'Lora', serif; font-size: 1.125rem; font-weight: 600; }
 	.total-value { font-size: 1.5rem; font-weight: 700; color: var(--color-sage); }
-	.policy-box { padding: 0.75rem; background: white; border-radius: 8px; font-size: 0.75rem; color: var(--color-text-muted); }
+	.policy-box { padding: 0.75rem; background: var(--md-sys-color-surface-container-lowest); border-radius: var(--md-shape-corner-small); font-size: 0.75rem; color: var(--color-text-muted); }
 	.empty { text-align: center; padding: 2rem 0; color: var(--color-text-muted); }
 </style>

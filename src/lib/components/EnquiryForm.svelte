@@ -46,13 +46,13 @@
 
 <form onsubmit={e => { e.preventDefault(); handleSubmit(); }} class="form">
 	{#if submitted}
-		<div class="alert alert-success">
+		<div class="alert alert-success" role="status" aria-live="polite">
 			{t(messages, 'contact.form.success')}
 		</div>
 	{/if}
 
 	{#if error}
-		<div class="alert alert-error">
+		<div class="alert alert-error" role="alert">
 			{error}
 		</div>
 	{/if}
@@ -91,15 +91,15 @@
 	}
 
 	.alert-success {
-		background-color: #f0fdf4;
-		border: 1px solid #bbf7d0;
-		color: #166534;
+		background-color: var(--color-success-bg);
+		border: 1px solid var(--color-success-border);
+		color: var(--color-success-text);
 	}
 
 	.alert-error {
-		background-color: #fef2f2;
-		border: 1px solid #fecaca;
-		color: #991b1b;
+		background-color: var(--color-error-bg);
+		border: 1px solid var(--color-error-border);
+		color: var(--color-error-text);
 	}
 
 	.field {
@@ -123,7 +123,7 @@
 		font-family: inherit;
 		font-size: 1rem;
 		color: var(--color-text);
-		background-color: white;
+		background-color: var(--md-sys-color-surface-container-lowest);
 		outline: none;
 		transition: border-color 0.2s ease, box-shadow 0.2s ease;
 		box-sizing: border-box;
@@ -132,7 +132,7 @@
 	.field input:focus,
 	.field textarea:focus {
 		border-color: var(--color-sage);
-		box-shadow: 0 0 0 2px rgba(107, 143, 113, 0.2);
+		box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-sage) 20%, transparent);
 	}
 
 	.field textarea {
@@ -157,7 +157,7 @@
 	}
 
 	.submit-btn:disabled {
-		background-color: #9ca3af;
+		background-color: var(--color-disabled);
 		cursor: not-allowed;
 	}
 </style>

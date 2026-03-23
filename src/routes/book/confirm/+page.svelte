@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { localePath, t } from '$lib/i18n';
+	import { localePath, t, formatDate as fmtDate, formatCurrency as fmtCur, plural } from '$lib/i18n';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -18,7 +18,7 @@
 
 	const formatDate = (iso: string) => {
 		if (!iso) return '—';
-		return new Date(iso).toLocaleDateString('en-US', {
+		return fmtDate(lang, new Date(iso), {
 			weekday: 'short', month: 'long', day: 'numeric', year: 'numeric'
 		});
 	};
@@ -26,7 +26,7 @@
 	const formatCurrency = (amount: string) => {
 		const n = parseFloat(amount);
 		if (isNaN(n)) return '—';
-		return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'EUR' }).format(n);
+		return fmtCur(lang, n);
 	};
 </script>
 
@@ -63,7 +63,7 @@
 			</div>
 			<div class="summary-item">
 				<p class="item-label">{t(messages, 'booking_confirm.guests')}</p>
-				<p class="item-value">{guestCount} {Number(guestCount) > 1 ? t(messages, 'booking_confirm.guests') : t(messages, 'booking_confirm.guest')}</p>
+				<p class="item-value">{plural(messages, 'booking_confirm.guest', 'booking_confirm.guests', Number(guestCount))}</p>
 			</div>
 			<div class="summary-item">
 				<p class="item-label">{t(messages, 'booking_confirm.label_checkin')}</p>
@@ -75,7 +75,7 @@
 			</div>
 			<div class="summary-item">
 				<p class="item-label">{t(messages, 'booking_confirm.label_duration')}</p>
-				<p class="item-value">{nights} {Number(nights) > 1 ? t(messages, 'book.nights') : t(messages, 'book.night')}</p>
+				<p class="item-value">{plural(messages, 'book.night', 'book.nights', Number(nights))}</p>
 			</div>
 		</div>
 
@@ -119,17 +119,17 @@
 	.success-icon {
 		display: inline-flex; align-items: center; justify-content: center;
 		width: 4rem; height: 4rem; border-radius: 50%;
-		background: rgba(107,143,113,0.2); margin-bottom: 1rem;
+		background: color-mix(in srgb, var(--color-sage) 20%, transparent); margin-bottom: 1rem;
 	}
 	.success-icon span { font-size: 1.75rem; color: var(--color-sage); }
 	.success-title { font-family: 'Lora', serif; font-size: 2rem; font-weight: 700; color: var(--color-text); margin: 0 0 0.5rem; }
 	.success-subtitle { color: var(--color-text-muted); font-size: 1.125rem; margin: 0; }
 
-	.ref-box { text-align: center; margin-bottom: 2rem; padding: 1rem; background: rgba(107,143,113,0.15); border-radius: 12px; }
+	.ref-box { text-align: center; margin-bottom: 2rem; padding: 1rem; background: color-mix(in srgb, var(--color-sage) 15%, transparent); border-radius: var(--md-shape-corner-medium); }
 	.ref-label { font-size: 0.875rem; color: var(--color-text-muted); margin: 0 0 0.25rem; }
 	.ref-value { font-size: 1.5rem; font-weight: 700; letter-spacing: 0.1em; color: var(--color-text); margin: 0; }
 
-	.summary-card { background: var(--color-cream); border-radius: 16px; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.08); margin-bottom: 2rem; }
+	.summary-card { background: var(--color-cream); border-radius: var(--md-shape-corner-medium); padding: 1.5rem; box-shadow: var(--md-elevation-shadow-1); margin-bottom: 2rem; }
 	.summary-heading { font-family: 'Lora', serif; font-size: 1.25rem; font-weight: 600; margin: 0 0 1rem; }
 	.summary-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; margin-bottom: 1.5rem; }
 	@media (min-width: 600px) { .summary-grid { grid-template-columns: 1fr 1fr; } }
@@ -143,19 +143,19 @@
 	.status-note { font-size: 0.75rem; color: var(--color-text-muted); margin: 0.5rem 0 0; }
 	.status-pending { color: var(--color-sage); font-weight: 600; }
 
-	.directions-box { background: var(--color-cream); border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem; }
+	.directions-box { background: var(--color-cream); border-radius: var(--md-shape-corner-medium); padding: 1.5rem; margin-bottom: 2rem; }
 	.directions-heading { font-weight: 600; color: var(--color-brown); margin: 0 0 0.5rem; }
 	.directions-text { font-size: 0.875rem; color: var(--color-text-muted); margin: 0; }
 	.directions-text.address { margin-top: 0.5rem; }
 
-	.contact-box { text-align: center; padding: 1.5rem; background: var(--color-cream); border-radius: 12px; margin-bottom: 2rem; }
+	.contact-box { text-align: center; padding: 1.5rem; background: var(--color-cream); border-radius: var(--md-shape-corner-medium); margin-bottom: 2rem; }
 	.contact-text { font-size: 0.875rem; color: var(--color-text-muted); margin: 0; }
 
 	.cta-center { text-align: center; }
 	.cta-button {
 		display: inline-block; padding: 0.75rem 2rem;
-		background: var(--color-sage); color: white; font-weight: 600;
-		border-radius: 8px; text-decoration: none; transition: opacity 0.2s;
+		background: var(--color-sage); color: var(--md-sys-color-on-primary); font-weight: 600;
+		border-radius: var(--md-shape-corner-small); text-decoration: none; transition: opacity 0.2s;
 	}
 	.cta-button:hover { opacity: 0.9; }
 </style>

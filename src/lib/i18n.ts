@@ -62,3 +62,29 @@ export function detectLocale(acceptLanguage: string | null): Locale {
 export function isValidLocale(locale: unknown): locale is Locale {
 	return typeof locale === 'string' && LOCALES.includes(locale as Locale);
 }
+
+/** Map our locale codes to BCP 47 tags */
+const LOCALE_MAP: Record<Locale, string> = { en: 'en-GB', fr: 'fr-FR', de: 'de-DE' };
+
+/**
+ * Format a date using the user's locale
+ */
+export function formatDate(locale: Locale, date: Date, options?: Intl.DateTimeFormatOptions): string {
+	return new Intl.DateTimeFormat(LOCALE_MAP[locale], options).format(date);
+}
+
+/**
+ * Format currency using the user's locale
+ */
+export function formatCurrency(locale: Locale, amount: number, currency = 'EUR'): string {
+	return new Intl.NumberFormat(LOCALE_MAP[locale], { style: 'currency', currency }).format(amount);
+}
+
+/**
+ * Simple pluralization: picks singular or plural translation key based on count
+ * @example plural(messages, 'book.night', 'book.nights', 3) => "3 nights"
+ */
+export function plural(messages: Messages, singularKey: string, pluralKey: string, count: number): string {
+	const key = count === 1 ? singularKey : pluralKey;
+	return `${count} ${t(messages, key)}`;
+}

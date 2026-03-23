@@ -30,9 +30,9 @@
 <style>
 	.strip { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; padding: 2rem 0; }
 	@media (min-width: 600px) { .strip { grid-template-columns: repeat(3, 1fr); } }
-	@media (min-width: 1024px) { .strip { grid-template-columns: repeat(6, 1fr); } }
-	.highlight-item { text-align: center; padding: 1rem; background: var(--color-cream); border-radius: 12px; transition: box-shadow 0.2s ease; }
-	.highlight-item:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+	@media (min-width: 840px) { .strip { grid-template-columns: repeat(6, 1fr); } }
+	.highlight-item { text-align: center; padding: 1rem; background: var(--color-cream); border-radius: var(--md-shape-corner-medium); transition: box-shadow 0.2s ease; }
+	.highlight-item:hover { box-shadow: var(--md-elevation-shadow-1); }
 	.highlight-icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
 	.highlight-label { font-size: 0.875rem; font-weight: 600; color: var(--color-brown); margin: 0; }
 </style>

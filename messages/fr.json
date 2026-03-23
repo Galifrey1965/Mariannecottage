@@ -101,6 +101,7 @@
   },
   "gallery": {
     "title": "Galerie Photos",
+    "filter_label": "Filtrer les photos par catégorie",
     "categories": {
       "all": "Tous",
       "exterior": "Extérieur",
@@ -308,5 +309,20 @@
     "contact": "Contact",
     "social": "Nous Suivre",
     "copyright": "© 2024 Marianne Cottage. Tous droits réservés."
+  },
+  "a11y": {
+    "skip_to_content": "Aller au contenu principal",
+    "main_navigation": "Navigation principale",
+    "mobile_navigation": "Navigation mobile",
+    "toggle_menu": "Ouvrir/fermer le menu",
+    "previous": "Précédent",
+    "next": "Suivant",
+    "close": "Fermer",
+    "opens_new_window": "ouvre dans une nouvelle fenêtre",
+    "go_to_testimonial": "Aller au témoignage {number}",
+    "booking_steps": "Étapes de réservation",
+    "completed": "terminé",
+    "current": "en cours",
+    "pending": "à venir"
   }
 }

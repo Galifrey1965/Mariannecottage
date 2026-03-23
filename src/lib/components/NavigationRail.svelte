@@ -18,22 +18,21 @@
 	};
 </script>
 
-<nav class="rail">
+<nav class="rail" aria-label="Side navigation">
 	{#each items as item}
 		<a
 			href={item.href}
 			class="rail-item"
 			class:active={isActive(item.href)}
-			aria-label={item.label}
+			aria-current={isActive(item.href) ? 'page' : undefined}
 			title={item.label}
 		>
-			<span class="rail-icon">{item.icon}</span>
+			<span class="rail-icon" aria-hidden="true">{item.icon}</span>
 			<span class="rail-label">{item.label}</span>
 		</a>
 	{/each}
 </nav>
 
-<div class="rail-spacer" />
 
 <style>
 	.rail {
@@ -41,17 +40,18 @@
 		flex-direction: column;
 		position: fixed;
 		left: 0;
-		top: 0;
+		top: 56px;
 		bottom: 0;
 		width: 80px;
 		background-color: var(--color-bg);
 		border-right: 1px solid var(--color-cream-dark);
-		z-index: 40;
+		z-index: 30;
 		padding: 1rem 0;
-		gap: 1rem;
+		gap: 0.25rem;
+		overflow-y: auto;
 	}
 
-	@media (min-width: 600px) {
+	@media (min-width: 840px) {
 		.rail {
 			display: flex;
 		}
@@ -80,7 +80,7 @@
 
 	.rail-item.active {
 		background-color: var(--color-sage);
-		color: white;
+		color: var(--md-sys-color-on-primary);
 	}
 
 	.rail-icon {
@@ -94,14 +94,4 @@
 		font-weight: 500;
 	}
 
-	.rail-spacer {
-		display: none;
-		width: 80px;
-	}
-
-	@media (min-width: 600px) {
-		.rail-spacer {
-			display: block;
-		}
-	}
 </style>

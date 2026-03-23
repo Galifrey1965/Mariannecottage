@@ -23,8 +23,8 @@
 </div>
 
 <style>
-	.card { background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); overflow: hidden; transition: box-shadow 0.2s ease; }
-	.card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.12); }
+	.card { background: var(--md-sys-color-surface-container-lowest); border-radius: var(--md-shape-corner-medium); box-shadow: var(--md-elevation-shadow-1); overflow: hidden; transition: box-shadow 0.2s ease; }
+	.card:hover { box-shadow: var(--md-elevation-shadow-3); }
 	.card-image { width: 100%; height: 12rem; object-fit: cover; }
 	.card-body { padding: 1.5rem; }
 	.card-title { font-family: 'Lora', serif; font-size: 1.25rem; font-weight: 600; color: var(--color-brown); margin: 0 0 0.5rem; }

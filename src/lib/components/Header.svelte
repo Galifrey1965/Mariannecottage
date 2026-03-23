@@ -27,7 +27,15 @@
 	};
 
 	const closeMenu = () => { menuOpen = false; };
+
+	function handleKeydown(e: KeyboardEvent) {
+		if (e.key === 'Escape' && menuOpen) {
+			closeMenu();
+		}
+	}
 </script>
+
+<svelte:window onkeydown={handleKeydown} />
 
 <header class="header">
 	<div class="header-inner">
@@ -36,12 +44,13 @@
 			<span class="logo-subtitle">Cottage</span>
 		</a>
 
-		<nav class="desktop-nav">
+		<nav class="desktop-nav" aria-label={t(messages, 'a11y.main_navigation')}>
 			{#each navLinks as link}
 				<a
 					href={localePath(lang, link.href)}
 					class="nav-link"
 					class:active={isActive(link.href)}
+					aria-current={isActive(link.href) ? 'page' : undefined}
 				>
 					{link.label}
 				</a>
@@ -50,7 +59,12 @@
 
 		<div class="header-actions">
 			<LanguageSwitcher {lang} />
-			<button class="menu-toggle" onclick={() => menuOpen = !menuOpen} aria-label="Toggle menu">
+			<button
+				class="menu-toggle"
+				onclick={() => menuOpen = !menuOpen}
+				aria-label={t(messages, 'a11y.toggle_menu')}
+				aria-expanded={menuOpen}
+			>
 				{#if menuOpen}✕{:else}☰{/if}
 			</button>
 		</div>
@@ -59,16 +73,17 @@
 
 <!-- Mobile drawer -->
 {#if menuOpen}
-	<div class="overlay" onclick={closeMenu} role="presentation"></div>
-	<nav class="mobile-drawer">
+	<div class="overlay" onclick={closeMenu} aria-hidden="true"></div>
+	<nav class="mobile-drawer" aria-label={t(messages, 'a11y.mobile_navigation')}>
 		{#each navLinks as link}
 			<a
 				href={localePath(lang, link.href)}
 				class="drawer-link"
 				class:active={isActive(link.href)}
+				aria-current={isActive(link.href) ? 'page' : undefined}
 				onclick={closeMenu}
 			>
-				<span class="drawer-icon">{link.icon}</span>
+				<span class="drawer-icon" aria-hidden="true">{link.icon}</span>
 				{link.label}
 			</a>
 		{/each}
@@ -86,7 +101,7 @@
 	}
 
 	.header-inner {
-		max-width: 1280px;
+		max-width: 1440px;
 		margin: 0 auto;
 		padding: 0 1rem;
 		height: 56px;
@@ -150,7 +165,7 @@
 
 	.nav-link.active {
 		background-color: var(--color-sage);
-		color: white;
+		color: var(--md-sys-color-on-primary);
 	}
 
 	/* Header actions */
@@ -165,8 +180,8 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		width: 40px;
-		height: 40px;
+		width: 48px;
+		height: 48px;
 		border: none;
 		background: transparent;
 		font-size: 1.25rem;
@@ -188,7 +203,7 @@
 	.overlay {
 		position: fixed;
 		inset: 0;
-		background: rgba(0, 0, 0, 0.4);
+		background: color-mix(in srgb, var(--md-sys-color-scrim) 40%, transparent);
 		z-index: 45;
 	}
 
@@ -225,7 +240,7 @@
 	}
 
 	.drawer-link.active {
-		background: rgba(107, 143, 113, 0.15);
+		background: color-mix(in srgb, var(--color-sage) 15%, transparent);
 		color: var(--color-sage);
 		font-weight: 600;
 	}

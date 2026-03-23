@@ -72,11 +72,11 @@
 	.carousel-track::-webkit-scrollbar { display: none; }
 
 	.carousel-card {
-		flex-shrink: 0; width: 16rem; border-radius: 12px; overflow: hidden;
+		flex-shrink: 0; width: 16rem; border-radius: var(--md-shape-corner-medium); overflow: hidden;
 		background: var(--color-cream); border: none; cursor: pointer; text-align: left;
 		transition: box-shadow 0.2s ease; scroll-snap-align: center;
 	}
-	.carousel-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.12); }
+	.carousel-card:hover { box-shadow: var(--md-elevation-shadow-3); }
 
 	.card-media { position: relative; width: 100%; height: 10rem; overflow: hidden; }
 	.card-media img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease; }
@@ -84,7 +84,7 @@
 	.distance-badge {
 		position: absolute; top: 0.5rem; right: 0.5rem;
 		background: var(--color-sage); color: white;
-		padding: 0.25rem 0.5rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 500;
+		padding: 0.25rem 0.5rem; border-radius: var(--md-shape-corner-full); font-size: 0.75rem; font-weight: 500;
 	}
 
 	.card-content { padding: 1rem; }

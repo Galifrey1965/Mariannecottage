@@ -31,10 +31,70 @@
 
 	/* Calendar & Status */
 	--color-avail: #7ba96b;
-	--color-unavail: #c4554e;
+	--color-unavail: var(--md-sys-color-error);
 
 	/* Accent */
 	--color-gold: #c4a265;
+
+	/* Footer */
+	--color-footer-bg: #5d3a1a;
+	--color-footer-text: #fef3c7;
+	--color-footer-accent: #fde68a;
+	--color-footer-border: #7c4a23;
+
+	/* Alerts */
+	--color-success-bg: #f0fdf4;
+	--color-success-border: #bbf7d0;
+	--color-success-text: #166534;
+	--color-error-bg: #fef2f2;
+	--color-error-border: #fecaca;
+	--color-error-text: #991b1b;
+
+	/* Disabled */
+	--color-disabled: #9ca3af;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		/* Backgrounds */
+		--color-bg: #121212;
+		--color-cream: #262524;
+		--color-cream-dark: #31302f;
+
+		/* Accents */
+		--color-sage: #7bc9a0;
+		--color-sage-hover: #5db88a;
+		--color-brown: #d4c5a9;
+		--color-brown-light: #c4b077;
+
+		/* Text */
+		--color-text: #e8e3df;
+		--color-text-muted: #ccc8c3;
+
+		/* Calendar & Status */
+		--color-avail: #87ce9e;
+		--color-unavail: var(--md-sys-color-error);
+
+		/* Accent */
+		--color-gold: #dcc9a0;
+
+		/* Footer */
+		--color-footer-bg: #1f1e1d;
+		--color-footer-text: #e8e3df;
+		--color-footer-accent: #d4c5a9;
+		--color-footer-border: #3c3b39;
+
+		/* Alerts */
+		--color-success-bg: rgba(123, 201, 160, 0.15);
+		--color-success-border: rgba(123, 201, 160, 0.3);
+		--color-success-text: #87ce9e;
+		--color-error-bg: rgba(255, 139, 129, 0.15);
+		--color-error-border: rgba(255, 139, 129, 0.3);
+		--color-error-text: #ff8b81;
+
+		/* Disabled */
+		--color-disabled: #555453;
+	}
 }
 
 html {

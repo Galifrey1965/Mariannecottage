@@ -31,7 +31,7 @@
 </section>
 
 <style>
-	.page-section { max-width: 1280px; margin: 0 auto; padding: 4rem 1rem; }
+	.page-section { max-width: 1440px; margin: 0 auto; padding: 4rem 1rem; }
 	@media (min-width: 600px) { .page-section { padding: 4rem 1.5rem; } }
 	.page-title { font-family: 'Lora', serif; font-size: 2.5rem; font-weight: 700; color: var(--color-brown); margin: 0 0 3rem; }
 	.center { text-align: center; }

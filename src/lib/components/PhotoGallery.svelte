@@ -27,33 +27,53 @@
 	const currentImage = $derived(
 		selectedImageIndex !== null ? filteredImages[selectedImageIndex] : null
 	);
+
+	function handleKeydown(e: KeyboardEvent) {
+		if (selectedImageIndex === null) return;
+		if (e.key === 'Escape') { selectedImageIndex = null; }
+		else if (e.key === 'ArrowLeft') { selectedImageIndex = selectedImageIndex === 0 ? filteredImages.length - 1 : selectedImageIndex - 1; }
+		else if (e.key === 'ArrowRight') { selectedImageIndex = selectedImageIndex === filteredImages.length - 1 ? 0 : selectedImageIndex + 1; }
+	}
 </script>
 
+<svelte:window onkeydown={handleKeydown} />
+
 <div>
-	<div class="filters">
+	<div class="filters" role="group" aria-label={t(messages, 'gallery.filter_label')}>
 		{#each categories as cat}
-			<button onclick={() => { selectedCategory = cat; selectedImageIndex = null; }} class="filter-chip" class:active={selectedCategory === cat}>
+			<button
+				onclick={() => { selectedCategory = cat; selectedImageIndex = null; }}
+				class="filter-chip"
+				class:active={selectedCategory === cat}
+				aria-pressed={selectedCategory === cat}
+			>
 				{t(messages, `gallery.categories.${cat}`)}
 			</button>
 		{/each}
 	</div>
 
-	<div class="gallery-grid">
+	<div class="gallery-grid" role="grid" aria-label={t(messages, 'gallery.title')}>
 		{#each filteredImages as image, i}
-			<button onclick={() => (selectedImageIndex = i)} class="gallery-item">
+			<button onclick={() => (selectedImageIndex = i)} class="gallery-item" aria-label={image.alt}>
 				<img src={image.src} alt={image.alt} />
-				<div class="gallery-overlay"><span>🔍</span></div>
+				<div class="gallery-overlay" aria-hidden="true"><span>🔍</span></div>
 			</button>
 		{/each}
 	</div>
 
 	{#if currentImage && selectedImageIndex !== null}
-		<div class="lightbox" onclick={() => (selectedImageIndex = null)}>
+		<div
+			class="lightbox"
+			onclick={() => (selectedImageIndex = null)}
+			role="dialog"
+			aria-modal="true"
+			aria-label={currentImage.alt}
+		>
 			<div class="lightbox-content" onclick={e => e.stopPropagation()}>
 				<img src={currentImage.src} alt={currentImage.alt} />
-				<button onclick={() => { selectedImageIndex = selectedImageIndex === 0 ? filteredImages.length - 1 : selectedImageIndex - 1; }} class="lightbox-nav prev" aria-label="Previous">←</button>
-				<button onclick={() => { selectedImageIndex = selectedImageIndex === filteredImages.length - 1 ? 0 : selectedImageIndex + 1; }} class="lightbox-nav next" aria-label="Next">→</button>
-				<button onclick={() => (selectedImageIndex = null)} class="lightbox-close" aria-label="Close">✕</button>
+				<button onclick={() => { selectedImageIndex = selectedImageIndex === 0 ? filteredImages.length - 1 : selectedImageIndex - 1; }} class="lightbox-nav prev" aria-label={t(messages, 'a11y.previous')}>&larr;</button>
+				<button onclick={() => { selectedImageIndex = selectedImageIndex === filteredImages.length - 1 ? 0 : selectedImageIndex + 1; }} class="lightbox-nav next" aria-label={t(messages, 'a11y.next')}>&rarr;</button>
+				<button onclick={() => (selectedImageIndex = null)} class="lightbox-close" aria-label={t(messages, 'a11y.close')}>&times;</button>
 			</div>
 		</div>
 	{/if}
@@ -62,29 +82,29 @@
 <style>
 	.filters { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 2rem; }
 	.filter-chip {
-		padding: 0.5rem 1rem; border-radius: 9999px; font-size: 0.875rem; font-weight: 500;
+		padding: 0.5rem 1rem; border-radius: var(--md-shape-corner-full); font-size: 0.875rem; font-weight: 500;
 		border: none; cursor: pointer; transition: all 0.2s ease;
 		background: var(--color-cream); color: var(--color-brown);
 	}
-	.filter-chip.active { background: var(--color-sage); color: white; }
+	.filter-chip.active { background: var(--color-sage); color: var(--md-sys-color-on-primary); }
 
 	.gallery-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
 	@media (min-width: 600px) { .gallery-grid { grid-template-columns: repeat(3, 1fr); } }
-	@media (min-width: 1024px) { .gallery-grid { grid-template-columns: repeat(4, 1fr); } }
+	@media (min-width: 840px) { .gallery-grid { grid-template-columns: repeat(4, 1fr); } }
 
-	.gallery-item { position: relative; overflow: hidden; border-radius: 12px; aspect-ratio: 1; border: none; padding: 0; cursor: pointer; }
+	.gallery-item { position: relative; overflow: hidden; border-radius: var(--md-shape-corner-medium); aspect-ratio: 1; border: none; padding: 0; cursor: pointer; }
 	.gallery-item img { width: 100%; height: 100%; object-fit: cover; }
 	.gallery-overlay {
-		position: absolute; inset: 0; background: rgba(0,0,0,0.4);
+		position: absolute; inset: 0; background: color-mix(in srgb, var(--md-sys-color-scrim) 40%, transparent);
 		display: flex; align-items: center; justify-content: center;
 		transition: background 0.2s ease;
 	}
 	.gallery-overlay span { font-size: 1.5rem; color: white; }
-	.gallery-item:hover .gallery-overlay { background: rgba(0,0,0,0.6); }
+	.gallery-item:hover .gallery-overlay { background: color-mix(in srgb, var(--md-sys-color-scrim) 60%, transparent); }
 
-	.lightbox { position: fixed; inset: 0; z-index: 50; background: rgba(0,0,0,0.9); display: flex; align-items: center; justify-content: center; padding: 1rem; }
+	.lightbox { position: fixed; inset: 0; z-index: 50; background: color-mix(in srgb, var(--md-sys-color-scrim) 90%, transparent); display: flex; align-items: center; justify-content: center; padding: 1rem; }
 	.lightbox-content { position: relative; max-width: 56rem; width: 100%; }
-	.lightbox-content img { width: 100%; height: auto; border-radius: 12px; }
+	.lightbox-content img { width: 100%; height: auto; border-radius: var(--md-shape-corner-medium); }
 	.lightbox-nav {
 		position: absolute; top: 50%; transform: translateY(-50%);
 		background: rgba(255,255,255,0.2); color: white; border: none;
