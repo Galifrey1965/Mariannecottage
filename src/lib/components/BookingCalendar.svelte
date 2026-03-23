@@ -4,13 +4,16 @@
 
 	interface Props {
 		messages: Messages;
+		lang?: string;
 		availability?: Record<string, boolean>;
 		onDateRangeSelect?: (checkIn: Date, checkOut: Date) => void;
 		minDate?: Date;
 		maxDate?: Date;
 	}
 
-	let { messages, availability = {}, onDateRangeSelect, minDate = new Date(), maxDate }: Props = $props();
+	let { messages, lang = 'en', availability = {}, onDateRangeSelect, minDate = new Date(), maxDate }: Props = $props();
+
+	const mondayStart = $derived(lang === 'fr' || lang === 'de');
 
 	let currentMonth = $state(new Date());
 	let selectedStart: Date | null = $state(null);
@@ -46,14 +49,15 @@
 
 	const getDays = () => {
 		const days: (Date | null)[] = [];
-		const firstDay = getFirstDayOfMonth(currentMonth);
+		let firstDay = getFirstDayOfMonth(currentMonth);
+		if (mondayStart) firstDay = (firstDay + 6) % 7;
 		const daysCount = daysInMonth(currentMonth);
 		for (let i = 0; i < firstDay; i++) days.push(null);
 		for (let i = 1; i <= daysCount; i++) days.push(new Date(currentMonth.getFullYear(), currentMonth.getMonth(), i));
 		return days;
 	};
 
-	const monthName = currentMonth.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+	const monthName = $derived(currentMonth.toLocaleDateString(lang, { month: 'long', year: 'numeric' }));
 	const days = $derived(getDays());
 
 	function dayClass(date: Date): string {
@@ -73,7 +77,10 @@
 	</div>
 
 	<div class="weekdays">
-		{#each [t(messages, 'calendar.sun'), t(messages, 'calendar.mon'), t(messages, 'calendar.tue'), t(messages, 'calendar.wed'), t(messages, 'calendar.thu'), t(messages, 'calendar.fri'), t(messages, 'calendar.sat')] as day}
+		{#each mondayStart
+			? [t(messages, 'calendar.mon'), t(messages, 'calendar.tue'), t(messages, 'calendar.wed'), t(messages, 'calendar.thu'), t(messages, 'calendar.fri'), t(messages, 'calendar.sat'), t(messages, 'calendar.sun')]
+			: [t(messages, 'calendar.sun'), t(messages, 'calendar.mon'), t(messages, 'calendar.tue'), t(messages, 'calendar.wed'), t(messages, 'calendar.thu'), t(messages, 'calendar.fri'), t(messages, 'calendar.sat')]
+		as day}
 			<div class="weekday">{day}</div>
 		{/each}
 	</div>
@@ -98,7 +105,7 @@
 
 	{#if selectedStart && selectedEnd}
 		<div class="selection-info">
-			<strong>{t(messages, 'calendar.selected')}:</strong> {selectedStart.toLocaleDateString()} → {selectedEnd.toLocaleDateString()}
+			<strong>{t(messages, 'calendar.selected')}:</strong> {selectedStart.toLocaleDateString(lang)} → {selectedEnd.toLocaleDateString(lang)}
 		</div>
 	{/if}
 </div>

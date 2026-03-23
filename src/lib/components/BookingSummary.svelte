@@ -4,6 +4,7 @@
 
 	interface Props {
 		messages: Messages;
+		lang?: string;
 		checkInDate?: Date;
 		checkOutDate?: Date;
 		nightly_rate?: number;
@@ -11,7 +12,7 @@
 		cancellationPolicy?: string;
 	}
 
-	let { messages, checkInDate, checkOutDate, nightly_rate = 120, guests = 1, cancellationPolicy }: Props = $props();
+	let { messages, lang = 'en', checkInDate, checkOutDate, nightly_rate = 120, guests = 1, cancellationPolicy }: Props = $props();
 
 	const nights = $derived(
 		checkInDate && checkOutDate
@@ -24,7 +25,7 @@
 	const total = $derived(subtotal + tax);
 
 	const formatCurrency = (amount: number) =>
-		new Intl.NumberFormat('en-US', { style: 'currency', currency: 'EUR' }).format(amount);
+		new Intl.NumberFormat(lang, { style: 'currency', currency: 'EUR' }).format(amount);
 </script>
 
 <div class="summary">
@@ -32,8 +33,8 @@
 
 	{#if checkInDate && checkOutDate}
 		<div class="summary-rows">
-			<div class="row"><span class="label">{t(messages, 'booking_summary.checkin')}</span><span class="value">{checkInDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}</span></div>
-			<div class="row"><span class="label">{t(messages, 'booking_summary.checkout')}</span><span class="value">{checkOutDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}</span></div>
+			<div class="row"><span class="label">{t(messages, 'booking_summary.checkin')}</span><span class="value">{checkInDate.toLocaleDateString(lang, { weekday: 'short', month: 'short', day: 'numeric' })}</span></div>
+			<div class="row"><span class="label">{t(messages, 'booking_summary.checkout')}</span><span class="value">{checkOutDate.toLocaleDateString(lang, { weekday: 'short', month: 'short', day: 'numeric' })}</span></div>
 			<div class="row"><span class="label">{t(messages, 'booking_summary.nights')}</span><span class="value">{nights}</span></div>
 			<div class="row"><span class="label">{t(messages, 'booking_summary.guests')}</span><span class="value">{guests}</span></div>
 		</div>
@@ -41,7 +42,7 @@
 		<hr />
 
 		<div class="summary-rows">
-			<div class="row"><span class="label">{nightly_rate}€ × {nights} nights</span><span class="value">{formatCurrency(subtotal)}</span></div>
+			<div class="row"><span class="label">{nightly_rate}€ × {nights} {nights > 1 ? t(messages, 'book.nights') : t(messages, 'book.night')}</span><span class="value">{formatCurrency(subtotal)}</span></div>
 			<div class="row"><span class="label">{t(messages, 'booking_summary.tax')}</span><span class="value">{formatCurrency(tax)}</span></div>
 		</div>
 

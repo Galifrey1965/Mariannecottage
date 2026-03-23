@@ -136,6 +136,7 @@
 					<h2 class="section-heading">{t(messages, 'book.heading')}</h2>
 					<BookingCalendar
 						{messages}
+						{lang}
 						availability={realAvailability}
 						onDateRangeSelect={handleDateRangeSelect}
 						minDate={new Date()}
@@ -230,11 +231,11 @@
 						<div class="review-rows">
 							<div class="review-row">
 								<span class="review-label">{t(messages, 'book.label_checkin')}</span>
-								<span class="review-value">{checkInDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}</span>
+								<span class="review-value">{checkInDate.toLocaleDateString(lang, { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}</span>
 							</div>
 							<div class="review-row">
 								<span class="review-label">{t(messages, 'book.label_checkout')}</span>
-								<span class="review-value">{checkOutDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}</span>
+								<span class="review-value">{checkOutDate.toLocaleDateString(lang, { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}</span>
 							</div>
 							<div class="review-row">
 								<span class="review-label">{t(messages, 'book.label_duration')}</span>
@@ -263,6 +264,7 @@
 		<div class="sidebar">
 			<BookingSummary
 				{messages}
+				{lang}
 				checkInDate={checkInDate}
 				checkOutDate={checkOutDate}
 				nightly_rate={nightly_rate}

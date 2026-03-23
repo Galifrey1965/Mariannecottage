@@ -18,7 +18,7 @@
 
 	const formatDate = (iso: string) => {
 		if (!iso) return '—';
-		return new Date(iso).toLocaleDateString('en-US', {
+		return new Date(iso).toLocaleDateString(lang, {
 			weekday: 'short', month: 'long', day: 'numeric', year: 'numeric'
 		});
 	};
@@ -26,7 +26,7 @@
 	const formatCurrency = (amount: string) => {
 		const n = parseFloat(amount);
 		if (isNaN(n)) return '—';
-		return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'EUR' }).format(n);
+		return new Intl.NumberFormat(lang, { style: 'currency', currency: 'EUR' }).format(n);
 	};
 </script>
 
