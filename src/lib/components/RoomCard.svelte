@@ -1,15 +1,16 @@
 <script lang="ts">
-	import { localePath } from '$lib/i18n';
-	import type { Locale } from '$lib/i18n';
+	import { localePath, t } from '$lib/i18n';
+	import type { Locale, Messages } from '$lib/i18n';
 
 	interface Props {
 		lang: Locale;
+		messages: Messages;
 		image: string;
 		title: string;
 		description: string;
 	}
 
-	let { lang, image, title, description }: Props = $props();
+	let { lang, messages, image, title, description }: Props = $props();
 </script>
 
 <div class="card">
@@ -17,7 +18,7 @@
 	<div class="card-body">
 		<h3 class="card-title">{title}</h3>
 		<p class="card-text">{description}</p>
-		<a href={localePath(lang, '/rooms')} class="card-link">→ View Details</a>
+		<a href={localePath(lang, '/rooms')} class="card-link">{t(messages, 'room_card.view_details')}</a>
 	</div>
 </div>
 

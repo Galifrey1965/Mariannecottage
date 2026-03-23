@@ -23,23 +23,23 @@
 		{
 			category: 'ww2',
 			items: [
-				{ image: '/images/omaha-beach.jpg', title: 'Omaha Beach', distance: '29 km', description: 'Historic D-Day landing beaches and memorials' },
-				{ image: '/images/la-cambe-cemetery.jpg', title: 'La Cambe German Cemetery', distance: '26 km', description: 'World War II German military cemetery' },
-				{ image: '/images/overlord-museum.jpg', title: 'Overlord Museum', distance: '29 km', description: 'Comprehensive D-Day and WW2 history museum' }
+				{ image: '/images/omaha-beach.jpg', title: t(messages, 'explore.omaha_beach'), distance: '29 km', description: t(messages, 'explore.omaha_desc') },
+				{ image: '/images/la-cambe-cemetery.jpg', title: t(messages, 'explore.la_cambe'), distance: '26 km', description: t(messages, 'explore.la_cambe_desc') },
+				{ image: '/images/overlord-museum.jpg', title: t(messages, 'explore.overlord'), distance: '29 km', description: t(messages, 'explore.overlord_desc') }
 			]
 		},
 		{
 			category: 'nature',
 			items: [
-				{ image: '/images/cerisy-abbey.jpg', title: 'Cerisy Abbey', distance: '5 km', description: 'Beautiful medieval abbey surrounded by nature' },
-				{ image: '/images/haras-saint-lo.jpg', title: 'Haras National de Saint-Lô', distance: '13 km', description: 'Historic stud farm with beautiful gardens' }
+				{ image: '/images/cerisy-abbey.jpg', title: t(messages, 'explore.cerisy'), distance: '5 km', description: t(messages, 'explore.cerisy_desc') },
+				{ image: '/images/haras-saint-lo.jpg', title: t(messages, 'explore.haras'), distance: '13 km', description: t(messages, 'explore.haras_desc') }
 			]
 		},
 		{
 			category: 'towns',
 			items: [
-				{ image: '/images/saint-lo.jpg', title: 'Saint-Lô', distance: '13 km', description: 'Historic medieval town with remarkable architecture' },
-				{ image: '/images/bayeux-cathedral.jpg', title: 'Bayeux', distance: '30 km', description: 'Famous medieval town with stunning cathedral' }
+				{ image: '/images/saint-lo.jpg', title: t(messages, 'explore.saintlo'), distance: '13 km', description: t(messages, 'explore.saintlo_desc') },
+				{ image: '/images/bayeux-cathedral.jpg', title: t(messages, 'explore.bayeux'), distance: '30 km', description: t(messages, 'explore.bayeux_desc') }
 			]
 		}
 	];

@@ -17,15 +17,15 @@
 		<p>{t(messages, 'legal.placeholder')}</p>
 
 		<div class="todo-list">
-			<h2>Information to be completed:</h2>
+			<h2>{t(messages, 'legal.todo_heading')}</h2>
 			<ul>
-				<li>SIRET number</li>
-				<li>Company registration details</li>
-				<li>Hosting provider information</li>
-				<li>Data protection policy (RGPD/GDPR)</li>
-				<li>Cookie policy</li>
-				<li>Terms of service</li>
-				<li>Cancellation policy details</li>
+				<li>{t(messages, 'legal.siret')}</li>
+				<li>{t(messages, 'legal.company')}</li>
+				<li>{t(messages, 'legal.hosting')}</li>
+				<li>{t(messages, 'legal.gdpr')}</li>
+				<li>{t(messages, 'legal.cookies')}</li>
+				<li>{t(messages, 'legal.terms')}</li>
+				<li>{t(messages, 'legal.cancellation')}</li>
 			</ul>
 		</div>
 	</div>

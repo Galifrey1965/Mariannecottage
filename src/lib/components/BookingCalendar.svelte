@@ -1,12 +1,16 @@
 <script lang="ts">
+	import { t } from '$lib/i18n';
+	import type { Messages } from '$lib/i18n';
+
 	interface Props {
+		messages: Messages;
 		availability?: Record<string, boolean>;
 		onDateRangeSelect?: (checkIn: Date, checkOut: Date) => void;
 		minDate?: Date;
 		maxDate?: Date;
 	}
 
-	let { availability = {}, onDateRangeSelect, minDate = new Date(), maxDate }: Props = $props();
+	let { messages, availability = {}, onDateRangeSelect, minDate = new Date(), maxDate }: Props = $props();
 
 	let currentMonth = $state(new Date());
 	let selectedStart: Date | null = $state(null);
@@ -63,13 +67,13 @@
 
 <div class="calendar">
 	<div class="cal-header">
-		<button onclick={prevMonth} class="nav-btn" aria-label="Previous month">‹</button>
+		<button onclick={prevMonth} class="nav-btn" aria-label={t(messages, 'calendar.prev_month')}>‹</button>
 		<h2 class="month-title">{monthName}</h2>
-		<button onclick={nextMonth} class="nav-btn" aria-label="Next month">›</button>
+		<button onclick={nextMonth} class="nav-btn" aria-label={t(messages, 'calendar.next_month')}>›</button>
 	</div>
 
 	<div class="weekdays">
-		{#each ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] as day}
+		{#each [t(messages, 'calendar.sun'), t(messages, 'calendar.mon'), t(messages, 'calendar.tue'), t(messages, 'calendar.wed'), t(messages, 'calendar.thu'), t(messages, 'calendar.fri'), t(messages, 'calendar.sat')] as day}
 			<div class="weekday">{day}</div>
 		{/each}
 	</div>
@@ -87,14 +91,14 @@
 	</div>
 
 	<div class="legend">
-		<div class="legend-item"><div class="legend-swatch available"></div><span>Available</span></div>
-		<div class="legend-item"><div class="legend-swatch unavailable"></div><span>Unavailable</span></div>
-		<div class="legend-item"><div class="legend-swatch past"></div><span>Past Date</span></div>
+		<div class="legend-item"><div class="legend-swatch available"></div><span>{t(messages, 'calendar.available')}</span></div>
+		<div class="legend-item"><div class="legend-swatch unavailable"></div><span>{t(messages, 'calendar.unavailable')}</span></div>
+		<div class="legend-item"><div class="legend-swatch past"></div><span>{t(messages, 'calendar.past_date')}</span></div>
 	</div>
 
 	{#if selectedStart && selectedEnd}
 		<div class="selection-info">
-			<strong>Selected:</strong> {selectedStart.toLocaleDateString()} → {selectedEnd.toLocaleDateString()}
+			<strong>{t(messages, 'calendar.selected')}:</strong> {selectedStart.toLocaleDateString()} → {selectedEnd.toLocaleDateString()}
 		</div>
 	{/if}
 </div>

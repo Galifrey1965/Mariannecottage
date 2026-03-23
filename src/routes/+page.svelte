@@ -47,15 +47,17 @@
 	<div class="rooms-grid">
 		<RoomCard
 			{lang}
+			{messages}
 			image="/images/2024-12-15.jpg"
-			title="Bedroom 1"
-			description="Comfortable bedroom with garden views"
+			title={t(messages, 'home.rooms_data.bedroom1')}
+			description={t(messages, 'home.rooms_data.bedroom1_desc')}
 		/>
 		<RoomCard
 			{lang}
+			{messages}
 			image="/images/2024-12-15%20(1).jpg"
-			title="Bedroom 2"
-			description="Second bedroom with natural light"
+			title={t(messages, 'home.rooms_data.bedroom2')}
+			description={t(messages, 'home.rooms_data.bedroom2_desc')}
 		/>
 	</div>
 	<div class="cta-center">
@@ -71,21 +73,21 @@
 			image="/images/omaha-beach.jpg"
 			title={t(messages, 'home.attractions.dday')}
 			distance="29 km"
-			description="Historic D-Day landing beaches and memorials"
+			description={t(messages, 'home.attractions_data.dday_desc')}
 			category={t(messages, 'explore.category.ww2')}
 		/>
 		<AttractionCard
 			image="/images/cerisy-abbey.jpg"
 			title={t(messages, 'home.attractions.cerisy')}
 			distance="5 km"
-			description="Beautiful medieval abbey in the countryside"
+			description={t(messages, 'home.attractions_data.cerisy_desc')}
 			category={t(messages, 'explore.category.nature')}
 		/>
 		<AttractionCard
 			image="/images/saint-lo.jpg"
 			title={t(messages, 'home.attractions.saintlo')}
 			distance="13 km"
-			description="Historic town with remarkable architecture"
+			description={t(messages, 'home.attractions_data.saintlo_desc')}
 			category={t(messages, 'explore.category.towns')}
 		/>
 	</div>

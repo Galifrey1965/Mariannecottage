@@ -1,5 +1,9 @@
 <script lang="ts">
+	import { t } from '$lib/i18n';
+	import type { Messages } from '$lib/i18n';
+
 	interface Props {
+		messages: Messages;
 		checkInDate?: Date;
 		checkOutDate?: Date;
 		nightly_rate?: number;
@@ -7,7 +11,7 @@
 		cancellationPolicy?: string;
 	}
 
-	let { checkInDate, checkOutDate, nightly_rate = 120, guests = 1, cancellationPolicy }: Props = $props();
+	let { messages, checkInDate, checkOutDate, nightly_rate = 120, guests = 1, cancellationPolicy }: Props = $props();
 
 	const nights = $derived(
 		checkInDate && checkOutDate
@@ -24,37 +28,37 @@
 </script>
 
 <div class="summary">
-	<h2 class="summary-title">Booking Summary</h2>
+	<h2 class="summary-title">{t(messages, 'booking_summary.title')}</h2>
 
 	{#if checkInDate && checkOutDate}
 		<div class="summary-rows">
-			<div class="row"><span class="label">Check-in:</span><span class="value">{checkInDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}</span></div>
-			<div class="row"><span class="label">Check-out:</span><span class="value">{checkOutDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}</span></div>
-			<div class="row"><span class="label">Nights:</span><span class="value">{nights}</span></div>
-			<div class="row"><span class="label">Guests:</span><span class="value">{guests}</span></div>
+			<div class="row"><span class="label">{t(messages, 'booking_summary.checkin')}</span><span class="value">{checkInDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}</span></div>
+			<div class="row"><span class="label">{t(messages, 'booking_summary.checkout')}</span><span class="value">{checkOutDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}</span></div>
+			<div class="row"><span class="label">{t(messages, 'booking_summary.nights')}</span><span class="value">{nights}</span></div>
+			<div class="row"><span class="label">{t(messages, 'booking_summary.guests')}</span><span class="value">{guests}</span></div>
 		</div>
 
 		<hr />
 
 		<div class="summary-rows">
 			<div class="row"><span class="label">{nightly_rate}€ × {nights} nights</span><span class="value">{formatCurrency(subtotal)}</span></div>
-			<div class="row"><span class="label">Tax (10%)</span><span class="value">{formatCurrency(tax)}</span></div>
+			<div class="row"><span class="label">{t(messages, 'booking_summary.tax')}</span><span class="value">{formatCurrency(tax)}</span></div>
 		</div>
 
 		<hr />
 
 		<div class="total-row">
-			<span>Total</span>
+			<span>{t(messages, 'booking_summary.total')}</span>
 			<span class="total-value">{formatCurrency(total)}</span>
 		</div>
 
 		{#if cancellationPolicy}
 			<div class="policy-box">
-				<strong>Cancellation:</strong> {cancellationPolicy}
+				<strong>{t(messages, 'booking_summary.cancellation')}</strong> {cancellationPolicy}
 			</div>
 		{/if}
 	{:else}
-		<div class="empty">Select check-in and check-out dates to see pricing</div>
+		<div class="empty">{t(messages, 'booking_summary.empty')}</div>
 	{/if}
 </div>
 

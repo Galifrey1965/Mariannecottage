@@ -13,7 +13,7 @@
 	let checkInDate: Date | undefined = $state();
 	let checkOutDate: Date | undefined = $state();
 	const nightly_rate = 120;
-	const cancellationPolicy = 'Free cancellation up to 7 days before arrival';
+	const cancellationPolicy = $derived(t(messages, 'book.cancellation_policy'));
 
 	let guestName = $state('');
 	let guestEmail = $state('');
@@ -44,10 +44,10 @@
 
 	function validate(): boolean {
 		const errors: Record<string, string> = {};
-		if (!guestName.trim()) errors.guestName = 'Name is required';
-		if (!guestEmail.trim()) errors.guestEmail = 'Email is required';
-		else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(guestEmail)) errors.guestEmail = 'Invalid email';
-		if (guestPhone && !/^[+\d\s()-]{7,20}$/.test(guestPhone)) errors.guestPhone = 'Invalid phone number';
+		if (!guestName.trim()) errors.guestName = t(messages, 'book.error_name_required');
+		if (!guestEmail.trim()) errors.guestEmail = t(messages, 'book.error_email_required');
+		else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(guestEmail)) errors.guestEmail = t(messages, 'book.error_email_invalid');
+		if (guestPhone && !/^[+\d\s()-]{7,20}$/.test(guestPhone)) errors.guestPhone = t(messages, 'book.error_phone_invalid');
 		fieldErrors = errors;
 		return Object.keys(errors).length === 0;
 	}
@@ -78,7 +78,7 @@
 			});
 			const result = await res.json();
 			if (!result.success) {
-				formError = result.error || 'Booking failed. Please try again.';
+				formError = result.error || t(messages, 'book.error_booking_failed');
 				return;
 			}
 			const params = new URLSearchParams({
@@ -93,7 +93,7 @@
 			});
 			goto(`/book/confirm?${params.toString()}`);
 		} catch {
-			formError = 'Network error. Please try again.';
+			formError = t(messages, 'book.error_network');
 		} finally {
 			submitting = false;
 		}
@@ -109,7 +109,7 @@
 
 	<!-- Step indicator -->
 	<div class="steps">
-		{#each [{ n: 1, label: 'Dates' }, { n: 2, label: 'Details' }, { n: 3, label: 'Review' }] as s}
+		{#each [{ n: 1, label: t(messages, 'book.step_dates') }, { n: 2, label: t(messages, 'book.step_details') }, { n: 3, label: t(messages, 'book.step_review') }] as s}
 			<button
 				onclick={() => { if (s.n === 1 || (s.n === 2 && checkInDate && checkOutDate) || (s.n === 3 && checkInDate && checkOutDate && guestName && guestEmail)) step = s.n as 1 | 2 | 3; }}
 				class="step-btn"
@@ -135,6 +135,7 @@
 				<div>
 					<h2 class="section-heading">{t(messages, 'book.heading')}</h2>
 					<BookingCalendar
+						{messages}
 						availability={realAvailability}
 						onDateRangeSelect={handleDateRangeSelect}
 						minDate={new Date()}
@@ -144,40 +145,40 @@
 
 			{#if step === 2}
 				<div class="form-card">
-					<h2 class="section-heading">Guest Details</h2>
+					<h2 class="section-heading">{t(messages, 'book.guest_details')}</h2>
 
 					<div class="form-fields">
 						<div class="field">
-							<label for="guestName" class="field-label">Full Name *</label>
-							<input id="guestName" type="text" bind:value={guestName} class="field-input" class:error={fieldErrors.guestName} placeholder="John Smith" autocomplete="name" />
+							<label for="guestName" class="field-label">{t(messages, 'book.full_name')} *</label>
+							<input id="guestName" type="text" bind:value={guestName} class="field-input" class:error={fieldErrors.guestName} placeholder={t(messages, 'book.placeholder_name')} autocomplete="name" />
 							{#if fieldErrors.guestName}<p class="field-error">{fieldErrors.guestName}</p>{/if}
 						</div>
 
 						<div class="field">
-							<label for="guestEmail" class="field-label">Email Address *</label>
-							<input id="guestEmail" type="email" bind:value={guestEmail} class="field-input" class:error={fieldErrors.guestEmail} placeholder="john@example.com" autocomplete="email" />
+							<label for="guestEmail" class="field-label">{t(messages, 'book.email_address')} *</label>
+							<input id="guestEmail" type="email" bind:value={guestEmail} class="field-input" class:error={fieldErrors.guestEmail} placeholder={t(messages, 'book.placeholder_email')} autocomplete="email" />
 							{#if fieldErrors.guestEmail}<p class="field-error">{fieldErrors.guestEmail}</p>{/if}
 						</div>
 
 						<div class="field-row">
 							<div class="field">
-								<label for="guestPhone" class="field-label">Phone</label>
-								<input id="guestPhone" type="tel" bind:value={guestPhone} class="field-input" class:error={fieldErrors.guestPhone} placeholder="+33 7 80 73 17 04" autocomplete="tel" />
+								<label for="guestPhone" class="field-label">{t(messages, 'book.phone')}</label>
+								<input id="guestPhone" type="tel" bind:value={guestPhone} class="field-input" class:error={fieldErrors.guestPhone} placeholder={t(messages, 'book.placeholder_phone')} autocomplete="tel" />
 								{#if fieldErrors.guestPhone}<p class="field-error">{fieldErrors.guestPhone}</p>{/if}
 							</div>
 							<div class="field">
-								<label for="guestCountry" class="field-label">Country</label>
+								<label for="guestCountry" class="field-label">{t(messages, 'book.country')}</label>
 								<select id="guestCountry" bind:value={guestCountry} class="field-input">
-									<option value="">Select country</option>
-									<option value="FR">France</option>
-									<option value="GB">United Kingdom</option>
-									<option value="DE">Germany</option>
-									<option value="NL">Netherlands</option>
-									<option value="BE">Belgium</option>
-									<option value="US">United States</option>
-									<option value="CA">Canada</option>
-									<option value="AU">Australia</option>
-									<option value="OTHER">Other</option>
+									<option value="">{t(messages, 'book.select_country')}</option>
+									<option value="FR">{t(messages, 'book.country_fr')}</option>
+									<option value="GB">{t(messages, 'book.country_gb')}</option>
+									<option value="DE">{t(messages, 'book.country_de')}</option>
+									<option value="NL">{t(messages, 'book.country_nl')}</option>
+									<option value="BE">{t(messages, 'book.country_be')}</option>
+									<option value="US">{t(messages, 'book.country_us')}</option>
+									<option value="CA">{t(messages, 'book.country_ca')}</option>
+									<option value="AU">{t(messages, 'book.country_au')}</option>
+									<option value="OTHER">{t(messages, 'book.country_other')}</option>
 								</select>
 							</div>
 						</div>
@@ -185,21 +186,21 @@
 						<div class="field">
 							<label for="guests" class="field-label">{t(messages, 'book.guests')} *</label>
 							<select id="guests" bind:value={guests} class="field-input">
-								<option value={1}>1 Guest</option>
-								<option value={2}>2 Guests</option>
-								<option value={3}>3 Guests</option>
-								<option value={4}>4 Guests</option>
+								<option value={1}>1 {t(messages, 'booking_confirm.guest')}</option>
+								<option value={2}>2 {t(messages, 'booking_confirm.guests')}</option>
+								<option value={3}>3 {t(messages, 'booking_confirm.guests')}</option>
+								<option value={4}>4 {t(messages, 'booking_confirm.guests')}</option>
 							</select>
 						</div>
 
 						<div class="field">
-							<label for="specialRequests" class="field-label">Special Requests</label>
-							<textarea id="specialRequests" bind:value={specialRequests} class="field-input textarea" rows="3" placeholder="Dietary requirements, arrival time, etc."></textarea>
+							<label for="specialRequests" class="field-label">{t(messages, 'book.special_requests')}</label>
+							<textarea id="specialRequests" bind:value={specialRequests} class="field-input textarea" rows="3" placeholder={t(messages, 'book.placeholder_requests')}></textarea>
 						</div>
 
 						<div class="actions">
-							<button onclick={() => step = 1} class="btn-outline">Back</button>
-							<button onclick={goToReview} class="btn-primary flex-1">Review Booking</button>
+							<button onclick={() => step = 1} class="btn-outline">{t(messages, 'book.back')}</button>
+							<button onclick={goToReview} class="btn-primary flex-1">{t(messages, 'book.review_booking')}</button>
 						</div>
 					</div>
 				</div>
@@ -207,19 +208,19 @@
 
 			{#if step === 3}
 				<div class="form-card">
-					<h2 class="section-heading">Review Your Booking</h2>
+					<h2 class="section-heading">{t(messages, 'book.review_heading')}</h2>
 
 					<div class="review-rows">
-						<div class="review-row"><span class="review-label">Name</span><span class="review-value">{guestName}</span></div>
-						<div class="review-row"><span class="review-label">Email</span><span class="review-value">{guestEmail}</span></div>
+						<div class="review-row"><span class="review-label">{t(messages, 'book.label_name')}</span><span class="review-value">{guestName}</span></div>
+						<div class="review-row"><span class="review-label">{t(messages, 'book.label_email')}</span><span class="review-value">{guestEmail}</span></div>
 						{#if guestPhone}
-							<div class="review-row"><span class="review-label">Phone</span><span class="review-value">{guestPhone}</span></div>
+							<div class="review-row"><span class="review-label">{t(messages, 'book.label_phone')}</span><span class="review-value">{guestPhone}</span></div>
 						{/if}
 						{#if guestCountry}
-							<div class="review-row"><span class="review-label">Country</span><span class="review-value">{guestCountry}</span></div>
+							<div class="review-row"><span class="review-label">{t(messages, 'book.label_country')}</span><span class="review-value">{guestCountry}</span></div>
 						{/if}
 						{#if specialRequests}
-							<div class="review-block"><span class="review-label">Special Requests</span><p class="review-value">{specialRequests}</p></div>
+							<div class="review-block"><span class="review-label">{t(messages, 'book.label_special_requests')}</span><p class="review-value">{specialRequests}</p></div>
 						{/if}
 					</div>
 
@@ -228,16 +229,16 @@
 					{#if checkInDate && checkOutDate}
 						<div class="review-rows">
 							<div class="review-row">
-								<span class="review-label">Check-in</span>
+								<span class="review-label">{t(messages, 'book.label_checkin')}</span>
 								<span class="review-value">{checkInDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}</span>
 							</div>
 							<div class="review-row">
-								<span class="review-label">Check-out</span>
+								<span class="review-label">{t(messages, 'book.label_checkout')}</span>
 								<span class="review-value">{checkOutDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}</span>
 							</div>
 							<div class="review-row">
-								<span class="review-label">Duration</span>
-								<span class="review-value">{nights} night{nights > 1 ? 's' : ''}</span>
+								<span class="review-label">{t(messages, 'book.label_duration')}</span>
+								<span class="review-value">{nights} {nights > 1 ? t(messages, 'book.nights') : t(messages, 'book.night')}</span>
 							</div>
 						</div>
 					{/if}
@@ -247,9 +248,9 @@
 					{/if}
 
 					<div class="actions">
-						<button onclick={() => step = 2} class="btn-outline">Back</button>
+						<button onclick={() => step = 2} class="btn-outline">{t(messages, 'book.back')}</button>
 						<button onclick={submitBooking} disabled={submitting} class="btn-primary flex-1">
-							{#if submitting}Submitting...{:else}Confirm Booking{/if}
+							{#if submitting}{t(messages, 'book.submitting')}{:else}{t(messages, 'book.confirm_booking')}{/if}
 						</button>
 					</div>
 
@@ -261,6 +262,7 @@
 		<!-- Sidebar Summary -->
 		<div class="sidebar">
 			<BookingSummary
+				{messages}
 				checkInDate={checkInDate}
 				checkOutDate={checkOutDate}
 				nightly_rate={nightly_rate}
@@ -269,11 +271,11 @@
 			/>
 
 			<div class="rates-box">
-				<h3 class="rates-title">Seasonal Rates</h3>
+				<h3 class="rates-title">{t(messages, 'book.seasonal_rates')}</h3>
 				<div class="rates-list">
-					<div class="rate-row"><span>Low (Nov-Feb)</span><span class="rate-value">€85/night</span></div>
-					<div class="rate-row"><span>High (Mar-Oct)</span><span class="rate-value">€120/night</span></div>
-					<div class="rate-row peak"><span>Peak (D-Day week)</span><span class="rate-value">€140/night</span></div>
+					<div class="rate-row"><span>{t(messages, 'book.rate_low')}</span><span class="rate-value">{t(messages, 'book.rate_low_price')}</span></div>
+					<div class="rate-row"><span>{t(messages, 'book.rate_high')}</span><span class="rate-value">{t(messages, 'book.rate_high_price')}</span></div>
+					<div class="rate-row peak"><span>{t(messages, 'book.rate_peak')}</span><span class="rate-value">{t(messages, 'book.rate_peak_price')}</span></div>
 				</div>
 			</div>
 		</div>
@@ -281,7 +283,7 @@
 
 	<!-- Support -->
 	<div class="support-section">
-		<p class="support-text">Need help with your booking?</p>
+		<p class="support-text">{t(messages, 'book.need_help')}</p>
 		<a href={localePath(lang, '/contact')} class="btn-secondary">
 			{t(messages, 'book.contact_us')}
 		</a>

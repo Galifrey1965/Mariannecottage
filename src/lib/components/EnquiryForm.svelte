@@ -15,7 +15,7 @@
 
 	async function handleSubmit() {
 		if (!formData.name || !formData.email || !formData.message) {
-			error = 'All fields are required';
+			error = t(messages, 'enquiry_form.all_fields_required');
 			return;
 		}
 
@@ -73,7 +73,7 @@
 	</div>
 
 	<button type="submit" class="submit-btn" disabled={isSubmitting}>
-		{isSubmitting ? 'Sending...' : t(messages, 'contact.form.submit')}
+		{isSubmitting ? t(messages, 'enquiry_form.sending') : t(messages, 'contact.form.submit')}
 	</button>
 </form>
 

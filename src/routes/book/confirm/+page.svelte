@@ -42,7 +42,7 @@
 		</div>
 		<h1 class="success-title">{t(messages, 'booking_confirm.thank_you')}</h1>
 		<p class="success-subtitle">
-			A confirmation email will be sent to <strong>{email}</strong>
+			{t(messages, 'booking_confirm.confirmation_email')} <strong>{email}</strong>
 		</p>
 	</div>
 
@@ -58,24 +58,24 @@
 
 		<div class="summary-grid">
 			<div class="summary-item">
-				<p class="item-label">Guest</p>
+				<p class="item-label">{t(messages, 'booking_confirm.guest')}</p>
 				<p class="item-value">{name}</p>
 			</div>
 			<div class="summary-item">
 				<p class="item-label">{t(messages, 'booking_confirm.guests')}</p>
-				<p class="item-value">{guestCount} guest{Number(guestCount) > 1 ? 's' : ''}</p>
+				<p class="item-value">{guestCount} {Number(guestCount) > 1 ? t(messages, 'booking_confirm.guests') : t(messages, 'booking_confirm.guest')}</p>
 			</div>
 			<div class="summary-item">
-				<p class="item-label">Check-in</p>
+				<p class="item-label">{t(messages, 'booking_confirm.label_checkin')}</p>
 				<p class="item-value">{formatDate(checkin)}</p>
 			</div>
 			<div class="summary-item">
-				<p class="item-label">Check-out</p>
+				<p class="item-label">{t(messages, 'booking_confirm.label_checkout')}</p>
 				<p class="item-value">{formatDate(checkout)}</p>
 			</div>
 			<div class="summary-item">
-				<p class="item-label">Duration</p>
-				<p class="item-value">{nights} night{Number(nights) > 1 ? 's' : ''}</p>
+				<p class="item-label">{t(messages, 'booking_confirm.label_duration')}</p>
+				<p class="item-value">{nights} {Number(nights) > 1 ? t(messages, 'book.nights') : t(messages, 'book.night')}</p>
 			</div>
 		</div>
 
@@ -87,7 +87,7 @@
 		</div>
 
 		<p class="status-note">
-			Status: <span class="status-pending">Pending</span> — payment integration coming soon
+			{t(messages, 'booking_confirm.status')}: <span class="status-pending">{t(messages, 'booking_confirm.status_pending')}</span> — {t(messages, 'booking_confirm.status_note')}
 		</p>
 	</div>
 
@@ -96,7 +96,7 @@
 		<h3 class="directions-heading">{t(messages, 'booking_confirm.directions')}</h3>
 		<p class="directions-text">{t(messages, 'booking_confirm.important')}</p>
 		<p class="directions-text address">
-			<strong>Address:</strong> 1 La Haye, 50680 Couvains, Normandy, France
+			<strong>{t(messages, 'booking_confirm.address')}:</strong> {t(messages, 'contact.address')}
 		</p>
 	</div>
 
@@ -107,7 +107,7 @@
 
 	<!-- CTA -->
 	<div class="cta-center">
-		<a href={localePath(lang, '/')} class="cta-button">Back to Home</a>
+		<a href={localePath(lang, '/')} class="cta-button">{t(messages, 'booking_confirm.back_home')}</a>
 	</div>
 </section>
 
