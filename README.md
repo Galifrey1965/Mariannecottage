@@ -15,7 +15,7 @@ Charming 1800s farmhouse B&B in Normandy with 2 bedrooms. Multi-language site (E
 | **1: Static Brochure** | ✅ COMPLETE | 7 pages, EN/FR/DE, responsive design, testimonials, gallery |
 | **2: Interactive Maps** | ✅ COMPLETE | Leaflet maps (Explore + Contact), 9 attraction markers, category filtering |
 | **2.5: Material Design 3 System** | ✅ COMPLETE | Design tokens, Light/Dark themes, M3 components, Navigation Rail/Bar, animations |
-| **3: Booking System** | 🔲 TODO | Calendar, availability, email confirmations, Supabase integration |
+| **3: Booking System** | 🔄 IN PROGRESS | Calendar, guest form, booking API, confirmation page, Supabase live, admin dashboard |
 | **4: Stripe Payments** | 🔲 TODO | Secure checkout, invoice generation, webhook handling |
 
 ---
@@ -389,42 +389,65 @@ src/
 
 ---
 
-## Phase 3: Booking System (TODO)
+## Phase 3: Booking System 🔄
 
-**Planned Features:**
-- Calendar picker (availability from Booking.com iCal feed)
-- Guest count selector
-- Rate plan display (nightly rates)
-- Booking summary + total cost
-- Email confirmation with booking reference
-- Supabase database: bookings table, guests table
-- Admin dashboard to view/manage bookings
-- Automated reminder emails (3 days before arrival)
+**Progress:**
 
-**Database Schema:**
-```sql
-CREATE TABLE bookings (
-  id UUID PRIMARY KEY,
-  created_at TIMESTAMP,
-  arrival_date DATE NOT NULL,
-  departure_date DATE NOT NULL,
-  guest_name TEXT NOT NULL,
-  guest_email TEXT NOT NULL,
-  guest_phone TEXT,
-  num_guests INT NOT NULL,
-  rate_plan TEXT,
-  total_cost DECIMAL,
-  notes TEXT,
-  status TEXT DEFAULT 'pending'
-);
+| Sub-task | Status | Notes |
+|----------|--------|-------|
+| Booking calendar component | ✅ Done | Date range selection, availability states, M3 styled |
+| Booking summary panel | ✅ Done | Nights calc, pricing breakdown, tax, currency formatting |
+| Guest details form | ✅ Done | 3-step wizard (Dates → Details → Review), validation |
+| Booking API endpoint | ✅ Done | Real Supabase insert, validates, generates MC-YYYYMMDD-XXXX ref |
+| Confirmation page | ✅ Done | M3 styled, shows ref/dates/total, directions |
+| Supabase schema design | ✅ Done | 3 tables: bookings, availability, rate_plans (see supabase-schema.sql) |
+| Supabase client utility | ✅ Done | TypeScript interfaces, CRUD functions, admin/anon clients |
+| Supabase DB + keys | ✅ Done | Tables created, RLS enabled, test data seeded, insert/read/delete verified |
+| Real availability | ✅ Done | Booking page fetches from Supabase via server load |
+| Admin dashboard | ✅ Done | Login gate, stats, search/filter, detail panel, status updates, admin notes |
+| Admin API | ✅ Done | GET (list/filter), PATCH (status/notes) — real Supabase queries |
+| Email confirmations | 🔲 TODO | Booking receipt, reminder emails |
 
-CREATE TABLE availability (
-  id UUID PRIMARY KEY,
-  date DATE,
-  available BOOLEAN,
-  synced_from TEXT
-);
+**Key Files:**
 ```
+src/routes/book/+page.svelte           # 3-step booking wizard
+src/routes/book/+page.server.ts        # Server load: fetches real availability
+src/routes/book/confirm/+page.svelte   # Confirmation page
+src/routes/api/book/+server.ts         # Booking API (real Supabase insert)
+src/routes/admin/+page.svelte          # Admin dashboard (login, table, detail panel)
+src/routes/admin/+layout.svelte        # Admin layout (no public nav)
+src/routes/api/admin/login/+server.ts  # Admin auth (POST login, DELETE logout)
+src/routes/api/admin/bookings/+server.ts # Admin bookings (GET list, PATCH update)
+src/lib/server/supabase.ts             # Supabase client + types + CRUD
+src/lib/components/BookingCalendar.svelte
+src/lib/components/BookingSummary.svelte
+supabase-schema.sql                    # Full SQL schema + RLS + test data
+```
+
+**Database Schema (3 tables):**
+```sql
+-- bookings: 20+ columns (guest details, dates, pricing, status, payment)
+-- availability: date-based availability with sync metadata
+-- rate_plans: seasonal rates with date ranges
+-- See SUPABASE_SETUP.md for full SQL
+```
+
+**Booking Flow:**
+1. Server loads real availability from Supabase → calendar shows available/blocked dates
+2. Select dates on calendar → step 2
+3. Fill guest details (name*, email*, phone, country, guests*, requests) → step 3
+4. Review all details → submit
+5. POST `/api/book` → validates, inserts into Supabase, generates MC-YYYYMMDD-XXXX reference
+6. Redirect to `/book/confirm?ref=...` with booking summary
+
+**Admin Dashboard (`/admin`):**
+- Password-protected login (cookie-based, 8hr session)
+- Stats: confirmed/pending counts, revenue, upcoming bookings
+- Search by name, email, or booking reference
+- Filter by status (all/pending/confirmed/cancelled)
+- Desktop table + mobile card layouts
+- Slide-over detail panel: change status, view guest/stay/pricing details, admin notes
+- All data from real Supabase queries
 
 ---
 
@@ -572,10 +595,11 @@ Private project for Marianne Cottage B&B. All rights reserved.
 ## Team
 
 - **Owners:** Mark & Kim
-- **Developer:** Claude Code (AI Assistant)
+- **Developer:** MintyMods (MintyMods@gmail.com)
+- **AI Assistant:** Claude Code
 - **Contact:** mariannecattage@gmail.com | +33 (0)7 80 73 17 04
 
 ---
 
-**Last Updated:** 2026-03-22
-**Phase 2 Complete:** Interactive Leaflet maps deployed to production
+**Last Updated:** 2026-03-23
+**Current:** Phase 3 near complete — Supabase live, booking flow + admin dashboard working, email TODO
