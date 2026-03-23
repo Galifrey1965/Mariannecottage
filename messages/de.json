@@ -247,7 +247,8 @@
     "available": "Verfügbar",
     "unavailable": "Nicht verfügbar",
     "past_date": "Vergangen",
-    "selected": "Ausgewählt"
+    "selected": "Ausgewählt",
+    "select_checkout": "Wählen Sie Ihr Abreisedatum"
   },
   "booking_summary": {
     "title": "Buchungszusammenfassung",
