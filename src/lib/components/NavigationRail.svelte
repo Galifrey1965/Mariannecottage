@@ -51,9 +51,15 @@
 		overflow-y: auto;
 	}
 
-	@media (min-width: 840px) {
+	@media (min-width: 600px) {
 		.rail {
 			display: flex;
+		}
+	}
+
+	@media (min-width: 840px) {
+		.rail {
+			display: none;
 		}
 	}
 

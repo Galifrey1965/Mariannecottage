@@ -195,7 +195,7 @@
 		background: var(--color-cream);
 	}
 
-	@media (min-width: 840px) {
+	@media (min-width: 600px) {
 		.menu-toggle { display: none; }
 	}
 

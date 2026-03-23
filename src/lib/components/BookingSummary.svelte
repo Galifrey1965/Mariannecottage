@@ -41,7 +41,7 @@
 		<hr />
 
 		<div class="summary-rows">
-			<div class="row"><span class="label">{nightly_rate}€ × {nights} nights</span><span class="value">{fmtCurrency(subtotal)}</span></div>
+			<div class="row"><span class="label">{nightly_rate}€ × {nights} {nights > 1 ? t(messages, 'book.nights') : t(messages, 'book.night')}</span><span class="value">{fmtCurrency(subtotal)}</span></div>
 			<div class="row"><span class="label">{t(messages, 'booking_summary.tax')}</span><span class="value">{fmtCurrency(tax)}</span></div>
 		</div>
 

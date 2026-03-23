@@ -248,7 +248,8 @@
     "available": "Available",
     "unavailable": "Unavailable",
     "past_date": "Past Date",
-    "selected": "Selected"
+    "selected": "Selected",
+    "select_checkout": "Select your check-out date"
   },
   "booking_summary": {
     "title": "Booking Summary",

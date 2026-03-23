@@ -17,6 +17,7 @@ Charming 1800s farmhouse B&B in Normandy with 2 bedrooms. Multi-language site (E
 | **2.5: Material Design 3 System** | ✅ COMPLETE | Design tokens, Light/Dark themes, M3 components, Navigation Rail/Bar, animations |
 | **3: Booking System** | ✅ COMPLETE | Calendar, guest form, booking API, confirmation page, Supabase live, admin dashboard |
 | **4: SMUI Migration** | ✅ COMPLETE | Removed Tailwind CSS, migrated to SMUI v8 + scoped CSS, consistent theming |
+| **5: i18n Completion** | ✅ COMPLETE | Locale-aware dates/currency, Monday-start calendar for FR/DE, all hardcoded strings translated |
 
 **Future Features (Parked):**
 
@@ -87,6 +88,21 @@ static/smui-dark.css                  # Compiled dark theme
 - ✅ `npm run build` — succeeds, no errors
 - ✅ Zero Tailwind references remaining in `src/`
 - ✅ All pages use scoped CSS with project CSS variables
+
+---
+
+## Phase 5: i18n Completion ✅
+
+Fixed all hardcoded locale strings across the booking system.
+
+**What changed:**
+- `BookingCalendar.svelte` — month/year header, selected range display now use active `lang`
+- `BookingSummary.svelte` — dates, currency formatting, "nights" text all locale-aware
+- `book/+page.svelte` — step 3 review dates use `lang`, passes `lang` to child components
+- `book/confirm/+page.svelte` — confirmation dates and currency use `lang`
+- Calendar week starts Monday for FR/DE locales (European convention)
+- `Intl.NumberFormat` uses active locale instead of hardcoded `'en-US'`
+- Hardcoded English "nights" in BookingSummary replaced with translation keys
 
 ---
 
@@ -351,4 +367,4 @@ Private project for Marianne Cottage B&B. All rights reserved.
 ---
 
 **Last Updated:** 2026-03-23
-**Current:** Phase 4 complete — Tailwind removed, SMUI migration done, all pages using scoped CSS. Email + Stripe parked as future features.
+**Current:** Phase 5 complete — booking calendar/dates/currency fully i18n'd across EN/FR/DE. Email + Stripe parked as future features.

@@ -248,7 +248,8 @@
     "available": "Disponible",
     "unavailable": "Indisponible",
     "past_date": "Date passée",
-    "selected": "Sélectionné"
+    "selected": "Sélectionné",
+    "select_checkout": "Sélectionnez votre date de départ"
   },
   "booking_summary": {
     "title": "Résumé de la Réservation",

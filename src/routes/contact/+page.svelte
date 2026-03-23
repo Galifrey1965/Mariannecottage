@@ -50,13 +50,13 @@
 			<div class="info-block">
 				<h3 class="info-heading">{t(messages, 'contact.social.heading')}</h3>
 				<div class="social-links">
-					<a href="https://booking.com" target="_blank" rel="noopener" class="fab-link" aria-label="{t(messages, 'contact.social.booking_com')} ({t(messages, 'a11y.opens_new_window')})">
+					<a href="https://www.booking.com/hotel/fr/marianne-cottage.html" target="_blank" rel="noopener" class="fab-link" aria-label="{t(messages, 'contact.social.booking_com')} ({t(messages, 'a11y.opens_new_window')})">
 						<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
 							<path d="M2 7h10v2H4v6h8v2H2V7zm12-2h8v14h-8v-2h6V7h-6V5zM8 11h2v2H8v-2z"/>
 						</svg>
 						<span>{t(messages, 'contact.social.booking_com')}</span>
 					</a>
-					<a href="https://tripadvisor.com" target="_blank" rel="noopener" class="fab-link" aria-label="{t(messages, 'contact.social.tripadvisor')} ({t(messages, 'a11y.opens_new_window')})">
+					<a href="https://www.tripadvisor.com/Hotel_Review-g12080400-d27963962-Reviews-Marianne_Cottage_Bed_And_Breakfast-Couvains_Manche_Basse_Normandie_Normandy.html" target="_blank" rel="noopener" class="fab-link" aria-label="{t(messages, 'contact.social.tripadvisor')} ({t(messages, 'a11y.opens_new_window')})">
 						<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
 							<path d="M12 2C7.64 2 3.89 4.03 2.36 7H.5l1.9 2.16A5.5 5.5 0 0 0 6.5 17a5.48 5.48 0 0 0 4.25-2l1.25 1.5 1.25-1.5A5.48 5.48 0 0 0 17.5 17a5.5 5.5 0 0 0 4.1-7.84L23.5 7h-1.86C20.11 4.03 16.36 2 12 2zm-5.5 13a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7zm11 0a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7zM6.5 10.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm11 0a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z"/>
 						</svg>

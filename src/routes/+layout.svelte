@@ -75,9 +75,15 @@
 		min-width: 0;
 	}
 
-	@media (min-width: 840px) {
+	@media (min-width: 600px) {
 		.main-content {
 			margin-left: 80px;
+		}
+	}
+
+	@media (min-width: 840px) {
+		.main-content {
+			margin-left: 0;
 		}
 	}
 
