@@ -15,8 +15,14 @@ Charming 1800s farmhouse B&B in Normandy with 2 bedrooms. Multi-language site (E
 | **1: Static Brochure** | ✅ COMPLETE | 7 pages, EN/FR/DE, responsive design, testimonials, gallery |
 | **2: Interactive Maps** | ✅ COMPLETE | Leaflet maps (Explore + Contact), 9 attraction markers, category filtering |
 | **2.5: Material Design 3 System** | ✅ COMPLETE | Design tokens, Light/Dark themes, M3 components, Navigation Rail/Bar, animations |
-| **3: Booking System** | 🔄 IN PROGRESS | Calendar, guest form, booking API, confirmation page, Supabase live, admin dashboard |
-| **4: Stripe Payments** | 🔲 TODO | Secure checkout, invoice generation, webhook handling |
+| **3: Booking System** | ✅ COMPLETE | Calendar, guest form, booking API, confirmation page, Supabase live, admin dashboard |
+
+**Future Features (Parked):**
+
+| Feature | Notes |
+|---------|-------|
+| Email Confirmations | Booking receipt, reminder emails |
+| Stripe Payments | Secure checkout, invoice generation, webhook handling |
 
 ---
 
@@ -406,7 +412,7 @@ src/
 | Real availability | ✅ Done | Booking page fetches from Supabase via server load |
 | Admin dashboard | ✅ Done | Login gate, stats, search/filter, detail panel, status updates, admin notes |
 | Admin API | ✅ Done | GET (list/filter), PATCH (status/notes) — real Supabase queries |
-| Email confirmations | 🔲 TODO | Booking receipt, reminder emails |
+| ~~Email confirmations~~ | 🔀 PARKED | Moved to future features |
 
 **Key Files:**
 ```
@@ -451,14 +457,12 @@ supabase-schema.sql                    # Full SQL schema + RLS + test data
 
 ---
 
-## Phase 4: Stripe Payment Integration (TODO)
+## Future Features (Parked)
 
-**Planned Features:**
-- Secure checkout form (Stripe Elements)
-- Deposit (30%) vs full payment toggle
-- Invoice generation + PDF download
-- Webhook handling for payment updates
-- Payment receipt emails
+| Feature | Planned Scope |
+|---------|--------------|
+| **Email Confirmations** | Booking receipt, reminder emails |
+| **Stripe Payments** | Secure checkout (Stripe Elements), deposit/full toggle, invoices, webhooks, receipt emails |
 
 ---
 
@@ -506,6 +510,9 @@ PUBLIC_DEFAULT_LOCALE=en
 
 **Environment Variables on Netlify:**
 Set via Netlify dashboard Site Settings > Build & Deploy > Environment
+
+**Claude Code Setup:**
+`.claude/settings.local.json` is gitignored (contains Supabase keys in permission strings). To restore locally, add tool permissions for: `WebSearch`, `Bash(node -e ...)`, `Bash(npx supabase:*)`, and `Bash(netlify env:set ...)` with your real keys.
 
 ---
 
@@ -602,4 +609,4 @@ Private project for Marianne Cottage B&B. All rights reserved.
 ---
 
 **Last Updated:** 2026-03-23
-**Current:** Phase 3 near complete — Supabase live, booking flow + admin dashboard working, email TODO
+**Current:** Phase 3 complete — Supabase live, booking flow + admin dashboard working. Email + Stripe parked as future features.
