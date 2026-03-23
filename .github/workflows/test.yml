@@ -1,37 +1,39 @@
-name: Test                                                                                                                                                                                                                                                                                                                  on:                                                                                                                                                             push:
-      branches: [develop]
-    pull_request:
-      branches: [develop]
+name: Test
 
-  jobs:
-    test:
-      runs-on: ubuntu-latest
-      env:
-        PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
-        PUBLIC_SUPABASE_ANON_KEY: placeholder-anon-key
-        SUPABASE_SERVICE_ROLE_KEY: placeholder-service-role-key
-      steps:
-        - uses: actions/checkout@v4
+on:
+  push:
+    branches: [develop]
+  pull_request:
+    branches: [develop]
 
-        - uses: actions/setup-node@v4
-          with:
-            node-version: 22
-            cache: npm
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
+      PUBLIC_SUPABASE_ANON_KEY: placeholder-anon-key
+      SUPABASE_SERVICE_ROLE_KEY: placeholder-service-role-key
+    steps:
+      - uses: actions/checkout@v4
 
-        - run: npm ci
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
 
-        - name: Type check
-          run: npm run check
+      - run: npm ci
 
-        - name: Unit & component tests
-          run: npm test
+      - name: Type check
+        run: npm run check
 
-        - name: Build
-          run: npm run build
+      - name: Unit & component tests
+        run: npm test
 
-        - name: Install Playwright browsers
-          run: npx playwright install chromium --with-deps
+      - name: Build
+        run: npm run build
 
-        - name: E2E tests
-          run: npm run test:e2e
+      - name: Install Playwright browsers
+        run: npx playwright install chromium --with-deps
 
+      - name: E2E tests
+        run: npm run test:e2e
