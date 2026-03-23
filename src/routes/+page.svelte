@@ -68,21 +68,21 @@
 	<h2 class="section-heading center">{t(messages, 'home.attractions.heading')}</h2>
 	<div class="attractions-grid">
 		<AttractionCard
-			image="/images/2023-05-20.jpg"
+			image="/images/omaha-beach.jpg"
 			title={t(messages, 'home.attractions.dday')}
 			distance="29 km"
 			description="Historic D-Day landing beaches and memorials"
 			category={t(messages, 'explore.category.ww2')}
 		/>
 		<AttractionCard
-			image="/images/2023-06-07.jpg"
+			image="/images/cerisy-abbey.jpg"
 			title={t(messages, 'home.attractions.cerisy')}
 			distance="5 km"
 			description="Beautiful medieval abbey in the countryside"
 			category={t(messages, 'explore.category.nature')}
 		/>
 		<AttractionCard
-			image="/images/2024-12-15%20(2).jpg"
+			image="/images/saint-lo.jpg"
 			title={t(messages, 'home.attractions.saintlo')}
 			distance="13 km"
 			description="Historic town with remarkable architecture"

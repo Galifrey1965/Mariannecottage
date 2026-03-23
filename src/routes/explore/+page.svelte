@@ -23,23 +23,23 @@
 		{
 			category: 'ww2',
 			items: [
-				{ image: '/images/2023-05-20.jpg', title: 'Omaha Beach', distance: '29 km', description: 'Historic D-Day landing beaches and memorials' },
-				{ image: '/images/2023-06-07.jpg', title: 'La Cambe German Cemetery', distance: '26 km', description: 'World War II German military cemetery' },
-				{ image: '/images/2024-12-15.jpg', title: 'Overlord Museum', distance: '29 km', description: 'Comprehensive D-Day and WW2 history museum' }
+				{ image: '/images/omaha-beach.jpg', title: 'Omaha Beach', distance: '29 km', description: 'Historic D-Day landing beaches and memorials' },
+				{ image: '/images/la-cambe-cemetery.jpg', title: 'La Cambe German Cemetery', distance: '26 km', description: 'World War II German military cemetery' },
+				{ image: '/images/overlord-museum.jpg', title: 'Overlord Museum', distance: '29 km', description: 'Comprehensive D-Day and WW2 history museum' }
 			]
 		},
 		{
 			category: 'nature',
 			items: [
-				{ image: '/images/2024-12-15-(1).jpg', title: 'Cerisy Abbey', distance: '5 km', description: 'Beautiful medieval abbey surrounded by nature' },
-				{ image: '/images/2024-12-15-(2).jpg', title: 'Haras National de Saint-Lô', distance: '13 km', description: 'Historic stud farm with beautiful gardens' }
+				{ image: '/images/cerisy-abbey.jpg', title: 'Cerisy Abbey', distance: '5 km', description: 'Beautiful medieval abbey surrounded by nature' },
+				{ image: '/images/haras-saint-lo.jpg', title: 'Haras National de Saint-Lô', distance: '13 km', description: 'Historic stud farm with beautiful gardens' }
 			]
 		},
 		{
 			category: 'towns',
 			items: [
-				{ image: '/images/2024-12-15-(3).jpg', title: 'Saint-Lô', distance: '13 km', description: 'Historic medieval town with remarkable architecture' },
-				{ image: '/images/unnamed.jpg', title: 'Bayeux', distance: '30 km', description: 'Famous medieval town with stunning cathedral' }
+				{ image: '/images/saint-lo.jpg', title: 'Saint-Lô', distance: '13 km', description: 'Historic medieval town with remarkable architecture' },
+				{ image: '/images/bayeux-cathedral.jpg', title: 'Bayeux', distance: '30 km', description: 'Famous medieval town with stunning cathedral' }
 			]
 		}
 	];
