@@ -50,10 +50,10 @@
 			<div class="info-block">
 				<h3 class="info-heading">{t(messages, 'contact.social.heading')}</h3>
 				<div class="social-links">
-					<a href="https://booking.com" target="_blank" rel="noopener" class="social-link">
+					<a href="https://www.booking.com/hotel/fr/marianne-cottage.html" target="_blank" rel="noopener" class="social-link">
 						{t(messages, 'contact.social.booking_com')}
 					</a>
-					<a href="https://tripadvisor.com" target="_blank" rel="noopener" class="social-link">
+					<a href="https://www.tripadvisor.com/Hotel_Review-g12080400-d27963962-Reviews-Marianne_Cottage_Bed_And_Breakfast-Couvains_Manche_Basse_Normandie_Normandy.html" target="_blank" rel="noopener" class="social-link">
 						{t(messages, 'contact.social.tripadvisor')}
 					</a>
 					<a href="https://facebook.com/p/Marianne-Cottage-Bed-and-Breakfast-61554481672203/" target="_blank" rel="noopener" class="social-link">
