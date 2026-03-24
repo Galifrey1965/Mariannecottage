@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { t } from '$lib/i18n';
 	import type { Messages } from '$lib/i18n';
+	import Textfield from '@smui/textfield';
+	import TextfieldIcon from '@smui/textfield/icon';
 
 	interface Props {
 		messages: Messages;
@@ -58,18 +60,49 @@
 	{/if}
 
 	<div class="field">
-		<label for="name">{t(messages, 'contact.form.name')}</label>
-		<input type="text" id="name" bind:value={formData.name} required />
+		<Textfield
+			variant="outlined"
+			bind:value={formData.name}
+			label={t(messages, 'contact.form.name')}
+			required
+			style="width: 100%;"
+			input$id="name"
+			input$autocomplete="name"
+		>
+			<TextfieldIcon slot="leadingIcon">
+				<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+			</TextfieldIcon>
+		</Textfield>
 	</div>
 
 	<div class="field">
-		<label for="email">{t(messages, 'contact.form.email')}</label>
-		<input type="email" id="email" bind:value={formData.email} required />
+		<Textfield
+			variant="outlined"
+			bind:value={formData.email}
+			label={t(messages, 'contact.form.email')}
+			type="email"
+			required
+			style="width: 100%;"
+			input$id="email"
+			input$autocomplete="email"
+		>
+			<TextfieldIcon slot="leadingIcon">
+				<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"/></svg>
+			</TextfieldIcon>
+		</Textfield>
 	</div>
 
 	<div class="field">
-		<label for="message">{t(messages, 'contact.form.message')}</label>
-		<textarea id="message" bind:value={formData.message} rows="5" required></textarea>
+		<Textfield
+			variant="outlined"
+			textarea
+			bind:value={formData.message}
+			label={t(messages, 'contact.form.message')}
+			required
+			style="width: 100%;"
+			input$id="message"
+			input$rows={5}
+		/>
 	</div>
 
 	<button type="submit" class="submit-btn" disabled={isSubmitting}>
@@ -105,38 +138,6 @@
 	.field {
 		display: flex;
 		flex-direction: column;
-		gap: 0.25rem;
-	}
-
-	.field label {
-		font-size: 0.875rem;
-		font-weight: 500;
-		color: var(--color-text-muted);
-	}
-
-	.field input,
-	.field textarea {
-		width: 100%;
-		padding: 0.625rem 1rem;
-		border: 1px solid var(--color-cream-dark);
-		border-radius: 8px;
-		font-family: inherit;
-		font-size: 1rem;
-		color: var(--color-text);
-		background-color: var(--md-sys-color-surface-container-lowest);
-		outline: none;
-		transition: border-color 0.2s ease, box-shadow 0.2s ease;
-		box-sizing: border-box;
-	}
-
-	.field input:focus,
-	.field textarea:focus {
-		border-color: var(--color-sage);
-		box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-sage) 20%, transparent);
-	}
-
-	.field textarea {
-		resize: none;
 	}
 
 	.submit-btn {
