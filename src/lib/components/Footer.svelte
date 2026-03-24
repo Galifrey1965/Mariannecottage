@@ -30,6 +30,9 @@
 
 		<div class="footer-bottom">
 			<p>{t(messages, 'footer.copyright')}</p>
+			<a href="https://github.com/Galifrey1965/Mariannecottage/issues/new" target="_blank" rel="noopener" class="report-issue">
+				{t(messages, 'footer.report_issue')}
+			</a>
 		</div>
 	</div>
 </footer>
@@ -115,5 +118,20 @@
 		font-size: 0.875rem;
 		color: var(--color-footer-accent);
 		margin: 0;
+	}
+
+	.report-issue {
+		display: inline-block;
+		margin-top: 0.75rem;
+		font-size: 0.75rem;
+		color: var(--color-footer-accent);
+		text-decoration: none;
+		opacity: 0.7;
+		transition: opacity 0.2s ease;
+	}
+
+	.report-issue:hover {
+		opacity: 1;
+		color: white;
 	}
 </style>
