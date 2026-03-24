@@ -110,7 +110,7 @@
 	.directions-box { padding: 1rem; background: var(--color-cream); border-left: 4px solid var(--color-sage); border-radius: 4px; }
 	.directions-heading { font-weight: 600; color: var(--color-brown); margin: 0 0 0.5rem; }
 	.directions-text { font-size: 0.875rem; color: var(--color-text-muted); margin: 0; }
-	.social-links { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+	.social-links { display: flex; flex-wrap: nowrap; gap: 0.75rem; align-items: center; }
 	.fab-link {
 		display: inline-flex;
 		align-items: center;
@@ -123,6 +123,7 @@
 		font-weight: 600;
 		font-size: 0.875rem;
 		text-decoration: none;
+		white-space: nowrap;
 		box-shadow: var(--md-elevation-shadow-1);
 		transition: box-shadow 0.2s, transform 0.2s;
 	}
