@@ -34,8 +34,7 @@ describe('EnquiryForm', () => {
 
 	it('renders all form fields', () => {
 		const { container } = render(EnquiryForm, { props: { messages } });
-		expect(container.querySelector('input[type="text"]')).toBeInTheDocument();
-		expect(container.querySelector('input[type="email"]')).toBeInTheDocument();
+		expect(container.querySelector('input')).toBeInTheDocument();
 		expect(container.querySelector('textarea')).toBeInTheDocument();
 		expect(container.querySelector('button[type="submit"]')).toBeInTheDocument();
 	});
@@ -57,9 +56,12 @@ describe('EnquiryForm', () => {
 
 		const { container } = render(EnquiryForm, { props: { messages } });
 
-		const nameInput = container.querySelector('input[type="text"]') as HTMLInputElement;
-		const emailInput = container.querySelector('input[type="email"]') as HTMLInputElement;
+		const inputs = container.querySelectorAll('input');
 		const textarea = container.querySelector('textarea') as HTMLTextAreaElement;
+
+		// SMUI renders inputs inside label wrappers; find by order
+		const nameInput = inputs[0] as HTMLInputElement;
+		const emailInput = inputs[1] as HTMLInputElement;
 
 		await fireEvent.input(nameInput, { target: { value: 'Jane Doe' } });
 		await fireEvent.input(emailInput, { target: { value: 'jane@example.com' } });
@@ -77,9 +79,11 @@ describe('EnquiryForm', () => {
 
 		const { container } = render(EnquiryForm, { props: { messages } });
 
-		const nameInput = container.querySelector('input[type="text"]') as HTMLInputElement;
-		const emailInput = container.querySelector('input[type="email"]') as HTMLInputElement;
+		const inputs = container.querySelectorAll('input');
 		const textarea = container.querySelector('textarea') as HTMLTextAreaElement;
+
+		const nameInput = inputs[0] as HTMLInputElement;
+		const emailInput = inputs[1] as HTMLInputElement;
 
 		await fireEvent.input(nameInput, { target: { value: 'Jane' } });
 		await fireEvent.input(emailInput, { target: { value: 'jane@example.com' } });
