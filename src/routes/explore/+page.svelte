@@ -8,15 +8,15 @@
 	const { messages } = data;
 
 	const mapMarkers = [
-		{ lat: 49.1264, lng: -1.0986, title: 'Marianne Cottage', description: 'Your base in Normandy', type: 'cottage' as const },
-		{ lat: 49.3697, lng: -0.8642, title: 'Omaha Beach', description: 'Historic D-Day landing site, 29 km', type: 'ww2' as const },
-		{ lat: 49.3467, lng: -0.9167, title: 'La Cambe German Cemetery', description: 'WW2 memorial, 26 km', type: 'ww2' as const },
-		{ lat: 49.355, lng: -0.9083, title: 'Overlord Museum', description: 'D-Day history museum, 29 km', type: 'ww2' as const },
-		{ lat: 49.145, lng: -1.1267, title: '29th Division Monument', description: 'American WW2 memorial, 4.3 km', type: 'ww2' as const },
-		{ lat: 49.1886, lng: -1.0345, title: 'Cerisy Abbey', description: 'Medieval abbey in countryside, 5 km', type: 'nature' as const },
-		{ lat: 49.1117, lng: -1.0881, title: 'Haras National de Saint-Lô', description: 'Historic stud farm, 13 km', type: 'nature' as const },
-		{ lat: 49.1117, lng: -1.0881, title: 'Saint-Lô', description: 'Historic town, 13 km', type: 'towns' as const },
-		{ lat: 49.2742, lng: -0.7034, title: 'Bayeux', description: 'Medieval town with cathedral, 30 km', type: 'towns' as const }
+		{ lat: 49.1728, lng: -0.9887, title: 'Marianne Cottage', description: 'Your base in Normandy', type: 'cottage' as const },
+		{ lat: 49.3715, lng: -0.8885, title: 'Omaha Beach', description: 'Historic D-Day landing site, 29 km', type: 'ww2' as const },
+		{ lat: 49.3432, lng: -1.0266, title: 'La Cambe German Cemetery', description: 'WW2 memorial, 26 km', type: 'ww2' as const },
+		{ lat: 49.3479, lng: -0.8558, title: 'Overlord Museum', description: 'D-Day history museum, 29 km', type: 'ww2' as const },
+		{ lat: 49.2041, lng: -1.0245, title: '29th Division Monument', description: 'American WW2 memorial, 4.3 km', type: 'ww2' as const },
+		{ lat: 49.1950, lng: -0.9370, title: 'Cerisy Abbey', description: 'Medieval abbey in countryside, 5 km', type: 'nature' as const },
+		{ lat: 49.1197, lng: -1.0786, title: 'Haras National de Saint-Lô', description: 'Historic stud farm, 13 km', type: 'nature' as const },
+		{ lat: 49.1155, lng: -1.0828, title: 'Saint-Lô', description: 'Historic town, 13 km', type: 'towns' as const },
+		{ lat: 49.2764, lng: -0.7031, title: 'Bayeux', description: 'Medieval town with cathedral, 30 km', type: 'towns' as const }
 	];
 
 	const attractions = [

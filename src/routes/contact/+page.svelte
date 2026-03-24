@@ -85,9 +85,9 @@
 		<div class="map-wrapper">
 			<LeafletMap
 				markers={[
-					{ lat: 49.1264, lng: -1.0986, title: 'Marianne Cottage', description: '1 La Haye, 50680 Couvains, France', type: 'cottage' }
+					{ lat: 49.1728, lng: -0.9887, title: 'Marianne Cottage', description: '1 La Haye, 50680 Couvains, France', type: 'cottage' }
 				]}
-				center={[49.1264, -1.0986]}
+				center={[49.1728, -0.9887]}
 				zoom={13}
 				height="400px"
 			/>
