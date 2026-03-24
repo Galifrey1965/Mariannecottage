@@ -125,9 +125,13 @@
 
 <div class="calendar" onmouseleave={() => hoveredDate = null}>
 	<div class="cal-header">
-		<button onclick={prevMonth} class="nav-btn" aria-label={t(messages, 'calendar.prev_month')}>‹</button>
+		<button onclick={prevMonth} class="nav-btn" aria-label={t(messages, 'calendar.prev_month')}>
+			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+		</button>
 		<h2 class="month-title">{monthName}</h2>
-		<button onclick={nextMonth} class="nav-btn" aria-label={t(messages, 'calendar.next_month')}>›</button>
+		<button onclick={nextMonth} class="nav-btn" aria-label={t(messages, 'calendar.next_month')}>
+			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M10 6 8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+		</button>
 	</div>
 
 	{#if selectedStart && !selectedEnd}
@@ -181,8 +185,9 @@
 <style>
 	.calendar { width: 100%; background: var(--color-cream); border-radius: var(--md-shape-corner-medium); padding: 1.5rem; box-shadow: var(--md-elevation-shadow-1); }
 	.cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
-	.nav-btn { padding: 0.5rem; border-radius: 50%; border: none; background: transparent; cursor: pointer; font-size: 1.25rem; transition: background 0.2s ease; }
+	.nav-btn { display: inline-flex; align-items: center; justify-content: center; width: 2.5rem; height: 2.5rem; padding: 0; border-radius: 50%; border: none; background: transparent; cursor: pointer; color: var(--color-brown); transition: background 0.2s ease; }
 	.nav-btn:hover { background: var(--color-cream-dark); }
+	.nav-btn:active { background: color-mix(in srgb, var(--color-sage) 20%, transparent); }
 	.month-title { font-family: 'Lora', serif; font-size: 1.25rem; font-weight: 600; margin: 0; }
 
 	.hint { text-align: center; font-size: 0.8rem; color: var(--color-sage); font-weight: 500; margin-bottom: 0.75rem; animation: fadeIn 0.2s ease; }
