@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { localePath, t } from '$lib/i18n';
+	import { t } from '$lib/i18n';
 	import type { Messages, Locale } from '$lib/i18n';
 
 	interface Props {
@@ -8,14 +8,6 @@
 	}
 
 	let { lang, messages }: Props = $props();
-
-	const quickLinks = [
-		{ label: t(messages, 'nav.home'), href: '/' },
-		{ label: t(messages, 'nav.rooms'), href: '/rooms' },
-		{ label: t(messages, 'nav.gallery'), href: '/gallery' },
-		{ label: t(messages, 'nav.explore'), href: '/explore' },
-		{ label: t(messages, 'nav.contact'), href: '/contact' }
-	];
 </script>
 
 <footer class="footer">
@@ -24,20 +16,6 @@
 			<div>
 				<h3 class="footer-brand">Marianne Cottage</h3>
 				<p class="footer-tagline">{t(messages, 'footer.tagline')}</p>
-			</div>
-
-			<div>
-				<h4 class="footer-heading">{t(messages, 'footer.quick_links')}</h4>
-				<ul class="footer-links">
-					{#each quickLinks as link}
-						<li>
-							<a href={localePath(lang, link.href)}>{link.label}</a>
-						</li>
-					{/each}
-					<li>
-						<a href={localePath(lang, '/legal')}>{t(messages, 'nav.legal')}</a>
-					</li>
-				</ul>
 			</div>
 
 			<div>
@@ -52,6 +30,9 @@
 
 		<div class="footer-bottom">
 			<p>{t(messages, 'footer.copyright')}</p>
+			<a href="https://github.com/Galifrey1965/Mariannecottage/issues/new" target="_blank" rel="noopener" class="report-issue">
+				{t(messages, 'footer.report_issue')}
+			</a>
 		</div>
 	</div>
 </footer>
@@ -90,7 +71,7 @@
 
 	@media (min-width: 840px) {
 		.footer-grid {
-			grid-template-columns: repeat(3, 1fr);
+			grid-template-columns: repeat(2, 1fr);
 		}
 	}
 
@@ -115,27 +96,7 @@
 		color: var(--color-footer-text);
 	}
 
-	.footer-links {
-		list-style: none;
-		padding: 0;
-		margin: 0;
-		display: flex;
-		flex-direction: column;
-		gap: 0.5rem;
-	}
-
-	.footer-links a {
-		color: var(--color-footer-accent);
-		text-decoration: none;
-		font-size: 0.875rem;
-		transition: color 0.2s ease;
-	}
-
-	.footer-links a:hover {
-		color: white;
-	}
-
-	.footer-contact {
+.footer-contact {
 		font-size: 0.875rem;
 		color: var(--color-footer-accent);
 		display: flex;
@@ -157,5 +118,20 @@
 		font-size: 0.875rem;
 		color: var(--color-footer-accent);
 		margin: 0;
+	}
+
+	.report-issue {
+		display: inline-block;
+		margin-top: 0.75rem;
+		font-size: 0.75rem;
+		color: var(--color-footer-accent);
+		text-decoration: none;
+		opacity: 0.7;
+		transition: opacity 0.2s ease;
+	}
+
+	.report-issue:hover {
+		opacity: 1;
+		color: white;
 	}
 </style>

@@ -5,41 +5,50 @@
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
-	const { messages } = data;
+	const { lang, messages } = data;
+
+	/** Format distance: km for fr/de, miles for en */
+	const dist = (km: number) => {
+		if (lang === 'en') {
+			const mi = Math.round(km * 0.621371);
+			return `${mi} mi`;
+		}
+		return `${km} km`;
+	};
 
 	const mapMarkers = [
-		{ lat: 49.1264, lng: -1.0986, title: 'Marianne Cottage', description: 'Your base in Normandy', type: 'cottage' as const },
-		{ lat: 49.3697, lng: -0.8642, title: 'Omaha Beach', description: 'Historic D-Day landing site, 29 km', type: 'ww2' as const },
-		{ lat: 49.3467, lng: -0.9167, title: 'La Cambe German Cemetery', description: 'WW2 memorial, 26 km', type: 'ww2' as const },
-		{ lat: 49.355, lng: -0.9083, title: 'Overlord Museum', description: 'D-Day history museum, 29 km', type: 'ww2' as const },
-		{ lat: 49.145, lng: -1.1267, title: '29th Division Monument', description: 'American WW2 memorial, 4.3 km', type: 'ww2' as const },
-		{ lat: 49.1886, lng: -1.0345, title: 'Cerisy Abbey', description: 'Medieval abbey in countryside, 5 km', type: 'nature' as const },
-		{ lat: 49.1117, lng: -1.0881, title: 'Haras National de Saint-Lô', description: 'Historic stud farm, 13 km', type: 'nature' as const },
-		{ lat: 49.1117, lng: -1.0881, title: 'Saint-Lô', description: 'Historic town, 13 km', type: 'towns' as const },
-		{ lat: 49.2742, lng: -0.7034, title: 'Bayeux', description: 'Medieval town with cathedral, 30 km', type: 'towns' as const }
+		{ lat: 49.1728, lng: -0.9887, title: 'Marianne Cottage', description: 'Your base in Normandy', type: 'cottage' as const },
+		{ lat: 49.3715, lng: -0.8885, title: 'Omaha Beach', description: 'Historic D-Day landing site, 29 km', type: 'ww2' as const },
+		{ lat: 49.3432, lng: -1.0266, title: 'La Cambe German Cemetery', description: 'WW2 memorial, 26 km', type: 'ww2' as const },
+		{ lat: 49.3479, lng: -0.8558, title: 'Overlord Museum', description: 'D-Day history museum, 29 km', type: 'ww2' as const },
+		{ lat: 49.2041, lng: -1.0245, title: '29th Division Monument', description: 'American WW2 memorial, 4.3 km', type: 'ww2' as const },
+		{ lat: 49.1950, lng: -0.9370, title: 'Cerisy Abbey', description: 'Medieval abbey in countryside, 5 km', type: 'nature' as const },
+		{ lat: 49.1197, lng: -1.0786, title: 'Haras National de Saint-Lô', description: 'Historic stud farm, 13 km', type: 'nature' as const },
+		{ lat: 49.1155, lng: -1.0828, title: 'Saint-Lô', description: 'Historic town, 13 km', type: 'towns' as const },
+		{ lat: 49.2764, lng: -0.7031, title: 'Bayeux', description: 'Medieval town with cathedral, 30 km', type: 'towns' as const }
 	];
 
 	const attractions = [
 		{
 			category: 'ww2',
 			items: [
-				{ image: '/images/omaha-beach.jpg', title: t(messages, 'explore.omaha_beach'), distance: '29 km', description: t(messages, 'explore.omaha_desc') },
-				{ image: '/images/la-cambe-cemetery.jpg', title: t(messages, 'explore.la_cambe'), distance: '26 km', description: t(messages, 'explore.la_cambe_desc') },
-				{ image: '/images/overlord-museum.jpg', title: t(messages, 'explore.overlord'), distance: '29 km', description: t(messages, 'explore.overlord_desc') }
+				{ image: '/images/omaha-beach.jpg', title: t(messages, 'explore.omaha_beach'), distance: dist(29), description: t(messages, 'explore.omaha_desc'), url: 'https://www.musee-memorial-omaha.com/en/' },
+				{ image: '/images/la-cambe-cemetery.jpg', title: t(messages, 'explore.la_cambe'), distance: dist(26), description: t(messages, 'explore.la_cambe_desc'), url: 'https://kriegsgraeberstaetten.volksbund.de/en/friedhof/la-cambe' },
+				{ image: '/images/overlord-museum.jpg', title: t(messages, 'explore.overlord'), distance: dist(29), description: t(messages, 'explore.overlord_desc'), url: 'https://www.overlordmuseum.com/en/' }
 			]
 		},
 		{
 			category: 'nature',
 			items: [
-				{ image: '/images/cerisy-abbey.jpg', title: t(messages, 'explore.cerisy'), distance: '5 km', description: t(messages, 'explore.cerisy_desc') },
-				{ image: '/images/haras-saint-lo.jpg', title: t(messages, 'explore.haras'), distance: '13 km', description: t(messages, 'explore.haras_desc') }
+				{ image: '/images/cerisy-abbey.jpg', title: t(messages, 'explore.cerisy'), distance: dist(5), description: t(messages, 'explore.cerisy_desc'), url: 'https://www.abbaye-cerisy.fr/' },
+				{ image: '/images/haras-saint-lo.jpg', title: t(messages, 'explore.haras'), distance: dist(13), description: t(messages, 'explore.haras_desc'), url: 'https://www.polehippiquestlo.fr/' }
 			]
 		},
 		{
 			category: 'towns',
 			items: [
-				{ image: '/images/saint-lo.jpg', title: t(messages, 'explore.saintlo'), distance: '13 km', description: t(messages, 'explore.saintlo_desc') },
-				{ image: '/images/bayeux-cathedral.jpg', title: t(messages, 'explore.bayeux'), distance: '30 km', description: t(messages, 'explore.bayeux_desc') }
+				{ image: '/images/saint-lo.jpg', title: t(messages, 'explore.saintlo'), distance: dist(13), description: t(messages, 'explore.saintlo_desc'), url: 'https://saintlo-tourisme.com/' },
+				{ image: '/images/bayeux-cathedral.jpg', title: t(messages, 'explore.bayeux'), distance: dist(30), description: t(messages, 'explore.bayeux_desc'), url: 'https://www.bayeux.fr/en' }
 			]
 		}
 	];
@@ -77,6 +86,7 @@
 							distance={item.distance}
 							description={item.description}
 							category={category.category}
+							url={item.url}
 						/>
 					{/each}
 				</div>

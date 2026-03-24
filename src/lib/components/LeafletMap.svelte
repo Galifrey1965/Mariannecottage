@@ -17,7 +17,7 @@
 		height?: string;
 	}
 
-	let { markers, center = [49.1264, -1.0986], zoom = 10, height = '500px' }: Props = $props();
+	let { markers, center = [49.1728, -0.9887], zoom = 10, height = '500px' }: Props = $props();
 
 	let mapContainer: HTMLDivElement;
 
