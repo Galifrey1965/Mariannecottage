@@ -1,329 +1,330 @@
 {
-  "meta": {
-    "title": "Marianne Cottage - Bed & Breakfast in der Normandie",
-    "description": "Charmantes Bauernhaus aus dem 19. Jahrhundert mit 2 Schlafzimmern im Herzen der Normandie. Kostenlos WiFi, Parkplatz und Frühstück inbegriffen."
-  },
-  "nav": {
-    "home": "Startseite",
-    "rooms": "Zimmer",
-    "gallery": "Galerie",
-    "explore": "Erkunden",
-    "contact": "Kontakt",
-    "book": "Buchen",
-    "legal": "Impressum"
-  },
-  "lang": {
-    "en": "English",
-    "fr": "Français",
-    "de": "Deutsch"
-  },
-  "home": {
-    "hero": {
-      "tagline": "Ein Hafen des Friedens im Herzen der Normandie",
-      "cta": "Buchen Sie Ihren Aufenthalt"
-    },
-    "about": {
-      "heading": "Willkommen im Marianne Cottage",
-      "p1": "Das Marianne Cottage liegt in der friedlichen Landschaft der Normandie und ist ein wunderschön restauriertes Bauernhaus aus dem 19. Jahrhundert auf einem ruhigen Weg, nur wenige Kilometer von einigen der bedeutendsten historischen Stätten Frankreichs entfernt. Unser intimes Bed & Breakfast bietet die perfekte Basis zum Erkunden der Region und gleichzeitig den Komfort und die Ruhe, die Sie verdienen.",
-      "p2": "Die Gastgeber Mark und Kim haben dieses historische Anwesen liebevoll restauriert und heißen Gäste willkommen, um die authentische Gastfreundschaft der Normandie zu erleben. Sie befinden sich umgeben von grünen Hügeln und genießen die Geräusche der Natur – vom sanften Wind bis zu den Rufen der Tierwelt, die in dieser Gegend beheimatet ist.",
-      "p3": "Das Cottage liegt in der Nähe der D-Day-Strände und historischen Abteien der Normandie und ist somit ein idealer Ort für Geschichtsinteressierte. Egal ob Sie WW2-Stätten erkunden, durch mittelalterliche Dörfer bummeln oder einfach nur die ländliche Ruhe genießen – das Marianne Cottage bietet den perfekten Rückzugsort."
-    },
-    "highlights": {
-      "wifi": "Kostenlos WiFi",
-      "parking": "Kostenlos Parkplatz",
-      "breakfast": "Frühstück Inbegriffen",
-      "garden": "Privater Garten",
-      "wildlife": "Tierschutzgebiet",
-      "nonsmoking": "Nichtraucher"
-    },
-    "rooms": {
-      "heading": "Unser Zimmer",
-      "cta": "Zimmer Ansehen"
-    },
-    "attractions": {
-      "heading": "Erkunden Sie die Umgebung",
-      "dday": "D-Day-Strände",
-      "cerisy": "Abtei von Cerisy",
-      "saintlo": "Saint-Lô",
-      "cta": "Mehr Entdecken"
-    },
-    "testimonials": {
-      "heading": "Gästebewertungen",
-      "simon": "Herzlicher Empfang, schönes Zimmer, komfortables Bett, modernes geräumiges Badezimmer, ausgezeichnetes Frühstück.",
-      "simon_author": "Simon, Großbritannien",
-      "ingrid": "Es fehlte nichts für 5 Tage. Makellose Zimmer, reichhaltiges frisch zubereitetes Frühstück, hervorragende Abendmalzeit.",
-      "ingrid_author": "Ingrid, Niederlande",
-      "guest3": "Herzlicher Empfang, herrliches Landhaus, friedlich, in der Nähe von Sehenswürdigkeiten, maßgeschneidertes Frühstück.",
-      "guest3_author": "Gast, Frankreich"
-    },
-    "booking": {
-      "heading": "Bereit zu Buchen?",
-      "cta": "Verfügbarkeit Prüfen"
-    },
-    "rooms_data": {
-      "bedroom1": "Schlafzimmer 1",
-      "bedroom1_desc": "Komfortables Schlafzimmer mit Gartenblick",
-      "bedroom2": "Schlafzimmer 2",
-      "bedroom2_desc": "Zweites Schlafzimmer mit natürlichem Licht"
-    },
-    "attractions_data": {
-      "dday_desc": "Historische D-Day-Landungsstrände und Gedenkstätten",
-      "cerisy_desc": "Schöne mittelalterliche Abtei auf dem Land",
-      "saintlo_desc": "Historische Stadt mit bemerkenswerter Architektur"
-    }
-  },
-  "rooms": {
-    "title": "Zimmer & Ausstattung",
-    "description": "Unser komfortables Zimmer mit 2 Schlafzimmern und modernem Badezimmer",
-    "suite": {
-      "heading": "Geräumige 2-Zimmer Suite",
-      "description": "Unsere Suite verfügt über zwei Schlafzimmer, ein modernes Badezimmer mit begehbarer Dusche und einen schönen Gartenblick. Komfortable Betten, frische Bettwäsche und durchdachte Details machen diesen Ort zum perfekten Zuhause auf Zeit."
-    },
-    "amenities": {
-      "heading": "Ausstattung",
-      "comfortable_beds": "Komfortable, hochwertige Betten",
-      "shower": "Modernes, geräumiges Badezimmer mit Dusche",
-      "towels": "Frische Handtücher und Bettwäsche",
-      "kettle": "Elektrischer Wasserkocher",
-      "garden_views": "Gartenausblick",
-      "wifi": "Kostenlos hochgeschwindigkeits-WiFi",
-      "parking": "Kostenlos privater Parkplatz",
-      "nonsmoke": "Nichtraucher-Anwesen"
-    },
-    "breakfast": {
-      "heading": "Frühstück",
-      "description": "Genießen Sie jeden Morgen ein köstliches Buffet und kontinentales Frühstück mit frischen Croissants und Baguettes von unserer lokalen Bäckerei, saisonalen Früchten, Saft, Joghurt und hausgemachten Konfitüren. Spezielle Wünsche (wie Eier) werden gerne auf Anfrage erfüllt."
-    },
-    "evening_meal": {
-      "heading": "Abendessen",
-      "description": "Nach Absprache erhältlich. Mark bereitet ein hausgemachtes Dinner ab 20€ pro Person zu. Teilen Sie uns Ihre Vorlieben bei der Buchung mit!"
-    }
-  },
-  "gallery": {
-    "title": "Fotogalerie",
-    "filter_label": "Fotos nach Kategorie filtern",
-    "categories": {
-      "all": "Alle",
-      "exterior": "Außen",
-      "rooms": "Zimmer",
-      "bathroom": "Badezimmer",
-      "garden": "Garten",
-      "breakfast": "Frühstück",
-      "surroundings": "Umgebung"
-    }
-  },
-  "contact": {
-    "title": "Kontakt & Anfahrt",
-    "address_label": "Adresse",
-    "address": "1 La Haye, 50680 Couvains, Frankreich",
-    "email_label": "Email",
-    "email": "mariannecattage@gmail.com",
-    "phone_label": "Telefon",
-    "phone": "+33 (0)7 80 73 17 04",
-    "airport": "Nächster Flughafen",
-    "airport_info": "Caen–Carpiquet (45 km)",
-    "directions": {
-      "heading": "Anfahrtsweg",
-      "important": "Wichtig: Fahren Sie bitte durch das Dorf Couvains an. Viele Navigationssysteme leiten über die Belleval-Straße, die nach den ersten 75 Metern eine schlecht gepflegte, holprige Feldstraße ist. Folgen Sie stattdessen den Schildern durch das Dorf Couvains."
-    },
-    "form": {
-      "heading": "Senden Sie uns eine Nachricht",
-      "name": "Name",
-      "email": "Email",
-      "message": "Nachricht",
-      "submit": "Senden",
-      "success": "Danke! Wir werden uns bald bei Ihnen melden.",
-      "error": "Fehler beim Senden der Nachricht. Bitte versuchen Sie es später noch einmal."
-    },
-    "social": {
-      "heading": "Finden Sie uns Online",
-      "booking_com": "Booking.com",
-      "tripadvisor": "TripAdvisor",
-      "facebook": "Facebook"
-    },
-    "location_map": "Finden Sie uns auf der Karte"
-  },
-  "book": {
-    "title": "Buchen Sie Ihren Aufenthalt",
-    "coming_soon": "Buchungssystem kommt bald",
-    "description": "Online-Buchung ist bald verfügbar. Kontaktieren Sie uns jetzt direkt oder buchen Sie über eine unserer Partner-Websites.",
-    "contact_us": "Kontaktieren Sie Uns",
-    "booking_com_link": "Auf Booking.com Buchen",
-    "heading": "Wählen Sie Ihre Daten",
-    "guests": "Anzahl der Gäste",
-    "rate_plan": "Tarif",
-    "summary": "Zusammenfassung",
-    "total": "Gesamtbetrag",
-    "per_night": "pro Nacht",
-    "checkout": "Zur Bezahlung",
-    "cancellation_policy": "Kostenlose Stornierung bis 7 Tage vor Anreise",
-    "step_dates": "Daten",
-    "step_details": "Details",
-    "step_review": "Überprüfen",
-    "guest_details": "Gästedaten",
-    "full_name": "Vollständiger Name",
-    "email_address": "E-Mail-Adresse",
-    "phone": "Telefon",
-    "country": "Land",
-    "select_country": "Land auswählen",
-    "special_requests": "Besondere Wünsche",
-    "placeholder_name": "Max Mustermann",
-    "placeholder_email": "max@beispiel.de",
-    "placeholder_phone": "+33 7 80 73 17 04",
-    "placeholder_requests": "Ernährungsanforderungen, Ankunftszeit, etc.",
-    "required": "erforderlich",
-    "back": "Zurück",
-    "review_booking": "Buchung Überprüfen",
-    "review_heading": "Überprüfen Sie Ihre Buchung",
-    "label_name": "Name",
-    "label_email": "E-Mail",
-    "label_phone": "Telefon",
-    "label_country": "Land",
-    "label_special_requests": "Besondere Wünsche",
-    "label_checkin": "Anreise",
-    "label_checkout": "Abreise",
-    "label_duration": "Dauer",
-    "night": "Nacht",
-    "nights": "Nächte",
-    "submitting": "Wird gesendet...",
-    "confirm_booking": "Buchung Bestätigen",
-    "seasonal_rates": "Saisonpreise",
-    "rate_low": "Nebensaison (Nov-Feb)",
-    "rate_high": "Hauptsaison (Mär-Okt)",
-    "rate_peak": "Spitze (D-Day-Woche)",
-    "rate_low_price": "85€/Nacht",
-    "rate_high_price": "120€/Nacht",
-    "rate_peak_price": "140€/Nacht",
-    "need_help": "Brauchen Sie Hilfe bei Ihrer Buchung?",
-    "guest_count": "{n} Gast",
-    "guest_count_plural": "{n} Gäste",
-    "country_fr": "Frankreich",
-    "country_gb": "Vereinigtes Königreich",
-    "country_de": "Deutschland",
-    "country_nl": "Niederlande",
-    "country_be": "Belgien",
-    "country_us": "Vereinigte Staaten",
-    "country_ca": "Kanada",
-    "country_au": "Australien",
-    "country_other": "Andere",
-    "error_name_required": "Name ist erforderlich",
-    "error_email_required": "E-Mail ist erforderlich",
-    "error_email_invalid": "Ungültige E-Mail",
-    "error_phone_invalid": "Ungültige Telefonnummer",
-    "error_booking_failed": "Buchung fehlgeschlagen. Bitte versuchen Sie es erneut.",
-    "error_network": "Netzwerkfehler. Bitte versuchen Sie es erneut."
-  },
-  "booking_confirm": {
-    "title": "Buchung Bestätigt",
-    "thank_you": "Danke für Ihre Buchung!",
-    "confirmation_email": "Eine Bestätigungs-E-Mail wird gesendet an",
-    "reference": "Buchungsreferenz",
-    "summary": "Buchungszusammenfassung",
-    "dates": "Daten",
-    "guests": "Gäste",
-    "guest": "Gast",
-    "total_paid": "Bezahlter Gesamtbetrag",
-    "directions": "Anfahrt zum Anwesen",
-    "important": "Bitte beachten: Fahren Sie über das Dorf Couvains an. Meiden Sie die Belleval-Straße.",
-    "address": "Adresse",
-    "contact_info": "Fragen? Kontaktieren Sie uns unter mariannecattage@gmail.com oder +33 (0)7 80 73 17 04",
-    "label_checkin": "Anreise",
-    "label_checkout": "Abreise",
-    "label_duration": "Dauer",
-    "status": "Status",
-    "status_pending": "Ausstehend",
-    "status_note": "Zahlungsintegration kommt bald",
-    "back_home": "Zurück zur Startseite"
-  },
-  "calendar": {
-    "prev_month": "Vorheriger Monat",
-    "next_month": "Nächster Monat",
-    "sun": "So",
-    "mon": "Mo",
-    "tue": "Di",
-    "wed": "Mi",
-    "thu": "Do",
-    "fri": "Fr",
-    "sat": "Sa",
-    "available": "Verfügbar",
-    "unavailable": "Nicht verfügbar",
-    "past_date": "Vergangen",
-    "selected": "Ausgewählt",
-    "select_checkout": "Wählen Sie Ihr Abreisedatum"
-  },
-  "booking_summary": {
-    "title": "Buchungszusammenfassung",
-    "checkin": "Anreise:",
-    "checkout": "Abreise:",
-    "nights": "Nächte:",
-    "guests": "Gäste:",
-    "tax": "Steuer (10%)",
-    "total": "Gesamtbetrag",
-    "cancellation": "Stornierung:",
-    "empty": "Wählen Sie An- und Abreisedaten um die Preise zu sehen"
-  },
-  "room_card": {
-    "view_details": "→ Details Ansehen"
-  },
-  "enquiry_form": {
-    "all_fields_required": "Alle Felder sind erforderlich",
-    "sending": "Wird gesendet..."
-  },
-  "explore": {
-    "title": "Erkunden Sie die Normandie",
-    "description": "Das Marianne Cottage ist ideal gelegen, um die reiche Geschichte und natürliche Schönheit der Normandie zu erkunden. Unten finden Sie Attraktionen von WW2-Stätten bis hin zu charmanten mittelalterlichen Dörfern und Naturdenkmälern.",
-    "category": {
-      "ww2": "WW2-Geschichte",
-      "nature": "Natur & Erbe",
-      "towns": "Städte & Kultur"
-    },
-    "omaha_beach": "Omaha Beach",
-    "omaha_desc": "Historische D-Day-Landungsstrände und Gedenkstätten",
-    "la_cambe": "Deutsche Kriegsgräberstätte La Cambe",
-    "la_cambe_desc": "Deutscher Soldatenfriedhof aus dem Zweiten Weltkrieg",
-    "overlord": "Overlord Museum",
-    "overlord_desc": "Umfassendes Museum über den D-Day und den Zweiten Weltkrieg",
-    "cerisy": "Abtei von Cerisy",
-    "cerisy_desc": "Schöne mittelalterliche Abtei umgeben von Natur",
-    "haras": "Haras National de Saint-Lô",
-    "haras_desc": "Historisches Gestüt mit schönen Gärten",
-    "saintlo": "Saint-Lô",
-    "saintlo_desc": "Historische mittelalterliche Stadt mit bemerkenswerter Architektur",
-    "bayeux": "Bayeux",
-    "bayeux_desc": "Berühmte mittelalterliche Stadt mit beeindruckender Kathedrale"
-  },
-  "legal": {
-    "title": "Impressum",
-    "placeholder": "Rechtliche Informationen werden in Kürze veröffentlicht, einschließlich Registernummer, Unternehmensdetails, Hosting-Anbieter und Datenschutzrichtlinie.",
-    "todo_heading": "Noch zu ergänzende Informationen:",
-    "siret": "SIRET-Nummer",
-    "company": "Handelsregisterdetails",
-    "hosting": "Hosting-Anbieter Informationen",
-    "gdpr": "Datenschutzrichtlinie (DSGVO)",
-    "cookies": "Cookie-Richtlinie",
-    "terms": "Allgemeine Geschäftsbedingungen",
-    "cancellation": "Details zur Stornierungsrichtlinie"
-  },
-  "footer": {
-    "tagline": "Ein Hafen des Friedens im Herzen der Normandie",
-    "contact": "Kontakt",
-    "social": "Folgen Sie Uns",
-    "copyright": "© 2024 Marianne Cottage. Alle Rechte vorbehalten.",
-    "report_issue": "Website-Problem melden"
-  },
-  "a11y": {
-    "skip_to_content": "Zum Hauptinhalt springen",
-    "main_navigation": "Hauptnavigation",
-    "mobile_navigation": "Mobile Navigation",
-    "toggle_menu": "Menü umschalten",
-    "previous": "Zurück",
-    "next": "Weiter",
-    "close": "Schließen",
-    "opens_new_window": "öffnet in neuem Fenster",
-    "go_to_testimonial": "Zum Erfahrungsbericht {number}",
-    "booking_steps": "Buchungsschritte",
-    "completed": "abgeschlossen",
-    "current": "aktuell",
-    "pending": "ausstehend"
-  }
+	"meta": {
+		"title": "Marianne Cottage - Bed & Breakfast in der Normandie",
+		"description": "Charmantes Bauernhaus aus dem 19. Jahrhundert mit 2 Schlafzimmern im Herzen der Normandie. Kostenlos WiFi, Parkplatz und Frühstück inbegriffen."
+	},
+	"nav": {
+		"home": "Startseite",
+		"rooms": "Zimmer",
+		"gallery": "Galerie",
+		"explore": "Erkunden",
+		"contact": "Kontakt",
+		"book": "Buchen",
+		"legal": "Impressum"
+	},
+	"lang": {
+		"en": "English",
+		"fr": "Français",
+		"de": "Deutsch"
+	},
+	"home": {
+		"hero": {
+			"tagline": "Ein Hafen des Friedens im Herzen der Normandie",
+			"cta": "Buchen Sie Ihren Aufenthalt"
+		},
+		"about": {
+			"heading": "Willkommen im Marianne Cottage",
+			"p1": "Das Marianne Cottage liegt in der friedlichen Landschaft der Normandie und ist ein wunderschön restauriertes Bauernhaus aus dem 19. Jahrhundert auf einem ruhigen Weg, nur wenige Kilometer von einigen der bedeutendsten historischen Stätten Frankreichs entfernt. Unser intimes Bed & Breakfast bietet die perfekte Basis zum Erkunden der Region und gleichzeitig den Komfort und die Ruhe, die Sie verdienen.",
+			"p2": "Die Gastgeber Mark und Kim haben dieses historische Anwesen liebevoll restauriert und heißen Gäste willkommen, um die authentische Gastfreundschaft der Normandie zu erleben. Sie befinden sich umgeben von grünen Hügeln und genießen die Geräusche der Natur – vom sanften Wind bis zu den Rufen der Tierwelt, die in dieser Gegend beheimatet ist.",
+			"p3": "Das Cottage liegt in der Nähe der D-Day-Strände und historischen Abteien der Normandie und ist somit ein idealer Ort für Geschichtsinteressierte. Egal ob Sie WW2-Stätten erkunden, durch mittelalterliche Dörfer bummeln oder einfach nur die ländliche Ruhe genießen – das Marianne Cottage bietet den perfekten Rückzugsort."
+		},
+		"highlights": {
+			"wifi": "Kostenlos WiFi",
+			"parking": "Kostenlos Parkplatz",
+			"breakfast": "Frühstück Inbegriffen",
+			"garden": "Privater Garten",
+			"wildlife": "Tierschutzgebiet",
+			"nonsmoking": "Nichtraucher"
+		},
+		"rooms": {
+			"heading": "Unser Zimmer",
+			"cta": "Zimmer Ansehen"
+		},
+		"attractions": {
+			"heading": "Erkunden Sie die Umgebung",
+			"dday": "D-Day-Strände",
+			"cerisy": "Abtei von Cerisy",
+			"saintlo": "Saint-Lô",
+			"cta": "Mehr Entdecken"
+		},
+		"testimonials": {
+			"heading": "Gästebewertungen",
+			"simon": "Herzlicher Empfang, schönes Zimmer, komfortables Bett, modernes geräumiges Badezimmer, ausgezeichnetes Frühstück.",
+			"simon_author": "Simon, Großbritannien",
+			"ingrid": "Es fehlte nichts für 5 Tage. Makellose Zimmer, reichhaltiges frisch zubereitetes Frühstück, hervorragende Abendmalzeit.",
+			"ingrid_author": "Ingrid, Niederlande",
+			"guest3": "Herzlicher Empfang, herrliches Landhaus, friedlich, in der Nähe von Sehenswürdigkeiten, maßgeschneidertes Frühstück.",
+			"guest3_author": "Gast, Frankreich"
+		},
+		"booking": {
+			"heading": "Bereit zu Buchen?",
+			"cta": "Verfügbarkeit Prüfen"
+		},
+		"rooms_data": {
+			"bedroom1": "Schlafzimmer 1",
+			"bedroom1_desc": "Komfortables Schlafzimmer mit Gartenblick",
+			"bedroom2": "Schlafzimmer 2",
+			"bedroom2_desc": "Zweites Schlafzimmer mit natürlichem Licht"
+		},
+		"attractions_data": {
+			"dday_desc": "Historische D-Day-Landungsstrände und Gedenkstätten",
+			"cerisy_desc": "Schöne mittelalterliche Abtei auf dem Land",
+			"saintlo_desc": "Historische Stadt mit bemerkenswerter Architektur"
+		}
+	},
+	"rooms": {
+		"title": "Zimmer & Ausstattung",
+		"description": "Unser komfortables Zimmer mit 2 Schlafzimmern und modernem Badezimmer",
+		"suite": {
+			"heading": "Geräumige 2-Zimmer Suite",
+			"description": "Unsere Suite verfügt über zwei Schlafzimmer, ein modernes Badezimmer mit begehbarer Dusche und einen schönen Gartenblick. Komfortable Betten, frische Bettwäsche und durchdachte Details machen diesen Ort zum perfekten Zuhause auf Zeit."
+		},
+		"amenities": {
+			"heading": "Ausstattung",
+			"comfortable_beds": "Komfortable, hochwertige Betten",
+			"shower": "Modernes, geräumiges Badezimmer mit Dusche",
+			"towels": "Frische Handtücher und Bettwäsche",
+			"kettle": "Elektrischer Wasserkocher",
+			"garden_views": "Gartenausblick",
+			"wifi": "Kostenlos hochgeschwindigkeits-WiFi",
+			"parking": "Kostenlos privater Parkplatz",
+			"nonsmoke": "Nichtraucher-Anwesen"
+		},
+		"breakfast": {
+			"heading": "Frühstück",
+			"description": "Genießen Sie jeden Morgen ein köstliches Buffet und kontinentales Frühstück mit frischen Croissants und Baguettes von unserer lokalen Bäckerei, saisonalen Früchten, Saft, Joghurt und hausgemachten Konfitüren. Spezielle Wünsche (wie Eier) werden gerne auf Anfrage erfüllt."
+		},
+		"evening_meal": {
+			"heading": "Abendessen",
+			"description": "Nach Absprache erhältlich. Mark bereitet ein hausgemachtes Dinner ab 20€ pro Person zu. Teilen Sie uns Ihre Vorlieben bei der Buchung mit!"
+		}
+	},
+	"gallery": {
+		"title": "Fotogalerie",
+		"filter_label": "Fotos nach Kategorie filtern",
+		"categories": {
+			"all": "Alle",
+			"exterior": "Außen",
+			"rooms": "Zimmer",
+			"bathroom": "Badezimmer",
+			"garden": "Garten",
+			"breakfast": "Frühstück",
+			"surroundings": "Umgebung"
+		}
+	},
+	"contact": {
+		"title": "Kontakt & Anfahrt",
+		"address_label": "Adresse",
+		"address": "1 La Haye, 50680 Couvains, Frankreich",
+		"email_label": "Email",
+		"email": "mariannecattage@gmail.com",
+		"phone_label": "Telefon",
+		"phone": "+33 (0)7 80 73 17 04",
+		"airport": "Nächster Flughafen",
+		"airport_info": "Caen–Carpiquet (45 km)",
+		"directions": {
+			"heading": "Anfahrtsweg",
+			"important": "Wichtig: Fahren Sie bitte durch das Dorf Couvains an. Viele Navigationssysteme leiten über die Belleval-Straße, die nach den ersten 75 Metern eine schlecht gepflegte, holprige Feldstraße ist. Folgen Sie stattdessen den Schildern durch das Dorf Couvains."
+		},
+		"form": {
+			"heading": "Senden Sie uns eine Nachricht",
+			"name": "Name",
+			"email": "Email",
+			"message": "Nachricht",
+			"submit": "Senden",
+			"success": "Danke! Wir werden uns bald bei Ihnen melden.",
+			"error": "Fehler beim Senden der Nachricht. Bitte versuchen Sie es später noch einmal."
+		},
+		"social": {
+			"heading": "Finden Sie uns Online",
+			"booking_com": "Booking.com",
+			"tripadvisor": "TripAdvisor",
+			"facebook": "Facebook"
+		},
+		"location_map": "Finden Sie uns auf der Karte"
+	},
+	"book": {
+		"title": "Buchen Sie Ihren Aufenthalt",
+		"coming_soon": "Buchungssystem kommt bald",
+		"description": "Online-Buchung ist bald verfügbar. Kontaktieren Sie uns jetzt direkt oder buchen Sie über eine unserer Partner-Websites.",
+		"contact_us": "Kontaktieren Sie Uns",
+		"booking_com_link": "Auf Booking.com Buchen",
+		"heading": "Wählen Sie Ihre Daten",
+		"guests": "Anzahl der Gäste",
+		"rate_plan": "Tarif",
+		"summary": "Zusammenfassung",
+		"total": "Gesamtbetrag",
+		"per_night": "pro Nacht",
+		"checkout": "Zur Bezahlung",
+		"cancellation_policy": "Kostenlose Stornierung bis 7 Tage vor Anreise",
+		"step_dates": "Daten",
+		"step_details": "Details",
+		"step_review": "Überprüfen",
+		"guest_details": "Gästedaten",
+		"full_name": "Vollständiger Name",
+		"email_address": "E-Mail-Adresse",
+		"phone": "Telefon",
+		"country": "Land",
+		"select_country": "Land auswählen",
+		"special_requests": "Besondere Wünsche",
+		"placeholder_name": "Max Mustermann",
+		"placeholder_email": "max@beispiel.de",
+		"placeholder_phone": "+33 7 80 73 17 04",
+		"placeholder_requests": "Ernährungsanforderungen, Ankunftszeit, etc.",
+		"required": "erforderlich",
+		"back": "Zurück",
+		"review_booking": "Buchung Überprüfen",
+		"review_heading": "Überprüfen Sie Ihre Buchung",
+		"label_name": "Name",
+		"label_email": "E-Mail",
+		"label_phone": "Telefon",
+		"label_country": "Land",
+		"label_special_requests": "Besondere Wünsche",
+		"label_checkin": "Anreise",
+		"label_checkout": "Abreise",
+		"label_duration": "Dauer",
+		"night": "Nacht",
+		"nights": "Nächte",
+		"submitting": "Wird gesendet...",
+		"confirm_booking": "Buchung Bestätigen",
+		"seasonal_rates": "Saisonpreise",
+		"rate_low": "Nebensaison (Nov-Feb)",
+		"rate_high": "Hauptsaison (Mär-Okt)",
+		"rate_peak": "Spitze (D-Day-Woche)",
+		"rate_low_price": "85€/Nacht",
+		"rate_high_price": "120€/Nacht",
+		"rate_peak_price": "140€/Nacht",
+		"need_help": "Brauchen Sie Hilfe bei Ihrer Buchung?",
+		"guest_count": "{n} Gast",
+		"guest_count_plural": "{n} Gäste",
+		"country_fr": "Frankreich",
+		"country_gb": "Vereinigtes Königreich",
+		"country_de": "Deutschland",
+		"country_nl": "Niederlande",
+		"country_be": "Belgien",
+		"country_us": "Vereinigte Staaten",
+		"country_ca": "Kanada",
+		"country_au": "Australien",
+		"country_other": "Andere",
+		"error_name_required": "Name ist erforderlich",
+		"error_email_required": "E-Mail ist erforderlich",
+		"error_email_invalid": "Ungültige E-Mail",
+		"error_phone_invalid": "Ungültige Telefonnummer",
+		"error_booking_failed": "Buchung fehlgeschlagen. Bitte versuchen Sie es erneut.",
+		"error_network": "Netzwerkfehler. Bitte versuchen Sie es erneut."
+	},
+	"booking_confirm": {
+		"title": "Buchung Bestätigt",
+		"thank_you": "Danke für Ihre Buchung!",
+		"confirmation_email": "Eine Bestätigungs-E-Mail wird gesendet an",
+		"reference": "Buchungsreferenz",
+		"summary": "Buchungszusammenfassung",
+		"dates": "Daten",
+		"guests": "Gäste",
+		"guest": "Gast",
+		"total_paid": "Bezahlter Gesamtbetrag",
+		"directions": "Anfahrt zum Anwesen",
+		"important": "Bitte beachten: Fahren Sie über das Dorf Couvains an. Meiden Sie die Belleval-Straße.",
+		"address": "Adresse",
+		"contact_info": "Fragen? Kontaktieren Sie uns unter mariannecattage@gmail.com oder +33 (0)7 80 73 17 04",
+		"label_checkin": "Anreise",
+		"label_checkout": "Abreise",
+		"label_duration": "Dauer",
+		"status": "Status",
+		"status_pending": "Ausstehend",
+		"status_note": "Zahlungsintegration kommt bald",
+		"back_home": "Zurück zur Startseite"
+	},
+	"calendar": {
+		"prev_month": "Vorheriger Monat",
+		"next_month": "Nächster Monat",
+		"sun": "So",
+		"mon": "Mo",
+		"tue": "Di",
+		"wed": "Mi",
+		"thu": "Do",
+		"fri": "Fr",
+		"sat": "Sa",
+		"available": "Verfügbar",
+		"unavailable": "Nicht verfügbar",
+		"past_date": "Vergangen",
+		"selected": "Ausgewählt",
+		"select_checkout": "Wählen Sie Ihr Abreisedatum"
+	},
+	"booking_summary": {
+		"title": "Buchungszusammenfassung",
+		"checkin": "Anreise:",
+		"checkout": "Abreise:",
+		"nights": "Nächte:",
+		"guests": "Gäste:",
+		"tax": "Steuer (10%)",
+		"total": "Gesamtbetrag",
+		"cancellation": "Stornierung:",
+		"empty": "Wählen Sie An- und Abreisedaten um die Preise zu sehen"
+	},
+	"room_card": {
+		"view_details": "→ Details Ansehen"
+	},
+	"enquiry_form": {
+		"all_fields_required": "Alle Felder sind erforderlich",
+		"sending": "Wird gesendet..."
+	},
+	"explore": {
+		"title": "Erkunden Sie die Normandie",
+		"description": "Das Marianne Cottage ist ideal gelegen, um die reiche Geschichte und natürliche Schönheit der Normandie zu erkunden. Unten finden Sie Attraktionen von WW2-Stätten bis hin zu charmanten mittelalterlichen Dörfern und Naturdenkmälern.",
+		"category": {
+			"ww2": "WW2-Geschichte",
+			"nature": "Natur & Erbe",
+			"towns": "Städte & Kultur"
+		},
+		"omaha_beach": "Omaha Beach",
+		"omaha_desc": "Historische D-Day-Landungsstrände und Gedenkstätten",
+		"la_cambe": "Deutsche Kriegsgräberstätte La Cambe",
+		"la_cambe_desc": "Deutscher Soldatenfriedhof aus dem Zweiten Weltkrieg",
+		"overlord": "Overlord Museum",
+		"overlord_desc": "Umfassendes Museum über den D-Day und den Zweiten Weltkrieg",
+		"cerisy": "Abtei von Cerisy",
+		"cerisy_desc": "Schöne mittelalterliche Abtei umgeben von Natur",
+		"haras": "Haras National de Saint-Lô",
+		"haras_desc": "Historisches Gestüt mit schönen Gärten",
+		"saintlo": "Saint-Lô",
+		"saintlo_desc": "Historische mittelalterliche Stadt mit bemerkenswerter Architektur",
+		"bayeux": "Bayeux",
+		"bayeux_desc": "Berühmte mittelalterliche Stadt mit beeindruckender Kathedrale"
+	},
+	"legal": {
+		"title": "Impressum",
+		"placeholder": "Rechtliche Informationen werden in Kürze veröffentlicht, einschließlich Registernummer, Unternehmensdetails, Hosting-Anbieter und Datenschutzrichtlinie.",
+		"todo_heading": "Noch zu ergänzende Informationen:",
+		"siret": "SIRET-Nummer",
+		"company": "Handelsregisterdetails",
+		"hosting": "Hosting-Anbieter Informationen",
+		"gdpr": "Datenschutzrichtlinie (DSGVO)",
+		"cookies": "Cookie-Richtlinie",
+		"terms": "Allgemeine Geschäftsbedingungen",
+		"cancellation": "Details zur Stornierungsrichtlinie"
+	},
+	"footer": {
+		"tagline": "Ein Hafen des Friedens im Herzen der Normandie",
+		"contact": "Kontakt",
+		"social": "Folgen Sie Uns",
+		"copyright": "© 2024 Marianne Cottage. Alle Rechte vorbehalten.",
+		"report_issue": "Website-Problem melden"
+	},
+	"a11y": {
+		"skip_to_content": "Zum Hauptinhalt springen",
+		"main_navigation": "Hauptnavigation",
+		"mobile_navigation": "Mobile Navigation",
+		"toggle_menu": "Menü umschalten",
+		"previous": "Zurück",
+		"next": "Weiter",
+		"close": "Schließen",
+		"opens_new_window": "öffnet in neuem Fenster",
+		"go_to_testimonial": "Zum Erfahrungsbericht {number}",
+		"booking_steps": "Buchungsschritte",
+		"completed": "abgeschlossen",
+		"current": "aktuell",
+		"pending": "ausstehend",
+		"side_navigation": "Seitennavigation"
+	}
 }

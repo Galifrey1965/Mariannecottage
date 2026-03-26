@@ -1,329 +1,330 @@
 {
-  "meta": {
-    "title": "Marianne Cottage - Bed & Breakfast in Normandy",
-    "description": "Charming 1800s farmhouse with 2 bedrooms in the heart of Normandy. Free WiFi, parking, and breakfast included."
-  },
-  "nav": {
-    "home": "Home",
-    "rooms": "Rooms",
-    "gallery": "Gallery",
-    "explore": "Explore",
-    "contact": "Contact",
-    "book": "Book",
-    "legal": "Legal"
-  },
-  "lang": {
-    "en": "English",
-    "fr": "Français",
-    "de": "Deutsch"
-  },
-  "home": {
-    "hero": {
-      "tagline": "A haven of peace in the heart of Normandy",
-      "cta": "Book Your Stay"
-    },
-    "about": {
-      "heading": "Welcome to Marianne Cottage",
-      "p1": "Nestled in the peaceful Normandy countryside, Marianne Cottage is a beautifully restored 1800s farmhouse set on a quiet lane just a few kilometres from some of France's most significant historical sites. Our intimate bed and breakfast offers the perfect base for exploring the region while providing the comfort and tranquility you deserve.",
-      "p2": "Hosts Mark and Kim have lovingly restored this historic property, welcoming guests to experience authentic Normandy hospitality. You'll find yourself surrounded by rolling green fields and enjoy the sounds of nature—from the gentle breeze to the calls of the wildlife that makes this area their home.",
-      "p3": "The cottage sits close to the D-Day beaches and historic abbeys of Normandy, making it an ideal location for history enthusiasts. Whether you're exploring WW2 heritage sites, wandering through medieval villages, or simply soaking in the rural tranquility, Marianne Cottage provides the perfect retreat."
-    },
-    "highlights": {
-      "wifi": "Free WiFi",
-      "parking": "Free Parking",
-      "breakfast": "Breakfast Included",
-      "garden": "Private Garden",
-      "wildlife": "Wildlife Haven",
-      "nonsmoking": "Non-Smoking"
-    },
-    "rooms": {
-      "heading": "Our Suite",
-      "cta": "View Rooms"
-    },
-    "attractions": {
-      "heading": "Explore Nearby",
-      "dday": "D-Day Beaches",
-      "cerisy": "Cerisy Abbey",
-      "saintlo": "Saint-Lô",
-      "cta": "Explore More"
-    },
-    "testimonials": {
-      "heading": "Guest Reviews",
-      "simon": "Warm welcome, lovely room, comfortable bed, modern spacious bathroom, excellent breakfast.",
-      "simon_author": "Simon, UK",
-      "ingrid": "Lacked nothing for 5 days. Immaculate rooms, extensive freshly prepared breakfast, wonderful evening meal option.",
-      "ingrid_author": "Ingrid, Netherlands",
-      "guest3": "Warm welcome, delightful countryside house, peaceful, close to points of interest, made-to-measure breakfast.",
-      "guest3_author": "Guest, France"
-    },
-    "booking": {
-      "heading": "Ready to Book?",
-      "cta": "Check Availability"
-    },
-    "rooms_data": {
-      "bedroom1": "Bedroom 1",
-      "bedroom1_desc": "Comfortable bedroom with garden views",
-      "bedroom2": "Bedroom 2",
-      "bedroom2_desc": "Second bedroom with natural light"
-    },
-    "attractions_data": {
-      "dday_desc": "Historic D-Day landing beaches and memorials",
-      "cerisy_desc": "Beautiful medieval abbey in the countryside",
-      "saintlo_desc": "Historic town with remarkable architecture"
-    }
-  },
-  "rooms": {
-    "title": "Rooms & Amenities",
-    "description": "Our comfortable suite with 2 bedrooms and modern bathroom",
-    "suite": {
-      "heading": "Spacious 2-Bedroom Suite",
-      "description": "Our suite features two bedrooms, a modern walk-in shower bathroom with quality toiletries, and beautiful garden views. Comfortable beds, fresh linens, and thoughtful touches make this the perfect home away from home."
-    },
-    "amenities": {
-      "heading": "Amenities",
-      "comfortable_beds": "Comfortable, quality beds",
-      "shower": "Modern spacious walk-in shower",
-      "towels": "Fresh towels and linens provided",
-      "kettle": "Electric kettle",
-      "garden_views": "Garden views",
-      "wifi": "Free high-speed WiFi",
-      "parking": "Free private parking",
-      "nonsmoke": "Non-smoking property"
-    },
-    "breakfast": {
-      "heading": "Breakfast",
-      "description": "Enjoy a delicious buffet and continental breakfast each morning, featuring fresh croissants and baguettes from our local boulangerie, seasonal fruits, juice, yoghurt, and homemade jams. Special requests (such as eggs) are happily accommodated upon request."
-    },
-    "evening_meal": {
-      "heading": "Evening Meal",
-      "description": "Available by arrangement. Mark prepares a home-cooked dinner from €20 per person. Let us know your preferences when you book!"
-    }
-  },
-  "gallery": {
-    "title": "Photo Gallery",
-    "filter_label": "Filter photos by category",
-    "categories": {
-      "all": "All",
-      "exterior": "Exterior",
-      "rooms": "Rooms",
-      "bathroom": "Bathroom",
-      "garden": "Garden",
-      "breakfast": "Breakfast",
-      "surroundings": "Surroundings"
-    }
-  },
-  "contact": {
-    "title": "Contact & Directions",
-    "address_label": "Address",
-    "address": "1 La Haye, 50680 Couvains, France",
-    "email_label": "Email",
-    "email": "mariannecattage@gmail.com",
-    "phone_label": "Phone",
-    "phone": "+33 (0)7 80 73 17 04",
-    "airport": "Nearest Airport",
-    "airport_info": "Caen–Carpiquet (45 km)",
-    "directions": {
-      "heading": "Getting Here",
-      "important": "Important: Please arrive via the village of Couvains. Many satellite navigation systems route via the Belleval road, which is a poorly maintained potholed farm track after the first 75 metres. Follow signs through Couvains village instead."
-    },
-    "form": {
-      "heading": "Send us a Message",
-      "name": "Name",
-      "email": "Email",
-      "message": "Message",
-      "submit": "Send",
-      "success": "Thank you! We'll get back to you soon.",
-      "error": "Error sending message. Please try again."
-    },
-    "social": {
-      "heading": "Find Us Online",
-      "booking_com": "Booking.com",
-      "tripadvisor": "TripAdvisor",
-      "facebook": "Facebook"
-    },
-    "location_map": "Find Us on the Map"
-  },
-  "book": {
-    "title": "Book Your Stay",
-    "coming_soon": "Booking system coming soon",
-    "description": "Complete online booking will be available soon. For now, please contact us directly or book through one of our partner sites.",
-    "contact_us": "Contact Us",
-    "booking_com_link": "Book on Booking.com",
-    "heading": "Select Your Dates",
-    "guests": "Number of Guests",
-    "rate_plan": "Rate Plan",
-    "summary": "Summary",
-    "total": "Total",
-    "per_night": "per night",
-    "checkout": "Proceed to Payment",
-    "cancellation_policy": "Free cancellation up to 7 days before arrival",
-    "step_dates": "Dates",
-    "step_details": "Details",
-    "step_review": "Review",
-    "guest_details": "Guest Details",
-    "full_name": "Full Name",
-    "email_address": "Email Address",
-    "phone": "Phone",
-    "country": "Country",
-    "select_country": "Select country",
-    "special_requests": "Special Requests",
-    "placeholder_name": "John Smith",
-    "placeholder_email": "john@example.com",
-    "placeholder_phone": "+33 7 80 73 17 04",
-    "placeholder_requests": "Dietary requirements, arrival time, etc.",
-    "required": "required",
-    "back": "Back",
-    "review_booking": "Review Booking",
-    "review_heading": "Review Your Booking",
-    "label_name": "Name",
-    "label_email": "Email",
-    "label_phone": "Phone",
-    "label_country": "Country",
-    "label_special_requests": "Special Requests",
-    "label_checkin": "Check-in",
-    "label_checkout": "Check-out",
-    "label_duration": "Duration",
-    "night": "night",
-    "nights": "nights",
-    "submitting": "Submitting...",
-    "confirm_booking": "Confirm Booking",
-    "seasonal_rates": "Seasonal Rates",
-    "rate_low": "Low (Nov-Feb)",
-    "rate_high": "High (Mar-Oct)",
-    "rate_peak": "Peak (D-Day week)",
-    "rate_low_price": "€85/night",
-    "rate_high_price": "€120/night",
-    "rate_peak_price": "€140/night",
-    "need_help": "Need help with your booking?",
-    "guest_count": "{n} Guest",
-    "guest_count_plural": "{n} Guests",
-    "country_fr": "France",
-    "country_gb": "United Kingdom",
-    "country_de": "Germany",
-    "country_nl": "Netherlands",
-    "country_be": "Belgium",
-    "country_us": "United States",
-    "country_ca": "Canada",
-    "country_au": "Australia",
-    "country_other": "Other",
-    "error_name_required": "Name is required",
-    "error_email_required": "Email is required",
-    "error_email_invalid": "Invalid email",
-    "error_phone_invalid": "Invalid phone number",
-    "error_booking_failed": "Booking failed. Please try again.",
-    "error_network": "Network error. Please try again."
-  },
-  "booking_confirm": {
-    "title": "Booking Confirmed",
-    "thank_you": "Thank you for booking!",
-    "confirmation_email": "A confirmation email will be sent to",
-    "reference": "Booking Reference",
-    "summary": "Booking Summary",
-    "dates": "Dates",
-    "guests": "Guests",
-    "guest": "Guest",
-    "total_paid": "Total Paid",
-    "directions": "Directions to Property",
-    "important": "Please note: Arrive via Couvains village. Avoid the Belleval road.",
-    "address": "Address",
-    "contact_info": "Questions? Contact us at mariannecattage@gmail.com or +33 (0)7 80 73 17 04",
-    "label_checkin": "Check-in",
-    "label_checkout": "Check-out",
-    "label_duration": "Duration",
-    "status": "Status",
-    "status_pending": "Pending",
-    "status_note": "payment integration coming soon",
-    "back_home": "Back to Home"
-  },
-  "calendar": {
-    "prev_month": "Previous month",
-    "next_month": "Next month",
-    "sun": "Sun",
-    "mon": "Mon",
-    "tue": "Tue",
-    "wed": "Wed",
-    "thu": "Thu",
-    "fri": "Fri",
-    "sat": "Sat",
-    "available": "Available",
-    "unavailable": "Unavailable",
-    "past_date": "Past Date",
-    "selected": "Selected",
-    "select_checkout": "Select your check-out date"
-  },
-  "booking_summary": {
-    "title": "Booking Summary",
-    "checkin": "Check-in:",
-    "checkout": "Check-out:",
-    "nights": "Nights:",
-    "guests": "Guests:",
-    "tax": "Tax (10%)",
-    "total": "Total",
-    "cancellation": "Cancellation:",
-    "empty": "Select check-in and check-out dates to see pricing"
-  },
-  "room_card": {
-    "view_details": "→ View Details"
-  },
-  "enquiry_form": {
-    "all_fields_required": "All fields are required",
-    "sending": "Sending..."
-  },
-  "explore": {
-    "title": "Explore Normandy",
-    "description": "Marianne Cottage is ideally located for exploring the rich history and natural beauty of Normandy. Below you'll find attractions ranging from WW2 heritage sites to charming medieval villages and natural landmarks.",
-    "category": {
-      "ww2": "WW2 History",
-      "nature": "Nature & Heritage",
-      "towns": "Towns & Culture"
-    },
-    "omaha_beach": "Omaha Beach",
-    "omaha_desc": "Historic D-Day landing beaches and memorials",
-    "la_cambe": "La Cambe German Cemetery",
-    "la_cambe_desc": "World War II German military cemetery",
-    "overlord": "Overlord Museum",
-    "overlord_desc": "Comprehensive D-Day and WW2 history museum",
-    "cerisy": "Cerisy Abbey",
-    "cerisy_desc": "Beautiful medieval abbey surrounded by nature",
-    "haras": "Haras National de Saint-Lô",
-    "haras_desc": "Historic stud farm with beautiful gardens",
-    "saintlo": "Saint-Lô",
-    "saintlo_desc": "Historic medieval town with remarkable architecture",
-    "bayeux": "Bayeux",
-    "bayeux_desc": "Famous medieval town with stunning cathedral"
-  },
-  "legal": {
-    "title": "Mentions Légales / Legal Notice / Impressum",
-    "placeholder": "Legal information will be published here shortly, including SIRET number, company details, hosting provider, and data protection policy.",
-    "todo_heading": "Information to be completed:",
-    "siret": "SIRET number",
-    "company": "Company registration details",
-    "hosting": "Hosting provider information",
-    "gdpr": "Data protection policy (RGPD/GDPR)",
-    "cookies": "Cookie policy",
-    "terms": "Terms of service",
-    "cancellation": "Cancellation policy details"
-  },
-  "footer": {
-    "tagline": "A haven of peace in the heart of Normandy",
-    "contact": "Contact",
-    "social": "Follow Us",
-    "copyright": "© 2024 Marianne Cottage. All rights reserved.",
-    "report_issue": "Report a website issue"
-  },
-  "a11y": {
-    "skip_to_content": "Skip to main content",
-    "main_navigation": "Main navigation",
-    "mobile_navigation": "Mobile navigation",
-    "toggle_menu": "Toggle menu",
-    "previous": "Previous",
-    "next": "Next",
-    "close": "Close",
-    "opens_new_window": "opens in new window",
-    "go_to_testimonial": "Go to testimonial {number}",
-    "booking_steps": "Booking steps",
-    "completed": "completed",
-    "current": "current",
-    "pending": "pending"
-  }
+	"meta": {
+		"title": "Marianne Cottage - Bed & Breakfast in Normandy",
+		"description": "Charming 1800s farmhouse with 2 bedrooms in the heart of Normandy. Free WiFi, parking, and breakfast included."
+	},
+	"nav": {
+		"home": "Home",
+		"rooms": "Rooms",
+		"gallery": "Gallery",
+		"explore": "Explore",
+		"contact": "Contact",
+		"book": "Book",
+		"legal": "Legal"
+	},
+	"lang": {
+		"en": "English",
+		"fr": "Français",
+		"de": "Deutsch"
+	},
+	"home": {
+		"hero": {
+			"tagline": "A haven of peace in the heart of Normandy",
+			"cta": "Book Your Stay"
+		},
+		"about": {
+			"heading": "Welcome to Marianne Cottage",
+			"p1": "Nestled in the peaceful Normandy countryside, Marianne Cottage is a beautifully restored 1800s farmhouse set on a quiet lane just a few kilometres from some of France's most significant historical sites. Our intimate bed and breakfast offers the perfect base for exploring the region while providing the comfort and tranquility you deserve.",
+			"p2": "Hosts Mark and Kim have lovingly restored this historic property, welcoming guests to experience authentic Normandy hospitality. You'll find yourself surrounded by rolling green fields and enjoy the sounds of nature—from the gentle breeze to the calls of the wildlife that makes this area their home.",
+			"p3": "The cottage sits close to the D-Day beaches and historic abbeys of Normandy, making it an ideal location for history enthusiasts. Whether you're exploring WW2 heritage sites, wandering through medieval villages, or simply soaking in the rural tranquility, Marianne Cottage provides the perfect retreat."
+		},
+		"highlights": {
+			"wifi": "Free WiFi",
+			"parking": "Free Parking",
+			"breakfast": "Breakfast Included",
+			"garden": "Private Garden",
+			"wildlife": "Wildlife Haven",
+			"nonsmoking": "Non-Smoking"
+		},
+		"rooms": {
+			"heading": "Our Suite",
+			"cta": "View Rooms"
+		},
+		"attractions": {
+			"heading": "Explore Nearby",
+			"dday": "D-Day Beaches",
+			"cerisy": "Cerisy Abbey",
+			"saintlo": "Saint-Lô",
+			"cta": "Explore More"
+		},
+		"testimonials": {
+			"heading": "Guest Reviews",
+			"simon": "Warm welcome, lovely room, comfortable bed, modern spacious bathroom, excellent breakfast.",
+			"simon_author": "Simon, UK",
+			"ingrid": "Lacked nothing for 5 days. Immaculate rooms, extensive freshly prepared breakfast, wonderful evening meal option.",
+			"ingrid_author": "Ingrid, Netherlands",
+			"guest3": "Warm welcome, delightful countryside house, peaceful, close to points of interest, made-to-measure breakfast.",
+			"guest3_author": "Guest, France"
+		},
+		"booking": {
+			"heading": "Ready to Book?",
+			"cta": "Check Availability"
+		},
+		"rooms_data": {
+			"bedroom1": "Bedroom 1",
+			"bedroom1_desc": "Comfortable bedroom with garden views",
+			"bedroom2": "Bedroom 2",
+			"bedroom2_desc": "Second bedroom with natural light"
+		},
+		"attractions_data": {
+			"dday_desc": "Historic D-Day landing beaches and memorials",
+			"cerisy_desc": "Beautiful medieval abbey in the countryside",
+			"saintlo_desc": "Historic town with remarkable architecture"
+		}
+	},
+	"rooms": {
+		"title": "Rooms & Amenities",
+		"description": "Our comfortable suite with 2 bedrooms and modern bathroom",
+		"suite": {
+			"heading": "Spacious 2-Bedroom Suite",
+			"description": "Our suite features two bedrooms, a modern walk-in shower bathroom with quality toiletries, and beautiful garden views. Comfortable beds, fresh linens, and thoughtful touches make this the perfect home away from home."
+		},
+		"amenities": {
+			"heading": "Amenities",
+			"comfortable_beds": "Comfortable, quality beds",
+			"shower": "Modern spacious walk-in shower",
+			"towels": "Fresh towels and linens provided",
+			"kettle": "Electric kettle",
+			"garden_views": "Garden views",
+			"wifi": "Free high-speed WiFi",
+			"parking": "Free private parking",
+			"nonsmoke": "Non-smoking property"
+		},
+		"breakfast": {
+			"heading": "Breakfast",
+			"description": "Enjoy a delicious buffet and continental breakfast each morning, featuring fresh croissants and baguettes from our local boulangerie, seasonal fruits, juice, yoghurt, and homemade jams. Special requests (such as eggs) are happily accommodated upon request."
+		},
+		"evening_meal": {
+			"heading": "Evening Meal",
+			"description": "Available by arrangement. Mark prepares a home-cooked dinner from €20 per person. Let us know your preferences when you book!"
+		}
+	},
+	"gallery": {
+		"title": "Photo Gallery",
+		"filter_label": "Filter photos by category",
+		"categories": {
+			"all": "All",
+			"exterior": "Exterior",
+			"rooms": "Rooms",
+			"bathroom": "Bathroom",
+			"garden": "Garden",
+			"breakfast": "Breakfast",
+			"surroundings": "Surroundings"
+		}
+	},
+	"contact": {
+		"title": "Contact & Directions",
+		"address_label": "Address",
+		"address": "1 La Haye, 50680 Couvains, France",
+		"email_label": "Email",
+		"email": "mariannecattage@gmail.com",
+		"phone_label": "Phone",
+		"phone": "+33 (0)7 80 73 17 04",
+		"airport": "Nearest Airport",
+		"airport_info": "Caen–Carpiquet (45 km)",
+		"directions": {
+			"heading": "Getting Here",
+			"important": "Important: Please arrive via the village of Couvains. Many satellite navigation systems route via the Belleval road, which is a poorly maintained potholed farm track after the first 75 metres. Follow signs through Couvains village instead."
+		},
+		"form": {
+			"heading": "Send us a Message",
+			"name": "Name",
+			"email": "Email",
+			"message": "Message",
+			"submit": "Send",
+			"success": "Thank you! We'll get back to you soon.",
+			"error": "Error sending message. Please try again."
+		},
+		"social": {
+			"heading": "Find Us Online",
+			"booking_com": "Booking.com",
+			"tripadvisor": "TripAdvisor",
+			"facebook": "Facebook"
+		},
+		"location_map": "Find Us on the Map"
+	},
+	"book": {
+		"title": "Book Your Stay",
+		"coming_soon": "Booking system coming soon",
+		"description": "Complete online booking will be available soon. For now, please contact us directly or book through one of our partner sites.",
+		"contact_us": "Contact Us",
+		"booking_com_link": "Book on Booking.com",
+		"heading": "Select Your Dates",
+		"guests": "Number of Guests",
+		"rate_plan": "Rate Plan",
+		"summary": "Summary",
+		"total": "Total",
+		"per_night": "per night",
+		"checkout": "Proceed to Payment",
+		"cancellation_policy": "Free cancellation up to 7 days before arrival",
+		"step_dates": "Dates",
+		"step_details": "Details",
+		"step_review": "Review",
+		"guest_details": "Guest Details",
+		"full_name": "Full Name",
+		"email_address": "Email Address",
+		"phone": "Phone",
+		"country": "Country",
+		"select_country": "Select country",
+		"special_requests": "Special Requests",
+		"placeholder_name": "John Smith",
+		"placeholder_email": "john@example.com",
+		"placeholder_phone": "+33 7 80 73 17 04",
+		"placeholder_requests": "Dietary requirements, arrival time, etc.",
+		"required": "required",
+		"back": "Back",
+		"review_booking": "Review Booking",
+		"review_heading": "Review Your Booking",
+		"label_name": "Name",
+		"label_email": "Email",
+		"label_phone": "Phone",
+		"label_country": "Country",
+		"label_special_requests": "Special Requests",
+		"label_checkin": "Check-in",
+		"label_checkout": "Check-out",
+		"label_duration": "Duration",
+		"night": "night",
+		"nights": "nights",
+		"submitting": "Submitting...",
+		"confirm_booking": "Confirm Booking",
+		"seasonal_rates": "Seasonal Rates",
+		"rate_low": "Low (Nov-Feb)",
+		"rate_high": "High (Mar-Oct)",
+		"rate_peak": "Peak (D-Day week)",
+		"rate_low_price": "€85/night",
+		"rate_high_price": "€120/night",
+		"rate_peak_price": "€140/night",
+		"need_help": "Need help with your booking?",
+		"guest_count": "{n} Guest",
+		"guest_count_plural": "{n} Guests",
+		"country_fr": "France",
+		"country_gb": "United Kingdom",
+		"country_de": "Germany",
+		"country_nl": "Netherlands",
+		"country_be": "Belgium",
+		"country_us": "United States",
+		"country_ca": "Canada",
+		"country_au": "Australia",
+		"country_other": "Other",
+		"error_name_required": "Name is required",
+		"error_email_required": "Email is required",
+		"error_email_invalid": "Invalid email",
+		"error_phone_invalid": "Invalid phone number",
+		"error_booking_failed": "Booking failed. Please try again.",
+		"error_network": "Network error. Please try again."
+	},
+	"booking_confirm": {
+		"title": "Booking Confirmed",
+		"thank_you": "Thank you for booking!",
+		"confirmation_email": "A confirmation email will be sent to",
+		"reference": "Booking Reference",
+		"summary": "Booking Summary",
+		"dates": "Dates",
+		"guests": "Guests",
+		"guest": "Guest",
+		"total_paid": "Total Paid",
+		"directions": "Directions to Property",
+		"important": "Please note: Arrive via Couvains village. Avoid the Belleval road.",
+		"address": "Address",
+		"contact_info": "Questions? Contact us at mariannecattage@gmail.com or +33 (0)7 80 73 17 04",
+		"label_checkin": "Check-in",
+		"label_checkout": "Check-out",
+		"label_duration": "Duration",
+		"status": "Status",
+		"status_pending": "Pending",
+		"status_note": "payment integration coming soon",
+		"back_home": "Back to Home"
+	},
+	"calendar": {
+		"prev_month": "Previous month",
+		"next_month": "Next month",
+		"sun": "Sun",
+		"mon": "Mon",
+		"tue": "Tue",
+		"wed": "Wed",
+		"thu": "Thu",
+		"fri": "Fri",
+		"sat": "Sat",
+		"available": "Available",
+		"unavailable": "Unavailable",
+		"past_date": "Past Date",
+		"selected": "Selected",
+		"select_checkout": "Select your check-out date"
+	},
+	"booking_summary": {
+		"title": "Booking Summary",
+		"checkin": "Check-in:",
+		"checkout": "Check-out:",
+		"nights": "Nights:",
+		"guests": "Guests:",
+		"tax": "Tax (10%)",
+		"total": "Total",
+		"cancellation": "Cancellation:",
+		"empty": "Select check-in and check-out dates to see pricing"
+	},
+	"room_card": {
+		"view_details": "→ View Details"
+	},
+	"enquiry_form": {
+		"all_fields_required": "All fields are required",
+		"sending": "Sending..."
+	},
+	"explore": {
+		"title": "Explore Normandy",
+		"description": "Marianne Cottage is ideally located for exploring the rich history and natural beauty of Normandy. Below you'll find attractions ranging from WW2 heritage sites to charming medieval villages and natural landmarks.",
+		"category": {
+			"ww2": "WW2 History",
+			"nature": "Nature & Heritage",
+			"towns": "Towns & Culture"
+		},
+		"omaha_beach": "Omaha Beach",
+		"omaha_desc": "Historic D-Day landing beaches and memorials",
+		"la_cambe": "La Cambe German Cemetery",
+		"la_cambe_desc": "World War II German military cemetery",
+		"overlord": "Overlord Museum",
+		"overlord_desc": "Comprehensive D-Day and WW2 history museum",
+		"cerisy": "Cerisy Abbey",
+		"cerisy_desc": "Beautiful medieval abbey surrounded by nature",
+		"haras": "Haras National de Saint-Lô",
+		"haras_desc": "Historic stud farm with beautiful gardens",
+		"saintlo": "Saint-Lô",
+		"saintlo_desc": "Historic medieval town with remarkable architecture",
+		"bayeux": "Bayeux",
+		"bayeux_desc": "Famous medieval town with stunning cathedral"
+	},
+	"legal": {
+		"title": "Mentions Légales / Legal Notice / Impressum",
+		"placeholder": "Legal information will be published here shortly, including SIRET number, company details, hosting provider, and data protection policy.",
+		"todo_heading": "Information to be completed:",
+		"siret": "SIRET number",
+		"company": "Company registration details",
+		"hosting": "Hosting provider information",
+		"gdpr": "Data protection policy (RGPD/GDPR)",
+		"cookies": "Cookie policy",
+		"terms": "Terms of service",
+		"cancellation": "Cancellation policy details"
+	},
+	"footer": {
+		"tagline": "A haven of peace in the heart of Normandy",
+		"contact": "Contact",
+		"social": "Follow Us",
+		"copyright": "© 2024 Marianne Cottage. All rights reserved.",
+		"report_issue": "Report a website issue"
+	},
+	"a11y": {
+		"skip_to_content": "Skip to main content",
+		"main_navigation": "Main navigation",
+		"mobile_navigation": "Mobile navigation",
+		"toggle_menu": "Toggle menu",
+		"previous": "Previous",
+		"next": "Next",
+		"close": "Close",
+		"opens_new_window": "opens in new window",
+		"go_to_testimonial": "Go to testimonial {number}",
+		"booking_steps": "Booking steps",
+		"completed": "completed",
+		"current": "current",
+		"pending": "pending",
+		"side_navigation": "Side navigation"
+	}
 }

@@ -127,7 +127,7 @@
 	const formatDate = (iso: string) =>
 		new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
 	const formatCurrency = (n: number) =>
-		new Intl.NumberFormat('en-US', { style: 'currency', currency: 'EUR' }).format(n);
+		new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'EUR' }).format(n);
 	const formatRelative = (iso: string) => {
 		const days = Math.ceil((new Date(iso).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
 		if (days < 0) return `${Math.abs(days)}d ago`;

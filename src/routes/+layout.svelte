@@ -37,7 +37,7 @@
 	<Header {lang} {messages} />
 
 	<div class="app-body">
-		<NavigationRail items={railItems} />
+		<NavigationRail items={railItems} label={t(messages, 'a11y.side_navigation')} />
 
 		<main id="main-content" class="main-content" tabindex="-1">
 			{@render children()}
