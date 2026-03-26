@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { t } from '$lib/i18n';
 	import type { Messages, Locale } from '$lib/i18n';
+	import AiHelpFabs from './AiHelpFabs.svelte';
 
 	interface Props {
 		lang: Locale;
@@ -19,6 +20,7 @@
 			<div>
 				<h3 class="footer-brand">Marianne Cottage</h3>
 				<p class="footer-tagline">{t(messages, 'footer.tagline')}</p>
+				<AiHelpFabs {messages} />
 			</div>
 
 			<div>
@@ -33,13 +35,29 @@
 
 		<div class="footer-bottom">
 			<p>{t(messages, 'footer.copyright')}</p>
-			<a
-				href="https://github.com/Galifrey1965/Mariannecottage/releases"
-				target="_blank"
-				rel="noopener"
-				class="version-link"
-				aria-label="{t(messages, 'footer.version')} v{version} — {buildDate}"
-			>v{version} · {buildDate}</a>
+			<div class="footer-meta">
+				<a
+					href="https://github.com/Galifrey1965/Mariannecottage/releases"
+					target="_blank"
+					rel="noopener"
+					class="version-link"
+					aria-label="{t(messages, 'footer.version')} v{version} — {buildDate}"
+				>v{version} · {buildDate}</a>
+				<a
+					href="https://app.netlify.com/projects/mariannecottage/deploys"
+					target="_blank"
+					rel="noopener"
+					class="netlify-badge"
+					aria-label="Netlify deploy status"
+				>
+					<img
+						src="https://api.netlify.com/api/v1/badges/6e4b6de3-6fb1-4867-840e-91b4dda71dbc/deploy-status"
+						alt="Netlify Status"
+						width="100"
+						height="20"
+					/>
+				</a>
+			</div>
 			<a href="https://github.com/Galifrey1965/Mariannecottage/issues/new" target="_blank" rel="noopener" class="report-issue">
 				{t(messages, 'footer.report_issue')}
 			</a>
@@ -130,9 +148,27 @@
 		margin: 0;
 	}
 
+	.footer-meta {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex-wrap: wrap;
+		gap: 0.75rem;
+		margin-top: 0.5rem;
+	}
+
+	.netlify-badge {
+		display: inline-flex;
+		opacity: 0.7;
+		transition: opacity 0.2s ease;
+	}
+
+	.netlify-badge:hover {
+		opacity: 1;
+	}
+
 	.version-link {
 		display: inline-block;
-		margin-top: 0.5rem;
 		font-size: 0.75rem;
 		font-family: monospace;
 		color: var(--color-footer-accent);
