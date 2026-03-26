@@ -2,7 +2,7 @@
 // 20 POIs within 50km of Marianne Cottage (1 La Haye, 50680 Couvains)
 // + Mont Saint-Michel exception (~71km, culturally unmissable)
 //
-// Images: populated after running `node scripts/download-poi-images.mjs`
+// Images: populated by `node scripts/download-poi-images.mjs`
 // Distances: Haversine straight-line from 49.1728, -0.9887
 // popularityScore: internal only — used for sorting, never shown in UI
 
@@ -43,7 +43,18 @@ export const POIS: Poi[] = [
 		accessibilityLevel: 'Good',
 		website: 'https://www.normandie-tourisme.fr',
 		wikipedia: 'https://en.wikipedia.org/wiki/Omaha_Beach',
-		images: [],
+		images: [
+			{ src: '/images/poi/omaha-beach/1.jpg', alt: 'Troops of the US Army 2nd Infantry Division march up the bluff at the E-1 draw in the Easy Red sector of Omaha Beach, Normandy, France on D+1, June 7, 1944.', attribution: 'US Army Signal Corps / Wikimedia Commons / Public domain' },
+			{ src: '/images/poi/omaha-beach/2.jpg', alt: 'The 80th anniversary of D-Day and the Battle of Normandy on 6 June 2024', attribution: 'European Union / Wikimedia Commons / Attribution' },
+			{ src: '/images/poi/omaha-beach/3.jpg', alt: 'The 80th anniversary of D-Day and the Battle of Normandy on 6 June 2024', attribution: 'European Union / Wikimedia Commons / Attribution' },
+			{ src: '/images/poi/omaha-beach/4.jpg', alt: 'The 80th anniversary of D-Day and the Battle of Normandy on 6 June 2024', attribution: 'European Union / Wikimedia Commons / Attribution' },
+			{ src: '/images/poi/omaha-beach/5.jpg', alt: 'Omaha Beach, Normandy, France', attribution: 'Dupont66 / Wikimedia Commons / CC BY 4.0' },
+			{ src: '/images/poi/omaha-beach/6.jpg', alt: 'U.S. Army Paratroopers pose on Omaha Beach for the 80th anniversary of D-Day, June 2024', attribution: 'U.S. Army Reserve photo by Sgt. 1st Class Austin Berner / Wikimedia Commons / Public domain' },
+			{ src: '/images/poi/omaha-beach/7.jpg', alt: '29th Infantry Division color guard ceremony at Omaha Beach, June 2024', attribution: 'U.S. Army Reserve photo by Sgt. 1st Class Austin Berner / Wikimedia Commons / Public domain' },
+			{ src: '/images/poi/omaha-beach/8.jpg', alt: 'Ceremony for the 29th Infantry Division at Omaha Beach, June 2024', attribution: 'U.S. Army Reserve photo by Sgt. 1st Class Austin Berner / Wikimedia Commons / Public domain' },
+			{ src: '/images/poi/omaha-beach/9.jpg', alt: 'Ceremony for the 29th Infantry Division at Omaha Beach, June 2024', attribution: 'U.S. Army Reserve photo by Sgt. 1st Class Austin Berner / Wikimedia Commons / Public domain' },
+			{ src: '/images/poi/omaha-beach/10.jpg', alt: '29th Infantry Division color guard at Omaha Beach ceremony, June 2024', attribution: 'U.S. Army Reserve photo by Sgt. 1st Class Austin Berner / Wikimedia Commons / Public domain' }
+		],
 		titleKey: 'poi.omaha_beach.title',
 		subtitleKey: 'poi.omaha_beach.subtitle',
 		summaryKey: 'poi.omaha_beach.summary'
@@ -58,7 +69,18 @@ export const POIS: Poi[] = [
 		accessibilityLevel: 'Good',
 		website: 'https://www.abmc.gov/Normandy',
 		wikipedia: 'https://en.wikipedia.org/wiki/Normandy_American_Cemetery_and_Memorial',
-		images: [],
+		images: [
+			{ src: '/images/poi/american-cemetery/1.jpg', alt: 'Normandy American Cemetery at Colleville-sur-Mer', attribution: 'Clément Bardot / Wikimedia Commons / CC BY-SA 3.0' },
+			{ src: '/images/poi/american-cemetery/2.jpg', alt: 'The World War II Normandy American Cemetery and Memorial in Colleville-sur-Mer, Normandy, France', attribution: 'Gzzz / Wikimedia Commons / CC BY-SA 3.0' },
+			{ src: '/images/poi/american-cemetery/3.jpg', alt: 'Normandy American Cemetery and Memorial in Colleville-sur-Mer, Calvados, France', attribution: 'Myrabella / Wikimedia Commons / CC BY-SA 3.0' },
+			{ src: '/images/poi/american-cemetery/4.jpg', alt: '44th Infantry Division veteran First Sergeant Hernandez during the 6th June memorial service', attribution: 'Archangel12 / Wikimedia Commons / CC BY 2.0' },
+			{ src: '/images/poi/american-cemetery/5.jpg', alt: 'Commemoration service at the Colleville cemetery', attribution: 'Archangel12 / Wikimedia Commons / CC BY 2.0' },
+			{ src: '/images/poi/american-cemetery/6.jpg', alt: 'Commemoration service at the Colleville cemetery', attribution: 'Archangel12 / Wikimedia Commons / CC BY 2.0' },
+			{ src: '/images/poi/american-cemetery/7.jpg', alt: 'Commemoration service at the Colleville cemetery', attribution: 'Archangel12 / Wikimedia Commons / CC BY 2.0' },
+			{ src: '/images/poi/american-cemetery/8.jpg', alt: 'Commemoration service at the Colleville cemetery', attribution: 'Archangel12 / Wikimedia Commons / CC BY 2.0' },
+			{ src: '/images/poi/american-cemetery/9.jpg', alt: 'Commemoration service at the Colleville cemetery', attribution: 'Archangel12 / Wikimedia Commons / CC BY 2.0' },
+			{ src: '/images/poi/american-cemetery/10.jpg', alt: 'Body of water in Colleville-sur-Mer (Calvados, France)', attribution: 'Gzen92 / Wikimedia Commons / CC BY-SA 4.0' }
+		],
 		titleKey: 'poi.american_cemetery.title',
 		subtitleKey: 'poi.american_cemetery.subtitle',
 		summaryKey: 'poi.american_cemetery.summary'
@@ -73,7 +95,12 @@ export const POIS: Poi[] = [
 		accessibilityLevel: 'Limited',
 		website: 'https://www.abmc.gov/Pointe-du-Hoc',
 		wikipedia: 'https://en.wikipedia.org/wiki/Pointe_du_Hoc',
-		images: [],
+		images: [
+			{ src: '/images/poi/pointe-du-hoc/1.jpg', alt: 'Pointe du Hoc, Normandy', attribution: 'Archangel12 / Wikimedia Commons / CC BY 2.0' },
+			{ src: '/images/poi/pointe-du-hoc/2.jpg', alt: 'Bombing craters at Pointe-du-Hoc, Calvados, Normandy, France', attribution: 'Jebulon / Wikimedia Commons / CC0' },
+			{ src: '/images/poi/pointe-du-hoc/3.jpg', alt: 'Ruins of German bunkers at Pointe-du-Hoc, Calvados, Normandy, France', attribution: 'Jebulon / Wikimedia Commons / CC0' },
+			{ src: '/images/poi/pointe-du-hoc/4.jpg', alt: 'Pointe-du-Hoc, April 2015, Calvados, Normandy, France', attribution: 'Jebulon / Wikimedia Commons / CC0' }
+		],
 		titleKey: 'poi.pointe_du_hoc.title',
 		subtitleKey: 'poi.pointe_du_hoc.subtitle',
 		summaryKey: 'poi.pointe_du_hoc.summary'
@@ -88,7 +115,10 @@ export const POIS: Poi[] = [
 		accessibilityLevel: 'Good',
 		website: 'https://www.bayeuxmuseum.com',
 		wikipedia: 'https://en.wikipedia.org/wiki/Bayeux',
-		images: [],
+		images: [
+			{ src: '/images/poi/bayeux/1.jpg', alt: 'Medieval stained glass from the Bayeux region', attribution: 'Wikimedia Commons / CC BY-SA 3.0' },
+			{ src: '/images/poi/bayeux/2.jpg', alt: 'View of Bayeux and its Norman countryside, 1913', attribution: 'Internet Archive Book Images / Wikimedia Commons / No restrictions' }
+		],
 		titleKey: 'poi.bayeux.title',
 		subtitleKey: 'poi.bayeux.subtitle',
 		summaryKey: 'poi.bayeux.summary'
@@ -103,7 +133,12 @@ export const POIS: Poi[] = [
 		accessibilityLevel: 'Good',
 		website: 'https://www.arromanches360.com',
 		wikipedia: 'https://en.wikipedia.org/wiki/Arromanches-les-Bains',
-		images: [],
+		images: [
+			{ src: '/images/poi/arromanches/1.jpg', alt: 'Aerial view of the Mulberry Harbour at Arromanches, June 1944', attribution: 'Royal Air Force official photographer / Wikimedia Commons / Public domain' },
+			{ src: '/images/poi/arromanches/2.jpg', alt: "Captain Hickling shows Winston Churchill a plan of Mulberry Harbour 'B', July 1944", attribution: 'Allen, E E (Lt), Royal Navy official photographer / Wikimedia Commons / Public domain' },
+			{ src: '/images/poi/arromanches/3.jpg', alt: 'Panoramic view of Arromanches beach with Mulberry B artificial harbour, D-Day plus 20, 1944', attribution: 'Freedman, Barnett (CBE) / Wikimedia Commons / Public domain' },
+			{ src: '/images/poi/arromanches/4.jpg', alt: "A line of Phoenix caisson units forming the breakwater of Mulberry Harbour at Arromanches, June 1944", attribution: 'No 5 Army Film & Photographic Unit, Harrison (Sgt) / Wikimedia Commons / Public domain' }
+		],
 		titleKey: 'poi.arromanches.title',
 		subtitleKey: 'poi.arromanches.subtitle',
 		summaryKey: 'poi.arromanches.summary'
@@ -118,7 +153,18 @@ export const POIS: Poi[] = [
 		accessibilityLevel: 'Good',
 		website: 'https://le-memorial-de-caen.fr',
 		wikipedia: 'https://en.wikipedia.org/wiki/M%C3%A9morial_de_Caen',
-		images: [],
+		images: [
+			{ src: '/images/poi/memorial-caen/1.jpg', alt: 'Aircraft exhibit at the Mémorial de Caen', attribution: 'Unknown / Wikimedia Commons / CC BY-SA 3.0' },
+			{ src: '/images/poi/memorial-caen/2.jpg', alt: 'French flag flying in front of the Mémorial de Caen, November 2015', attribution: 'Benoit-caen / Wikimedia Commons / CC BY-SA 4.0' },
+			{ src: '/images/poi/memorial-caen/3.jpg', alt: 'Gathering in front of the Mémorial de Caen in tribute to the victims of 13 November 2015', attribution: 'Benoit-caen / Wikimedia Commons / CC BY-SA 4.0' },
+			{ src: '/images/poi/memorial-caen/4.jpg', alt: 'German military chess "Wehrschach" exhibited at the Caen Memorial Museum', attribution: 'Elya / Wikimedia Commons / CC BY-SA 4.0' },
+			{ src: '/images/poi/memorial-caen/5.jpg', alt: 'German military chess "Wehrschach" exhibited at the Caen Memorial Museum', attribution: 'Elya / Wikimedia Commons / CC BY-SA 4.0' },
+			{ src: '/images/poi/memorial-caen/6.jpg', alt: 'German military chess "Wehrschach" exhibited at the Caen Memorial Museum', attribution: 'Elya / Wikimedia Commons / CC BY-SA 4.0' },
+			{ src: '/images/poi/memorial-caen/7.jpg', alt: 'German military chess "Wehrschach" exhibited at the Caen Memorial Museum', attribution: 'Elya / Wikimedia Commons / CC BY-SA 4.0' },
+			{ src: '/images/poi/memorial-caen/8.jpg', alt: 'German military chess "Wehrschach" exhibited at the Caen Memorial Museum', attribution: 'Elya / Wikimedia Commons / CC BY-SA 4.0' },
+			{ src: '/images/poi/memorial-caen/9.jpg', alt: 'The immersive room at the Mémorial de Caen', attribution: 'MémorialCaen / Wikimedia Commons / CC BY-SA 4.0' },
+			{ src: '/images/poi/memorial-caen/10.jpg', alt: 'The Mémorial de Caen', attribution: 'François Monier / Wikimedia Commons / CC BY-SA 4.0' }
+		],
 		titleKey: 'poi.memorial_caen.title',
 		subtitleKey: 'poi.memorial_caen.subtitle',
 		summaryKey: 'poi.memorial_caen.summary'
@@ -133,7 +179,16 @@ export const POIS: Poi[] = [
 		accessibilityLevel: 'Good',
 		website: 'https://www.utah-beach.com',
 		wikipedia: 'https://en.wikipedia.org/wiki/Utah_Beach',
-		images: [],
+		images: [
+			{ src: '/images/poi/utah-beach/1.jpg', alt: 'American assault troops land on Utah Beach, northern coast of France', attribution: 'Photographer: Wall / Wikimedia Commons / Public domain' },
+			{ src: '/images/poi/utah-beach/2.jpg', alt: 'Sand stabilization at Utah Beach, Manche, Normandy, France', attribution: 'Jebulon / Wikimedia Commons / CC0' },
+			{ src: '/images/poi/utah-beach/3.jpg', alt: 'Utah Beach D-Day landing site, towards the south, Manche, Normandy', attribution: 'Jebulon / Wikimedia Commons / CC0' },
+			{ src: '/images/poi/utah-beach/4.jpg', alt: 'Map of Utah Beach on the east side of the Cotentin Peninsula in Normandy', attribution: 'U.S. Army / Wikimedia Commons / Public domain' },
+			{ src: '/images/poi/utah-beach/5.jpg', alt: 'Secretary of the Navy attends ceremony at Utah Beach on the 80th anniversary of D-Day, June 2024', attribution: 'U.S. Navy photo by Petty Officer 2nd Class Jared Mancuso / Wikimedia Commons / Public domain' },
+			{ src: '/images/poi/utah-beach/6.jpg', alt: 'Secretary of the Navy tours Utah Beach on the 80th anniversary of D-Day, June 2024', attribution: 'U.S. Navy photo by Petty Officer 2nd Class Jared Mancuso / Wikimedia Commons / Public domain' },
+			{ src: '/images/poi/utah-beach/7.jpg', alt: '4th Infantry Division at Utah Beach Memorial ceremony, D-Day 79th anniversary, June 2023', attribution: 'U.S. Army photo by Spc. Joshua Zayas-Sabogal / Wikimedia Commons / Public domain' },
+			{ src: '/images/poi/utah-beach/8.jpg', alt: 'Utah Beach Monument ceremony honoring American Soldiers of D-Day, June 2023', attribution: 'U.S. Army photo by Sgt. Clara Harty / Wikimedia Commons / Public domain' }
+		],
 		titleKey: 'poi.utah_beach.title',
 		subtitleKey: 'poi.utah_beach.subtitle',
 		summaryKey: 'poi.utah_beach.summary'
@@ -148,7 +203,12 @@ export const POIS: Poi[] = [
 		accessibilityLevel: 'Good',
 		website: null,
 		wikipedia: 'https://en.wikipedia.org/wiki/La_Cambe_German_war_cemetery',
-		images: [],
+		images: [
+			{ src: '/images/poi/la-cambe/1.jpg', alt: 'German military cemetery Normandy', attribution: 'Unknown / Wikimedia Commons / Public domain' },
+			{ src: '/images/poi/la-cambe/2.jpg', alt: 'German military cemetery Normandy', attribution: 'Unknown / Wikimedia Commons / Public domain' },
+			{ src: '/images/poi/la-cambe/3.jpg', alt: 'U.S., French, Canadian, and German Soldiers gather at the La Cambe German war cemetery, June 2009', attribution: 'U.S. Army Photo by Alfredo Barraza Jr. / Wikimedia Commons / Public domain' },
+			{ src: '/images/poi/la-cambe/4.jpg', alt: 'La Cambe German military cemetery near Bayeux, containing over 21,000 German military personnel of WWII', attribution: 'Dennis G. Jarvis / Wikimedia Commons / CC BY-SA 2.0' }
+		],
 		titleKey: 'poi.la_cambe.title',
 		subtitleKey: 'poi.la_cambe.subtitle',
 		summaryKey: 'poi.la_cambe.summary'
@@ -193,7 +253,11 @@ export const POIS: Poi[] = [
 		accessibilityLevel: 'Good',
 		website: 'https://www.saint-lo.fr',
 		wikipedia: 'https://en.wikipedia.org/wiki/Saint-L%C3%B4',
-		images: [],
+		images: [
+			{ src: '/images/poi/saint-lo/1.jpg', alt: 'American convoy passing through the ruins of Saint-Lô, August 1944', attribution: 'PhotosNormandie / Wikimedia Commons / CC BY-SA 2.0' },
+			{ src: '/images/poi/saint-lo/2.jpg', alt: 'Higgins Boat Monument at Utah Beach during 75th D-Day Anniversary tour, July 2019', attribution: 'Sgt. Lisa Crawford / Wikimedia Commons / Public domain' },
+			{ src: '/images/poi/saint-lo/3.jpg', alt: 'Nebraska National Guard staff ride participants during 75th Commemoration of the Liberation of Saint-Lô, July 2019', attribution: 'Sgt. Lisa Crawford / Wikimedia Commons / Public domain' }
+		],
 		titleKey: 'poi.saint_lo.title',
 		subtitleKey: 'poi.saint_lo.subtitle',
 		summaryKey: 'poi.saint_lo.summary'
@@ -238,7 +302,18 @@ export const POIS: Poi[] = [
 		accessibilityLevel: 'Good',
 		website: 'https://www.coutances.fr',
 		wikipedia: 'https://en.wikipedia.org/wiki/Coutances',
-		images: [],
+		images: [
+			{ src: '/images/poi/coutances/1.jpg', alt: 'Choir of the Cathedral of Our Lady, Coutances, Normandy, France', attribution: 'Zairon / Wikimedia Commons / CC BY-SA 4.0' },
+			{ src: '/images/poi/coutances/2.jpg', alt: 'Choir of the Cathedral of Our Lady, Coutances, Normandy, France', attribution: 'Zairon / Wikimedia Commons / CC BY-SA 4.0' },
+			{ src: '/images/poi/coutances/3.jpg', alt: 'Choir of the Cathedral of Our Lady, Coutances, Normandy, France', attribution: 'Zairon / Wikimedia Commons / CC BY-SA 4.0' },
+			{ src: '/images/poi/coutances/4.jpg', alt: 'Choir of the Cathedral of Our Lady, Coutances, Normandy, France', attribution: 'Zairon / Wikimedia Commons / CC BY-SA 4.0' },
+			{ src: '/images/poi/coutances/5.jpg', alt: 'Facade of the Cathedral of Our Lady, Coutances, Normandy, France', attribution: 'Zairon / Wikimedia Commons / CC BY-SA 4.0' },
+			{ src: '/images/poi/coutances/6.jpg', alt: 'Towers of the Cathedral of Our Lady, Coutances, Normandy, France', attribution: 'Zairon / Wikimedia Commons / CC BY-SA 4.0' },
+			{ src: '/images/poi/coutances/7.jpg', alt: 'Organ of the Cathedral of Our Lady, Coutances, Normandy, France', attribution: 'Zairon / Wikimedia Commons / CC BY-SA 4.0' },
+			{ src: '/images/poi/coutances/8.jpg', alt: 'Cathedral at Coutances, Normandy, distant view', attribution: 'Cameron, Harry F. / Wikimedia Commons / Public domain' },
+			{ src: '/images/poi/coutances/9.jpg', alt: 'Coutances, Normandy — cathedral distant view', attribution: 'Cameron, Harry F. / Wikimedia Commons / Public domain' },
+			{ src: '/images/poi/coutances/10.jpg', alt: 'Choir of the Cathedral of Our Lady, Coutances, Normandy, France', attribution: 'Zairon / Wikimedia Commons / CC BY-SA 4.0' }
+		],
 		titleKey: 'poi.coutances.title',
 		subtitleKey: 'poi.coutances.subtitle',
 		summaryKey: 'poi.coutances.summary'
@@ -253,7 +328,18 @@ export const POIS: Poi[] = [
 		accessibilityLevel: 'Good',
 		website: 'https://www.carentan-les-marais.fr',
 		wikipedia: 'https://en.wikipedia.org/wiki/Carentan',
-		images: [],
+		images: [
+			{ src: '/images/poi/carentan/1.jpg', alt: 'Carentan City Hall from east, Normandy', attribution: 'TCY / Wikimedia Commons / CC BY-SA 3.0' },
+			{ src: '/images/poi/carentan/2.jpg', alt: 'French bagpipe musicians march into Carentan town square during D-Day 78 celebrations, June 2022', attribution: 'U.S. Army 207-MI-BDE by Sgt. Jordan Pearson / Wikimedia Commons / Public domain' },
+			{ src: '/images/poi/carentan/3.jpg', alt: 'WWII Army veteran Betty Rose at D-Day 78 ceremony in Carentan, June 2022', attribution: 'U.S. Army 207-MI-BDE by Sgt. Jordan Pearson / Wikimedia Commons / Public domain' },
+			{ src: '/images/poi/carentan/4.jpg', alt: 'Paratroopers line the cobblestone roads of Carentan town square for D-Day 78, June 2022', attribution: 'U.S. Army 207-MI-BDE by Sgt. Jordan Pearson / Wikimedia Commons / Public domain' },
+			{ src: '/images/poi/carentan/5.jpg', alt: 'WWII Army veteran George Hamilton during D-Day 78 celebrations in Carentan, June 2022', attribution: 'U.S. Army 207-MI-BDE by Sgt. Jordan Pearson / Wikimedia Commons / Public domain' },
+			{ src: '/images/poi/carentan/6.jpg', alt: 'Military leaders pose during D-Day ceremony in Carentan, June 2022', attribution: 'U.S. Army 207-MI-BDE by Sgt. Jordan Pearson / Wikimedia Commons / Public domain' },
+			{ src: '/images/poi/carentan/7.jpg', alt: 'WWII Army veteran Clifford Stump at D-Day 78 ceremony in Carentan, June 2022', attribution: 'U.S. Army 207-MI-BDE by Sgt. Jordan Pearson / Wikimedia Commons / Public domain' },
+			{ src: '/images/poi/carentan/8.jpg', alt: 'American and French citizens gather in Carentan town square for D-Day 78, June 2022', attribution: 'U.S. Army 207-MI-BDE by Sgt. Jordan Pearson / Wikimedia Commons / Public domain' },
+			{ src: '/images/poi/carentan/9.jpg', alt: 'French children in 1940s clothing during D-Day celebrations in Carentan, June 2022', attribution: 'U.S. Army 207-MI-BDE by Sgt. Jordan Pearson / Wikimedia Commons / Public domain' },
+			{ src: '/images/poi/carentan/10.jpg', alt: 'French children in 1940s clothing during D-Day re-enactment in Carentan, June 2022', attribution: 'U.S. Army 207-MI-BDE by Sgt. Jordan Pearson / Wikimedia Commons / Public domain' }
+		],
 		titleKey: 'poi.carentan.title',
 		subtitleKey: 'poi.carentan.subtitle',
 		summaryKey: 'poi.carentan.summary'
@@ -268,7 +354,15 @@ export const POIS: Poi[] = [
 		accessibilityLevel: 'Good',
 		website: 'https://www.junobeach.org',
 		wikipedia: 'https://en.wikipedia.org/wiki/Juno_Beach_Centre',
-		images: [],
+		images: [
+			{ src: '/images/poi/juno-beach/1.jpg', alt: 'Dedication plaques outside the Juno Beach Centre museum, Courseulles-sur-Mer', attribution: 'Mark from Woking, United Kingdom / Wikimedia Commons / CC BY 2.0' },
+			{ src: '/images/poi/juno-beach/2.jpg', alt: 'Memorial plaques at the Juno Beach Centre in Courseulles-sur-Mer', attribution: 'Mark from Woking, United Kingdom / Wikimedia Commons / CC BY 2.0' },
+			{ src: '/images/poi/juno-beach/3.jpg', alt: 'Canadian section of Juno Beach and Juno Beach Centre, Courseulles-sur-Mer, France', attribution: 'Dr. Alexander Mayer / Wikimedia Commons / CC BY-SA 3.0' },
+			{ src: '/images/poi/juno-beach/4.jpg', alt: 'A sculpture outside the Juno Beach Centre in Courseulles-sur-Mer', attribution: 'Dr Wilson / Wikimedia Commons / CC BY-SA 3.0' },
+			{ src: '/images/poi/juno-beach/5.jpg', alt: 'History panel and map of the Atlantic Wall in Courseulles-sur-Mer', attribution: 'Dave osm / Wikimedia Commons / CC BY-SA 4.0' },
+			{ src: '/images/poi/juno-beach/6.jpg', alt: 'History panel and map of the Atlantic Wall in Courseulles-sur-Mer', attribution: 'Dave osm / Wikimedia Commons / CC BY-SA 4.0' },
+			{ src: '/images/poi/juno-beach/7.jpg', alt: 'Panoramic view of the Juno Beach Centre at Courseulles-sur-Mer', attribution: 'remiforall / Wikimedia Commons / CC BY-SA 4.0' }
+		],
 		titleKey: 'poi.juno_beach.title',
 		subtitleKey: 'poi.juno_beach.subtitle',
 		summaryKey: 'poi.juno_beach.summary'
@@ -313,7 +407,18 @@ export const POIS: Poi[] = [
 		accessibilityLevel: 'Good',
 		website: null,
 		wikipedia: 'https://en.wikipedia.org/wiki/Torigni-sur-Vire',
-		images: [],
+		images: [
+			{ src: '/images/poi/torigni-sur-vire/1.jpg', alt: 'Château des Matignon, Torigni-sur-Vire, hotel de ville', attribution: 'Ikmo-ned / Wikimedia Commons / CC BY-SA 3.0' },
+			{ src: '/images/poi/torigni-sur-vire/2.jpg', alt: 'Château des Matignon at Torigni-sur-Vire', attribution: 'Xfigpower / Wikimedia Commons / CC BY-SA 3.0' },
+			{ src: '/images/poi/torigni-sur-vire/3.jpg', alt: 'Château des Matignon at Torigni-sur-Vire', attribution: 'Xfigpower / Wikimedia Commons / CC BY-SA 3.0' },
+			{ src: '/images/poi/torigni-sur-vire/4.jpg', alt: 'Rear view of Château des Matignon at Torigni-sur-Vire', attribution: 'Xfigpower / Wikimedia Commons / CC BY-SA 3.0' },
+			{ src: '/images/poi/torigni-sur-vire/5.jpg', alt: 'Château des Matignon, Torigni-sur-Vire, Manche, 2017', attribution: 'Selbymay / Wikimedia Commons / CC BY-SA 4.0' },
+			{ src: '/images/poi/torigni-sur-vire/6.jpg', alt: 'Château des Matignon, Torigni-sur-Vire, Manche, 2017', attribution: 'Selbymay / Wikimedia Commons / CC BY-SA 4.0' },
+			{ src: '/images/poi/torigni-sur-vire/7.jpg', alt: 'Château des Matignon, Torigni-sur-Vire, Manche, 2017', attribution: 'Selbymay / Wikimedia Commons / CC BY-SA 4.0' },
+			{ src: '/images/poi/torigni-sur-vire/8.jpg', alt: 'Château des Matignon, Torigni-sur-Vire, Manche, 2017', attribution: 'Selbymay / Wikimedia Commons / CC BY-SA 4.0' },
+			{ src: '/images/poi/torigni-sur-vire/9.jpg', alt: 'Château des Matignon, Torigni-sur-Vire, Manche, 2017', attribution: 'Selbymay / Wikimedia Commons / CC BY-SA 4.0' },
+			{ src: '/images/poi/torigni-sur-vire/10.png', alt: 'Plan of the park and Château des Matignon in Torigni, 1779', attribution: 'Dechevrières / Wikimedia Commons / Public domain' }
+		],
 		titleKey: 'poi.torigni_sur_vire.title',
 		subtitleKey: 'poi.torigni_sur_vire.subtitle',
 		summaryKey: 'poi.torigni_sur_vire.summary'
@@ -329,7 +434,13 @@ export const POIS: Poi[] = [
 		accessibilityLevel: 'Limited',
 		website: 'https://www.ot-montsaintmichel.com',
 		wikipedia: 'https://en.wikipedia.org/wiki/Mont_Saint-Michel',
-		images: [],
+		images: [
+			{ src: '/images/poi/mont-saint-michel/1.jpg', alt: 'Mont Saint-Michel at sunset, Normandy, France', attribution: 'Benh LIEU SONG / Wikimedia Commons / CC BY 2.5' },
+			{ src: '/images/poi/mont-saint-michel/2.jpg', alt: 'Mont Saint-Michel viewed along the Couesnon River in Normandy, France', attribution: 'Diliff / Wikimedia Commons / Public domain' },
+			{ src: '/images/poi/mont-saint-michel/3.jpg', alt: 'Cloisters of the abbey of Mont Saint-Michel, Normandy, France', attribution: 'Benh LIEU SONG (Flickr) / Wikimedia Commons / CC BY-SA 4.0' },
+			{ src: '/images/poi/mont-saint-michel/4.jpg', alt: 'Cistern of the Chaplaincy of the Mont Saint-Michel Abbey', attribution: 'John Samuel / Wikimedia Commons / CC BY-SA 4.0' },
+			{ src: '/images/poi/mont-saint-michel/5.jpg', alt: 'Sunrise on Mont-Saint-Michel', attribution: 'Lynx1211 / Wikimedia Commons / CC BY-SA 4.0' }
+		],
 		titleKey: 'poi.mont_saint_michel.title',
 		subtitleKey: 'poi.mont_saint_michel.subtitle',
 		summaryKey: 'poi.mont_saint_michel.summary'
