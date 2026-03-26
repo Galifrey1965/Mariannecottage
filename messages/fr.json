@@ -60,6 +60,10 @@
 			"heading": "Prêt à Réserver?",
 			"cta": "Vérifier la Disponibilité"
 		},
+		"ai": {
+			"ask_chatgpt": "Demander à ChatGPT",
+			"ask_claude": "Demander à Claude"
+		},
 		"rooms_data": {
 			"bedroom1": "Chambre 1",
 			"bedroom1_desc": "Chambre confortable avec vue sur le jardin",

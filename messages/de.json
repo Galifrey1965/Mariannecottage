@@ -60,6 +60,10 @@
 			"heading": "Bereit zu Buchen?",
 			"cta": "Verfügbarkeit Prüfen"
 		},
+		"ai": {
+			"ask_chatgpt": "ChatGPT Fragen",
+			"ask_claude": "Claude Fragen"
+		},
 		"rooms_data": {
 			"bedroom1": "Schlafzimmer 1",
 			"bedroom1_desc": "Komfortables Schlafzimmer mit Gartenblick",

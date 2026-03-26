@@ -5,6 +5,7 @@
 	import RoomCard from '$lib/components/RoomCard.svelte';
 	import AttractionCard from '$lib/components/AttractionCard.svelte';
 	import TestimonialCarousel from '$lib/components/TestimonialCarousel.svelte';
+	import AiHelpFabs from '$lib/components/AiHelpFabs.svelte';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -106,6 +107,7 @@
 	<h2 class="section-heading center">{t(messages, 'home.booking.heading')}</h2>
 	<p class="cta-description">{t(messages, 'home.about.p1')}</p>
 	<a href={localePath(lang, '/book')} class="cta-button large">{t(messages, 'home.booking.cta')}</a>
+	<AiHelpFabs {messages} />
 </section>
 
 <style>
