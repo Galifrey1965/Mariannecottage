@@ -331,5 +331,141 @@
 		"current": "current",
 		"pending": "pending",
 		"side_navigation": "Side navigation"
+	},
+	"poi": {
+		"category": {
+			"ww2": "WW2 History",
+			"heritage": "Heritage",
+			"towns": "Towns",
+			"museums": "Museums"
+		},
+		"filter": {
+			"all": "All",
+			"category": "Category",
+			"sort": "Sort by",
+			"sort_distance": "Distance",
+			"sort_popularity": "Popularity"
+		},
+		"accessibility": {
+			"label": "Accessibility",
+			"Good": "Good",
+			"Moderate": "Moderate",
+			"Limited": "Limited"
+		},
+		"actions": {
+			"learn_more": "Learn More",
+			"favourite": "Add to favourites",
+			"unfavourite": "Remove from favourites",
+			"view_map": "View on map",
+			"close_map": "Close map"
+		},
+		"distance": {
+			"from_cottage": "from the cottage",
+			"exception": "Worth the drive"
+		},
+		"image": {
+			"attribution": "Image credit"
+		},
+		"no_results": "No attractions match the current filters",
+		"omaha_beach": {
+			"title": "Omaha Beach",
+			"subtitle": "The most iconic D-Day landing site",
+			"summary": "One of five Allied landing beaches on D-Day, 6 June 1944, Omaha saw the fiercest fighting of the Normandy landings. Today, the wide sandy beach and nearby memorials stand as a powerful tribute to the thousands who gave their lives. A visit here is a profoundly moving experience."
+		},
+		"american_cemetery": {
+			"title": "Normandy American Cemetery",
+			"subtitle": "9,387 graves overlooking Omaha Beach",
+			"summary": "Perched on a clifftop above Omaha Beach, the Normandy American Cemetery is one of the most visited sites in France. Row upon row of gleaming white crosses and Stars of David mark the graves of American soldiers who fell during the D-Day campaign. The visitor centre tells their individual stories."
+		},
+		"pointe_du_hoc": {
+			"title": "Pointe du Hoc",
+			"subtitle": "Where Rangers scaled the cliffs under fire",
+			"summary": "Preserved almost exactly as it was left in 1944, Pointe du Hoc is the most dramatic WW2 site in Normandy. US Army Rangers scaled these 30-metre cliffs under enemy fire to silence German gun batteries. The bomb craters and shattered bunkers remain eerily intact."
+		},
+		"bayeux": {
+			"title": "Bayeux",
+			"subtitle": "Medieval town, tapestry and cathedral",
+			"summary": "Bayeux holds a unique place in history: the first French town liberated after D-Day, and home to the world-famous 11th-century Bayeux Tapestry depicting the Norman Conquest of England. The town's magnificent Gothic cathedral and charming medieval streets make it essential visiting."
+		},
+		"arromanches": {
+			"title": "Arromanches",
+			"subtitle": "Where the artificial harbour changed history",
+			"summary": "In June 1944, the Allies constructed a remarkable prefabricated harbour at Arromanches — a feat of engineering that allowed millions of tonnes of supplies to be landed. Remnants of the Mulberry harbour are still visible from the beach. The Arromanches 360° cinema brings the story to life."
+		},
+		"memorial_caen": {
+			"title": "Mémorial de Caen",
+			"subtitle": "The leading WW2 museum in France",
+			"summary": "Opened in 1988, the Mémorial de Caen is widely regarded as France's finest WW2 museum. Built on the site of a German command post, it traces the road to war, the Occupation, and the Battle of Normandy with stunning multimedia exhibitions. Allow a full day for a thorough visit."
+		},
+		"utah_beach": {
+			"title": "Utah Beach",
+			"subtitle": "The most westerly D-Day landing beach",
+			"summary": "Utah was the westernmost of the five D-Day beaches and saw the most successful Allied landing of 6 June 1944. The excellent Utah Beach Museum traces the day in detail with original vehicles, weapons, and personal accounts. The beach itself is quiet and atmospheric."
+		},
+		"la_cambe": {
+			"title": "La Cambe German Cemetery",
+			"subtitle": "21,000 German soldiers rest here",
+			"summary": "In stark contrast to the white crosses of the American Cemetery, La Cambe is a place of sombre beauty. Dark basalt crosses mark the graves of over 21,000 German soldiers. The cemetery is maintained by the German War Graves Commission and invites reflection on the human cost of war on all sides."
+		},
+		"overlord_museum": {
+			"title": "Overlord Museum",
+			"subtitle": "The finest collection of D-Day vehicles",
+			"summary": "Just a short distance from Omaha Beach, the Overlord Museum houses one of the most impressive collections of original WW2 military hardware in Europe. Tanks, half-tracks, aircraft, and personal equipment bring the scale of Operation Overlord into vivid focus."
+		},
+		"cerisy_abbey": {
+			"title": "Cerisy Abbey",
+			"subtitle": "A Benedictine gem on your doorstep",
+			"summary": "Just minutes from Marianne Cottage, Cerisy Abbey is one of Normandy's best-kept secrets. Founded in 1032 by Duke Robert I of Normandy, father of William the Conqueror, its Romanesque church is remarkably well-preserved. The peaceful grounds and surrounding forest make it a wonderful half-day visit."
+		},
+		"saint_lo": {
+			"title": "Saint-Lô",
+			"subtitle": "The 'capital of ruins' reborn",
+			"summary": "Saint-Lô was almost entirely destroyed in July 1944 and was famously described as 'the capital of ruins.' Rebuilt with striking post-war architecture, it is now the lively capital of the Manche department. Visit the stud farm, the restored town walls, and the moving ruins of Notre-Dame church."
+		},
+		"haras_national": {
+			"title": "Haras National de Saint-Lô",
+			"subtitle": "Normandy's finest stud farm",
+			"summary": "The National Stud of Saint-Lô is one of the most prestigious in France, home to around 80 stallions of various breeds. Guided tours reveal the beautiful 18th-century stable buildings, and summer equestrian shows are a highlight of the local calendar. A unique slice of Norman culture."
+		},
+		"chateau_balleroy": {
+			"title": "Château de Balleroy",
+			"subtitle": "A 17th-century château and balloon museum",
+			"summary": "Built between 1626 and 1636 for Jean de Choisy, Château de Balleroy is considered one of the finest early French classical châteaux. The grounds include an excellent hot-air balloon museum — the late Malcolm Forbes held his famous balloon meets here. The formal gardens are open throughout the season."
+		},
+		"coutances": {
+			"title": "Coutances",
+			"subtitle": "Gothic cathedral soaring over the bocage",
+			"summary": "Coutances is dominated by its magnificent Gothic cathedral, widely considered one of the finest in Normandy and a masterpiece of 13th-century architecture. The town's botanical gardens are among the most beautiful in the region. The weekly market fills the streets with local produce."
+		},
+		"carentan": {
+			"title": "Carentan",
+			"subtitle": "Gateway to Utah Beach and the marshes",
+			"summary": "Carentan sits at the heart of the Normandy marshlands and was the scene of fierce fighting in June 1944 as US paratroopers of the 101st Airborne linked the Utah and Omaha beachheads. Today it is a pleasant market town and marina, a great base for exploring the Marais du Cotentin nature park."
+		},
+		"juno_beach": {
+			"title": "Juno Beach Centre",
+			"subtitle": "Canada's tribute to its D-Day veterans",
+			"summary": "The Juno Beach Centre at Courseulles-sur-Mer is Canada's national memorial in Normandy, dedicated to the 45,000 Canadians who died in the Second World War. Interactive exhibitions tell the story of the Canadian home front and the Juno Beach landings with exceptional personal testimony."
+		},
+		"lessay_abbey": {
+			"title": "Lessay Abbey",
+			"subtitle": "The purest Romanesque church in Normandy",
+			"summary": "Lessay Abbey is widely regarded as the finest example of Romanesque architecture in Normandy. Founded in 1056, it was almost entirely destroyed in 1944 and meticulously rebuilt using original materials. The result is a building of extraordinary purity and calm. The September Sainte-Croix fair is one of Normandy's oldest traditions."
+		},
+		"vire": {
+			"title": "Vire",
+			"subtitle": "Gorges, andouille and bocage country",
+			"summary": "Perched above the spectacular Vire gorges, this compact town is the heart of the Norman bocage. Vire is famous throughout France for its andouille sausage, made by artisan charcutiers following centuries-old recipes. The surrounding countryside offers superb walking and cycling through unspoilt hedgerow landscape."
+		},
+		"torigni_sur_vire": {
+			"title": "Torigni-sur-Vire",
+			"subtitle": "A château town in the heart of Normandy",
+			"summary": "The small town of Torigni-sur-Vire is dominated by its imposing 16th-century château, now home to local government and open to visitors in summer. The town makes a pleasant stop with a weekly market and easy access to walking routes along the Vire valley."
+		},
+		"mont_saint_michel": {
+			"title": "Mont Saint-Michel",
+			"subtitle": "One of France's most iconic landmarks",
+			"summary": "Rising dramatically from the sea at the boundary of Normandy and Brittany, Mont Saint-Michel is one of the most visited sites in France and a UNESCO World Heritage Site. The medieval abbey perched on its rocky island is breathtaking at any tide. Allow a full day and, if possible, arrive at dusk."
+		}
 	}
 }

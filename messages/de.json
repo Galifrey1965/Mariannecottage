@@ -331,5 +331,141 @@
 		"current": "aktuell",
 		"pending": "ausstehend",
 		"side_navigation": "Seitennavigation"
+	},
+	"poi": {
+		"category": {
+			"ww2": "WW2-Geschichte",
+			"heritage": "Kulturerbe",
+			"towns": "Städte",
+			"museums": "Museen"
+		},
+		"filter": {
+			"all": "Alle",
+			"category": "Kategorie",
+			"sort": "Sortieren nach",
+			"sort_distance": "Entfernung",
+			"sort_popularity": "Beliebtheit"
+		},
+		"accessibility": {
+			"label": "Barrierefreiheit",
+			"Good": "Gut zugänglich",
+			"Moderate": "Eingeschränkt zugänglich",
+			"Limited": "Schwer zugänglich"
+		},
+		"actions": {
+			"learn_more": "Mehr erfahren",
+			"favourite": "Zu Favoriten hinzufügen",
+			"unfavourite": "Aus Favoriten entfernen",
+			"view_map": "Auf Karte anzeigen",
+			"close_map": "Karte schließen"
+		},
+		"distance": {
+			"from_cottage": "vom Ferienhaus",
+			"exception": "Die Fahrt lohnt sich"
+		},
+		"image": {
+			"attribution": "Bildnachweis"
+		},
+		"no_results": "Keine Sehenswürdigkeiten entsprechen den Filtern",
+		"omaha_beach": {
+			"title": "Omaha Beach",
+			"subtitle": "Die bekannteste Landungszone des D-Day",
+			"summary": "Omaha war einer der fünf alliierten Landungsabschnitte am 6. Juni 1944 und Schauplatz der heftigsten Kämpfe der Normandie-Landung. Heute laden der weitläufige Sandstrand und die nahen Gedenkstätten zu einer tief bewegenden Erinnerung an die Gefallenen ein. Ein Besuch, der unvergesslich bleibt."
+		},
+		"american_cemetery": {
+			"title": "Amerikanischer Soldatenfriedhof Normandie",
+			"subtitle": "9.387 Gräber mit Blick auf den Ärmelkanal",
+			"summary": "Hoch über Omaha Beach gelegen, zählt der amerikanische Soldatenfriedhof der Normandie zu den meistbesuchten Stätten Frankreichs. Reihe um Reihe weißer Kreuze und Davidsterne markieren die Gräber amerikanischer Soldaten, die während der Normandie-Kampagne fielen. Das Besucherzentrum erzählt ihre persönlichen Geschichten."
+		},
+		"pointe_du_hoc": {
+			"title": "Pointe du Hoc",
+			"subtitle": "Wo Rangers die Klippen unter Beschuss erstürmten",
+			"summary": "Die Pointe du Hoc ist nahezu unverändert seit 1944 und die dramatischste WW2-Stätte der Normandie. Amerikanische Rangers erkletterten diese 30 Meter hohen Klippen unter feindlichem Beschuss, um deutsche Geschützstellungen auszuschalten. Die Bombenkrater und zerstörten Bunker sind gespenstisch erhalten."
+		},
+		"bayeux": {
+			"title": "Bayeux",
+			"subtitle": "Mittelalterliche Stadt, Teppich und Kathedrale",
+			"summary": "Bayeux nimmt einen einzigartigen Platz in der Geschichte ein: die erste nach dem D-Day befreite französische Stadt und Heimat des weltberühmten Teppichs von Bayeux aus dem 11. Jahrhundert, der die normannische Eroberung Englands zeigt. Die prächtige gotische Kathedrale und die charmanten mittelalterlichen Gassen sind unbedingt sehenswert."
+		},
+		"arromanches": {
+			"title": "Arromanches",
+			"subtitle": "Der Kunsthafen, der Geschichte schrieb",
+			"summary": "Im Juni 1944 errichteten die Alliierten in Arromanches einen erstaunlichen vorgefertigten Hafen — eine Ingenieursleistung, die die Landung von Millionen Tonnen Nachschub ermöglichte. Überreste des Mulberry-Hafens sind noch vom Strand aus sichtbar. Das Kino Arromanches 360° erweckt die Geschichte zum Leben."
+		},
+		"memorial_caen": {
+			"title": "Mémorial de Caen",
+			"subtitle": "Das führende WW2-Museum Frankreichs",
+			"summary": "Das 1988 eröffnete Mémorial de Caen gilt als Frankreichs bedeutendstes WW2-Museum. Auf dem Gelände eines deutschen Kommandopostens erbaut, zeichnet es mit beeindruckenden Multimediaausstellungen den Weg in den Krieg, die Besatzung und die Normandieschlacht nach. Planen Sie einen ganzen Tag ein."
+		},
+		"utah_beach": {
+			"title": "Utah Beach",
+			"subtitle": "Der westlichste Landungsabschnitt des D-Day",
+			"summary": "Utah war der westlichste der fünf Landungsabschnitte und erlebte am 6. Juni 1944 die erfolgreichste alliierte Landung. Das ausgezeichnete Utah Beach Museum zeichnet den Tag detailreich nach — mit Originalfahrzeugen, Waffen und persönlichen Berichten. Der Strand selbst ist ruhig und atmosphärisch."
+		},
+		"la_cambe": {
+			"title": "Deutscher Soldatenfriedhof La Cambe",
+			"subtitle": "21.000 deutsche Soldaten fanden hier ihre Ruhe",
+			"summary": "Im starken Kontrast zu den weißen Kreuzen des amerikanischen Friedhofs ist La Cambe ein Ort stiller Schönheit. Dunkle Basaltkreuze markieren die Gräber von über 21.000 deutschen Soldaten. Der vom Volksbund Deutsche Kriegsgräberfürsorge gepflegte Friedhof lädt zur Besinnung über den menschlichen Preis des Krieges auf allen Seiten ein."
+		},
+		"overlord_museum": {
+			"title": "Overlord Museum",
+			"subtitle": "Die bedeutendste Sammlung von D-Day-Fahrzeugen",
+			"summary": "Nur wenige Kilometer von Omaha Beach entfernt, beherbergt das Overlord Museum eine der beeindruckendsten Sammlungen originaler WW2-Militärfahrzeuge in Europa. Panzer, Halbkettenfahrzeuge, Flugzeuge und persönliche Ausrüstung veranschaulichen den gewaltigen Umfang der Operation Overlord."
+		},
+		"cerisy_abbey": {
+			"title": "Abtei von Cerisy",
+			"subtitle": "Ein benediktinisches Juwel vor der Haustür",
+			"summary": "Nur wenige Minuten von Marianne Cottage entfernt, ist die Abtei von Cerisy eines der bestgehüteten Geheimnisse der Normandie. 1032 von Herzog Robert I. von der Normandie, dem Vater Wilhelms des Eroberers, gegründet, ist ihre romanische Kirche bemerkenswert gut erhalten. Der friedliche Park und der umliegende Wald machen einen Halbtagsausflug lohnenswert."
+		},
+		"saint_lo": {
+			"title": "Saint-Lô",
+			"subtitle": "Die 'Hauptstadt der Ruinen' neu geboren",
+			"summary": "Saint-Lô wurde im Juli 1944 fast vollständig zerstört und als 'Hauptstadt der Ruinen' bezeichnet. Mit markanter Nachkriegsarchitektur wiederaufgebaut, ist es heute die lebendige Hauptstadt des Départements Manche. Besuchen Sie das Gestüt, die restaurierten Stadtmauern und die bewegenden Ruinen der Kirche Notre-Dame."
+		},
+		"haras_national": {
+			"title": "Nationales Gestüt Saint-Lô",
+			"subtitle": "Normandies prestigiöses Staatsgestüt",
+			"summary": "Das Nationale Gestüt Saint-Lô ist eines der renommiertesten in Frankreich und beherbergt rund 80 Hengste verschiedener Rassen. Führungen erschließen die schönen Stallgebäude aus dem 18. Jahrhundert, und sommerliche Reitvorführungen sind ein Highlight im lokalen Veranstaltungskalender. Ein einzigartiger Einblick in die normannische Kultur."
+		},
+		"chateau_balleroy": {
+			"title": "Schloss Balleroy",
+			"subtitle": "Ein frühklassisches Schloss mit Ballonmuseum",
+			"summary": "Das zwischen 1626 und 1636 für Jean de Choisy erbaute Schloss Balleroy gilt als eines der schönsten frühklassischen Schlösser der Normandie. Das Anwesen beherbergt ein faszinierendes Heißluftballon-Museum — der verstorbene Malcolm Forbes veranstaltete hier seine berühmten Ballontreffen. Die Formalgärten sind während der Saison geöffnet."
+		},
+		"coutances": {
+			"title": "Coutances",
+			"subtitle": "Gotische Kathedrale über dem Bocage",
+			"summary": "Coutances wird von seiner prachtvollen gotischen Kathedrale dominiert, die allgemein als eine der schönsten der Normandie und als Meisterwerk der Architektur des 13. Jahrhunderts gilt. Die botanischen Gärten der Stadt gehören zu den schönsten der Region. Der Wochenmarkt füllt die Straßen mit lokalen Produkten."
+		},
+		"carentan": {
+			"title": "Carentan",
+			"subtitle": "Tor zu Utah Beach und den Sümpfen",
+			"summary": "Carentan liegt im Herzen der normannischen Marschlandschaft und war im Juni 1944 Schauplatz heftiger Kämpfe, als US-Fallschirmjäger der 101. Luftlandedivision die Strandköpfe von Utah und Omaha verbanden. Heute ist es eine angenehme Markt- und Hafenstadt, ein idealer Ausgangspunkt für den Naturpark Marais du Cotentin."
+		},
+		"juno_beach": {
+			"title": "Juno Beach Centre",
+			"subtitle": "Kanadas Gedenkstätte für seine D-Day-Veteranen",
+			"summary": "Das Juno Beach Centre in Courseulles-sur-Mer ist Kanadas nationales Denkmal in der Normandie, gewidmet den 45.000 Kanadiern, die im Zweiten Weltkrieg fielen. Interaktive Ausstellungen erzählen die Geschichte der kanadischen Heimatfront und der Landung am Juno Beach mit außergewöhnlichen persönlichen Zeugnissen."
+		},
+		"lessay_abbey": {
+			"title": "Abtei von Lessay",
+			"subtitle": "Das reinste romanische Bauwerk der Normandie",
+			"summary": "Die Abtei von Lessay gilt allgemein als das schönste Beispiel romanischer Architektur in der Normandie. 1056 gegründet, im Jahr 1944 fast vollständig zerstört und mit dem Originalmaterial sorgfältig wiederaufgebaut, strahlt sie eine außerordentliche Reinheit und Stille aus. Der Sainte-Croix-Jahrmarkt im September ist eine der ältesten Traditionen der Normandie."
+		},
+		"vire": {
+			"title": "Vire",
+			"subtitle": "Schluchten, Andouille und Bocage-Landschaft",
+			"summary": "Diese kompakte Stadt, hoch über den spektakulären Schluchten der Vire gelegen, ist das Herz des normannischen Bocage. Vire ist in ganz Frankreich für seine Andouille-Wurst bekannt, die von Handwerksmetzgern nach jahrhundertealten Rezepten hergestellt wird. Die Umgebung bietet hervorragende Wander- und Radwege durch unberührte Heckenlandschaft."
+		},
+		"torigni_sur_vire": {
+			"title": "Torigni-sur-Vire",
+			"subtitle": "Eine Schlossstadt im Herzen der Normandie",
+			"summary": "Die kleine Stadt Torigni-sur-Vire wird von ihrem imposanten Schloss aus dem 16. Jahrhundert dominiert, das heute als Gemeindeverwaltung dient und im Sommer für Besucher geöffnet ist. Die Stadt ist ein angenehmer Zwischenstopp mit Wochenmarkt und leichtem Zugang zu den Wanderrouten im Vire-Tal."
+		},
+		"mont_saint_michel": {
+			"title": "Mont Saint-Michel",
+			"subtitle": "Eines der bekanntesten Wahrzeichen Frankreichs",
+			"summary": "Der Mont Saint-Michel erhebt sich dramatisch aus dem Meer an der Grenze zwischen Normandie und Bretagne und ist einer der meistbesuchten Orte Frankreichs sowie UNESCO-Welterbe. Die auf einem Felseneiland thronende mittelalterliche Abtei ist zu jeder Tageszeit atemberaubend. Planen Sie einen ganzen Tag ein und kommen Sie wenn möglich bei Dämmerung an."
+		}
 	}
 }

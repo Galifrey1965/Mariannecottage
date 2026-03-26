@@ -331,5 +331,141 @@
 		"current": "en cours",
 		"pending": "à venir",
 		"side_navigation": "Navigation latérale"
+	},
+	"poi": {
+		"category": {
+			"ww2": "Histoire WW2",
+			"heritage": "Patrimoine",
+			"towns": "Villes",
+			"museums": "Musées"
+		},
+		"filter": {
+			"all": "Tous",
+			"category": "Catégorie",
+			"sort": "Trier par",
+			"sort_distance": "Distance",
+			"sort_popularity": "Popularité"
+		},
+		"accessibility": {
+			"label": "Accessibilité",
+			"Good": "Bon accès",
+			"Moderate": "Accès limité",
+			"Limited": "Accès difficile"
+		},
+		"actions": {
+			"learn_more": "En savoir plus",
+			"favourite": "Ajouter aux favoris",
+			"unfavourite": "Retirer des favoris",
+			"view_map": "Voir sur la carte",
+			"close_map": "Fermer la carte"
+		},
+		"distance": {
+			"from_cottage": "du gîte",
+			"exception": "Vaut le détour"
+		},
+		"image": {
+			"attribution": "Crédit photo"
+		},
+		"no_results": "Aucun site ne correspond aux filtres",
+		"omaha_beach": {
+			"title": "Omaha Beach",
+			"subtitle": "Le site emblématique du Débarquement",
+			"summary": "L'une des cinq plages du Débarquement du 6 juin 1944, Omaha fut le théâtre des combats les plus acharnés. Aujourd'hui, la longue plage de sable et les mémoriaux environnants rendent un hommage poignant aux milliers de soldats tombés. Une visite incontournable et profondément émouvante."
+		},
+		"american_cemetery": {
+			"title": "Cimetière américain de Normandie",
+			"subtitle": "9 387 tombes face à la mer",
+			"summary": "Perché sur les falaises dominant Omaha Beach, le cimetière américain de Normandie est l'un des sites les plus visités de France. Des rangées de croix blanches et d'étoiles de David immaculées marquent les sépultures des soldats américains tombés lors de la campagne du Débarquement. Le centre d'accueil retrace leur histoire individuelle."
+		},
+		"pointe_du_hoc": {
+			"title": "Pointe du Hoc",
+			"subtitle": "Là où les Rangers ont escaladé les falaises",
+			"summary": "Conservée presque dans son état d'origine de 1944, la Pointe du Hoc est le site de la Seconde Guerre mondiale le plus saisissant de Normandie. Des Rangers américains ont escaladé ces falaises de 30 mètres sous le feu ennemi pour neutraliser des batteries d'artillerie allemandes. Les entonnoirs de bombes et les bunkers dévastés demeurent étrangement intacts."
+		},
+		"bayeux": {
+			"title": "Bayeux",
+			"subtitle": "Ville médiévale, tapisserie et cathédrale",
+			"summary": "Bayeux occupe une place unique dans l'histoire : première ville française libérée après le Débarquement et berceau de la célèbre Tapisserie du XIe siècle représentant la Conquête normande de l'Angleterre. La magnifique cathédrale gothique et les ruelles médiévales charment tous les visiteurs."
+		},
+		"arromanches": {
+			"title": "Arromanches",
+			"subtitle": "Le port artificiel qui a changé l'histoire",
+			"summary": "En juin 1944, les Alliés construisirent à Arromanches un remarquable port préfabriqué — prouesse technique qui permit le débarquement de millions de tonnes de matériel. Des vestiges du port Mulberry demeurent visibles depuis la plage. Le cinéma Arromanches 360° fait revivre cette épopée."
+		},
+		"memorial_caen": {
+			"title": "Mémorial de Caen",
+			"subtitle": "Le principal musée de la Seconde Guerre mondiale",
+			"summary": "Inauguré en 1988, le Mémorial de Caen est considéré comme le musée de la Seconde Guerre mondiale le plus important de France. Édifié sur l'emplacement d'un poste de commandement allemand, il retrace la montée vers la guerre, l'Occupation et la Bataille de Normandie grâce à des expositions multimédia remarquables. Comptez une journée entière."
+		},
+		"utah_beach": {
+			"title": "Utah Beach",
+			"subtitle": "Le débarquement le plus à l'ouest",
+			"summary": "Utah fut la plage du Débarquement la plus à l'ouest et le lieu du débarquement allié le plus réussi du 6 juin 1944. L'excellent Musée du Débarquement Utah Beach retrace cette journée en détail avec des véhicules, des armes et des témoignages personnels originaux. La plage elle-même est calme et chargée d'histoire."
+		},
+		"la_cambe": {
+			"title": "Cimetière militaire de La Cambe",
+			"subtitle": "21 000 soldats allemands y reposent",
+			"summary": "En contraste frappant avec les croix blanches du cimetière américain, La Cambe est un lieu d'une beauté grave. Des croix basaltiques sombres marquent les sépultures de plus de 21 000 soldats allemands. Entretenu par la Commission allemande des sépultures de guerre, ce lieu invite à la réflexion sur le coût humain de la guerre pour tous."
+		},
+		"overlord_museum": {
+			"title": "Overlord Museum",
+			"subtitle": "La plus belle collection de véhicules du Débarquement",
+			"summary": "À quelques kilomètres d'Omaha Beach, l'Overlord Museum abrite l'une des collections d'équipements militaires d'origine de la Seconde Guerre mondiale les plus impressionnantes d'Europe. Chars, half-tracks, avions et équipements personnels donnent toute la mesure de l'Opération Overlord."
+		},
+		"cerisy_abbey": {
+			"title": "Abbaye de Cerisy",
+			"subtitle": "Un joyau bénédictin à deux pas",
+			"summary": "À quelques minutes de Marianne Cottage, l'Abbaye de Cerisy est l'un des joyaux méconnus de Normandie. Fondée en 1032 par le duc Robert Ier de Normandie, père de Guillaume le Conquérant, son église romane est remarquablement bien conservée. Les jardins paisibles et la forêt environnante en font une belle demi-journée de visite."
+		},
+		"saint_lo": {
+			"title": "Saint-Lô",
+			"subtitle": "La « capitale des ruines » reconstruite",
+			"summary": "Saint-Lô fut presque entièrement détruite en juillet 1944 et fut surnommée « la capitale des ruines ». Reconstruite avec une architecture d'après-guerre remarquable, elle est aujourd'hui la préfecture animée du département de la Manche. Ne manquez pas le haras, les remparts restaurés et les ruines émouvantes de l'église Notre-Dame."
+		},
+		"haras_national": {
+			"title": "Haras National de Saint-Lô",
+			"subtitle": "Le plus grand haras de France",
+			"summary": "Le Haras national de Saint-Lô est l'un des plus prestigieux de France, accueillant une quatre-vingtaine d'étalons de différentes races. Les visites guidées permettent de découvrir les magnifiques bâtiments d'écuries du XVIIIe siècle, et les spectacles équestres estivaux sont l'un des temps forts du calendrier local."
+		},
+		"chateau_balleroy": {
+			"title": "Château de Balleroy",
+			"subtitle": "Un château classique et un musée des montgolfières",
+			"summary": "Construit entre 1626 et 1636 pour Jean de Choisy, le Château de Balleroy est considéré comme l'un des plus beaux châteaux classiques de la première période en Normandie. Le domaine abrite un remarquable musée de la montgolfière — feu Malcolm Forbes y organisait ses célèbres rencontres aérostatiques. Les jardins à la française sont ouverts toute la saison."
+		},
+		"coutances": {
+			"title": "Coutances",
+			"subtitle": "La cathédrale gothique qui domine le bocage",
+			"summary": "Coutances est dominée par sa magnifique cathédrale gothique, considérée comme l'une des plus belles de Normandie et chef-d'œuvre de l'architecture du XIIIe siècle. Les jardins botaniques de la ville comptent parmi les plus beaux de la région. Le marché hebdomadaire déborde de produits locaux."
+		},
+		"carentan": {
+			"title": "Carentan",
+			"subtitle": "Aux portes d'Utah Beach et des marais",
+			"summary": "Carentan est au cœur des marais normands et fut le théâtre de combats acharnés en juin 1944, lorsque les parachutistes américains de la 101e division aéroportée relièrent les têtes de pont d'Utah et d'Omaha. Aujourd'hui, c'est une agréable ville de marché et de plaisance, idéale pour explorer le Parc naturel régional des Marais du Cotentin."
+		},
+		"juno_beach": {
+			"title": "Juno Beach Centre",
+			"subtitle": "L'hommage du Canada à ses vétérans du Débarquement",
+			"summary": "Le Juno Beach Centre à Courseulles-sur-Mer est le mémorial national canadien en Normandie, dédié aux 45 000 Canadiens morts pendant la Seconde Guerre mondiale. Des expositions interactives retracent la vie au Canada pendant la guerre et le Débarquement sur Juno Beach avec des témoignages personnels exceptionnels."
+		},
+		"lessay_abbey": {
+			"title": "Abbaye de Lessay",
+			"subtitle": "Le plus pur exemple roman de Normandie",
+			"summary": "L'abbaye de Lessay est largement reconnue comme le plus bel exemple d'architecture romane de Normandie. Fondée en 1056, presque entièrement détruite en 1944 et méticuleusement reconstruite avec les matériaux d'origine, elle dégage une pureté et une sérénité extraordinaires. La foire de la Sainte-Croix en septembre est l'une des plus anciennes traditions normandes."
+		},
+		"vire": {
+			"title": "Vire",
+			"subtitle": "Gorges, andouille et pays du bocage",
+			"summary": "Perchée au-dessus des spectaculaires gorges de la Vire, cette ville compacte est le cœur du bocage normand. Vire est célèbre dans toute la France pour son andouille, fabriquée par des charcutiers artisanaux selon des recettes séculaires. Le paysage environnant offre d'excellentes promenades à pied ou à vélo dans un bocage préservé."
+		},
+		"torigni_sur_vire": {
+			"title": "Torigni-sur-Vire",
+			"subtitle": "Une ville châtelaine au cœur de la Normandie",
+			"summary": "La petite ville de Torigni-sur-Vire est dominée par son imposant château du XVIe siècle, aujourd'hui siège de la collectivité locale et ouvert aux visiteurs en été. La ville constitue une étape agréable avec un marché hebdomadaire et des circuits de randonnée à proximité dans la vallée de la Vire."
+		},
+		"mont_saint_michel": {
+			"title": "Mont Saint-Michel",
+			"subtitle": "L'un des sites les plus emblématiques de France",
+			"summary": "Surgissant de la mer à la frontière de la Normandie et de la Bretagne, le Mont Saint-Michel est l'un des sites les plus visités de France et classé au patrimoine mondial de l'UNESCO. L'abbaye médiévale perchée sur son îlot rocheux est à couper le souffle à toute heure. Prévoyez une journée entière et, si possible, arrivez au crépuscule."
+		}
 	}
 }
