@@ -108,6 +108,30 @@ describe('BookingCalendar', () => {
 		}
 	});
 
+	it('day buttons have locale-aware aria-labels (en: English weekday names)', () => {
+		const { container } = render(BookingCalendar, {
+			props: { messages, lang: 'en' }
+		});
+		const dayBtn = container.querySelector('.day.available') as HTMLElement;
+		if (dayBtn) {
+			const label = dayBtn.getAttribute('aria-label') ?? '';
+			// English locale produces weekday names like "Monday", "Tuesday" etc
+			expect(label).toMatch(/Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday/);
+		}
+	});
+
+	it('day buttons have locale-aware aria-labels (fr: French weekday names)', () => {
+		const { container } = render(BookingCalendar, {
+			props: { messages, lang: 'fr' }
+		});
+		const dayBtn = container.querySelector('.day.available') as HTMLElement;
+		if (dayBtn) {
+			const label = dayBtn.getAttribute('aria-label') ?? '';
+			// French locale produces weekday names like "lundi", "mardi" etc
+			expect(label).toMatch(/lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche/i);
+		}
+	});
+
 	it('fires onDateRangeSelect when two dates clicked', async () => {
 		const handler = vi.fn();
 		// Use a future month to avoid past-date issues

@@ -12,6 +12,9 @@
 	let { lang, messages }: Props = $props();
 
 	let menuOpen = $state(false);
+	let toggleBtnEl: HTMLElement | undefined = $state();
+	let drawerNavEl: HTMLElement | undefined = $state();
+	let wasMenuOpen = false;
 
 	const navLinks = [
 		{ label: t(messages, 'nav.home'), href: '/', icon: '🏠' },
@@ -27,6 +30,17 @@
 	};
 
 	const closeMenu = () => { menuOpen = false; };
+
+	$effect(() => {
+		if (menuOpen) {
+			wasMenuOpen = true;
+			const firstLink = drawerNavEl?.querySelector('.drawer-link') as HTMLElement | null;
+			firstLink?.focus();
+		} else if (wasMenuOpen) {
+			wasMenuOpen = false;
+			toggleBtnEl?.focus();
+		}
+	});
 
 	function handleKeydown(e: KeyboardEvent) {
 		if (e.key === 'Escape' && menuOpen) {
@@ -60,6 +74,7 @@
 		<div class="header-actions">
 			<LanguageSwitcher {lang} />
 			<button
+				bind:this={toggleBtnEl}
 				class="menu-toggle"
 				onclick={() => menuOpen = !menuOpen}
 				aria-label={t(messages, 'a11y.toggle_menu')}
@@ -74,7 +89,7 @@
 <!-- Mobile drawer -->
 {#if menuOpen}
 	<div class="overlay" onclick={closeMenu} aria-hidden="true"></div>
-	<nav class="mobile-drawer" aria-label={t(messages, 'a11y.mobile_navigation')}>
+	<nav bind:this={drawerNavEl} class="mobile-drawer" aria-label={t(messages, 'a11y.mobile_navigation')}>
 		{#each navLinks as link}
 			<a
 				href={localePath(lang, link.href)}

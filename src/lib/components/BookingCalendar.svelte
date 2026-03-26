@@ -157,7 +157,7 @@
 					onmouseenter={() => hoveredDate = date}
 					disabled={isPast(date) || !isAvailable(date)}
 					class={dayClass(date)}
-					aria-label={date.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })}
+					aria-label={date.toLocaleDateString(lang, { weekday: 'long', month: 'long', day: 'numeric' })}
 					aria-selected={isInRange(date)}
 				>
 					{date.getDate()}
