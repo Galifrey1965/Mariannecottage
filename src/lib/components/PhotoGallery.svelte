@@ -46,6 +46,7 @@
 <svelte:window onkeydown={handleKeydown} />
 
 <div>
+	<div class="filter-bar-wrapper">
 	<div class="filters" role="group" aria-label={t(messages, 'gallery.filter_label')}>
 		{#each categories as cat}
 			<button
@@ -57,6 +58,7 @@
 				{t(messages, `gallery.categories.${cat}`)}
 			</button>
 		{/each}
+	</div>
 	</div>
 
 	<div class="gallery-grid" role="grid" aria-label={t(messages, 'gallery.title')}>
@@ -87,7 +89,14 @@
 </div>
 
 <style>
-	.filters { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 2rem; }
+	.filter-bar-wrapper {
+		margin-bottom: 1.5rem;
+		padding: 0.75rem 1rem;
+		background: var(--color-cream);
+		border-radius: var(--md-shape-corner-medium);
+		border: 1px solid var(--color-cream-dark);
+	}
+	.filters { display: flex; flex-wrap: wrap; gap: 0.4rem; }
 	.filter-chip {
 		display: inline-flex; align-items: center;
 		padding: 0.35rem 0.85rem; border-radius: 1rem; font-size: 0.8rem; font-weight: 500;
