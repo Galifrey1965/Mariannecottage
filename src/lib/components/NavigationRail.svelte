@@ -9,16 +9,17 @@
 
 	interface Props {
 		items: NavItem[];
+		label: string;
 	}
 
-	let { items }: Props = $props();
+	let { items, label }: Props = $props();
 
 	const isActive = (href: string) => {
 		return $page.url.pathname === href || $page.url.pathname.startsWith(href + '/');
 	};
 </script>
 
-<nav class="rail" aria-label="Side navigation">
+<nav class="rail" aria-label={label}>
 	{#each items as item}
 		<a
 			href={item.href}

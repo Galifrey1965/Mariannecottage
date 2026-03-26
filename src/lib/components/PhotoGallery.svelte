@@ -17,6 +17,7 @@
 
 	let selectedCategory = $state('all');
 	let selectedImageIndex = $state<number | null>(null);
+	let closeBtnEl: HTMLElement | undefined = $state();
 
 	const categories = ['all', 'exterior', 'rooms', 'bathroom', 'garden', 'breakfast', 'surroundings'];
 
@@ -27,6 +28,12 @@
 	const currentImage = $derived(
 		selectedImageIndex !== null ? filteredImages[selectedImageIndex] : null
 	);
+
+	$effect(() => {
+		if (selectedImageIndex !== null && closeBtnEl) {
+			closeBtnEl.focus();
+		}
+	});
 
 	function handleKeydown(e: KeyboardEvent) {
 		if (selectedImageIndex === null) return;
@@ -73,7 +80,7 @@
 				<img src={currentImage.src} alt={currentImage.alt} />
 				<button onclick={() => { selectedImageIndex = selectedImageIndex! === 0 ? filteredImages.length - 1 : selectedImageIndex! - 1; }} class="lightbox-nav prev" aria-label={t(messages, 'a11y.previous')}>&larr;</button>
 				<button onclick={() => { selectedImageIndex = selectedImageIndex! === filteredImages.length - 1 ? 0 : selectedImageIndex! + 1; }} class="lightbox-nav next" aria-label={t(messages, 'a11y.next')}>&rarr;</button>
-				<button onclick={() => (selectedImageIndex = null)} class="lightbox-close" aria-label={t(messages, 'a11y.close')}>&times;</button>
+				<button bind:this={closeBtnEl} onclick={() => (selectedImageIndex = null)} class="lightbox-close" aria-label={t(messages, 'a11y.close')}>&times;</button>
 			</div>
 		</div>
 	{/if}
