@@ -366,6 +366,11 @@
 		"image": {
 			"attribution": "Image credit"
 		},
+		"grid": {
+			"loading": "Loading attractions",
+			"no_results": "No attractions match the current filters",
+			"results": "{count} attractions"
+		},
 		"no_results": "No attractions match the current filters",
 		"omaha_beach": {
 			"title": "Omaha Beach",

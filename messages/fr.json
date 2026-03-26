@@ -366,6 +366,11 @@
 		"image": {
 			"attribution": "Crédit photo"
 		},
+		"grid": {
+			"loading": "Chargement des sites",
+			"no_results": "Aucun site ne correspond aux filtres",
+			"results": "{count} sites"
+		},
 		"no_results": "Aucun site ne correspond aux filtres",
 		"omaha_beach": {
 			"title": "Omaha Beach",

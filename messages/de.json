@@ -366,6 +366,11 @@
 		"image": {
 			"attribution": "Bildnachweis"
 		},
+		"grid": {
+			"loading": "Sehenswürdigkeiten werden geladen",
+			"no_results": "Keine Sehenswürdigkeiten entsprechen den Filtern",
+			"results": "{count} Sehenswürdigkeiten"
+		},
 		"no_results": "Keine Sehenswürdigkeiten entsprechen den Filtern",
 		"omaha_beach": {
 			"title": "Omaha Beach",
