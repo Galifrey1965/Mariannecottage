@@ -210,9 +210,8 @@
 		background: var(--color-cream);
 	}
 
-	@media (min-width: 600px) {
-		.menu-toggle { display: none; }
-	}
+	/* Hamburger replaced by NavigationBar (mobile) and NavigationRail (medium) */
+	.menu-toggle { display: none; }
 
 	/* Overlay */
 	.overlay {

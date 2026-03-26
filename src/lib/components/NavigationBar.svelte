@@ -9,22 +9,24 @@
 
 	interface Props {
 		items: NavItem[];
+		label: string;
 	}
 
-	let { items }: Props = $props();
+	let { items, label }: Props = $props();
 
 	const isActive = (href: string) => {
 		return $page.url.pathname === href || $page.url.pathname.startsWith(href + '/');
 	};
 </script>
 
-<nav class="bottom-nav">
+<nav class="bottom-nav" aria-label={label}>
 	{#each items as item}
 		<a
 			href={item.href}
 			class="nav-item"
 			class:active={isActive(item.href)}
 			aria-label={item.label}
+			aria-current={isActive(item.href) ? 'page' : undefined}
 		>
 			<span class="nav-icon">{item.icon}</span>
 			<span class="nav-label">{item.label}</span>
