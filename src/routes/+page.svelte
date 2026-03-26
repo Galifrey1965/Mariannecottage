@@ -20,7 +20,7 @@
 <HeroSection
 	{lang}
 	{messages}
-	image="/images/2024-08-15.webp"
+	image="/images/2024-08-15.jpg"
 	title={t(messages, 'home.hero.tagline')}
 	cta={t(messages, 'home.hero.cta')}
 	ctaLink="/book"
@@ -48,14 +48,14 @@
 		<RoomCard
 			{lang}
 			{messages}
-			image="/images/2024-12-15.jpg"
+			image="/images/gallery/bedroom-double-bed.jpeg"
 			title={t(messages, 'home.rooms_data.bedroom1')}
 			description={t(messages, 'home.rooms_data.bedroom1_desc')}
 		/>
 		<RoomCard
 			{lang}
 			{messages}
-			image="/images/2024-12-15%20(1).jpg"
+			image="/images/gallery/bedroom-twin-full.jpeg"
 			title={t(messages, 'home.rooms_data.bedroom2')}
 			description={t(messages, 'home.rooms_data.bedroom2_desc')}
 		/>

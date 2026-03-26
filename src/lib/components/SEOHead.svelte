@@ -18,7 +18,7 @@
 		lang,
 		title = t(messages, 'meta.title'),
 		description = t(messages, 'meta.description'),
-		image = 'https://mariannecottage.netlify.app/images/2024-08-15.webp',
+		image = 'https://mariannecottage.netlify.app/images/2024-08-15.jpg',
 		url = 'https://mariannecottage.netlify.app',
 		alternates = [],
 		type = 'website'

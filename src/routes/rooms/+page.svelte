@@ -19,10 +19,10 @@
 		<p class="description">{t(messages, 'rooms.suite.description')}</p>
 
 		<div class="image-grid">
-			<img src="/images/2024-12-15.jpg" alt="Bedroom 1" class="room-image" />
-			<img src="/images/2024-12-15%20(1).jpg" alt="Bedroom 2" class="room-image" />
-			<img src="/images/2024-12-15%20(3).jpg" alt="Bathroom" class="room-image" />
-			<img src="/images/unnamed.jpg" alt="Common area" class="room-image" />
+			<img src="/images/gallery/bedroom-double-bed.jpeg" alt="Bedroom 1" class="room-image" />
+			<img src="/images/gallery/bedroom-twin-full.jpeg" alt="Bedroom 2" class="room-image" />
+			<img src="/images/gallery/bathroom-main.jpeg" alt="Bathroom" class="room-image" />
+			<img src="/images/gallery/living-dining-room.jpeg" alt="Common area" class="room-image" />
 		</div>
 	</div>
 
