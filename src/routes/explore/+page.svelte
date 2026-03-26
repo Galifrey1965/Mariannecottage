@@ -1,57 +1,25 @@
 <script lang="ts">
 	import { t } from '$lib/i18n';
-	import LeafletMap from '$lib/components/LeafletMap.svelte';
-	import AttractionCard from '$lib/components/AttractionCard.svelte';
+	import { POIS } from '$lib/data/poi';
+	import type { PoiCategory } from '$lib/data/poi';
 	import type { PageData } from './$types';
+	import PoiFilterBar from '$lib/components/poi/PoiFilterBar.svelte';
+	import PoiGrid from '$lib/components/poi/PoiGrid.svelte';
 
 	let { data }: { data: PageData } = $props();
 	const { lang, messages } = data;
 
-	/** Format distance: km for fr/de, miles for en */
-	const dist = (km: number) => {
-		if (lang === 'en') {
-			const mi = Math.round(km * 0.621371);
-			return `${mi} mi`;
-		}
-		return `${km} km`;
-	};
+	let selectedCategory = $state<PoiCategory | 'all'>('all');
+	let sortBy = $state<'distance' | 'popularity'>('distance');
 
-	const mapMarkers = [
-		{ lat: 49.1728, lng: -0.9887, title: 'Marianne Cottage', description: 'Your base in Normandy', type: 'cottage' as const },
-		{ lat: 49.3715, lng: -0.8885, title: 'Omaha Beach', description: 'Historic D-Day landing site, 29 km', type: 'ww2' as const },
-		{ lat: 49.3432, lng: -1.0266, title: 'La Cambe German Cemetery', description: 'WW2 memorial, 26 km', type: 'ww2' as const },
-		{ lat: 49.3479, lng: -0.8558, title: 'Overlord Museum', description: 'D-Day history museum, 29 km', type: 'ww2' as const },
-		{ lat: 49.2041, lng: -1.0245, title: '29th Division Monument', description: 'American WW2 memorial, 4.3 km', type: 'ww2' as const },
-		{ lat: 49.1950, lng: -0.9370, title: 'Cerisy Abbey', description: 'Medieval abbey in countryside, 5 km', type: 'nature' as const },
-		{ lat: 49.1197, lng: -1.0786, title: 'Haras National de Saint-Lô', description: 'Historic stud farm, 13 km', type: 'nature' as const },
-		{ lat: 49.1155, lng: -1.0828, title: 'Saint-Lô', description: 'Historic town, 13 km', type: 'towns' as const },
-		{ lat: 49.2764, lng: -0.7031, title: 'Bayeux', description: 'Medieval town with cathedral, 30 km', type: 'towns' as const }
-	];
-
-	const attractions = [
-		{
-			category: 'ww2',
-			items: [
-				{ image: '/images/omaha-beach.jpg', title: t(messages, 'explore.omaha_beach'), distance: dist(29), description: t(messages, 'explore.omaha_desc'), url: 'https://www.musee-memorial-omaha.com/en/' },
-				{ image: '/images/la-cambe-cemetery.jpg', title: t(messages, 'explore.la_cambe'), distance: dist(26), description: t(messages, 'explore.la_cambe_desc'), url: 'https://kriegsgraeberstaetten.volksbund.de/en/friedhof/la-cambe' },
-				{ image: '/images/overlord-museum.jpg', title: t(messages, 'explore.overlord'), distance: dist(29), description: t(messages, 'explore.overlord_desc'), url: 'https://www.overlordmuseum.com/en/' }
-			]
-		},
-		{
-			category: 'nature',
-			items: [
-				{ image: '/images/cerisy-abbey.jpg', title: t(messages, 'explore.cerisy'), distance: dist(5), description: t(messages, 'explore.cerisy_desc'), url: 'https://www.abbaye-cerisy.fr/' },
-				{ image: '/images/haras-saint-lo.jpg', title: t(messages, 'explore.haras'), distance: dist(13), description: t(messages, 'explore.haras_desc'), url: 'https://www.polehippiquestlo.fr/' }
-			]
-		},
-		{
-			category: 'towns',
-			items: [
-				{ image: '/images/saint-lo.jpg', title: t(messages, 'explore.saintlo'), distance: dist(13), description: t(messages, 'explore.saintlo_desc'), url: 'https://saintlo-tourisme.com/' },
-				{ image: '/images/bayeux-cathedral.jpg', title: t(messages, 'explore.bayeux'), distance: dist(30), description: t(messages, 'explore.bayeux_desc'), url: 'https://www.bayeux.fr/en' }
-			]
-		}
-	];
+	const filteredAndSorted = $derived(
+		POIS.filter((poi) => selectedCategory === 'all' || poi.category === selectedCategory).sort(
+			(a, b) =>
+				sortBy === 'distance'
+					? a.distanceKm - b.distanceKm
+					: b.popularityScore - a.popularityScore
+		)
+	);
 </script>
 
 <svelte:head>
@@ -62,49 +30,46 @@
 	<h1 class="page-title">{t(messages, 'explore.title')}</h1>
 	<p class="page-description">{t(messages, 'explore.description')}</p>
 
-	<div class="map-wrapper">
-		<LeafletMap markers={mapMarkers} zoom={10} height="500px" />
+	<div class="filter-bar-wrapper">
+		<PoiFilterBar {messages} {lang} bind:selectedCategory bind:sortBy />
 	</div>
 
-	<div class="categories">
-		{#each attractions as category}
-			<div class="category-section">
-				<h2 class="category-heading">
-					{#if category.category === 'ww2'}
-						{t(messages, 'explore.category.ww2')}
-					{:else if category.category === 'nature'}
-						{t(messages, 'explore.category.nature')}
-					{:else}
-						{t(messages, 'explore.category.towns')}
-					{/if}
-				</h2>
-				<div class="cards-grid">
-					{#each category.items as item}
-						<AttractionCard
-							image={item.image}
-							title={item.title}
-							distance={item.distance}
-							description={item.description}
-							category={category.category}
-							url={item.url}
-						/>
-					{/each}
-				</div>
-			</div>
-		{/each}
-	</div>
+	<PoiGrid pois={filteredAndSorted} {messages} {lang} />
 </section>
 
 <style>
-	.page-section { max-width: 1440px; margin: 0 auto; padding: 4rem 1rem; }
-	@media (min-width: 600px) { .page-section { padding: 4rem 1.5rem; } }
-	.page-title { font-family: 'Lora', serif; font-size: 2.5rem; font-weight: 700; color: var(--color-brown); margin: 0 0 1rem; }
-	.page-description { color: var(--color-text-muted); font-size: 1.125rem; margin: 0 0 3rem; line-height: 1.6; }
-	.map-wrapper { margin-bottom: 4rem; border-radius: var(--md-shape-corner-medium); overflow: hidden; box-shadow: var(--md-elevation-shadow-2); }
-	.categories { display: flex; flex-direction: column; gap: 4rem; }
-	.category-section {}
-	.category-heading { font-family: 'Lora', serif; font-size: 1.75rem; font-weight: 600; color: var(--color-brown); margin: 0 0 2rem; text-align: center; }
-	.cards-grid { display: grid; grid-template-columns: 1fr; gap: 2rem; }
-	@media (min-width: 840px) { .cards-grid { grid-template-columns: repeat(2, 1fr); } }
-	@media (min-width: 1200px) { .cards-grid { grid-template-columns: repeat(3, 1fr); } }
+	.page-section {
+		max-width: 1440px;
+		margin: 0 auto;
+		padding: 4rem 1rem;
+	}
+
+	@media (min-width: 600px) {
+		.page-section {
+			padding: 4rem 1.5rem;
+		}
+	}
+
+	.page-title {
+		font-family: 'Lora', serif;
+		font-size: 2.5rem;
+		font-weight: 700;
+		color: var(--color-brown);
+		margin: 0 0 1rem;
+	}
+
+	.page-description {
+		color: var(--color-text-muted);
+		font-size: 1.125rem;
+		margin: 0 0 2rem;
+		line-height: 1.6;
+	}
+
+	.filter-bar-wrapper {
+		margin-bottom: 1.5rem;
+		padding: 0.75rem 1rem;
+		background: var(--color-cream, #f5f0e8);
+		border-radius: var(--md-shape-corner-medium, 12px);
+		border: 1px solid var(--color-cream-dark, #ede6d8);
+	}
 </style>
