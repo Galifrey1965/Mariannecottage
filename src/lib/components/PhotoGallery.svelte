@@ -63,7 +63,7 @@
 		{#each filteredImages as image, i}
 			<button onclick={() => (selectedImageIndex = i)} class="gallery-item" aria-label={image.alt}>
 				<img src={image.src} alt={image.alt} />
-				<div class="gallery-overlay" aria-hidden="true"><span>🔍</span></div>
+				<div class="gallery-overlay" aria-hidden="true"></div>
 			</button>
 		{/each}
 	</div>
@@ -102,12 +102,10 @@
 	.gallery-item { position: relative; overflow: hidden; border-radius: var(--md-shape-corner-medium); aspect-ratio: 1; border: none; padding: 0; cursor: pointer; }
 	.gallery-item img { width: 100%; height: 100%; object-fit: cover; }
 	.gallery-overlay {
-		position: absolute; inset: 0; background: color-mix(in srgb, var(--md-sys-color-scrim) 40%, transparent);
-		display: flex; align-items: center; justify-content: center;
+		position: absolute; inset: 0; background: transparent;
 		transition: background 0.2s ease;
 	}
-	.gallery-overlay span { font-size: 1.5rem; color: white; }
-	.gallery-item:hover .gallery-overlay { background: color-mix(in srgb, var(--md-sys-color-scrim) 60%, transparent); }
+	.gallery-item:hover .gallery-overlay { background: color-mix(in srgb, var(--md-sys-color-scrim) 30%, transparent); }
 
 	.lightbox { position: fixed; inset: 0; z-index: 50; background: color-mix(in srgb, var(--md-sys-color-scrim) 90%, transparent); display: flex; align-items: center; justify-content: center; padding: 1rem; }
 	.lightbox-content { position: relative; max-width: 56rem; width: 100%; }
