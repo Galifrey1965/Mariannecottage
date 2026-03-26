@@ -87,13 +87,19 @@
 </div>
 
 <style>
-	.filters { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 2rem; }
+	.filters { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 2rem; }
 	.filter-chip {
-		padding: 0.5rem 1rem; border-radius: var(--md-shape-corner-full); font-size: 0.875rem; font-weight: 500;
-		border: none; cursor: pointer; transition: all 0.2s ease;
-		background: var(--color-cream); color: var(--color-brown);
+		display: inline-flex; align-items: center;
+		padding: 0.35rem 0.85rem; border-radius: 1rem; font-size: 0.8rem; font-weight: 500;
+		border: 1.5px solid var(--color-cream-dark); cursor: pointer;
+		background: transparent; color: var(--color-text-muted);
+		transition: background 0.15s, color 0.15s, border-color 0.15s;
+		white-space: nowrap;
 	}
-	.filter-chip.active { background: var(--color-sage); color: var(--md-sys-color-on-primary); }
+	.filter-chip:hover { background: var(--color-cream); border-color: var(--color-brown-light); color: var(--color-brown); }
+	.filter-chip:focus-visible { outline: 2px solid var(--md-sys-color-primary); outline-offset: 2px; }
+	.filter-chip.active { background: var(--color-sage); border-color: var(--color-sage); color: #fff; font-weight: 600; }
+	.filter-chip.active:hover { background: var(--color-sage-hover); border-color: var(--color-sage-hover); }
 
 	.gallery-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
 	@media (min-width: 600px) { .gallery-grid { grid-template-columns: repeat(3, 1fr); } }
