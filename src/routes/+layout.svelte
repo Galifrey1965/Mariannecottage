@@ -1,6 +1,7 @@
 <script lang="ts">
 	import '../app.css';
 	import { page } from '$app/stores';
+	import { afterNavigate } from '$app/navigation';
 	import Header from '$lib/components/Header.svelte';
 	import Footer from '$lib/components/Footer.svelte';
 	import NavigationRail from '$lib/components/NavigationRail.svelte';
@@ -16,6 +17,13 @@
 	const baseUrl = 'https://mariannecottage.netlify.app';
 	const currentPath = $page.url.pathname;
 	const alternates = LOCALES.map(l => ({ lang: l, url: `${baseUrl}${currentPath}` }));
+
+	// scroll-behavior: smooth on <html> can cause SvelteKit's scroll reset to land mid-page
+	afterNavigate(({ type }) => {
+		if (type !== 'popstate') {
+			window.scrollTo({ top: 0, behavior: 'instant' });
+		}
+	});
 
 	const railItems = [
 		{ label: t(messages, 'nav.home'), icon: '🏠', href: localePath(lang, '/') },
