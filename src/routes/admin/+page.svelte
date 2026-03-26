@@ -182,11 +182,11 @@
 		<div class="stats-grid">
 			<div class="stat-card">
 				<p class="stat-label">Confirmed</p>
-				<p class="stat-value" style="color: #166534;">{confirmedBookings.length}</p>
+				<p class="stat-value" style="color: var(--color-success-text);">{confirmedBookings.length}</p>
 			</div>
 			<div class="stat-card">
 				<p class="stat-label">Pending</p>
-				<p class="stat-value" style="color: #92400e;">{pendingBookings.length}</p>
+				<p class="stat-value" style="color: var(--color-warning-text);">{pendingBookings.length}</p>
 			</div>
 			<div class="stat-card">
 				<p class="stat-label">Revenue</p>
@@ -194,7 +194,7 @@
 			</div>
 			<div class="stat-card">
 				<p class="stat-label">Upcoming</p>
-				<p class="stat-value" style="color: #1d4ed8;">{upcomingBookings.length}</p>
+				<p class="stat-value" style="color: var(--color-info-text);">{upcomingBookings.length}</p>
 			</div>
 		</div>
 
@@ -413,14 +413,14 @@
 	.login-wrapper { display: flex; align-items: center; justify-content: center; min-height: 70vh; }
 	.login-card { width: 100%; max-width: 24rem; background: var(--color-bg); border-radius: 16px; padding: 2rem; box-shadow: 0 4px 24px rgba(0,0,0,0.1); }
 	.login-title { font-family: 'Lora', serif; text-align: center; margin: 0 0 1.5rem; }
-	.error-text { font-size: 0.875rem; color: #c4554e; margin-bottom: 1rem; }
+	.error-text { font-size: 0.875rem; color: var(--color-error-text); margin-bottom: 1rem; }
 
 	/* Form elements */
 	.form-label { display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.5rem; }
 	.form-input {
 		width: 100%; padding: 0.625rem 1rem; border: 1px solid var(--color-cream-dark);
 		border-radius: 8px; font-family: inherit; font-size: 0.875rem;
-		color: var(--color-text); background: white; outline: none;
+		color: var(--color-text); background: var(--color-bg); outline: none;
 		transition: border-color 0.2s ease; box-sizing: border-box; margin-bottom: 1rem;
 	}
 	.form-input:focus { border-color: var(--color-sage); box-shadow: 0 0 0 2px rgba(107,143,113,0.2); }
@@ -489,9 +489,9 @@
 
 	/* Status badges */
 	.status-badge { display: inline-block; padding: 0.125rem 0.625rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 500; text-transform: capitalize; }
-	.status-badge.pending { background: #fef3c7; color: #92400e; }
-	.status-badge.confirmed { background: #dcfce7; color: #166534; }
-	.status-badge.cancelled { background: #fee2e2; color: #991b1b; }
+	.status-badge.pending { background: var(--color-warning-bg); color: var(--color-warning-text); }
+	.status-badge.confirmed { background: var(--color-success-bg); color: var(--color-success-text); }
+	.status-badge.cancelled { background: var(--color-error-bg); color: var(--color-error-text); }
 
 	/* Mobile cards */
 	.mobile-cards { display: block; }
@@ -526,9 +526,9 @@
 		border: 1px solid var(--color-cream-dark); background: transparent; color: var(--color-text-muted);
 	}
 	.status-toggle:disabled { opacity: 0.5; cursor: not-allowed; }
-	.status-toggle.active.pending { background: #fef3c7; color: #92400e; border-color: #92400e; font-weight: 600; }
-	.status-toggle.active.confirmed { background: #dcfce7; color: #166534; border-color: #166534; font-weight: 600; }
-	.status-toggle.active.cancelled { background: #fee2e2; color: #991b1b; border-color: #991b1b; font-weight: 600; }
+	.status-toggle.active.pending { background: var(--color-warning-bg); color: var(--color-warning-text); border-color: var(--color-warning-text); font-weight: 600; }
+	.status-toggle.active.confirmed { background: var(--color-success-bg); color: var(--color-success-text); border-color: var(--color-success-text); font-weight: 600; }
+	.status-toggle.active.cancelled { background: var(--color-error-bg); color: var(--color-error-text); border-color: var(--color-error-text); font-weight: 600; }
 
 	.pricing-rows { font-size: 0.875rem; display: flex; flex-direction: column; gap: 0.25rem; }
 	.pricing-row { display: flex; justify-content: space-between; color: var(--color-text-muted); }

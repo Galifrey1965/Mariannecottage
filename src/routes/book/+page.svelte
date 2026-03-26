@@ -321,7 +321,7 @@
 		font-size: 0.75rem; font-weight: 700;
 		background: var(--color-cream-dark); color: var(--color-text-muted);
 	}
-	.step-number.active { background: white; color: var(--color-sage); }
+	.step-number.active { background: var(--md-sys-color-surface); color: var(--color-sage); }
 	.step-number.done { background: var(--color-sage); color: white; }
 	.step-label { display: none; }
 	@media (min-width: 600px) { .step-label { display: inline; } }

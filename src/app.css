@@ -50,6 +50,16 @@
 	--color-error-border: #fecaca;
 	--color-error-text: #991b1b;
 
+	/* Warning */
+	--color-warning-bg: #fffbeb;
+	--color-warning-border: #fde68a;
+	--color-warning-text: #92400e;
+
+	/* Info */
+	--color-info-bg: #eff6ff;
+	--color-info-border: #bfdbfe;
+	--color-info-text: #1d4ed8;
+
 	/* Disabled */
 	--color-disabled: #9ca3af;
 }
@@ -91,6 +101,16 @@
 		--color-error-bg: rgba(255, 139, 129, 0.15);
 		--color-error-border: rgba(255, 139, 129, 0.3);
 		--color-error-text: #ff8b81;
+
+		/* Warning */
+		--color-warning-bg: rgba(251, 191, 36, 0.15);
+		--color-warning-border: rgba(251, 191, 36, 0.3);
+		--color-warning-text: #fbbf24;
+
+		/* Info */
+		--color-info-bg: rgba(96, 165, 250, 0.15);
+		--color-info-border: rgba(96, 165, 250, 0.3);
+		--color-info-text: #60a5fa;
 
 		/* Disabled */
 		--color-disabled: #555453;
