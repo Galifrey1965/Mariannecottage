@@ -8,6 +8,9 @@
 	}
 
 	let { lang, messages }: Props = $props();
+
+	const version: string = typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : '0.0.0';
+	const buildDate: string = typeof __BUILD_DATE__ !== 'undefined' ? __BUILD_DATE__ : new Date().toISOString().slice(0, 10);
 </script>
 
 <footer class="footer">
@@ -30,6 +33,13 @@
 
 		<div class="footer-bottom">
 			<p>{t(messages, 'footer.copyright')}</p>
+			<a
+				href="https://github.com/Galifrey1965/Mariannecottage/releases"
+				target="_blank"
+				rel="noopener"
+				class="version-link"
+				aria-label="{t(messages, 'footer.version')} v{version} — {buildDate}"
+			>v{version} · {buildDate}</a>
 			<a href="https://github.com/Galifrey1965/Mariannecottage/issues/new" target="_blank" rel="noopener" class="report-issue">
 				{t(messages, 'footer.report_issue')}
 			</a>
@@ -118,6 +128,22 @@
 		font-size: 0.875rem;
 		color: var(--color-footer-accent);
 		margin: 0;
+	}
+
+	.version-link {
+		display: inline-block;
+		margin-top: 0.5rem;
+		font-size: 0.75rem;
+		font-family: monospace;
+		color: var(--color-footer-accent);
+		text-decoration: none;
+		opacity: 0.6;
+		transition: opacity 0.2s ease;
+	}
+
+	.version-link:hover {
+		opacity: 1;
+		color: white;
 	}
 
 	.report-issue {

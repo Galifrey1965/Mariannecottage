@@ -309,7 +309,8 @@
 		"contact": "Contact",
 		"social": "Follow Us",
 		"copyright": "© 2024 Marianne Cottage. All rights reserved.",
-		"report_issue": "Report a website issue"
+		"report_issue": "Report a website issue",
+		"version": "Version"
 	},
 	"a11y": {
 		"skip_to_content": "Skip to main content",
