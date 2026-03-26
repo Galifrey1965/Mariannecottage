@@ -11,6 +11,14 @@
 
 	let currentIndex = $state(0);
 	let paused = $state(false);
+	let previewVisible = $state(false);
+	let previewX = $state(0);
+	let previewY = $state(0);
+
+	function handleMouseMove(e: MouseEvent) {
+		previewX = e.clientX;
+		previewY = e.clientY;
+	}
 
 	// Auto-rotate: random interval 3–5s per slide.
 	// currentIndex is read inside the setTimeout callback (async) so it is NOT
@@ -70,8 +78,9 @@
 		role="region"
 		aria-label={label}
 		aria-roledescription="carousel"
-		onmouseenter={() => (paused = true)}
-		onmouseleave={() => (paused = false)}
+		onmouseenter={() => { paused = true; previewVisible = true; }}
+		onmouseleave={() => { paused = false; previewVisible = false; }}
+		onmousemove={handleMouseMove}
 	>
 		<!-- Slides -->
 		<div class="carousel__track" aria-live="polite" aria-atomic="false">
@@ -165,6 +174,17 @@
 				</p>
 			{/if}
 		{/if}
+	</div>
+{/if}
+
+<!-- Hover image preview — fixed position, desktop only -->
+{#if previewVisible && images.length > 0}
+	<div
+		class="carousel__preview"
+		style="left: {Math.min(previewX + 20, typeof window !== 'undefined' ? window.innerWidth - 340 : previewX + 20)}px; top: {Math.max(previewY - 160, 8)}px;"
+		aria-hidden="true"
+	>
+		<img src={cdnSrc(images[currentIndex].src, 600)} alt="" />
 	</div>
 {/if}
 
@@ -298,6 +318,31 @@
 	.carousel__dot:focus-visible {
 		outline: 2px solid var(--md-sys-color-primary, #6b8f71);
 		outline-offset: 2px;
+	}
+
+	/* Hover image preview — desktop only */
+	@media (hover: hover) {
+		.carousel__preview {
+			position: fixed;
+			z-index: 200;
+			width: 320px;
+			border-radius: var(--md-shape-corner-medium, 12px);
+			box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+			overflow: hidden;
+			pointer-events: none;
+			animation: preview-fade-in 0.15s ease;
+		}
+
+		.carousel__preview img {
+			display: block;
+			width: 100%;
+			height: auto;
+		}
+
+		@keyframes preview-fade-in {
+			from { opacity: 0; transform: scale(0.96); }
+			to   { opacity: 1; transform: scale(1); }
+		}
 	}
 
 	/* Attribution */

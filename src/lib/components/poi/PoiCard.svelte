@@ -55,7 +55,9 @@
 	const distanceLabel = $derived(
 		poi.distanceKm > 60
 			? t(messages, 'poi.distance.exception')
-			: `${poi.distanceKm.toFixed(1)} km`
+			: lang === 'en'
+				? `${(poi.distanceKm * 0.621371).toFixed(1)} mi`
+				: `${poi.distanceKm.toFixed(1)} km`
 	);
 
 	// Accessibility level indicator colour
