@@ -1,0 +1,1272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Marianne Cottage — Normandy B&B</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #ffffff;
+    --surface: #f7f7f8;
+    --accent: #0066ff;
+    --accent-hover: #0052cc;
+    --text: #1a1a2e;
+    --text-muted: #6b7280;
+    --border: #e8e8e8;
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.08);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+    --nav-h: 60px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    height: var(--nav-h);
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 24px;
+  }
+
+  .nav-brand {
+    font-weight: 700; font-size: 1rem; color: var(--text);
+    letter-spacing: -0.01em; text-decoration: none;
+  }
+  .nav-brand span { color: var(--accent); }
+
+  .nav-links { display: flex; gap: 4px; }
+
+  .nav-links button {
+    background: none; border: none; cursor: pointer;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.875rem; font-weight: 500;
+    color: var(--text-muted);
+    padding: 6px 12px; border-radius: var(--radius-sm);
+    transition: all 0.15s;
+  }
+  .nav-links button:hover { background: var(--surface); color: var(--text); }
+  .nav-links button.active { background: var(--surface); color: var(--text); font-weight: 600; }
+
+  .hamburger {
+    display: none; flex-direction: column; gap: 5px;
+    background: none; border: none; cursor: pointer; padding: 6px;
+  }
+  .hamburger span { display: block; width: 22px; height: 2px; background: var(--text); border-radius: 2px; transition: all 0.2s; }
+
+  .mobile-menu {
+    display: none; position: fixed; top: var(--nav-h); left: 0; right: 0;
+    background: var(--bg); border-bottom: 1px solid var(--border);
+    padding: 12px 16px; z-index: 99; flex-direction: column; gap: 4px;
+  }
+  .mobile-menu.open { display: flex; }
+  .mobile-menu button {
+    background: none; border: none; cursor: pointer;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 1rem; font-weight: 500; color: var(--text);
+    padding: 10px 12px; border-radius: var(--radius-sm); text-align: left;
+    transition: background 0.15s;
+  }
+  .mobile-menu button:hover { background: var(--surface); }
+  .mobile-menu button.active { color: var(--accent); font-weight: 600; }
+
+  /* ── PAGES ── */
+  .page { display: none; padding-top: var(--nav-h); min-height: 100vh; }
+  .page.active { display: block; }
+
+  .container { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+
+  /* ── SECTION LABEL ── */
+  .section-label {
+    font-size: 0.75rem; font-weight: 600; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 8px;
+  }
+  .section-heading {
+    font-size: clamp(1.75rem, 4vw, 2.5rem); font-weight: 700;
+    letter-spacing: -0.02em; color: var(--text); line-height: 1.15;
+  }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: var(--radius-md); box-shadow: var(--shadow);
+    padding: 20px; transition: box-shadow 0.2s;
+  }
+  .card:hover { box-shadow: var(--shadow-md); }
+
+  /* ── BUTTONS ── */
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--accent); color: #fff; border: none; cursor: pointer;
+    font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.9rem;
+    font-weight: 600; padding: 10px 20px; border-radius: var(--radius-sm);
+    text-decoration: none; transition: background 0.15s, transform 0.1s;
+  }
+  .btn:hover { background: var(--accent-hover); }
+  .btn:active { transform: scale(0.98); }
+  .btn-outline {
+    background: transparent; color: var(--accent);
+    border: 1.5px solid var(--accent);
+  }
+  .btn-outline:hover { background: var(--accent); color: #fff; }
+
+  /* ── MONO ── */
+  .mono { font-family: 'JetBrains Mono', monospace; }
+
+  /* ── ANIMATIONS ── */
+  .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.5s, transform 0.5s; }
+  .reveal.visible { opacity: 1; transform: none; }
+
+  /* ══════════════════════════════════════
+     HOME PAGE
+  ══════════════════════════════════════ */
+  .hero {
+    padding: 56px 0 40px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: start;
+  }
+
+  .hero-left { display: flex; flex-direction: column; gap: 24px; }
+
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: #f0f7ff; color: var(--accent); font-size: 0.8rem;
+    font-weight: 600; padding: 6px 12px; border-radius: 100px;
+    border: 1px solid #cce0ff;
+  }
+  .hero-eyebrow::before { content: '●'; font-size: 0.5rem; }
+
+  .hero-headline {
+    font-size: clamp(2.2rem, 5vw, 3.4rem); font-weight: 800;
+    letter-spacing: -0.03em; line-height: 1.08; color: var(--text);
+  }
+  .hero-headline .hl { color: var(--accent); }
+
+  .hero-tagline {
+    font-size: 1.05rem; color: var(--text-muted); line-height: 1.6;
+    max-width: 420px;
+  }
+
+  .hero-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+  /* hero bento grid */
+  .hero-bento { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: auto auto; gap: 12px; }
+
+  .hero-card {
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: var(--radius-md); box-shadow: var(--shadow);
+    padding: 18px;
+  }
+
+  .hero-card.span2 { grid-column: span 2; }
+  .hero-card.tall { min-height: 130px; display: flex; flex-direction: column; justify-content: space-between; }
+
+  .hero-card-icon { font-size: 1.4rem; margin-bottom: 8px; }
+  .hero-card-val { font-size: 1.6rem; font-weight: 700; color: var(--text); letter-spacing: -0.02em; }
+  .hero-card-label { font-size: 0.78rem; color: var(--text-muted); font-weight: 500; margin-top: 2px; }
+  .stars { color: var(--accent); font-size: 0.9rem; letter-spacing: 1px; }
+
+  /* home bento grid */
+  .home-bento {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-auto-rows: auto;
+    gap: 16px;
+    padding: 48px 0;
+  }
+
+  .hb-about { grid-column: span 2; }
+  .hb-highlight { grid-column: span 1; }
+  .hb-room1 { grid-column: span 1; }
+  .hb-room2 { grid-column: span 1; }
+  .hb-rates { grid-column: span 1; }
+  .hb-testimonial { grid-column: span 2; }
+  .hb-cta { grid-column: span 1; }
+  .hb-breakfast { grid-column: span 2; }
+
+  .card-tag {
+    display: inline-block; font-size: 0.7rem; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    background: var(--surface); color: var(--text-muted);
+    padding: 3px 8px; border-radius: 100px; margin-bottom: 12px;
+  }
+  .card-title { font-size: 1.15rem; font-weight: 700; margin-bottom: 8px; }
+  .card-body { font-size: 0.9rem; color: var(--text-muted); line-height: 1.6; }
+
+  .pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 0.78rem; font-weight: 500;
+    background: var(--surface); border: 1px solid var(--border);
+    padding: 4px 10px; border-radius: 100px; color: var(--text-muted);
+  }
+  .pill-dot { width: 6px; height: 6px; border-radius: 50%; }
+
+  .rate-big { font-size: 2rem; font-weight: 700; color: var(--text); letter-spacing: -0.03em; }
+  .rate-unit { font-size: 0.85rem; color: var(--text-muted); font-weight: 400; }
+
+  .hb-cta-inner {
+    display: flex; flex-direction: column; height: 100%;
+    justify-content: space-between; min-height: 140px;
+  }
+
+  /* amenity pills row */
+  .amenity-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+  .amenity-pill {
+    font-size: 0.78rem; font-weight: 500; color: var(--text-muted);
+    background: var(--surface); border: 1px solid var(--border);
+    padding: 5px 10px; border-radius: 100px;
+  }
+
+  /* ══════════════════════════════════════
+     ROOMS PAGE
+  ══════════════════════════════════════ */
+  .rooms-section { padding: 56px 0; }
+  .rooms-header { margin-bottom: 36px; }
+
+  .rooms-bento {
+    display: grid; grid-template-columns: repeat(2, 1fr);
+    gap: 16px; margin-bottom: 32px;
+  }
+  .room-card { padding: 28px; }
+  .room-icon { font-size: 2.2rem; margin-bottom: 16px; }
+  .room-name { font-size: 1.3rem; font-weight: 700; margin-bottom: 6px; }
+  .room-bed { font-size: 0.88rem; color: var(--accent); font-weight: 600; margin-bottom: 14px; }
+  .room-desc { font-size: 0.9rem; color: var(--text-muted); line-height: 1.65; margin-bottom: 18px; }
+
+  .amenities-section { padding: 0 0 48px; }
+  .amenities-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-top: 24px; }
+  .amenity-card { padding: 18px; display: flex; align-items: flex-start; gap: 14px; }
+  .amenity-icon { font-size: 1.4rem; flex-shrink: 0; }
+  .amenity-title { font-size: 0.9rem; font-weight: 600; margin-bottom: 2px; }
+  .amenity-desc { font-size: 0.8rem; color: var(--text-muted); }
+
+  .rates-section { padding: 0 0 56px; }
+  .rates-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 28px; }
+
+  .rate-card { padding: 28px; position: relative; }
+  .rate-card.featured { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0,102,255,0.08); }
+  .rate-badge {
+    position: absolute; top: -1px; right: 16px;
+    background: var(--accent); color: #fff; font-size: 0.7rem;
+    font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
+    padding: 4px 10px; border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+  }
+  .rate-season { font-size: 0.78rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 8px; }
+  .rate-months { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 16px; }
+  .rate-price { font-size: 2.4rem; font-weight: 800; letter-spacing: -0.04em; color: var(--text); }
+  .rate-price span { font-size: 1rem; font-weight: 400; color: var(--text-muted); }
+
+  .meals-section { padding: 0 0 56px; }
+  .meals-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 28px; }
+  .meal-card { padding: 28px; }
+  .meal-icon { font-size: 2rem; margin-bottom: 14px; }
+  .meal-title { font-size: 1.15rem; font-weight: 700; margin-bottom: 8px; }
+  .meal-desc { font-size: 0.9rem; color: var(--text-muted); line-height: 1.65; }
+  .meal-items { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 6px; }
+  .meal-item {
+    font-size: 0.78rem; background: var(--surface); border: 1px solid var(--border);
+    padding: 4px 10px; border-radius: 100px; color: var(--text-muted);
+  }
+
+  /* ══════════════════════════════════════
+     EXPLORE PAGE
+  ══════════════════════════════════════ */
+  .explore-section { padding: 56px 0; }
+  .explore-header { margin-bottom: 32px; }
+
+  .filter-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; align-items: center; }
+  .filter-btn {
+    font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.82rem;
+    font-weight: 600; padding: 7px 14px; border-radius: 100px;
+    border: 1.5px solid var(--border); background: var(--bg);
+    color: var(--text-muted); cursor: pointer; transition: all 0.15s;
+  }
+  .filter-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .filter-btn:hover:not(.active) { border-color: var(--accent); color: var(--accent); }
+
+  .sort-btn {
+    margin-left: auto; font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.82rem; font-weight: 600; padding: 7px 14px;
+    border-radius: 100px; border: 1.5px solid var(--border);
+    background: var(--surface); color: var(--text-muted); cursor: pointer;
+    transition: all 0.15s;
+  }
+  .sort-btn:hover { border-color: var(--text-muted); }
+
+  .poi-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 14px;
+  }
+  .poi-card { padding: 20px; display: flex; flex-direction: column; gap: 10px; }
+  .poi-card[style*="display:none"] { display: none !important; }
+  .poi-header { display: flex; justify-content: space-between; align-items: flex-start; }
+  .poi-name { font-size: 1rem; font-weight: 700; flex: 1; }
+  .poi-distance { font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; font-weight: 500; color: var(--accent); white-space: nowrap; margin-left: 12px; }
+  .poi-cats { display: flex; flex-wrap: wrap; gap: 5px; }
+  .cat-pill {
+    font-size: 0.7rem; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.06em; padding: 3px 8px; border-radius: 100px;
+    border: 1px solid; cursor: default;
+  }
+  .cat-ww2 { background: #fff3f3; color: #cc2200; border-color: #ffccc0; }
+  .cat-museum { background: #f3f0ff; color: #6600cc; border-color: #ddd0ff; }
+  .cat-heritage { background: #f0f9f0; color: #007722; border-color: #c0e8c0; }
+  .cat-towns { background: #fffbf0; color: #996600; border-color: #ffe0a0; }
+
+  /* ══════════════════════════════════════
+     TESTIMONIALS (home + rooms)
+  ══════════════════════════════════════ */
+  .testimonials-section { padding: 48px 0; }
+  .testimonials-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 28px; }
+  .testi-card { padding: 24px; }
+  .testi-stars { color: var(--accent); font-size: 1rem; letter-spacing: 2px; margin-bottom: 12px; }
+  .testi-quote { font-size: 0.9rem; line-height: 1.65; color: var(--text-muted); margin-bottom: 14px; quotes: "\201C" "\201D"; }
+  .testi-quote::before { content: open-quote; }
+  .testi-quote::after { content: close-quote; }
+  .testi-author { font-size: 0.82rem; font-weight: 700; color: var(--text); }
+  .testi-flag { font-size: 0.78rem; color: var(--text-muted); }
+
+  /* ══════════════════════════════════════
+     BOOK PAGE
+  ══════════════════════════════════════ */
+  .book-section { padding: 56px 0; }
+  .book-grid { display: grid; grid-template-columns: 1fr 1.4fr; gap: 32px; align-items: start; }
+
+  .book-info { display: flex; flex-direction: column; gap: 16px; }
+  .book-info-card { padding: 22px; }
+  .book-info-title { font-size: 0.9rem; font-weight: 700; margin-bottom: 8px; }
+  .book-info-body { font-size: 0.88rem; color: var(--text-muted); line-height: 1.6; }
+
+  .form-card { padding: 32px; }
+  .form-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 6px; }
+  .form-sub { font-size: 0.88rem; color: var(--text-muted); margin-bottom: 24px; }
+
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .form-group { display: flex; flex-direction: column; gap: 5px; margin-bottom: 14px; }
+  .form-group label { font-size: 0.82rem; font-weight: 600; color: var(--text); }
+  .form-group input, .form-group select, .form-group textarea {
+    font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.9rem;
+    padding: 10px 12px; border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+    background: var(--bg); color: var(--text); outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+    border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0,102,255,0.1);
+  }
+  .form-group textarea { resize: vertical; min-height: 90px; }
+
+  /* ══════════════════════════════════════
+     CONTACT PAGE
+  ══════════════════════════════════════ */
+  .contact-section { padding: 56px 0; }
+  .contact-grid { display: grid; grid-template-columns: 1fr 1.4fr; gap: 32px; align-items: start; }
+
+  .contact-info { display: flex; flex-direction: column; gap: 16px; }
+  .contact-item { display: flex; align-items: flex-start; gap: 14px; }
+  .contact-icon { font-size: 1.4rem; flex-shrink: 0; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: #f0f7ff; border-radius: var(--radius-sm); }
+  .contact-detail-title { font-size: 0.82rem; font-weight: 600; color: var(--text-muted); margin-bottom: 3px; }
+  .contact-detail-val { font-size: 0.95rem; font-weight: 600; color: var(--text); }
+  .contact-detail-val a { color: var(--text); text-decoration: none; }
+  .contact-detail-val a:hover { color: var(--accent); }
+
+  .map-card {
+    padding: 0; overflow: hidden; background: var(--surface);
+    min-height: 200px; display: flex; align-items: center; justify-content: center;
+  }
+  .map-placeholder {
+    text-align: center; padding: 40px 20px;
+    font-size: 0.9rem; color: var(--text-muted);
+  }
+  .map-placeholder p { margin-top: 8px; font-size: 0.82rem; }
+
+  /* ══════════════════════════════════════
+     TOAST
+  ══════════════════════════════════════ */
+  .toast {
+    position: fixed; bottom: 24px; right: 24px; z-index: 999;
+    background: var(--text); color: #fff; font-size: 0.9rem; font-weight: 500;
+    padding: 14px 20px; border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    transform: translateY(80px); opacity: 0;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    pointer-events: none; max-width: 340px;
+  }
+  .toast.show { transform: none; opacity: 1; }
+  .toast-icon { margin-right: 8px; }
+
+  /* ══════════════════════════════════════
+     FOOTER
+  ══════════════════════════════════════ */
+  footer {
+    border-top: 1px solid var(--border); background: var(--surface);
+    padding: 32px 24px; text-align: center;
+    font-size: 0.82rem; color: var(--text-muted);
+  }
+  footer strong { color: var(--text); }
+  footer a { color: var(--text-muted); text-decoration: none; }
+  footer a:hover { color: var(--accent); }
+  footer .footer-links { display: flex; justify-content: center; gap: 16px; margin-top: 10px; }
+
+  /* ══════════════════════════════════════
+     RESPONSIVE
+  ══════════════════════════════════════ */
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: 1fr; gap: 24px; }
+    .home-bento { grid-template-columns: 1fr 1fr; }
+    .hb-about { grid-column: span 2; }
+    .hb-highlight { grid-column: span 2; }
+    .hb-room1, .hb-room2, .hb-rates, .hb-cta { grid-column: span 1; }
+    .hb-testimonial { grid-column: span 2; }
+    .hb-breakfast { grid-column: span 2; }
+    .testimonials-grid { grid-template-columns: 1fr; }
+    .rooms-bento { grid-template-columns: 1fr; }
+    .rates-grid { grid-template-columns: 1fr; }
+    .meals-grid { grid-template-columns: 1fr; }
+    .book-grid { grid-template-columns: 1fr; }
+    .contact-grid { grid-template-columns: 1fr; }
+    .form-row { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 640px) {
+    .nav-links { display: none; }
+    .hamburger { display: flex; }
+    .home-bento { grid-template-columns: 1fr; }
+    .hb-about, .hb-highlight, .hb-room1, .hb-room2, .hb-rates, .hb-cta, .hb-testimonial, .hb-breakfast { grid-column: span 1; }
+    .hero-bento { grid-template-columns: 1fr 1fr; }
+    .hero-card.span2 { grid-column: span 2; }
+    .sort-btn { margin-left: 0; }
+    .container { padding: 0 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── TOAST ── -->
+<div class="toast" id="toast"><span class="toast-icon">✓</span><span id="toast-msg"></span></div>
+
+<!-- ── NAV ── -->
+<nav>
+  <a class="nav-brand" href="#" onclick="showPage('home');return false;">Marianne <span>Cottage</span></a>
+  <div class="nav-links">
+    <button onclick="showPage('home')" class="active" id="nav-home">Home</button>
+    <button onclick="showPage('rooms')" id="nav-rooms">Rooms & Rates</button>
+    <button onclick="showPage('explore')" id="nav-explore">Explore</button>
+    <button onclick="showPage('book')" id="nav-book">Book</button>
+    <button onclick="showPage('contact')" id="nav-contact">Contact</button>
+  </div>
+  <button class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- ── MOBILE MENU ── -->
+<div class="mobile-menu" id="mobile-menu">
+  <button onclick="showPage('home');closeMenu()" id="mnav-home" class="active">Home</button>
+  <button onclick="showPage('rooms');closeMenu()" id="mnav-rooms">Rooms & Rates</button>
+  <button onclick="showPage('explore');closeMenu()" id="mnav-explore">Explore</button>
+  <button onclick="showPage('book');closeMenu()" id="mnav-book">Book</button>
+  <button onclick="showPage('contact');closeMenu()" id="mnav-contact">Contact</button>
+</div>
+
+<!-- ══════════════════════════════════════
+     HOME PAGE
+══════════════════════════════════════ -->
+<div class="page active" id="page-home">
+  <div class="container">
+
+    <!-- HERO -->
+    <section class="hero reveal">
+      <div class="hero-left">
+        <div class="hero-eyebrow">Normandy, France · B&amp;B</div>
+        <h1 class="hero-headline">
+          A haven of peace<br><span class="hl">in the heart of</span><br>Normandy
+        </h1>
+        <p class="hero-tagline">
+          Marianne Cottage welcomes you to a tranquil 2-bedroom suite in the Normandy countryside, hosted by Mark &amp; Kim with warmth and care.
+        </p>
+        <div class="hero-actions">
+          <button class="btn" onclick="showPage('book')">Book a Stay</button>
+          <button class="btn btn-outline" onclick="showPage('rooms')">Explore Rooms</button>
+        </div>
+      </div>
+
+      <div class="hero-bento">
+        <div class="hero-card tall">
+          <div class="hero-card-icon">⭐</div>
+          <div>
+            <div class="stars">★★★★★</div>
+            <div class="hero-card-label">Guest rating</div>
+          </div>
+        </div>
+        <div class="hero-card tall">
+          <div class="hero-card-icon">🏛️</div>
+          <div>
+            <div class="hero-card-val mono">5km</div>
+            <div class="hero-card-label">Cerisy Abbey</div>
+          </div>
+        </div>
+        <div class="hero-card">
+          <div class="hero-card-icon">🗓️</div>
+          <div class="hero-card-val">€85–€140</div>
+          <div class="hero-card-label">per night, 3 seasons</div>
+        </div>
+        <div class="hero-card">
+          <div class="hero-card-icon">☕</div>
+          <div class="hero-card-val">Breakfast</div>
+          <div class="hero-card-label">always included</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- HOME BENTO -->
+    <section class="home-bento">
+
+      <!-- About -->
+      <div class="card hb-about reveal">
+        <div class="card-tag">About</div>
+        <div class="card-title">Welcome to 1 La Haye, Couvains</div>
+        <div class="card-body">
+          Marianne Cottage is a charming countryside retreat in Couvains, Normandy — just minutes from Cerisy Abbey and under an hour from the D-Day beaches, Mont Saint-Michel, and Bayeux. Mark &amp; Kim offer warm, personal hospitality in a peaceful setting with garden views and everything you need for an unforgettable stay.
+        </div>
+        <div class="amenity-row">
+          <span class="amenity-pill">🌿 Garden views</span>
+          <span class="amenity-pill">📶 Free WiFi</span>
+          <span class="amenity-pill">🚗 Parking</span>
+          <span class="amenity-pill">🚭 Non-smoking</span>
+        </div>
+      </div>
+
+      <!-- Highlight -->
+      <div class="card hb-highlight reveal" style="background: #f0f7ff; border-color: #cce0ff;">
+        <div class="card-tag" style="background:#fff;">Location highlight</div>
+        <div class="card-title">Heart of Normandy</div>
+        <div class="card-body">
+          D-Day beaches within 25km. Cerisy Abbey just 5km away. Perfect base for history, heritage &amp; landscape.
+        </div>
+        <div style="margin-top:14px; display:flex; flex-direction:column; gap:6px;">
+          <div style="display:flex;justify-content:space-between;font-size:0.82rem;">
+            <span style="color:var(--text-muted)">Cerisy Abbey</span>
+            <span class="mono" style="color:var(--accent);font-weight:500;">5 km</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:0.82rem;">
+            <span style="color:var(--text-muted)">Omaha Beach</span>
+            <span class="mono" style="color:var(--accent);font-weight:500;">23.3 km</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:0.82rem;">
+            <span style="color:var(--text-muted)">Mont Saint-Michel</span>
+            <span class="mono" style="color:var(--accent);font-weight:500;">71 km</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Room 1 -->
+      <div class="card hb-room1 reveal">
+        <div class="card-tag">Bedroom 1</div>
+        <div style="font-size:1.8rem;margin-bottom:10px;">🛏️</div>
+        <div class="card-title">Double Room</div>
+        <div class="card-body">Comfortable double bed, fresh linens, garden views, electric kettle.</div>
+      </div>
+
+      <!-- Room 2 -->
+      <div class="card hb-room2 reveal">
+        <div class="card-tag">Bedroom 2</div>
+        <div style="font-size:1.8rem;margin-bottom:10px;">🛏️🛏️</div>
+        <div class="card-title">Twin Room</div>
+        <div class="card-body">Two single beds — ideal for friends or family sharing the suite.</div>
+      </div>
+
+      <!-- Rates -->
+      <div class="card hb-rates reveal">
+        <div class="card-tag">Rates</div>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-top:4px;">
+          <div>
+            <div style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);font-weight:600;">Low season</div>
+            <div class="rate-big mono">€85 <span class="rate-unit">/night</span></div>
+          </div>
+          <div style="border-top:1px solid var(--border);padding-top:10px;">
+            <div style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--accent);font-weight:600;">High season</div>
+            <div class="rate-big mono" style="color:var(--accent);">€120 <span class="rate-unit" style="color:var(--text-muted)">/night</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Testimonial -->
+      <div class="card hb-testimonial reveal">
+        <div class="card-tag">Guest review</div>
+        <div style="font-size:1rem;color:var(--accent);letter-spacing:2px;margin-bottom:10px;">★★★★★</div>
+        <div style="font-size:1.05rem;font-weight:600;line-height:1.6;color:var(--text);margin-bottom:12px;">
+          "Lacked nothing for 5 days. Immaculate rooms, extensive freshly prepared breakfast, wonderful evening meal option."
+        </div>
+        <div style="font-size:0.82rem;font-weight:700;">Ingrid</div>
+        <div style="font-size:0.78rem;color:var(--text-muted);">Netherlands</div>
+      </div>
+
+      <!-- CTA -->
+      <div class="card hb-cta reveal" style="background: var(--accent); border-color: var(--accent);">
+        <div class="hb-cta-inner">
+          <div>
+            <div style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.7);font-weight:600;margin-bottom:8px;">Ready to visit?</div>
+            <div style="font-size:1.15rem;font-weight:700;color:#fff;line-height:1.4;">Book your stay in Normandy today</div>
+          </div>
+          <button class="btn" style="background:#fff;color:var(--accent);margin-top:16px;" onclick="showPage('book')">
+            Check availability →
+          </button>
+        </div>
+      </div>
+
+      <!-- Breakfast -->
+      <div class="card hb-breakfast reveal">
+        <div class="card-tag">Breakfast included</div>
+        <div class="card-title">A fresh start every morning</div>
+        <div class="card-body">Start each day with croissants, baguettes, seasonal fruits, juice, yoghurt, and homemade jams — all included in your stay.</div>
+        <div class="meal-items" style="margin-top:12px;">
+          <span class="meal-item">🥐 Croissants</span>
+          <span class="meal-item">🥖 Baguettes</span>
+          <span class="meal-item">🍓 Seasonal fruits</span>
+          <span class="meal-item">🥛 Yoghurt</span>
+          <span class="meal-item">🍊 Juice</span>
+          <span class="meal-item">🍯 Homemade jams</span>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Testimonials -->
+    <section class="testimonials-section">
+      <div class="section-label">What guests say</div>
+      <h2 class="section-heading">Trusted by visitors worldwide</h2>
+      <div class="testimonials-grid" style="margin-top:28px;">
+        <div class="card testi-card reveal">
+          <div class="testi-stars">★★★★★</div>
+          <p class="testi-quote">Warm welcome, lovely room, comfortable bed, modern spacious bathroom, excellent breakfast.</p>
+          <div class="testi-author">Simon</div>
+          <div class="testi-flag">United Kingdom 🇬🇧</div>
+        </div>
+        <div class="card testi-card reveal">
+          <div class="testi-stars">★★★★★</div>
+          <p class="testi-quote">Lacked nothing for 5 days. Immaculate rooms, extensive freshly prepared breakfast, wonderful evening meal option.</p>
+          <div class="testi-author">Ingrid</div>
+          <div class="testi-flag">Netherlands 🇳🇱</div>
+        </div>
+        <div class="card testi-card reveal">
+          <div class="testi-stars">★★★★★</div>
+          <p class="testi-quote">Warm welcome, delightful countryside house, peaceful, close to points of interest, made-to-measure breakfast.</p>
+          <div class="testi-author">Guest</div>
+          <div class="testi-flag">France 🇫🇷</div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <footer>
+    <strong>Marianne Cottage</strong> &mdash; 1 La Haye, 50680 Couvains, Normandy, France<br>
+    <div class="footer-links">
+      <a href="mailto:mariannecattage@gmail.com">mariannecattage@gmail.com</a>
+      <a href="tel:+33780731704">+33 (0)7 80 73 17 04</a>
+    </div>
+    <div style="margin-top:10px;color:#aaa;font-size:0.78rem;">© 2025 Marianne Cottage · Mark &amp; Kim · All rights reserved</div>
+  </footer>
+</div>
+
+<!-- ══════════════════════════════════════
+     ROOMS PAGE
+══════════════════════════════════════ -->
+<div class="page" id="page-rooms">
+  <div class="container">
+
+    <section class="rooms-section">
+      <div class="rooms-header reveal">
+        <div class="section-label">Accommodation</div>
+        <h2 class="section-heading">Two-Bedroom Suite</h2>
+        <p style="font-size:1rem;color:var(--text-muted);margin-top:10px;max-width:560px;line-height:1.65;">
+          A self-contained two-bedroom suite sharing a modern walk-in shower bathroom — perfect for couples, families, or two friends travelling together.
+        </p>
+      </div>
+
+      <div class="rooms-bento">
+        <div class="card room-card reveal">
+          <div class="room-icon">🛏️</div>
+          <div class="room-name">Bedroom 1 — Double</div>
+          <div class="room-bed">King-size double bed</div>
+          <div class="room-desc">
+            A spacious, beautifully appointed room with a comfortable double bed and views over the peaceful Normandy garden. Fresh linens, electric kettle, and thoughtful touches throughout.
+          </div>
+          <div class="amenity-row">
+            <span class="amenity-pill">Garden view</span>
+            <span class="amenity-pill">Electric kettle</span>
+            <span class="amenity-pill">Fresh linens</span>
+          </div>
+        </div>
+
+        <div class="card room-card reveal">
+          <div class="room-icon">🛏️🛏️</div>
+          <div class="room-name">Bedroom 2 — Twin</div>
+          <div class="room-bed">Two single beds</div>
+          <div class="room-desc">
+            A bright twin room ideal for friends or family members. Both beds are made up with fresh linens and the room enjoys the same garden-facing aspect and amenities as Bedroom 1.
+          </div>
+          <div class="amenity-row">
+            <span class="amenity-pill">Garden view</span>
+            <span class="amenity-pill">Electric kettle</span>
+            <span class="amenity-pill">Fresh linens</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Shared bathroom callout -->
+      <div class="card reveal" style="padding:24px;display:flex;align-items:center;gap:20px;margin-bottom:16px;">
+        <div style="font-size:2rem;flex-shrink:0;">🚿</div>
+        <div>
+          <div style="font-size:1rem;font-weight:700;margin-bottom:4px;">Shared Modern Walk-In Shower Bathroom</div>
+          <div style="font-size:0.88rem;color:var(--text-muted);line-height:1.6;">Both bedrooms share exclusive use of a contemporary, immaculate walk-in shower room — reserved for suite guests only. As Simon from the UK noted: "modern spacious bathroom."</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="amenities-section">
+      <div class="section-label reveal">Included</div>
+      <h2 class="section-heading reveal">Suite amenities</h2>
+      <div class="amenities-grid">
+        <div class="card amenity-card reveal">
+          <div class="amenity-icon">📶</div>
+          <div><div class="amenity-title">Free WiFi</div><div class="amenity-desc">High-speed throughout the property</div></div>
+        </div>
+        <div class="card amenity-card reveal">
+          <div class="amenity-icon">🚗</div>
+          <div><div class="amenity-title">Free Parking</div><div class="amenity-desc">On-site private parking</div></div>
+        </div>
+        <div class="card amenity-card reveal">
+          <div class="amenity-icon">🌿</div>
+          <div><div class="amenity-title">Garden Views</div><div class="amenity-desc">Both rooms face the garden</div></div>
+        </div>
+        <div class="card amenity-card reveal">
+          <div class="amenity-icon">☕</div>
+          <div><div class="amenity-title">Electric Kettles</div><div class="amenity-desc">In each bedroom</div></div>
+        </div>
+        <div class="card amenity-card reveal">
+          <div class="amenity-icon">🛁</div>
+          <div><div class="amenity-title">Fresh Linens</div><div class="amenity-desc">Changed regularly</div></div>
+        </div>
+        <div class="card amenity-card reveal">
+          <div class="amenity-icon">🚭</div>
+          <div><div class="amenity-title">Non-Smoking</div><div class="amenity-desc">Throughout the property</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="rates-section">
+      <div class="section-label reveal">Pricing</div>
+      <h2 class="section-heading reveal">Rates per night</h2>
+      <div class="rates-grid">
+        <div class="card rate-card reveal">
+          <div class="rate-season">Low Season</div>
+          <div class="rate-months">November – February</div>
+          <div class="rate-price mono">€85 <span>/night</span></div>
+          <div style="margin-top:16px;font-size:0.82rem;color:var(--text-muted);">Ideal for quiet winter escapes and uncrowded historic sites.</div>
+        </div>
+        <div class="card rate-card featured reveal">
+          <div class="rate-badge">Most popular</div>
+          <div class="rate-season" style="color:var(--accent);">High Season</div>
+          <div class="rate-months">March – October</div>
+          <div class="rate-price mono" style="color:var(--accent);">€120 <span style="color:var(--text-muted)">/night</span></div>
+          <div style="margin-top:16px;font-size:0.82rem;color:var(--text-muted);">Spring blooms to autumn harvest — Normandy at its finest.</div>
+        </div>
+        <div class="card rate-card reveal">
+          <div class="rate-season">Peak — D-Day Week</div>
+          <div class="rate-months">D-Day anniversary week (June)</div>
+          <div class="rate-price mono">€140 <span>/night</span></div>
+          <div style="margin-top:16px;font-size:0.82rem;color:var(--text-muted);">High demand during D-Day commemorations. Book well in advance.</div>
+        </div>
+      </div>
+      <p style="margin-top:16px;font-size:0.82rem;color:var(--text-muted);">All rates include full breakfast for all guests. Evening meal by arrangement from €20pp.</p>
+    </section>
+
+    <section class="meals-section">
+      <div class="section-label reveal">Dining</div>
+      <h2 class="section-heading reveal">Food &amp; Drink</h2>
+      <div class="meals-grid">
+        <div class="card meal-card reveal">
+          <div class="meal-icon">🥐</div>
+          <div class="meal-title">Breakfast — Included</div>
+          <div class="meal-desc">A generous, freshly prepared breakfast is included every morning. Our guests consistently highlight it as one of their favourite parts of the stay.</div>
+          <div class="meal-items">
+            <span class="meal-item">Croissants</span>
+            <span class="meal-item">Baguettes</span>
+            <span class="meal-item">Seasonal fruits</span>
+            <span class="meal-item">Juice</span>
+            <span class="meal-item">Yoghurt</span>
+            <span class="meal-item">Homemade jams</span>
+          </div>
+        </div>
+        <div class="card meal-card reveal">
+          <div class="meal-icon">🍽️</div>
+          <div class="meal-title">Evening Meal — By Arrangement</div>
+          <div class="meal-desc">Enjoy a home-cooked evening meal prepared by your hosts using locally sourced Normandy ingredients. Available by prior arrangement.</div>
+          <div class="meal-items">
+            <span class="meal-item">From €20 per person</span>
+            <span class="meal-item">Locally sourced</span>
+            <span class="meal-item">By arrangement</span>
+          </div>
+          <div style="margin-top:14px;">
+            <button class="btn btn-outline" onclick="showPage('contact')" style="font-size:0.85rem;padding:8px 16px;">Enquire about evening meals</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Testimonials on rooms page -->
+    <section class="testimonials-section">
+      <div class="section-label">Guest voices</div>
+      <h2 class="section-heading">What guests say about rooms</h2>
+      <div class="testimonials-grid" style="margin-top:28px;">
+        <div class="card testi-card reveal">
+          <div class="testi-stars">★★★★★</div>
+          <p class="testi-quote">Warm welcome, lovely room, comfortable bed, modern spacious bathroom, excellent breakfast.</p>
+          <div class="testi-author">Simon</div>
+          <div class="testi-flag">United Kingdom 🇬🇧</div>
+        </div>
+        <div class="card testi-card reveal">
+          <div class="testi-stars">★★★★★</div>
+          <p class="testi-quote">Immaculate rooms, extensive freshly prepared breakfast, wonderful evening meal option.</p>
+          <div class="testi-author">Ingrid</div>
+          <div class="testi-flag">Netherlands 🇳🇱</div>
+        </div>
+        <div class="card testi-card reveal">
+          <div class="testi-stars">★★★★★</div>
+          <p class="testi-quote">Delightful countryside house, peaceful, made-to-measure breakfast.</p>
+          <div class="testi-author">Guest</div>
+          <div class="testi-flag">France 🇫🇷</div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+  <footer>
+    <strong>Marianne Cottage</strong> &mdash; 1 La Haye, 50680 Couvains, Normandy, France<br>
+    <div class="footer-links">
+      <a href="mailto:mariannecattage@gmail.com">mariannecattage@gmail.com</a>
+      <a href="tel:+33780731704">+33 (0)7 80 73 17 04</a>
+    </div>
+    <div style="margin-top:10px;color:#aaa;font-size:0.78rem;">© 2025 Marianne Cottage · Mark &amp; Kim</div>
+  </footer>
+</div>
+
+<!-- ══════════════════════════════════════
+     EXPLORE PAGE
+══════════════════════════════════════ -->
+<div class="page" id="page-explore">
+  <div class="container">
+
+    <section class="explore-section">
+      <div class="explore-header reveal">
+        <div class="section-label">Area guide</div>
+        <h2 class="section-heading">Explore Normandy</h2>
+        <p style="font-size:1rem;color:var(--text-muted);margin-top:10px;max-width:560px;line-height:1.65;">
+          Marianne Cottage is perfectly positioned for history, heritage, and the Norman countryside. Filter by category or sort by distance.
+        </p>
+      </div>
+
+      <div class="filter-bar reveal">
+        <button class="filter-btn active" onclick="filterPOI('all',this)">All</button>
+        <button class="filter-btn" onclick="filterPOI('ww2',this)">WW2 Sites</button>
+        <button class="filter-btn" onclick="filterPOI('museum',this)">Museums</button>
+        <button class="filter-btn" onclick="filterPOI('heritage',this)">Heritage</button>
+        <button class="filter-btn" onclick="filterPOI('towns',this)">Towns</button>
+        <button class="sort-btn" id="sort-btn" onclick="toggleSort()">Sort: Nearest first ↕</button>
+      </div>
+
+      <div class="poi-grid" id="poi-grid">
+        <!-- Populated by JS -->
+      </div>
+    </section>
+
+  </div>
+  <footer>
+    <strong>Marianne Cottage</strong> &mdash; 1 La Haye, 50680 Couvains, Normandy, France<br>
+    <div class="footer-links">
+      <a href="mailto:mariannecattage@gmail.com">mariannecattage@gmail.com</a>
+      <a href="tel:+33780731704">+33 (0)7 80 73 17 04</a>
+    </div>
+    <div style="margin-top:10px;color:#aaa;font-size:0.78rem;">© 2025 Marianne Cottage · Mark &amp; Kim</div>
+  </footer>
+</div>
+
+<!-- ══════════════════════════════════════
+     BOOK PAGE
+══════════════════════════════════════ -->
+<div class="page" id="page-book">
+  <div class="container">
+
+    <section class="book-section">
+      <div class="reveal" style="margin-bottom:36px;">
+        <div class="section-label">Reservations</div>
+        <h2 class="section-heading">Book your stay</h2>
+        <p style="font-size:1rem;color:var(--text-muted);margin-top:10px;max-width:480px;line-height:1.65;">
+          Fill in your details and we'll get back to you within 24 hours to confirm availability and arrange payment.
+        </p>
+      </div>
+
+      <div class="book-grid">
+        <div class="book-info reveal">
+          <div class="card book-info-card">
+            <div class="book-info-title">🗓️ Rates at a glance</div>
+            <div class="book-info-body">
+              <strong>Low (Nov–Feb):</strong> €85/night<br>
+              <strong>High (Mar–Oct):</strong> €120/night<br>
+              <strong>Peak (D-Day week):</strong> €140/night<br>
+              <em style="font-size:0.82rem;">Breakfast always included.</em>
+            </div>
+          </div>
+          <div class="card book-info-card">
+            <div class="book-info-title">🍽️ Evening meals</div>
+            <div class="book-info-body">Available by arrangement from €20 per person. Please mention your interest in the notes field.</div>
+          </div>
+          <div class="card book-info-card">
+            <div class="book-info-title">📞 Prefer to call?</div>
+            <div class="book-info-body">
+              Mark &amp; Kim: <a href="tel:+33780731704" style="color:var(--accent);font-weight:600;">+33 (0)7 80 73 17 04</a><br>
+              or email: <a href="mailto:mariannecattage@gmail.com" style="color:var(--accent);font-weight:600;">mariannecattage@gmail.com</a>
+            </div>
+          </div>
+          <div class="card book-info-card" style="background:#f0f7ff;border-color:#cce0ff;">
+            <div class="book-info-title" style="color:var(--accent);">✓ What's included</div>
+            <div class="book-info-body">Full breakfast · Free WiFi · Free parking · Fresh linens · Garden views · Non-smoking property</div>
+          </div>
+        </div>
+
+        <div class="card form-card reveal">
+          <div class="form-title">Booking enquiry</div>
+          <div class="form-sub">We'll respond within 24 hours to confirm your dates.</div>
+          <form id="booking-form" onsubmit="submitForm(event,'booking')">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="b-fname">First name *</label>
+                <input type="text" id="b-fname" placeholder="Your first name" required>
+              </div>
+              <div class="form-group">
+                <label for="b-lname">Last name *</label>
+                <input type="text" id="b-lname" placeholder="Your last name" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="b-email">Email address *</label>
+              <input type="email" id="b-email" placeholder="you@example.com" required>
+            </div>
+            <div class="form-group">
+              <label for="b-phone">Phone number</label>
+              <input type="tel" id="b-phone" placeholder="+44 ...">
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="b-checkin">Check-in date *</label>
+                <input type="date" id="b-checkin" required>
+              </div>
+              <div class="form-group">
+                <label for="b-checkout">Check-out date *</label>
+                <input type="date" id="b-checkout" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="b-guests">Number of guests *</label>
+              <select id="b-guests" required>
+                <option value="">Select guests</option>
+                <option>1 guest</option>
+                <option>2 guests</option>
+                <option>3 guests</option>
+                <option>4 guests</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="b-rooms">Rooms required</label>
+              <select id="b-rooms">
+                <option>Bedroom 1 only (double)</option>
+                <option>Bedroom 2 only (twin)</option>
+                <option>Both bedrooms (full suite)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="b-notes">Notes / special requests</label>
+              <textarea id="b-notes" placeholder="Evening meals, dietary requirements, arrival time..."></textarea>
+            </div>
+            <button type="submit" class="btn" style="width:100%;justify-content:center;">Send booking enquiry</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+  </div>
+  <footer>
+    <strong>Marianne Cottage</strong> &mdash; 1 La Haye, 50680 Couvains, Normandy, France<br>
+    <div class="footer-links">
+      <a href="mailto:mariannecattage@gmail.com">mariannecattage@gmail.com</a>
+      <a href="tel:+33780731704">+33 (0)7 80 73 17 04</a>
+    </div>
+    <div style="margin-top:10px;color:#aaa;font-size:0.78rem;">© 2025 Marianne Cottage · Mark &amp; Kim</div>
+  </footer>
+</div>
+
+<!-- ══════════════════════════════════════
+     CONTACT PAGE
+══════════════════════════════════════ -->
+<div class="page" id="page-contact">
+  <div class="container">
+
+    <section class="contact-section">
+      <div class="reveal" style="margin-bottom:36px;">
+        <div class="section-label">Get in touch</div>
+        <h2 class="section-heading">Contact us</h2>
+        <p style="font-size:1rem;color:var(--text-muted);margin-top:10px;max-width:480px;line-height:1.65;">
+          Mark &amp; Kim are always happy to help with questions about the cottage, local area, or planning your stay.
+        </p>
+      </div>
+
+      <div class="contact-grid">
+        <div class="contact-info reveal">
+          <div class="card" style="padding:24px;display:flex;flex-direction:column;gap:20px;">
+            <div class="contact-item">
+              <div class="contact-icon">📧</div>
+              <div>
+                <div class="contact-detail-title">Email</div>
+                <div class="contact-detail-val"><a href="mailto:mariannecattage@gmail.com">mariannecattage@gmail.com</a></div>
+              </div>
+            </div>
+            <div class="contact-item">
+              <div class="contact-icon">📞</div>
+              <div>
+                <div class="contact-detail-title">Phone</div>
+                <div class="contact-detail-val"><a href="tel:+33780731704">+33 (0)7 80 73 17 04</a></div>
+              </div>
+            </div>
+            <div class="contact-item">
+              <div class="contact-icon">📍</div>
+              <div>
+                <div class="contact-detail-title">Address</div>
+                <div class="contact-detail-val">1 La Haye<br>50680 Couvains<br>Normandy, France</div>
+              </div>
+            </div>
+            <div class="contact-item">
+              <div class="contact-icon">👋</div>
+              <div>
+                <div class="contact-detail-title">Hosts</div>
+                <div class="contact-detail-val">Mark &amp; Kim</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card map-card reveal" style="min-height:200px;">
+            <div class="map-placeholder">
+              <div style="font-size:2rem;">🗺️</div>
+              <strong>Marianne Cottage</strong>
+              <p>1 La Haye, Couvains, Normandy</p>
+              <a href="https://maps.google.com/?q=1+La+Haye,+50680+Couvains,+France" target="_blank" rel="noopener" class="btn" style="margin-top:14px;font-size:0.82rem;padding:8px 16px;">Open in Google Maps</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="card form-card reveal">
+          <div class="form-title">Send a message</div>
+          <div class="form-sub">We'll reply as quickly as we can — usually within 24 hours.</div>
+          <form id="contact-form" onsubmit="submitForm(event,'contact')">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="c-fname">First name *</label>
+                <input type="text" id="c-fname" placeholder="Your first name" required>
+              </div>
+              <div class="form-group">
+                <label for="c-lname">Last name *</label>
+                <input type="text" id="c-lname" placeholder="Your last name" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="c-email">Email address *</label>
+              <input type="email" id="c-email" placeholder="you@example.com" required>
+            </div>
+            <div class="form-group">
+              <label for="c-subject">Subject</label>
+              <select id="c-subject">
+                <option>General enquiry</option>
+                <option>Availability question</option>
+                <option>Evening meal enquiry</option>
+                <option>Directions / arrival</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="c-msg">Message *</label>
+              <textarea id="c-msg" placeholder="How can we help?" style="min-height:150px;" required></textarea>
+            </div>
+            <button type="submit" class="btn" style="width:100%;justify-content:center;">Send message</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+  </div>
+  <footer>
+    <strong>Marianne Cottage</strong> &mdash; 1 La Haye, 50680 Couvains, Normandy, France<br>
+    <div class="footer-links">
+      <a href="mailto:mariannecattage@gmail.com">mariannecattage@gmail.com</a>
+      <a href="tel:+33780731704">+33 (0)7 80 73 17 04</a>
+    </div>
+    <div style="margin-top:10px;color:#aaa;font-size:0.78rem;">© 2025 Marianne Cottage · Mark &amp; Kim</div>
+  </footer>
+</div>
+
+<script>
+// ══════════════════════════════════════
+// PAGE NAVIGATION
+// ══════════════════════════════════════
+const pages = ['home','rooms','explore','book','contact'];
+
+function showPage(id) {
+  pages.forEach(p => {
+    document.getElementById('page-' + p).classList.toggle('active', p === id);
+    const nb = document.getElementById('nav-' + p);
+    const mb = document.getElementById('mnav-' + p);
+    if (nb) nb.classList.toggle('active', p === id);
+    if (mb) mb.classList.toggle('active', p === id);
+  });
+  window.scrollTo({ top: 0, behavior: 'instant' });
+  // re-trigger observers
+  setTimeout(initReveal, 100);
+}
+
+function toggleMenu() {
+  document.getElementById('mobile-menu').classList.toggle('open');
+}
+function closeMenu() {
+  document.getElementById('mobile-menu').classList.remove('open');
+}
+
+// ══════════════════════════════════════
+// POI DATA
+// ══════════════════════════════════════
+const pois = [
+  { name: 'Cerisy Abbey', cats: ['heritage'], dist: 5,    note: 'Nearest attraction' },
+  { name: 'La Cambe', cats: ['ww2'], dist: 18,            note: 'German War Cemetery' },
+  { name: 'Château de Balleroy', cats: ['heritage'], dist: 20, note: 'Classic French château' },
+  { name: 'American Cemetery', cats: ['ww2'], dist: 23.1, note: 'Overlooks Omaha Beach' },
+  { name: 'Omaha Beach', cats: ['ww2'], dist: 23.3,       note: 'Most famous D-Day beach' },
+  { name: 'Overlord Museum', cats: ['ww2','museum'], dist: 25, note: 'WW2 vehicles & artefacts' },
+  { name: 'Pointe du Hoc', cats: ['ww2'], dist: 24.7,     note: 'Preserved clifftop bunkers' },
+  { name: 'Bayeux', cats: ['heritage'], dist: 28,         note: 'Cathedral & Tapestry' },
+  { name: 'Arromanches', cats: ['ww2'], dist: 35,         note: 'Mulberry Harbour remains' },
+  { name: 'Coutances', cats: ['towns'], dist: 35,         note: 'Medieval cathedral city' },
+  { name: 'Saint-Lô', cats: ['towns'], dist: 13,          note: 'Capital of Manche' },
+  { name: 'Mont Saint-Michel', cats: ['towns','heritage'], dist: 71, note: 'Iconic island abbey' },
+];
+
+const catLabels = { ww2: 'WW2', museum: 'Museum', heritage: 'Heritage', towns: 'Town' };
+const catClass  = { ww2: 'cat-ww2', museum: 'cat-museum', heritage: 'cat-heritage', towns: 'cat-towns' };
+
+let sortAsc = true;
+let activeFilter = 'all';
+
+function renderPOI() {
+  let data = [...pois];
+  if (activeFilter !== 'all') data = data.filter(p => p.cats.includes(activeFilter));
+  data.sort((a,b) => sortAsc ? a.dist - b.dist : b.dist - a.dist);
+
+  const grid = document.getElementById('poi-grid');
+  grid.innerHTML = data.map(p => `
+    <div class="card poi-card">
+      <div class="poi-header">
+        <div class="poi-name">${p.name}</div>
+        <div class="poi-distance">${p.dist} km</div>
+      </div>
+      <div style="font-size:0.82rem;color:var(--text-muted);">${p.note}</div>
+      <div class="poi-cats">
+        ${p.cats.map(c => `<span class="cat-pill ${catClass[c]}">${catLabels[c]}</span>`).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterPOI(cat, btn) {
+  activeFilter = cat;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderPOI();
+}
+
+function toggleSort() {
+  sortAsc = !sortAsc;
+  document.getElementById('sort-btn').textContent = sortAsc ? 'Sort: Nearest first ↕' : 'Sort: Farthest first ↕';
+  renderPOI();
+}
+
+// ══════════════════════════════════════
+// FORMS + TOAST
+// ══════════════════════════════════════
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-msg').textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 4000);
+}
+
+function submitForm(e, type) {
+  e.preventDefault();
+  const form = e.target;
+  form.reset();
+  if (type === 'booking') {
+    showToast('Booking enquiry sent! Mark & Kim will reply within 24 hours.');
+  } else {
+    showToast('Message sent! We\'ll get back to you soon.');
+  }
+}
+
+// ══════════════════════════════════════
+// INTERSECTION OBSERVER ANIMATIONS
+// ══════════════════════════════════════
+function initReveal() {
+  const els = document.querySelectorAll('.reveal:not(.visible)');
+  if (!els.length) return;
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 60);
+        obs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.08 });
+  els.forEach(el => obs.observe(el));
+}
+
+// ══════════════════════════════════════
+// INIT
+// ══════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  renderPOI();
+  initReveal();
+
+  // Set min date for booking form to today
+  const today = new Date().toISOString().split('T')[0];
+  const checkin = document.getElementById('b-checkin');
+  const checkout = document.getElementById('b-checkout');
+  if (checkin) checkin.min = today;
+  if (checkout) checkout.min = today;
+  if (checkin) checkin.addEventListener('change', () => { checkout.min = checkin.value; });
+});
+</script>
+</body>
+</html>

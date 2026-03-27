@@ -1,0 +1,1745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Marianne Cottage — Normandy, France</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500;1,600&family=Barlow+Condensed:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0c0a07;
+    --surface: #1a1408;
+    --gold: #c9a96e;
+    --gold-muted: #8b7355;
+    --gold-dim: rgba(201,169,110,0.15);
+    --gold-border: rgba(201,169,110,0.2);
+    --gold-border-hover: rgba(201,169,110,0.6);
+    --text: #f0ebe4;
+    --text-dim: rgba(240,235,228,0.6);
+    --text-muted: rgba(240,235,228,0.35);
+    --nav-h: 72px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 1.65;
+    overflow-x: hidden;
+  }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--gold-muted); border-radius: 3px; }
+
+  /* ── NAV ── */
+  #nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: var(--nav-h);
+    z-index: 1000;
+    background: rgba(12,10,7,0.88);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border-bottom: 1px solid var(--gold-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40px;
+    transition: background 0.3s;
+  }
+
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 1.45rem;
+    color: var(--gold);
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    text-decoration: none;
+  }
+  .nav-logo span {
+    font-style: normal;
+    font-weight: 500;
+    font-size: 0.6rem;
+    color: var(--gold-muted);
+    display: block;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    font-family: 'Barlow Condensed', sans-serif;
+    margin-top: -2px;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 0;
+    list-style: none;
+    align-items: center;
+  }
+  .nav-links li a, .nav-links li button {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 0.75rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    text-decoration: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px 18px;
+    transition: color 0.25s;
+    position: relative;
+  }
+  .nav-links li a:hover, .nav-links li button:hover,
+  .nav-links li a.active, .nav-links li button.active {
+    color: var(--gold);
+  }
+  .nav-links li button.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 18px; right: 18px;
+    height: 1px;
+    background: var(--gold);
+  }
+
+  .nav-cta {
+    font-family: 'Barlow Condensed', sans-serif !important;
+    font-weight: 600 !important;
+    font-size: 0.72rem !important;
+    letter-spacing: 0.18em !important;
+    text-transform: uppercase !important;
+    background: var(--gold) !important;
+    color: #0c0a07 !important;
+    border-radius: 2px !important;
+    padding: 8px 20px !important;
+    margin-left: 12px !important;
+    transition: background 0.2s, transform 0.2s !important;
+  }
+  .nav-cta:hover { background: #d9b97e !important; transform: translateY(-1px); }
+
+  .hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 4px;
+  }
+  .hamburger span {
+    display: block;
+    width: 24px; height: 1.5px;
+    background: var(--gold);
+    transition: transform 0.3s, opacity 0.3s;
+  }
+  .hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+  .hamburger.open span:nth-child(2) { opacity: 0; }
+  .hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+  .mobile-menu {
+    display: none;
+    position: fixed;
+    top: var(--nav-h); left: 0; right: 0;
+    background: rgba(12,10,7,0.98);
+    backdrop-filter: blur(20px);
+    padding: 24px 40px 32px;
+    z-index: 999;
+    border-bottom: 1px solid var(--gold-border);
+    flex-direction: column;
+    gap: 4px;
+  }
+  .mobile-menu.open { display: flex; }
+  .mobile-menu button {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 1.1rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 12px 0;
+    text-align: left;
+    border-bottom: 1px solid var(--gold-border);
+    transition: color 0.2s;
+  }
+  .mobile-menu button:last-child { border-bottom: none; }
+  .mobile-menu button:hover, .mobile-menu button.active { color: var(--gold); }
+
+  /* ── PAGES ── */
+  .page { display: none; min-height: 100vh; }
+  .page.active { display: block; }
+
+  /* ── HERO ── */
+  #hero-section {
+    height: 100vh;
+    min-height: 620px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    background:
+      radial-gradient(ellipse 70% 50% at 50% 60%, rgba(201,169,110,0.05) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 30% at 30% 20%, rgba(201,169,110,0.03) 0%, transparent 60%),
+      var(--bg);
+    clip-path: polygon(0 0, 100% 0, 100% 92%, 0 100%);
+    padding: var(--nav-h) 24px 120px;
+  }
+
+  .hero-eyebrow {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 0.7rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--gold-muted);
+    margin-bottom: 28px;
+    opacity: 0;
+    transform: translateY(16px);
+    animation: fadeUp 0.9s 0.3s forwards;
+  }
+
+  .hero-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: clamp(4rem, 10vw, 7rem);
+    line-height: 0.92;
+    color: var(--text);
+    letter-spacing: -0.01em;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeUp 1s 0.5s forwards;
+  }
+  .hero-title .line2 {
+    display: block;
+    color: var(--gold);
+    font-weight: 300;
+  }
+  .hero-ornament {
+    font-style: normal;
+    font-size: 0.55em;
+    color: var(--gold-muted);
+    vertical-align: middle;
+    margin-left: 6px;
+    font-weight: 300;
+  }
+
+  .hero-rule {
+    width: 80px; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 28px auto 22px;
+    opacity: 0;
+    animation: fadeIn 0.8s 1s forwards;
+  }
+
+  .hero-tagline {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: clamp(1.05rem, 2vw, 1.4rem);
+    color: var(--text-dim);
+    letter-spacing: 0.04em;
+    margin-bottom: 12px;
+    opacity: 0;
+    animation: fadeIn 0.8s 1.1s forwards;
+  }
+  .hero-location {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 0.68rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--gold-muted);
+    margin-bottom: 44px;
+    opacity: 0;
+    animation: fadeIn 0.8s 1.2s forwards;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 0.8s 1.4s forwards;
+  }
+
+  .btn-primary {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    background: var(--gold);
+    color: #0c0a07;
+    border: none;
+    padding: 14px 32px;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .btn-primary:hover {
+    background: #d9b97e;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(201,169,110,0.25);
+  }
+
+  .btn-outline {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    background: transparent;
+    color: var(--gold);
+    border: 1px solid var(--gold-border-hover);
+    padding: 14px 32px;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s, border-color 0.2s;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .btn-outline:hover {
+    background: var(--gold-dim);
+    border-color: var(--gold);
+    transform: translateY(-2px);
+  }
+
+  /* ── SECTION SHARED ── */
+  .section {
+    padding: 90px 0 80px;
+    position: relative;
+  }
+  .section-clipped {
+    clip-path: polygon(0 0, 100% 0, 100% 92%, 0 100%);
+    padding-bottom: 120px;
+  }
+  .section-clipped-top {
+    clip-path: polygon(0 5%, 100% 0, 100% 100%, 0 100%);
+    margin-top: -40px;
+    padding-top: 80px;
+  }
+  .section-surface { background: var(--surface); }
+
+  .container {
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 0 40px;
+  }
+  .container-sm {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 40px;
+  }
+
+  .section-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 0.68rem;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--gold-muted);
+    margin-bottom: 14px;
+    display: block;
+  }
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: clamp(2.2rem, 5vw, 3.4rem);
+    line-height: 1.1;
+    color: var(--text);
+    margin-bottom: 20px;
+  }
+  .section-title strong {
+    font-weight: 500;
+    color: var(--gold);
+    font-style: normal;
+  }
+  .section-rule {
+    width: 48px; height: 1px;
+    background: linear-gradient(90deg, var(--gold), transparent);
+    margin-bottom: 24px;
+  }
+  .section-body {
+    font-size: 0.97rem;
+    color: var(--text-dim);
+    line-height: 1.8;
+    max-width: 600px;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    to { opacity: 1; }
+  }
+
+  .fade-up {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .fade-up.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .fade-up.delay-1 { transition-delay: 0.1s; }
+  .fade-up.delay-2 { transition-delay: 0.2s; }
+  .fade-up.delay-3 { transition-delay: 0.3s; }
+  .fade-up.delay-4 { transition-delay: 0.4s; }
+  .fade-up.delay-5 { transition-delay: 0.5s; }
+  .fade-up.delay-6 { transition-delay: 0.6s; }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--gold-border);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+    position: relative;
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--gold), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .card:hover {
+    border-color: rgba(201,169,110,0.45);
+    transform: translateY(-4px);
+    box-shadow: 0 16px 48px rgba(0,0,0,0.5);
+  }
+  .card:hover::before { opacity: 1; }
+
+  /* ── HOME PAGE ── */
+  .home-intro {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+  .home-intro-img {
+    aspect-ratio: 4/5;
+    background:
+      linear-gradient(135deg, rgba(201,169,110,0.08) 0%, transparent 50%),
+      var(--surface);
+    border-radius: 4px;
+    border: 1px solid var(--gold-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .home-intro-img::after {
+    content: '⌂';
+    font-size: 5rem;
+    color: rgba(201,169,110,0.08);
+  }
+  .home-intro-img .img-caption {
+    position: absolute;
+    bottom: 20px; left: 20px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold-muted);
+  }
+
+  /* Testimonials */
+  .testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+  .testimonial-card {
+    padding: 36px 28px;
+    position: relative;
+  }
+  .testimonial-card .quote-mark {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 4.5rem;
+    line-height: 0.8;
+    color: var(--gold);
+    opacity: 0.4;
+    margin-bottom: 12px;
+    display: block;
+    font-weight: 300;
+  }
+  .testimonial-card blockquote {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 1.08rem;
+    line-height: 1.7;
+    color: var(--text-dim);
+    margin-bottom: 20px;
+  }
+  .testimonial-card cite {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 0.7rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold-muted);
+    font-style: normal;
+  }
+
+  /* ── ROOMS PAGE ── */
+  .room-card {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 0;
+    margin-bottom: 28px;
+  }
+  .room-card-icon {
+    background: rgba(201,169,110,0.06);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.8rem;
+    border-right: 1px solid var(--gold-border);
+    min-height: 160px;
+  }
+  .room-card-body {
+    padding: 28px 32px;
+  }
+  .room-card-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 500;
+    font-size: 1.5rem;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  .room-card-sub {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 0.68rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold-muted);
+    margin-bottom: 12px;
+    display: block;
+  }
+  .room-card-desc {
+    font-size: 0.9rem;
+    color: var(--text-dim);
+    line-height: 1.75;
+  }
+
+  .amenities-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 14px;
+    margin-top: 28px;
+  }
+  .amenity-pill {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    background: var(--surface);
+    border: 1px solid var(--gold-border);
+    border-radius: 8px;
+    font-size: 0.875rem;
+    color: var(--text-dim);
+  }
+  .amenity-pill .icon { font-size: 1rem; }
+
+  /* Rates */
+  .rates-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 48px;
+  }
+  .rate-card {
+    text-align: center;
+    padding: 44px 28px;
+    position: relative;
+  }
+  .rate-card.peak {
+    background: linear-gradient(var(--surface), var(--surface)) padding-box,
+                linear-gradient(135deg, var(--gold), var(--gold-muted), var(--gold)) border-box;
+    border: 2px solid transparent !important;
+  }
+  .rate-card.peak::before { opacity: 1 !important; }
+  .rate-badge {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 0.65rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 16px;
+    display: block;
+  }
+  .rate-season {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 1.3rem;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+  .rate-period {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 24px;
+    display: block;
+  }
+  .rate-price {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    font-size: 3.2rem;
+    line-height: 1;
+    color: var(--gold);
+  }
+  .rate-price sup { font-size: 1.2rem; vertical-align: top; margin-top: 10px; }
+  .rate-price sub { font-size: 0.9rem; color: var(--gold-muted); }
+
+  /* Breakfast */
+  .breakfast-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 20px;
+  }
+  .breakfast-tag {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 0.68rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--gold);
+    border: 1px solid rgba(201,169,110,0.35);
+    padding: 6px 14px;
+    border-radius: 20px;
+  }
+
+  /* ── EXPLORE PAGE ── */
+  .explore-filters {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 32px;
+    align-items: center;
+  }
+  .filter-btn {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px solid rgba(240,235,228,0.12);
+    padding: 7px 16px;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .filter-btn:hover, .filter-btn.active {
+    background: var(--gold-dim);
+    color: var(--gold);
+    border-color: rgba(201,169,110,0.45);
+  }
+  .filter-separator {
+    width: 1px;
+    height: 24px;
+    background: rgba(240,235,228,0.1);
+    margin: 0 6px;
+  }
+  .sort-btn {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .sort-btn .arrow { font-size: 0.8rem; transition: transform 0.2s; }
+  .sort-btn.asc .arrow { transform: rotate(180deg); }
+
+  .poi-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  .poi-card {
+    padding: 24px 22px 20px;
+  }
+  .poi-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 10px;
+  }
+  .poi-category {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 12px;
+  }
+  .cat-ww2 { background: rgba(180,120,60,0.2); color: #c8924a; }
+  .cat-museum { background: rgba(120,100,180,0.2); color: #a090d0; }
+  .cat-heritage { background: rgba(80,160,100,0.18); color: #70c080; }
+  .cat-towns { background: rgba(80,140,180,0.18); color: #60b0d8; }
+
+  .poi-distance {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--gold);
+    white-space: nowrap;
+  }
+  .poi-distance small {
+    font-size: 0.65rem;
+    color: var(--gold-muted);
+    letter-spacing: 0.08em;
+  }
+  .poi-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    font-size: 1.18rem;
+    color: var(--text);
+    margin-bottom: 4px;
+    line-height: 1.25;
+  }
+  .poi-nearest {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-top: 8px;
+    display: inline-block;
+  }
+  .poi-card[data-hidden="true"] { display: none; }
+
+  /* ── FORMS ── */
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .form-group.full { grid-column: 1 / -1; }
+  .form-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 0.65rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold-muted);
+  }
+  .form-input, .form-select, .form-textarea {
+    background: rgba(26,20,8,0.8);
+    border: 1px solid rgba(240,235,228,0.12);
+    border-radius: 4px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.92rem;
+    padding: 12px 16px;
+    transition: border-color 0.25s, box-shadow 0.25s;
+    outline: none;
+    width: 100%;
+  }
+  .form-input:focus, .form-select:focus, .form-textarea:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(201,169,110,0.1);
+  }
+  .form-input::placeholder, .form-textarea::placeholder { color: var(--text-muted); }
+  .form-select option { background: #1a1408; color: var(--text); }
+  .form-textarea { resize: vertical; min-height: 120px; }
+
+  .form-note {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: 6px;
+  }
+
+  /* Directions warning */
+  .warning-box {
+    background: rgba(201,169,110,0.05);
+    border-left: 3px solid var(--gold);
+    border-radius: 0 8px 8px 0;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+  }
+  .warning-box-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 6px;
+  }
+  .warning-box p { font-size: 0.875rem; color: var(--text-dim); }
+
+  /* ── TOAST ── */
+  #toast {
+    position: fixed;
+    bottom: 32px;
+    right: 32px;
+    background: var(--surface);
+    border: 1px solid var(--gold-border-hover);
+    border-radius: 8px;
+    padding: 16px 24px;
+    font-size: 0.9rem;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+    z-index: 9999;
+    transform: translateY(80px);
+    opacity: 0;
+    transition: transform 0.4s ease, opacity 0.4s ease;
+    pointer-events: none;
+    max-width: 360px;
+  }
+  #toast.show {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+  #toast .toast-icon { font-size: 1.2rem; }
+  #toast .toast-close {
+    margin-left: auto;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 0 0 0 8px;
+    line-height: 1;
+  }
+
+  /* ── CONTACT ── */
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: start;
+  }
+  .contact-detail {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .contact-icon {
+    width: 40px; height: 40px;
+    border-radius: 8px;
+    background: var(--gold-dim);
+    border: 1px solid var(--gold-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+  .contact-detail-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 0.65rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold-muted);
+    margin-bottom: 4px;
+  }
+  .contact-detail-value {
+    font-size: 0.95rem;
+    color: var(--text);
+  }
+  .contact-detail-value a {
+    color: var(--gold);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .contact-detail-value a:hover { color: #d9b97e; }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--bg);
+    border-top: 1px solid var(--gold-border);
+    padding: 40px 0;
+    text-align: center;
+  }
+  footer .footer-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 1.6rem;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+  footer .footer-address {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+    letter-spacing: 0.06em;
+  }
+  footer .footer-copy {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+  }
+
+  /* ── DIVIDER ── */
+  .gold-divider {
+    width: 60px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 0 auto 32px;
+  }
+
+  /* ── PAGE HEADER ── */
+  .page-header {
+    padding: calc(var(--nav-h) + 60px) 0 70px;
+    text-align: center;
+    background:
+      radial-gradient(ellipse 60% 40% at 50% 50%, rgba(201,169,110,0.04) 0%, transparent 70%),
+      var(--bg);
+    clip-path: polygon(0 0, 100% 0, 100% 88%, 0 100%);
+    margin-bottom: -20px;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    .nav-links { display: none; }
+    .hamburger { display: flex; }
+    #nav { padding: 0 24px; }
+    .container { padding: 0 24px; }
+    .container-sm { padding: 0 24px; }
+
+    .home-intro { grid-template-columns: 1fr; gap: 40px; }
+    .home-intro-img { display: none; }
+
+    .testimonials-grid { grid-template-columns: 1fr; }
+    .rates-grid { grid-template-columns: 1fr; }
+    .poi-grid { grid-template-columns: repeat(2, 1fr); }
+    .form-grid { grid-template-columns: 1fr; }
+    .form-group.full { grid-column: 1; }
+    .contact-grid { grid-template-columns: 1fr; gap: 40px; }
+
+    .room-card { grid-template-columns: 1fr; }
+    .room-card-icon { min-height: 100px; border-right: none; border-bottom: 1px solid var(--gold-border); }
+
+    .amenities-grid { grid-template-columns: repeat(2, 1fr); }
+    .section { padding: 60px 0 50px; }
+    .page-header { padding: calc(var(--nav-h) + 40px) 0 50px; }
+  }
+
+  @media (max-width: 560px) {
+    .poi-grid { grid-template-columns: 1fr; }
+    .amenities-grid { grid-template-columns: 1fr; }
+    .rates-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <a class="nav-logo" href="#" onclick="showPage('home'); return false;">
+    Marianne Cottage
+    <span>Normandy · France</span>
+  </a>
+  <ul class="nav-links">
+    <li><button onclick="showPage('home')" data-page="home">Home</button></li>
+    <li><button onclick="showPage('rooms')" data-page="rooms">Rooms</button></li>
+    <li><button onclick="showPage('explore')" data-page="explore">Explore</button></li>
+    <li><button onclick="showPage('contact')" data-page="contact">Contact</button></li>
+    <li><button onclick="showPage('book')" class="nav-cta" data-page="book">Book</button></li>
+  </ul>
+  <button class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <button onclick="showPage('home');closeMenu()" data-page="home">Home</button>
+  <button onclick="showPage('rooms');closeMenu()" data-page="rooms">Rooms</button>
+  <button onclick="showPage('explore');closeMenu()" data-page="explore">Explore</button>
+  <button onclick="showPage('contact');closeMenu()" data-page="contact">Contact</button>
+  <button onclick="showPage('book');closeMenu()" data-page="book">Book a Stay</button>
+</div>
+
+<!-- ════════════════════════════════════════════
+     PAGE: HOME
+════════════════════════════════════════════ -->
+<div class="page active" id="page-home">
+
+  <!-- Hero -->
+  <section id="hero-section">
+    <p class="hero-eyebrow">Normandy, France &nbsp;·&nbsp; Chambres d'hôtes</p>
+    <h1 class="hero-title">
+      Marianne
+      <span class="line2">Cottage<span class="hero-ornament">✦</span></span>
+    </h1>
+    <div class="hero-rule"></div>
+    <p class="hero-tagline">A haven of peace in the heart of Normandy</p>
+    <p class="hero-location">1 La Haye · 50680 Couvains · Normandy</p>
+    <div class="hero-actions">
+      <button class="btn-primary" onclick="showPage('book')">Reserve a Stay</button>
+      <button class="btn-outline" onclick="showPage('explore')">Explore the Region</button>
+    </div>
+  </section>
+
+  <!-- Intro -->
+  <section class="section" style="padding-top: 80px;">
+    <div class="container">
+      <div class="home-intro">
+        <div class="fade-up">
+          <span class="section-label">Welcome</span>
+          <h2 class="section-title">A <strong>quiet corner</strong><br>of the world</h2>
+          <div class="section-rule"></div>
+          <p class="section-body">
+            Nestled in the gentle bocage of lower Normandy, Marianne Cottage is a restored countryside home
+            offering two elegant guest bedrooms with private shared bathroom. Your hosts Mark &amp; Kim
+            welcome you with warmth, exceptional breakfasts, and a wealth of local knowledge.
+          </p>
+          <p class="section-body" style="margin-top: 14px;">
+            Whether you've come to walk the D-Day beaches, discover Norman heritage, or simply breathe
+            the unhurried pace of the French countryside — this is your home away from home.
+          </p>
+          <div style="margin-top: 32px; display: flex; gap: 14px; flex-wrap: wrap;">
+            <button class="btn-primary" onclick="showPage('rooms')">View Rooms</button>
+            <button class="btn-outline" onclick="showPage('book')">Check Availability</button>
+          </div>
+        </div>
+        <div class="home-intro-img fade-up delay-2">
+          <span class="img-caption">Marianne Cottage · Couvains</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick facts strip -->
+  <section class="section section-surface section-clipped" style="padding-top: 60px;">
+    <div class="container">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 40px; text-align: center;">
+        <div class="fade-up">
+          <div style="font-family: 'Cormorant Garamond', serif; font-size: 2.8rem; font-weight: 300; color: var(--gold); line-height: 1;">2</div>
+          <div style="font-family: 'Barlow Condensed', sans-serif; font-size: 0.65rem; letter-spacing: 0.24em; text-transform: uppercase; color: var(--text-muted); margin-top: 6px;">Bedrooms</div>
+        </div>
+        <div class="fade-up delay-1">
+          <div style="font-family: 'Cormorant Garamond', serif; font-size: 2.8rem; font-weight: 300; color: var(--gold); line-height: 1;">B&B</div>
+          <div style="font-family: 'Barlow Condensed', sans-serif; font-size: 0.65rem; letter-spacing: 0.24em; text-transform: uppercase; color: var(--text-muted); margin-top: 6px;">Included Breakfast</div>
+        </div>
+        <div class="fade-up delay-2">
+          <div style="font-family: 'Cormorant Garamond', serif; font-size: 2.8rem; font-weight: 300; color: var(--gold); line-height: 1;">12+</div>
+          <div style="font-family: 'Barlow Condensed', sans-serif; font-size: 0.65rem; letter-spacing: 0.24em; text-transform: uppercase; color: var(--text-muted); margin-top: 6px;">Points of Interest</div>
+        </div>
+        <div class="fade-up delay-3">
+          <div style="font-family: 'Cormorant Garamond', serif; font-size: 2.8rem; font-weight: 300; color: var(--gold); line-height: 1;">5km</div>
+          <div style="font-family: 'Barlow Condensed', sans-serif; font-size: 0.65rem; letter-spacing: 0.24em; text-transform: uppercase; color: var(--text-muted); margin-top: 6px;">Cerisy Abbey</div>
+        </div>
+        <div class="fade-up delay-4">
+          <div style="font-family: 'Cormorant Garamond', serif; font-size: 2.8rem; font-weight: 300; color: var(--gold); line-height: 1;">€85</div>
+          <div style="font-family: 'Barlow Condensed', sans-serif; font-size: 0.65rem; letter-spacing: 0.24em; text-transform: uppercase; color: var(--text-muted); margin-top: 6px;">From per night</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section class="section section-clipped-top" style="background: var(--bg);">
+    <div class="container">
+      <div style="text-align: center; margin-bottom: 52px;" class="fade-up">
+        <span class="section-label" style="display: block; text-align: center;">Guest Voices</span>
+        <h2 class="section-title">What our guests <strong>say</strong></h2>
+        <div class="gold-divider"></div>
+      </div>
+      <div class="testimonials-grid">
+        <div class="card testimonial-card fade-up delay-1">
+          <span class="quote-mark">&ldquo;</span>
+          <blockquote>Warm welcome, lovely room, comfortable bed, modern spacious bathroom, excellent breakfast.</blockquote>
+          <cite>Simon &mdash; United Kingdom</cite>
+        </div>
+        <div class="card testimonial-card fade-up delay-2">
+          <span class="quote-mark">&ldquo;</span>
+          <blockquote>Lacked nothing for 5 days. Immaculate rooms, extensive freshly prepared breakfast, wonderful evening meal option.</blockquote>
+          <cite>Ingrid &mdash; Netherlands</cite>
+        </div>
+        <div class="card testimonial-card fade-up delay-3">
+          <span class="quote-mark">&ldquo;</span>
+          <blockquote>Warm welcome, delightful countryside house, peaceful, close to points of interest, made-to-measure breakfast.</blockquote>
+          <cite>Guest &mdash; France</cite>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA banner -->
+  <section style="padding: 80px 0; text-align: center; background: var(--surface); border-top: 1px solid var(--gold-border); border-bottom: 1px solid var(--gold-border);">
+    <div class="container-sm">
+      <div class="fade-up">
+        <p style="font-family: 'Barlow Condensed', sans-serif; font-size: 0.68rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold-muted); margin-bottom: 16px;">Plan your visit</p>
+        <h2 style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 300; font-size: clamp(2rem, 4vw, 3rem); color: var(--text); margin-bottom: 28px; line-height: 1.15;">
+          Ready to discover<br><span style="color: var(--gold);">Normandy?</span>
+        </h2>
+        <div style="display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;">
+          <button class="btn-primary" onclick="showPage('book')">Reserve Your Stay</button>
+          <button class="btn-outline" onclick="showPage('contact')">Get in Touch</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-logo">Marianne Cottage</div>
+    <p class="footer-address">1 La Haye · 50680 Couvains · Normandy, France</p>
+    <p class="footer-copy">Hosts: Mark &amp; Kim &nbsp;·&nbsp; <a href="mailto:mariannecattage@gmail.com" style="color: var(--gold-muted); text-decoration: none;">mariannecattage@gmail.com</a></p>
+  </footer>
+</div>
+
+<!-- ════════════════════════════════════════════
+     PAGE: ROOMS
+════════════════════════════════════════════ -->
+<div class="page" id="page-rooms">
+  <div class="page-header">
+    <span class="section-label" style="display: block; text-align: center;">Accommodation</span>
+    <h1 class="section-title" style="text-align: center; margin-bottom: 0;">Your <strong>rooms</strong></h1>
+  </div>
+
+  <section class="section" style="padding-top: 60px;">
+    <div class="container">
+
+      <!-- Suite intro -->
+      <div style="max-width: 660px; margin: 0 auto 60px; text-align: center;" class="fade-up">
+        <p class="section-body" style="margin: 0 auto; text-align: center;">
+          Marianne Cottage offers a private two-bedroom suite arrangement — ideal for families, couples
+          travelling together, or a solo traveller seeking extra space. Both rooms share a beautifully
+          appointed walk-in shower bathroom.
+        </p>
+      </div>
+
+      <!-- Bedroom 1 -->
+      <div class="card room-card fade-up">
+        <div class="room-card-icon">🛏</div>
+        <div class="room-card-body">
+          <span class="room-card-sub">Bedroom One</span>
+          <h3 class="room-card-title">The Double</h3>
+          <p class="room-card-desc">
+            A generous double-bedded room dressed in crisp linens, with garden views and soft natural light.
+            An electric kettle and thoughtful touches make it a true retreat after a day of exploration.
+          </p>
+        </div>
+      </div>
+
+      <!-- Bedroom 2 -->
+      <div class="card room-card fade-up delay-1">
+        <div class="room-card-icon">🛏🛏</div>
+        <div class="room-card-body">
+          <span class="room-card-sub">Bedroom Two</span>
+          <h3 class="room-card-title">The Twins</h3>
+          <p class="room-card-desc">
+            Two comfortable single beds in a calm, well-appointed room — perfect for friends travelling
+            together or a pair of younger guests. Garden-facing outlook and the same quality linens as the suite.
+          </p>
+        </div>
+      </div>
+
+      <!-- Shared bathroom -->
+      <div class="card room-card fade-up delay-2" style="margin-bottom: 60px;">
+        <div class="room-card-icon">🚿</div>
+        <div class="room-card-body">
+          <span class="room-card-sub">Shared Facilities</span>
+          <h3 class="room-card-title">Modern Walk-in Shower Bathroom</h3>
+          <p class="room-card-desc">
+            A contemporary, generously proportioned wet-room style bathroom, exclusively for your suite.
+            Powerful rain shower, quality towels, and premium toiletries provided.
+          </p>
+        </div>
+      </div>
+
+      <!-- Amenities -->
+      <div class="fade-up">
+        <span class="section-label">What's Included</span>
+        <h2 class="section-title">Room <strong>amenities</strong></h2>
+        <div class="section-rule"></div>
+      </div>
+      <div class="amenities-grid">
+        <div class="amenity-pill fade-up delay-1"><span class="icon">☕</span> Electric Kettle &amp; Tea / Coffee</div>
+        <div class="amenity-pill fade-up delay-2"><span class="icon">🛏</span> Fresh Luxury Linens</div>
+        <div class="amenity-pill fade-up delay-3"><span class="icon">🌿</span> Garden Views</div>
+        <div class="amenity-pill fade-up delay-4"><span class="icon">📶</span> Free High-Speed WiFi</div>
+        <div class="amenity-pill fade-up delay-5"><span class="icon">🚗</span> Free Private Parking</div>
+        <div class="amenity-pill fade-up delay-6"><span class="icon">🚭</span> Non-Smoking Property</div>
+        <div class="amenity-pill fade-up delay-1"><span class="icon">🥐</span> Breakfast Included Daily</div>
+        <div class="amenity-pill fade-up delay-2"><span class="icon">🍽</span> Evening Meal by Arrangement</div>
+      </div>
+
+      <!-- Breakfast -->
+      <div style="margin-top: 70px;">
+        <div class="fade-up">
+          <span class="section-label">Each Morning</span>
+          <h2 class="section-title">The <strong>breakfast</strong></h2>
+          <div class="section-rule"></div>
+          <p class="section-body">
+            Begin your day with Kim's homemade spread — a generous table of Norman produce and French
+            morning staples. Evening meals are available by prior arrangement from €20 per person,
+            featuring locally sourced ingredients.
+          </p>
+        </div>
+        <div class="breakfast-items" style="margin-top: 24px;">
+          <span class="breakfast-tag fade-up">Croissants</span>
+          <span class="breakfast-tag fade-up delay-1">Fresh Baguettes</span>
+          <span class="breakfast-tag fade-up delay-2">Seasonal Fruits</span>
+          <span class="breakfast-tag fade-up delay-3">Fruit Juice</span>
+          <span class="breakfast-tag fade-up delay-4">Yoghurt</span>
+          <span class="breakfast-tag fade-up delay-5">Homemade Jams</span>
+          <span class="breakfast-tag fade-up delay-6">Hot Beverages</span>
+        </div>
+        <p class="fade-up" style="margin-top: 16px; font-size: 0.85rem; color: var(--gold-muted); font-style: italic;">
+          Evening meal by arrangement · from €20 per person · locally sourced
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Rates -->
+  <section class="section section-surface section-clipped">
+    <div class="container">
+      <div style="text-align: center; margin-bottom: 12px;" class="fade-up">
+        <span class="section-label" style="display: block; text-align: center;">Tariffs</span>
+        <h2 class="section-title" style="text-align: center;">Room <strong>rates</strong></h2>
+        <div class="gold-divider"></div>
+        <p style="font-size: 0.88rem; color: var(--text-muted); max-width: 480px; margin: 0 auto;">
+          Per night · Entire suite · Breakfast included
+        </p>
+      </div>
+      <div class="rates-grid">
+        <div class="card rate-card fade-up delay-1">
+          <span class="rate-badge">Low Season</span>
+          <p class="rate-season">Autumn &amp; Winter</p>
+          <span class="rate-period">November — February</span>
+          <div class="rate-price"><sup>€</sup>85<sub>/night</sub></div>
+        </div>
+        <div class="card rate-card fade-up delay-2">
+          <span class="rate-badge">High Season</span>
+          <p class="rate-season">Spring &amp; Summer</p>
+          <span class="rate-period">March — October</span>
+          <div class="rate-price"><sup>€</sup>120<sub>/night</sub></div>
+        </div>
+        <div class="card rate-card peak fade-up delay-3">
+          <span class="rate-badge" style="color: #ffdd88;">✦ Peak — D-Day Week</span>
+          <p class="rate-season">Commemorations</p>
+          <span class="rate-period">D-Day Anniversary Week</span>
+          <div class="rate-price"><sup>€</sup>140<sub>/night</sub></div>
+        </div>
+      </div>
+      <p class="fade-up" style="text-align: center; margin-top: 28px; font-size: 0.82rem; color: var(--text-muted);">
+        Rates include breakfast for all guests. Evening meal from €20pp by prior arrangement.
+      </p>
+      <div style="text-align: center; margin-top: 36px;" class="fade-up">
+        <button class="btn-primary" onclick="showPage('book')">Request a Reservation</button>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-logo">Marianne Cottage</div>
+    <p class="footer-address">1 La Haye · 50680 Couvains · Normandy, France</p>
+    <p class="footer-copy">Hosts: Mark &amp; Kim &nbsp;·&nbsp; <a href="mailto:mariannecattage@gmail.com" style="color: var(--gold-muted); text-decoration: none;">mariannecattage@gmail.com</a></p>
+  </footer>
+</div>
+
+<!-- ════════════════════════════════════════════
+     PAGE: EXPLORE
+════════════════════════════════════════════ -->
+<div class="page" id="page-explore">
+  <div class="page-header">
+    <span class="section-label" style="display: block; text-align: center;">Discover</span>
+    <h1 class="section-title" style="text-align: center; margin-bottom: 0;">Explore <strong>Normandy</strong></h1>
+  </div>
+
+  <section class="section" style="padding-top: 60px;">
+    <div class="container">
+      <p class="section-body fade-up" style="margin: 0 auto 40px; text-align: center; max-width: 620px;">
+        Marianne Cottage sits at the heart of one of Europe's most historically and culturally rich regions.
+        From world-changing beaches to soaring abbeys — all within easy reach.
+      </p>
+
+      <!-- Filters -->
+      <div class="explore-filters fade-up">
+        <button class="filter-btn active" data-filter="all" onclick="filterPOI('all', this)">All</button>
+        <div class="filter-separator"></div>
+        <button class="filter-btn" data-filter="ww2" onclick="filterPOI('ww2', this)">WW2 Sites</button>
+        <button class="filter-btn" data-filter="museum" onclick="filterPOI('museum', this)">Museums</button>
+        <button class="filter-btn" data-filter="heritage" onclick="filterPOI('heritage', this)">Heritage</button>
+        <button class="filter-btn" data-filter="towns" onclick="filterPOI('towns', this)">Towns</button>
+        <div class="filter-separator"></div>
+        <button class="filter-btn sort-btn" id="sortBtn" onclick="toggleSort()">
+          Distance <span class="arrow">↓</span>
+        </button>
+      </div>
+
+      <!-- POI Grid -->
+      <div class="poi-grid" id="poiGrid">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Directions note -->
+  <section class="section section-surface section-clipped" style="padding-top: 60px;">
+    <div class="container-sm">
+      <div class="fade-up">
+        <span class="section-label">Getting Here</span>
+        <h2 class="section-title">Directions &amp; <strong>address</strong></h2>
+        <div class="section-rule"></div>
+      </div>
+      <div class="warning-box fade-up">
+        <p class="warning-box-title">⚠ Navigation Note</p>
+        <p>Some GPS and mapping apps may not correctly locate <strong>1 La Haye, 50680 Couvains</strong>.
+        We recommend confirming your route by email before arrival. We're happy to send detailed
+        directions from major landmarks or motorway exits.</p>
+      </div>
+      <div class="fade-up delay-1" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;">
+        <div class="card" style="padding: 20px 22px;">
+          <p style="font-family: 'Barlow Condensed', sans-serif; font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold-muted); margin-bottom: 8px;">Address</p>
+          <p style="font-size: 0.92rem; color: var(--text); line-height: 1.6;">
+            1 La Haye<br>50680 Couvains<br>Normandy, France
+          </p>
+        </div>
+        <div class="card" style="padding: 20px 22px;">
+          <p style="font-family: 'Barlow Condensed', sans-serif; font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold-muted); margin-bottom: 8px;">Nearest City</p>
+          <p style="font-size: 0.92rem; color: var(--text); line-height: 1.6;">
+            Saint-Lô: 13 km<br>Bayeux: 28 km<br>Caen: ~35 km
+          </p>
+        </div>
+      </div>
+      <div style="margin-top: 32px;" class="fade-up delay-2">
+        <button class="btn-outline" onclick="showPage('contact')">Request Directions</button>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-logo">Marianne Cottage</div>
+    <p class="footer-address">1 La Haye · 50680 Couvains · Normandy, France</p>
+    <p class="footer-copy">Hosts: Mark &amp; Kim &nbsp;·&nbsp; <a href="mailto:mariannecattage@gmail.com" style="color: var(--gold-muted); text-decoration: none;">mariannecattage@gmail.com</a></p>
+  </footer>
+</div>
+
+<!-- ════════════════════════════════════════════
+     PAGE: BOOK
+════════════════════════════════════════════ -->
+<div class="page" id="page-book">
+  <div class="page-header">
+    <span class="section-label" style="display: block; text-align: center;">Reserve</span>
+    <h1 class="section-title" style="text-align: center; margin-bottom: 0;">Book your <strong>stay</strong></h1>
+  </div>
+
+  <section class="section" style="padding-top: 60px;">
+    <div class="container-sm">
+      <p class="section-body fade-up" style="text-align: center; margin: 0 auto 40px;">
+        Complete the form below and Mark &amp; Kim will confirm availability and respond within 24 hours.
+        No payment is taken online — all bookings are confirmed directly with your hosts.
+      </p>
+
+      <div class="card fade-up" style="padding: 44px 40px;">
+        <form id="bookForm" onsubmit="handleBooking(event)">
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label" for="b-firstname">First Name</label>
+              <input class="form-input" type="text" id="b-firstname" placeholder="Marie" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="b-lastname">Last Name</label>
+              <input class="form-input" type="text" id="b-lastname" placeholder="Dupont" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="b-email">Email Address</label>
+              <input class="form-input" type="email" id="b-email" placeholder="marie@example.com" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="b-phone">Phone Number</label>
+              <input class="form-input" type="tel" id="b-phone" placeholder="+33 6 00 00 00 00">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="b-checkin">Check-in Date</label>
+              <input class="form-input" type="date" id="b-checkin" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="b-checkout">Check-out Date</label>
+              <input class="form-input" type="date" id="b-checkout" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="b-guests">Number of Guests</label>
+              <select class="form-select" id="b-guests" required>
+                <option value="" disabled selected>Select…</option>
+                <option value="1">1 Guest</option>
+                <option value="2">2 Guests</option>
+                <option value="3">3 Guests</option>
+                <option value="4">4 Guests</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="b-rooms">Rooms Required</label>
+              <select class="form-select" id="b-rooms">
+                <option value="suite">Both Bedrooms (Suite)</option>
+                <option value="double">Bedroom 1 — Double Only</option>
+                <option value="twins">Bedroom 2 — Twins Only</option>
+              </select>
+            </div>
+            <div class="form-group full">
+              <label class="form-label" for="b-meal">Evening Meal</label>
+              <select class="form-select" id="b-meal">
+                <option value="no">No thanks</option>
+                <option value="yes">Yes please — by arrangement (from €20pp)</option>
+              </select>
+            </div>
+            <div class="form-group full">
+              <label class="form-label" for="b-message">Special Requests or Questions</label>
+              <textarea class="form-textarea" id="b-message" placeholder="Dietary requirements, accessibility needs, arrival time…"></textarea>
+            </div>
+          </div>
+          <div style="margin-top: 28px; display: flex; gap: 16px; align-items: center; flex-wrap: wrap;">
+            <button type="submit" class="btn-primary">Send Booking Request</button>
+            <p class="form-note" style="margin-top: 0;">Your details are used only to process your enquiry.</p>
+          </div>
+        </form>
+      </div>
+
+      <!-- Rate reminder -->
+      <div style="margin-top: 32px;" class="fade-up">
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; text-align: center;">
+          <div class="card" style="padding: 18px 16px;">
+            <p style="font-family: 'Barlow Condensed', sans-serif; font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold-muted); margin-bottom: 6px;">Nov — Feb</p>
+            <p style="font-family: 'Cormorant Garamond', serif; font-size: 1.6rem; font-weight: 400; color: var(--gold);">€85</p>
+            <p style="font-size: 0.72rem; color: var(--text-muted);">per night</p>
+          </div>
+          <div class="card" style="padding: 18px 16px;">
+            <p style="font-family: 'Barlow Condensed', sans-serif; font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold-muted); margin-bottom: 6px;">Mar — Oct</p>
+            <p style="font-family: 'Cormorant Garamond', serif; font-size: 1.6rem; font-weight: 400; color: var(--gold);">€120</p>
+            <p style="font-size: 0.72rem; color: var(--text-muted);">per night</p>
+          </div>
+          <div class="card" style="padding: 18px 16px; background: linear-gradient(var(--surface), var(--surface)) padding-box, linear-gradient(135deg, var(--gold), var(--gold-muted)) border-box; border: 1.5px solid transparent !important;">
+            <p style="font-family: 'Barlow Condensed', sans-serif; font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold-muted); margin-bottom: 6px;">D-Day Week ✦</p>
+            <p style="font-family: 'Cormorant Garamond', serif; font-size: 1.6rem; font-weight: 400; color: var(--gold);">€140</p>
+            <p style="font-size: 0.72rem; color: var(--text-muted);">per night</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-logo">Marianne Cottage</div>
+    <p class="footer-address">1 La Haye · 50680 Couvains · Normandy, France</p>
+    <p class="footer-copy">Hosts: Mark &amp; Kim &nbsp;·&nbsp; <a href="mailto:mariannecattage@gmail.com" style="color: var(--gold-muted); text-decoration: none;">mariannecattage@gmail.com</a></p>
+  </footer>
+</div>
+
+<!-- ════════════════════════════════════════════
+     PAGE: CONTACT
+════════════════════════════════════════════ -->
+<div class="page" id="page-contact">
+  <div class="page-header">
+    <span class="section-label" style="display: block; text-align: center;">Get in Touch</span>
+    <h1 class="section-title" style="text-align: center; margin-bottom: 0;"><strong>Contact</strong> us</h1>
+  </div>
+
+  <section class="section" style="padding-top: 60px;">
+    <div class="container">
+      <div class="contact-grid">
+        <!-- Left: details -->
+        <div>
+          <div class="fade-up">
+            <span class="section-label">Your Hosts</span>
+            <h2 class="section-title">Mark <strong>&amp; Kim</strong></h2>
+            <div class="section-rule"></div>
+            <p class="section-body" style="margin-bottom: 36px;">
+              We're always happy to hear from prospective guests — whether you have questions about
+              the rooms, need help with directions, or want to know more about the local area.
+            </p>
+          </div>
+
+          <div class="contact-detail fade-up delay-1">
+            <div class="contact-icon">✉</div>
+            <div>
+              <p class="contact-detail-label">Email</p>
+              <p class="contact-detail-value"><a href="mailto:mariannecattage@gmail.com">mariannecattage@gmail.com</a></p>
+            </div>
+          </div>
+          <div class="contact-detail fade-up delay-2">
+            <div class="contact-icon">📞</div>
+            <div>
+              <p class="contact-detail-label">Phone</p>
+              <p class="contact-detail-value"><a href="tel:+33780731704">+33 (0)7 80 73 17 04</a></p>
+            </div>
+          </div>
+          <div class="contact-detail fade-up delay-3">
+            <div class="contact-icon">📍</div>
+            <div>
+              <p class="contact-detail-label">Address</p>
+              <p class="contact-detail-value">1 La Haye, 50680 Couvains<br>Normandy, France</p>
+            </div>
+          </div>
+
+          <div class="warning-box fade-up delay-4" style="margin-top: 8px;">
+            <p class="warning-box-title">⚠ Navigation Note</p>
+            <p>GPS may not locate us accurately. Please contact us for precise directions before your visit.</p>
+          </div>
+        </div>
+
+        <!-- Right: form -->
+        <div>
+          <div class="card fade-up delay-2" style="padding: 36px 32px;">
+            <h3 style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 400; font-size: 1.5rem; color: var(--text); margin-bottom: 24px;">Send a message</h3>
+            <form id="contactForm" onsubmit="handleContact(event)">
+              <div style="display: flex; flex-direction: column; gap: 18px;">
+                <div class="form-group">
+                  <label class="form-label" for="c-name">Your Name</label>
+                  <input class="form-input" type="text" id="c-name" placeholder="Marie Dupont" required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="c-email">Email Address</label>
+                  <input class="form-input" type="email" id="c-email" placeholder="marie@example.com" required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="c-subject">Subject</label>
+                  <select class="form-select" id="c-subject">
+                    <option value="availability">Availability enquiry</option>
+                    <option value="directions">Directions request</option>
+                    <option value="general">General question</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="c-message">Message</label>
+                  <textarea class="form-textarea" id="c-message" placeholder="How can we help?" required></textarea>
+                </div>
+                <button type="submit" class="btn-primary" style="align-self: flex-start;">Send Message</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-logo">Marianne Cottage</div>
+    <p class="footer-address">1 La Haye · 50680 Couvains · Normandy, France</p>
+    <p class="footer-copy">Hosts: Mark &amp; Kim &nbsp;·&nbsp; <a href="mailto:mariannecattage@gmail.com" style="color: var(--gold-muted); text-decoration: none;">mariannecattage@gmail.com</a></p>
+  </footer>
+</div>
+
+<!-- TOAST -->
+<div id="toast" role="alert">
+  <span class="toast-icon">✓</span>
+  <span id="toast-msg">Message sent!</span>
+  <button class="toast-close" onclick="closeToast()" aria-label="Close">✕</button>
+</div>
+
+<script>
+// ── POI DATA ──────────────────────────────────────────────────────────────
+const POIS = [
+  { name: "Cerisy Abbey",          cats: ["heritage"],        dist: 5,    nearest: true  },
+  { name: "Saint-Lô",              cats: ["towns"],           dist: 13              },
+  { name: "La Cambe Cemetery",     cats: ["ww2"],             dist: 18              },
+  { name: "Château de Balleroy",   cats: ["heritage"],        dist: 20              },
+  { name: "American Cemetery",     cats: ["ww2"],             dist: 23.1            },
+  { name: "Omaha Beach",           cats: ["ww2"],             dist: 23.3            },
+  { name: "Overlord Museum",       cats: ["ww2","museum"],    dist: 25              },
+  { name: "Bayeux",                cats: ["heritage"],        dist: 28              },
+  { name: "Pointe du Hoc",         cats: ["ww2"],             dist: 24.7            },
+  { name: "Arromanches",           cats: ["ww2"],             dist: 35              },
+  { name: "Coutances",             cats: ["towns"],           dist: 35              },
+  { name: "Mont Saint-Michel",     cats: ["towns","heritage"],dist: 71              },
+];
+
+const catLabel  = { ww2: "WW2", museum: "Museum", heritage: "Heritage", towns: "Town" };
+const catClass  = { ww2: "cat-ww2", museum: "cat-museum", heritage: "cat-heritage", towns: "cat-towns" };
+
+let sortAsc = true;
+let activeFilter = "all";
+
+function renderPOIs() {
+  const grid = document.getElementById("poiGrid");
+  if (!grid) return;
+
+  let data = [...POIS];
+
+  // sort
+  data.sort((a, b) => sortAsc ? a.dist - b.dist : b.dist - a.dist);
+
+  grid.innerHTML = data.map((p, i) => {
+    const hidden = activeFilter !== "all" && !p.cats.includes(activeFilter);
+    const delay  = (i % 6) + 1;
+    const primaryCat = p.cats[0];
+    const badges = p.cats.map(c =>
+      `<span class="poi-category ${catClass[c]}">${catLabel[c]}</span>`
+    ).join(" ");
+
+    return `
+    <div class="card poi-card fade-up delay-${delay}" ${hidden ? 'data-hidden="true"' : ''} data-cats="${p.cats.join(',')}">
+      <div class="poi-card-top">
+        <div style="display:flex;gap:5px;flex-wrap:wrap;">${badges}</div>
+        <div class="poi-distance">${p.dist}<small>km</small></div>
+      </div>
+      <h3 class="poi-name">${p.name}</h3>
+      ${p.nearest ? '<span class="poi-nearest">✦ Nearest landmark</span>' : ''}
+    </div>`;
+  }).join('');
+
+  // Re-observe new elements
+  observeAll();
+}
+
+function filterPOI(filter, btn) {
+  activeFilter = filter;
+  document.querySelectorAll(".filter-btn[data-filter]").forEach(b => b.classList.remove("active"));
+  if (btn) btn.classList.add("active");
+  document.querySelectorAll(".poi-card").forEach(card => {
+    const cats = (card.dataset.cats || "").split(",");
+    card.dataset.hidden = (filter !== "all" && !cats.includes(filter)) ? "true" : "false";
+    card.style.display  = (filter !== "all" && !cats.includes(filter)) ? "none" : "";
+  });
+}
+
+function toggleSort() {
+  sortAsc = !sortAsc;
+  const btn = document.getElementById("sortBtn");
+  if (btn) btn.classList.toggle("asc", !sortAsc);
+  renderPOIs();
+  if (activeFilter !== "all") filterPOI(activeFilter, null);
+}
+
+// ── PAGE NAV ────────────────────────────────────────────────────────────
+function showPage(id) {
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  const target = document.getElementById("page-" + id);
+  if (target) {
+    target.classList.add("active");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  // update nav active state
+  document.querySelectorAll("[data-page]").forEach(el => {
+    el.classList.toggle("active", el.dataset.page === id);
+  });
+
+  // render POIs when explore page shown
+  if (id === "explore") {
+    setTimeout(renderPOIs, 50);
+  }
+
+  // re-trigger observers for new page
+  setTimeout(observeAll, 100);
+}
+
+// ── HAMBURGER ───────────────────────────────────────────────────────────
+function toggleMenu() {
+  const btn  = document.getElementById("hamburger");
+  const menu = document.getElementById("mobileMenu");
+  const open = menu.classList.toggle("open");
+  btn.classList.toggle("open", open);
+}
+function closeMenu() {
+  document.getElementById("hamburger").classList.remove("open");
+  document.getElementById("mobileMenu").classList.remove("open");
+}
+
+// ── INTERSECTION OBSERVER ───────────────────────────────────────────────
+let observer;
+function observeAll() {
+  if (observer) observer.disconnect();
+  observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("visible");
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.08 });
+
+  document.querySelectorAll(".page.active .fade-up").forEach(el => {
+    if (!el.classList.contains("visible")) observer.observe(el);
+  });
+}
+
+// ── FORMS ───────────────────────────────────────────────────────────────
+function handleBooking(e) {
+  e.preventDefault();
+  showToast("✓", "Booking request sent! Mark & Kim will confirm within 24 hours.");
+  e.target.reset();
+}
+
+function handleContact(e) {
+  e.preventDefault();
+  showToast("✓", "Message sent! We'll be in touch soon.");
+  e.target.reset();
+}
+
+// ── TOAST ────────────────────────────────────────────────────────────────
+let toastTimer;
+function showToast(icon, msg) {
+  const toast = document.getElementById("toast");
+  const msgEl = document.getElementById("toast-msg");
+  const iconEl = toast.querySelector(".toast-icon");
+  if (msgEl) msgEl.textContent = msg;
+  if (iconEl) iconEl.textContent = icon;
+  toast.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(closeToast, 5000);
+}
+function closeToast() {
+  document.getElementById("toast").classList.remove("show");
+}
+
+// ── INIT ────────────────────────────────────────────────────────────────
+document.addEventListener("DOMContentLoaded", () => {
+  // Set min date for booking form
+  const today = new Date().toISOString().split("T")[0];
+  const ci = document.getElementById("b-checkin");
+  const co = document.getElementById("b-checkout");
+  if (ci) ci.min = today;
+  if (co) co.min = today;
+  if (ci) ci.addEventListener("change", () => { if (co) co.min = ci.value; });
+
+  // Initial observe
+  observeAll();
+});
+</script>
+</body>
+</html>

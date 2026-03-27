@@ -402,6 +402,7 @@
 		padding: 4rem 2rem 3rem;
 		max-width: 960px;
 		margin: 0 auto;
+		padding-bottom: 100px;
 	}
 
 	/* ── HEADER ───────────────────────────────────────────────────────── */
@@ -1004,6 +1005,12 @@
 		padding: 1.5rem 0 2rem;
 		border-top: 1px solid #e0ddd8;
 		text-align: center;
+		position: fixed;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		z-index: 100;
+		background: #fff;
 	}
 
 	.demo-nav {

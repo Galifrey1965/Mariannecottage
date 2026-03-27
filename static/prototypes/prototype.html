@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Marianne Cottage — Normandy B&amp;B</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;font-weight:300;color:#e8f0fe;background:#040810;min-height:100vh;overflow-x:hidden}
+.bg-canvas{position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse 80% 60% at 20% 10%,rgba(0,80,120,0.45) 0%,transparent 60%),radial-gradient(ellipse 60% 80% at 80% 80%,rgba(4,40,48,0.6) 0%,transparent 60%),radial-gradient(ellipse 70% 50% at 60% 30%,rgba(13,27,62,0.5) 0%,transparent 55%),linear-gradient(160deg,#040810 0%,#0D1B3E 40%,#042830 80%,#040810 100%);animation:meshShift 18s ease-in-out infinite alternate}
+@keyframes meshShift{0%{filter:hue-rotate(0deg) brightness(1)}33%{filter:hue-rotate(8deg) brightness(1.05)}66%{filter:hue-rotate(-5deg) brightness(0.97)}100%{filter:hue-rotate(12deg) brightness(1.08)}}
+.bg-canvas::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 40% 30% at 50% 50%,rgba(0,229,255,0.04) 0%,transparent 70%),radial-gradient(ellipse 30% 20% at 75% 20%,rgba(255,140,0,0.03) 0%,transparent 60%);animation:shimmer 12s ease-in-out infinite alternate}
+@keyframes shimmer{0%{opacity:0.6;transform:scale(1)}100%{opacity:1;transform:scale(1.05)}}
+#app{position:relative;z-index:1;min-height:100vh}
+.glass{background:rgba(255,255,255,0.07);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,0.1)}
+.glass-card{background:rgba(255,255,255,0.06);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,0.09);border-radius:20px;transition:transform 0.35s ease,box-shadow 0.35s ease,border-color 0.35s ease}
+.glass-card:hover{transform:translateY(-4px);box-shadow:0 20px 60px rgba(0,0,0,0.4),0 0 30px rgba(0,229,255,0.06);border-color:rgba(0,229,255,0.2)}
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:0 2rem;height:70px;display:flex;align-items:center;justify-content:space-between;background:rgba(4,8,16,0.6);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(0,229,255,0.1)}
+.nav-logo{font-family:'Orbitron',sans-serif;font-weight:700;font-size:1.2rem;letter-spacing:0.3em;color:#00E5FF;cursor:pointer;text-shadow:0 0 20px rgba(0,229,255,0.4);transition:text-shadow 0.3s}
+.nav-logo:hover{text-shadow:0 0 35px rgba(0,229,255,0.7)}
+.nav-logo span{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;font-size:0.75rem;color:rgba(200,220,255,0.5);letter-spacing:0.15em;display:block;margin-top:-4px}
+.nav-links{display:flex;align-items:center;gap:0.25rem;list-style:none}
+.nav-links a{font-family:'DM Sans',sans-serif;font-size:0.85rem;font-weight:400;letter-spacing:0.08em;color:rgba(200,220,255,0.7);text-decoration:none;padding:0.5rem 0.9rem;border-radius:8px;cursor:pointer;transition:color 0.25s,background 0.25s;text-transform:uppercase}
+.nav-links a:hover,.nav-links a.active{color:#00E5FF;background:rgba(0,229,255,0.08)}
+.nav-cta{font-family:'DM Sans',sans-serif;font-size:0.82rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;padding:0.55rem 1.4rem;background:linear-gradient(135deg,#FF8C00,#e07800);color:#040810;border:none;border-radius:10px;cursor:pointer;transition:transform 0.25s,box-shadow 0.25s;box-shadow:0 4px 20px rgba(255,140,0,0.25)}
+.nav-cta:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(255,140,0,0.4)}
+.nav-hamburger{display:none;background:none;border:none;color:#00E5FF;cursor:pointer;font-size:1.5rem}
+.page{display:none;padding-top:70px}
+.page.active{display:block}
+.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:2rem;position:relative;overflow:hidden}
+.hero-bg-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0.25;z-index:0}
+.hero::before{content:'';position:absolute;inset:0;z-index:1;background:radial-gradient(ellipse 60% 70% at 50% 50%,rgba(0,229,255,0.05) 0%,transparent 60%),linear-gradient(to bottom,rgba(4,8,16,0.3) 0%,rgba(4,8,16,0.5) 50%,rgba(4,8,16,0.9) 100%)}
+.hero-content{position:relative;z-index:2;max-width:780px}
+.about-img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:20px;border:1px solid rgba(255,255,255,0.09)}
+.card-img{width:100%;height:200px;object-fit:cover;border-radius:16px 16px 0 0;margin-bottom:0;display:block}
+.card-img-wrap{border-radius:20px 20px 0 0;overflow:hidden;margin:-2.5rem -2.5rem 1.5rem;height:200px}
+.card-img-wrap img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.4s ease}
+.glass-card:hover .card-img-wrap img{transform:scale(1.04)}
+.attraction-img{width:100%;height:160px;object-fit:cover;border-radius:12px;margin-bottom:1rem;display:block}
+.poi-img{width:100%;height:150px;object-fit:cover;border-radius:12px 12px 0 0;margin:-1.75rem -1.75rem 1rem;width:calc(100% + 3.5rem);display:block}
+.poi-img-wrap{margin:-1.75rem -1.75rem 1.25rem;overflow:hidden;border-radius:18px 18px 0 0;height:150px}
+.poi-img-wrap img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.4s ease}
+.glass-card.poi-card:hover .poi-img-wrap img{transform:scale(1.05)}
+.breakfast-img{width:calc(100% + 5rem);margin:-2.5rem -2.5rem 1.5rem;height:180px;object-fit:cover;display:block}
+.suite-img{width:100%;height:260px;object-fit:cover;border-radius:16px;margin-bottom:2rem;display:block}
+.hero-eyebrow{font-family:'Orbitron',sans-serif;font-size:0.7rem;letter-spacing:0.35em;color:#00E5FF;text-transform:uppercase;margin-bottom:1.5rem;opacity:0.8}
+.hero h1{font-family:'Cormorant Garamond',serif;font-size:clamp(2.8rem,7vw,5.5rem);font-weight:300;line-height:1.1;color:#fff;margin-bottom:1rem;text-shadow:0 2px 40px rgba(0,0,0,0.5)}
+.hero h1 em{font-style:italic;color:#00E5FF}
+.hero-tagline{font-family:'Cormorant Garamond',serif;font-size:clamp(1.1rem,2.5vw,1.5rem);font-style:italic;color:rgba(200,230,255,0.75);margin-bottom:2.5rem;font-weight:300}
+.hero-location{font-family:'DM Sans',sans-serif;font-size:0.82rem;color:rgba(200,220,255,0.5);letter-spacing:0.12em;margin-bottom:3rem}
+.hero-location .material-icons{font-size:0.9rem;vertical-align:middle;color:#FF8C00}
+.btn-primary{display:inline-flex;align-items:center;gap:0.5rem;padding:1rem 2.5rem;background:linear-gradient(135deg,#FF8C00,#e07800);color:#040810;font-family:'DM Sans',sans-serif;font-weight:500;font-size:0.95rem;letter-spacing:0.1em;text-transform:uppercase;border:none;border-radius:14px;cursor:pointer;transition:transform 0.3s,box-shadow 0.3s;box-shadow:0 6px 30px rgba(255,140,0,0.3);text-decoration:none}
+.btn-primary:hover{transform:translateY(-3px);box-shadow:0 12px 40px rgba(255,140,0,0.5)}
+.btn-secondary{display:inline-flex;align-items:center;gap:0.5rem;padding:0.9rem 2rem;background:rgba(255,255,255,0.07);backdrop-filter:blur(10px);color:#e8f0fe;font-family:'DM Sans',sans-serif;font-weight:400;font-size:0.9rem;letter-spacing:0.08em;text-transform:uppercase;border:1px solid rgba(255,255,255,0.15);border-radius:14px;cursor:pointer;transition:all 0.3s;text-decoration:none}
+.btn-secondary:hover{background:rgba(0,229,255,0.1);border-color:rgba(0,229,255,0.3);color:#00E5FF}
+.btn-cyan{display:inline-flex;align-items:center;gap:0.5rem;padding:0.9rem 2rem;background:rgba(0,229,255,0.1);color:#00E5FF;font-family:'DM Sans',sans-serif;font-weight:500;font-size:0.88rem;letter-spacing:0.1em;text-transform:uppercase;border:1px solid rgba(0,229,255,0.3);border-radius:14px;cursor:pointer;transition:all 0.3s;text-decoration:none}
+.btn-cyan:hover{background:rgba(0,229,255,0.18);box-shadow:0 6px 25px rgba(0,229,255,0.15)}
+section{padding:5rem 2rem}
+.container{max-width:1200px;margin:0 auto}
+.section-label{font-family:'Orbitron',sans-serif;font-size:0.62rem;letter-spacing:0.35em;color:#00E5FF;text-transform:uppercase;margin-bottom:0.75rem;opacity:0.8}
+.section-title{font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,4vw,3rem);font-weight:300;color:#fff;margin-bottom:1rem}
+.section-title em{font-style:italic;color:#00E5FF}
+.section-subtitle{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.15rem;color:rgba(200,220,255,0.65);margin-bottom:3rem;max-width:600px}
+.divider{width:60px;height:1px;background:linear-gradient(90deg,#00E5FF,transparent);margin-bottom:2rem}
+.highlights{background:rgba(255,255,255,0.04);border-top:1px solid rgba(0,229,255,0.08);border-bottom:1px solid rgba(0,229,255,0.08);padding:2.5rem 2rem}
+.highlights-grid{max-width:1000px;margin:0 auto;display:grid;grid-template-columns:repeat(6,1fr);gap:1rem;text-align:center}
+.highlight-item{display:flex;flex-direction:column;align-items:center;gap:0.5rem;padding:1rem 0.5rem}
+.highlight-item .material-icons{font-size:1.8rem;color:#FF8C00}
+.highlight-item span:last-child{font-size:0.75rem;color:rgba(200,220,255,0.65);letter-spacing:0.05em;line-height:1.3}
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:center}
+.about-img-placeholder{aspect-ratio:4/3;border-radius:20px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.about-img-placeholder::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,80,120,0.2),rgba(13,27,62,0.4))}
+.about-img-placeholder .material-icons{font-size:5rem;color:rgba(0,229,255,0.15);position:relative;z-index:1}
+.about-text p{color:rgba(200,220,255,0.7);line-height:1.85;margin-bottom:1.25rem;font-size:1rem}
+.hosts-badge{display:inline-flex;align-items:center;gap:0.75rem;padding:0.75rem 1.25rem;background:rgba(255,140,0,0.08);border:1px solid rgba(255,140,0,0.2);border-radius:12px;margin-top:0.5rem}
+.hosts-badge .material-icons{color:#FF8C00;font-size:1.2rem}
+.hosts-badge span{font-size:0.88rem;color:rgba(255,200,100,0.9)}
+.rooms-grid{display:grid;grid-template-columns:1fr 1fr;gap:2rem}
+.room-card{padding:2.5rem;position:relative;overflow:hidden}
+.room-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#00E5FF,transparent)}
+.room-icon-area{width:60px;height:60px;border-radius:14px;background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.15);display:flex;align-items:center;justify-content:center;margin-bottom:1.5rem}
+.room-icon-area .material-icons{color:#00E5FF;font-size:1.6rem}
+.room-card h3{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:400;color:#fff;margin-bottom:0.5rem}
+.room-card p{color:rgba(200,220,255,0.6);font-size:0.93rem;line-height:1.7;margin-bottom:1.25rem}
+.room-tag{display:inline-block;padding:0.3rem 0.8rem;background:rgba(0,229,255,0.07);border:1px solid rgba(0,229,255,0.15);border-radius:20px;font-size:0.75rem;color:rgba(0,229,255,0.8);margin:0.2rem;letter-spacing:0.05em}
+.attractions-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+.attraction-card{padding:2rem;text-align:center;cursor:pointer}
+.attraction-card .material-icons{font-size:2.2rem;color:#FF8C00;margin-bottom:1rem}
+.attraction-card h4{font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-weight:600;color:#fff;margin-bottom:0.25rem}
+.attraction-dist{font-family:'JetBrains Mono',monospace;font-size:0.78rem;color:#FF8C00;margin-bottom:0.75rem}
+.attraction-card p{font-size:0.88rem;color:rgba(200,220,255,0.6);line-height:1.6}
+.testimonials-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+.testimonial-card{padding:2rem}
+.stars{color:#FF8C00;font-size:0.9rem;letter-spacing:0.1em;margin-bottom:1rem}
+.testimonial-text{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.05rem;color:rgba(220,235,255,0.85);line-height:1.75;margin-bottom:1.25rem}
+.testimonial-author{display:flex;align-items:center;gap:0.75rem}
+.author-avatar{width:38px;height:38px;border-radius:50%;background:rgba(0,229,255,0.1);border:1px solid rgba(0,229,255,0.2);display:flex;align-items:center;justify-content:center}
+.author-avatar .material-icons{font-size:1.1rem;color:rgba(0,229,255,0.6)}
+.author-name{font-weight:500;font-size:0.88rem;color:#e8f0fe}
+.author-origin{font-size:0.75rem;color:rgba(200,220,255,0.45)}
+.booking-cta{text-align:center;padding:6rem 2rem}
+.booking-cta-inner{max-width:600px;margin:0 auto;padding:4rem 3rem;border-radius:28px}
+.booking-cta-inner h2{font-family:'Cormorant Garamond',serif;font-size:2.4rem;font-weight:300;color:#fff;margin-bottom:1rem}
+.booking-cta-inner p{color:rgba(200,220,255,0.6);margin-bottom:2rem;font-size:1.05rem}
+.cta-btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+.amenities-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.25rem}
+.amenity-item{padding:1.5rem;text-align:center;border-radius:16px}
+.amenity-item .material-icons{font-size:1.8rem;color:#00E5FF;margin-bottom:0.75rem;display:block}
+.amenity-item span:last-child{font-size:0.85rem;color:rgba(200,220,255,0.7);line-height:1.4}
+.info-box{padding:2.5rem;border-radius:20px;margin-bottom:1.5rem}
+.info-box-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:1rem}
+.info-box.breakfast{border-left:3px solid #FF8C00}
+.info-box.breakfast .info-box-icon{background:rgba(255,140,0,0.1)}
+.info-box.breakfast .info-box-icon .material-icons{color:#FF8C00}
+.info-box.meal{border-left:3px solid #00E5FF}
+.info-box.meal .info-box-icon{background:rgba(0,229,255,0.1)}
+.info-box.meal .info-box-icon .material-icons{color:#00E5FF}
+.info-box h3{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:600;color:#fff;margin-bottom:0.75rem}
+.info-box p{color:rgba(200,220,255,0.65);line-height:1.75;font-size:0.95rem}
+.price-highlight{font-family:'JetBrains Mono',monospace;color:#FF8C00;font-weight:500}
+.filter-bar{display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap;margin-bottom:2rem}
+.filter-btn{padding:0.5rem 1.2rem;border-radius:30px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:rgba(200,220,255,0.65);font-family:'DM Sans',sans-serif;font-size:0.82rem;letter-spacing:0.06em;cursor:pointer;transition:all 0.25s}
+.filter-btn:hover,.filter-btn.active{background:rgba(0,229,255,0.1);border-color:rgba(0,229,255,0.35);color:#00E5FF}
+.sort-btn{margin-left:auto;padding:0.5rem 1.2rem;border-radius:30px;background:rgba(255,140,0,0.08);border:1px solid rgba(255,140,0,0.2);color:#FF8C00;font-family:'DM Sans',sans-serif;font-size:0.82rem;cursor:pointer;transition:all 0.25s;display:flex;align-items:center;gap:0.4rem}
+.sort-btn:hover{background:rgba(255,140,0,0.15)}
+.poi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+.poi-card{padding:1.75rem;border-radius:18px;transition:transform 0.3s,opacity 0.3s}
+.poi-card.hidden{display:none}
+.poi-cat-badge{display:inline-block;padding:0.2rem 0.7rem;border-radius:20px;font-size:0.68rem;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:0.75rem;margin-right:0.3rem}
+.poi-cat-badge.ww2{background:rgba(255,80,80,0.12);border:1px solid rgba(255,80,80,0.25);color:rgba(255,120,120,0.9)}
+.poi-cat-badge.heritage{background:rgba(255,140,0,0.1);border:1px solid rgba(255,140,0,0.25);color:rgba(255,180,80,0.9)}
+.poi-cat-badge.towns{background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.2);color:rgba(0,229,255,0.8)}
+.poi-cat-badge.museums{background:rgba(150,100,255,0.1);border:1px solid rgba(150,100,255,0.25);color:rgba(180,140,255,0.9)}
+.poi-card h4{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:600;color:#fff;margin-bottom:0.25rem}
+.poi-dist{font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:#FF8C00;margin-bottom:0.75rem;display:flex;align-items:center;gap:0.3rem}
+.poi-card p{font-size:0.87rem;color:rgba(200,220,255,0.6);line-height:1.65;margin-bottom:0.75rem}
+.poi-access{font-size:0.72rem;color:rgba(200,220,255,0.4);display:flex;align-items:center;gap:0.3rem}
+.poi-access .material-icons{font-size:0.85rem}
+.poi-special-note{display:inline-block;padding:0.2rem 0.6rem;background:rgba(0,229,255,0.06);border:1px solid rgba(0,229,255,0.15);border-radius:8px;font-size:0.7rem;color:rgba(0,229,255,0.7);margin-top:0.5rem}
+.rates-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-bottom:3rem}
+.rate-card{padding:2rem;text-align:center;border-radius:18px;position:relative;overflow:hidden}
+.rate-card.peak{border-color:rgba(255,140,0,0.3)}
+.rate-card.peak::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#FF8C00,#ffb347)}
+.rate-season{font-family:'Orbitron',sans-serif;font-size:0.65rem;letter-spacing:0.2em;color:rgba(200,220,255,0.5);text-transform:uppercase;margin-bottom:0.5rem}
+.rate-period{font-size:0.82rem;color:rgba(200,220,255,0.45);margin-bottom:1rem}
+.rate-price{font-family:'JetBrains Mono',monospace;font-size:2.2rem;font-weight:500;color:#fff;margin-bottom:0.25rem}
+.rate-price span{font-size:1rem;color:rgba(200,220,255,0.5)}
+.rate-note{font-size:0.78rem;color:rgba(200,220,255,0.4)}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
+.form-group{display:flex;flex-direction:column;gap:0.4rem}
+.form-group.full-width{grid-column:1/-1}
+.form-group label{font-size:0.78rem;letter-spacing:0.08em;color:rgba(200,220,255,0.55);text-transform:uppercase}
+.form-group input,.form-group select,.form-group textarea{padding:0.85rem 1rem;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:#e8f0fe;font-family:'DM Sans',sans-serif;font-size:0.93rem;outline:none;transition:border-color 0.25s,box-shadow 0.25s}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:rgba(0,229,255,0.4);box-shadow:0 0 0 3px rgba(0,229,255,0.06)}
+.form-group select option{background:#0D1B3E}
+.form-group textarea{resize:vertical;min-height:100px}
+.form-submit{text-align:center;margin-top:1.5rem}
+.cancellation-note{display:flex;align-items:center;gap:0.5rem;padding:0.75rem 1.25rem;background:rgba(0,229,255,0.05);border:1px solid rgba(0,229,255,0.12);border-radius:10px;font-size:0.83rem;color:rgba(200,220,255,0.6);margin-top:1.5rem}
+.cancellation-note .material-icons{font-size:1rem;color:#00E5FF}
+.alt-booking{margin-top:3rem;padding:2rem;border-radius:16px;text-align:center;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07)}
+.alt-booking h3{font-family:'Cormorant Garamond',serif;font-size:1.3rem;color:#fff;margin-bottom:0.5rem}
+.alt-booking p{font-size:0.88rem;color:rgba(200,220,255,0.5);margin-bottom:1.25rem}
+.alt-btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+.contact-grid{display:grid;grid-template-columns:1fr 1.3fr;gap:3rem;align-items:start}
+.contact-info-block{display:flex;flex-direction:column;gap:1.25rem}
+.contact-item{display:flex;align-items:flex-start;gap:1rem;padding:1.25rem;border-radius:14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07)}
+.contact-item-icon{width:40px;height:40px;border-radius:10px;background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.contact-item-icon .material-icons{font-size:1.1rem;color:#00E5FF}
+.contact-item-label{font-size:0.7rem;text-transform:uppercase;letter-spacing:0.1em;color:rgba(200,220,255,0.4);margin-bottom:0.2rem}
+.contact-item-value{font-size:0.93rem;color:rgba(220,235,255,0.85);line-height:1.5}
+.contact-item-value a{color:#00E5FF;text-decoration:none}
+.contact-item-value a:hover{text-decoration:underline}
+.directions-box{padding:1.5rem;border-radius:14px;background:rgba(255,140,0,0.05);border:1px solid rgba(255,140,0,0.15)}
+.directions-box h4{font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:#FF8C00;margin-bottom:0.75rem;display:flex;align-items:center;gap:0.5rem}
+.directions-box h4 .material-icons{font-size:1.1rem}
+.directions-box p{font-size:0.87rem;color:rgba(200,220,255,0.65);line-height:1.7}
+.social-links{display:flex;gap:0.75rem;flex-wrap:wrap;margin-top:1rem}
+.social-link{padding:0.5rem 1rem;border-radius:10px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.09);color:rgba(200,220,255,0.65);font-size:0.8rem;text-decoration:none;transition:all 0.25s;display:flex;align-items:center;gap:0.4rem}
+.social-link:hover{background:rgba(0,229,255,0.08);border-color:rgba(0,229,255,0.2);color:#00E5FF}
+footer{margin-top:4rem;padding:3rem 2rem;text-align:center;border-top:1px solid rgba(255,255,255,0.06);background:rgba(4,8,16,0.5)}
+.footer-logo{font-family:'Orbitron',sans-serif;font-weight:700;font-size:1rem;letter-spacing:0.3em;color:#00E5FF;margin-bottom:0.5rem}
+.footer-tagline{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1rem;color:rgba(200,220,255,0.4);margin-bottom:1.5rem}
+.footer-copyright{font-size:0.75rem;color:rgba(200,220,255,0.25);letter-spacing:0.05em}
+.anim-fade{opacity:0;transform:translateY(30px);transition:opacity 0.7s ease,transform 0.7s ease}
+.anim-fade.visible{opacity:1;transform:translateY(0)}
+.anim-delay-1{transition-delay:0.1s}
+.anim-delay-2{transition-delay:0.2s}
+.anim-delay-3{transition-delay:0.3s}
+.anim-delay-4{transition-delay:0.4s}
+.anim-delay-5{transition-delay:0.5s}
+@media(max-width:900px){
+  .highlights-grid{grid-template-columns:repeat(3,1fr)}
+  .about-grid{grid-template-columns:1fr}
+  .about-img{display:none}
+  .rooms-grid{grid-template-columns:1fr}
+  .attractions-grid{grid-template-columns:1fr 1fr}
+  .testimonials-grid{grid-template-columns:1fr}
+  .amenities-grid{grid-template-columns:repeat(2,1fr)}
+  .rates-grid{grid-template-columns:1fr}
+  .poi-grid{grid-template-columns:repeat(2,1fr)}
+  .contact-grid{grid-template-columns:1fr}
+}
+@media(max-width:600px){
+  nav{padding:0 1rem}
+  .nav-links{display:none}
+  .nav-links.open{display:flex;flex-direction:column;position:fixed;top:70px;left:0;right:0;background:rgba(4,8,16,0.95);backdrop-filter:blur(20px);padding:1.5rem;border-bottom:1px solid rgba(0,229,255,0.1);z-index:999;gap:0.5rem}
+  .nav-links.open a{padding:0.75rem 1rem}
+  .nav-cta{display:none}
+  .nav-hamburger{display:flex}
+  .highlights-grid{grid-template-columns:repeat(2,1fr)}
+  .attractions-grid{grid-template-columns:1fr}
+  .form-grid{grid-template-columns:1fr}
+  .poi-grid{grid-template-columns:1fr}
+  .booking-cta-inner{padding:2.5rem 1.5rem}
+  section{padding:3.5rem 1.25rem}
+}
+</style>
+</head>
+<body>
+<div class="bg-canvas"></div>
+<div id="app">
+
+<nav>
+  <div class="nav-logo" onclick="showPage('home')">MARIANNE<span>Couvains · Normandy</span></div>
+  <ul class="nav-links" id="navLinks">
+    <li><a onclick="showPage('home')" id="nav-home" class="active">Home</a></li>
+    <li><a onclick="showPage('rooms')" id="nav-rooms">Rooms</a></li>
+    <li><a onclick="showPage('explore')" id="nav-explore">Explore</a></li>
+    <li><a onclick="showPage('book')" id="nav-book">Book</a></li>
+    <li><a onclick="showPage('contact')" id="nav-contact">Contact</a></li>
+  </ul>
+  <button class="nav-cta" onclick="showPage('book')">Book Now</button>
+  <button class="nav-hamburger" id="hamburger" onclick="toggleMenu()"><span class="material-icons">menu</span></button>
+</nav>
+
+<!-- HOME -->
+<div class="page active" id="page-home">
+  <section class="hero">
+    <img src="/images/2024-08-15.jpg" class="hero-bg-img" alt="">
+    <div class="hero-content">
+      <div class="hero-eyebrow">Bed &amp; Breakfast · Normandy, France</div>
+      <h1>Marianne<br><em>Cottage</em></h1>
+      <p class="hero-tagline">"A haven of peace in the heart of Normandy"</p>
+      <p class="hero-location"><span class="material-icons">location_on</span> 1 La Haye, Couvains · 50680 · France</p>
+      <button class="btn-primary" onclick="showPage('book')"><span class="material-icons">calendar_today</span> Book Your Stay</button>
+    </div>
+  </section>
+
+  <div class="highlights">
+    <div class="highlights-grid">
+      <div class="highlight-item anim-fade"><span class="material-icons">wifi</span><span>Free WiFi</span></div>
+      <div class="highlight-item anim-fade anim-delay-1"><span class="material-icons">local_parking</span><span>Free Parking</span></div>
+      <div class="highlight-item anim-fade anim-delay-2"><span class="material-icons">free_breakfast</span><span>Breakfast Included</span></div>
+      <div class="highlight-item anim-fade anim-delay-3"><span class="material-icons">yard</span><span>Private Garden</span></div>
+      <div class="highlight-item anim-fade anim-delay-4"><span class="material-icons">eco</span><span>Wildlife Haven</span></div>
+      <div class="highlight-item anim-fade anim-delay-5"><span class="material-icons">smoke_free</span><span>Non-Smoking</span></div>
+    </div>
+  </div>
+
+  <section>
+    <div class="container">
+      <div class="about-grid">
+        <img src="/images/2023-05-20.jpg" class="about-img anim-fade" alt="Marianne Cottage garden">
+        <div class="about-text anim-fade">
+          <div class="section-label">About Marianne Cottage</div>
+          <h2 class="section-title">A Restored <em>Farmhouse</em> with Soul</h2>
+          <div class="divider"></div>
+          <p>Nestled in the gentle countryside of Couvains, Marianne Cottage is a lovingly restored 1800s farmhouse that offers a rare blend of historic character and modern comfort.</p>
+          <p>The surrounding landscape is a patchwork of meadows, apple orchards and ancient hedgerows — a living wildlife haven where the pace of life slows, and the beauty of rural France reveals itself in quiet, unhurried moments.</p>
+          <p>From here you are ideally placed to explore the profound D-Day beaches, medieval abbeys, and charming Norman towns — then return each evening to peace, warmth, and an exceptional breakfast.</p>
+          <div class="hosts-badge"><span class="material-icons">favorite</span><span>Your hosts: <strong>Mark &amp; Kim</strong></span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding-top:0">
+    <div class="container">
+      <div class="section-label">Accommodation</div>
+      <h2 class="section-title">Your <em>Rooms</em></h2>
+      <div class="divider"></div>
+      <p class="section-subtitle">Two beautiful bedrooms forming an exclusive suite.</p>
+      <div class="rooms-grid">
+        <div class="glass-card room-card anim-fade">
+          <div class="card-img-wrap"><img src="/images/gallery/bedroom-double-bed.jpeg" alt="Bedroom One — double bed"></div>
+          <h3>Bedroom One</h3>
+          <p>A serene retreat with a generous double bed, dressed in crisp white linens. Gentle garden views greet you each morning.</p>
+          <div><span class="room-tag">Double Bed</span><span class="room-tag">Garden Views</span><span class="room-tag">Fresh Linens</span></div>
+        </div>
+        <div class="glass-card room-card anim-fade anim-delay-2">
+          <div class="card-img-wrap"><img src="/images/gallery/bedroom-twin-full.jpeg" alt="Bedroom Two — twin beds"></div>
+          <h3>Bedroom Two</h3>
+          <p>Flooded with natural light, this twin room is ideal for friends or family travelling together — bright, airy, thoughtfully furnished.</p>
+          <div><span class="room-tag">Twin Beds</span><span class="room-tag">Natural Light</span><span class="room-tag">Thoughtful Touches</span></div>
+        </div>
+      </div>
+      <div style="text-align:center;margin-top:2rem"><button class="btn-cyan" onclick="showPage('rooms')"><span class="material-icons">arrow_forward</span> View Full Room Details</button></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <div class="section-label">Local Area</div>
+      <h2 class="section-title">History &amp; Beauty on Your <em>Doorstep</em></h2>
+      <div class="divider"></div>
+      <p class="section-subtitle">Normandy's most significant sites are within easy reach.</p>
+      <div class="attractions-grid">
+        <div class="glass-card attraction-card anim-fade" onclick="showPage('explore')"><img src="/images/omaha-beach.jpg" class="attraction-img" alt="Omaha Beach"><h4>D-Day Beaches</h4><div class="attraction-dist">23 km</div><p>Walk the sands where history turned. The Allied landing beaches are a profound, unforgettable experience.</p></div>
+        <div class="glass-card attraction-card anim-fade anim-delay-2" onclick="showPage('explore')"><img src="/images/cerisy-abbey.jpg" class="attraction-img" alt="Cerisy Abbey"><h4>Cerisy Abbey</h4><div class="attraction-dist">5 km</div><p>Founded in 1032 by the father of William the Conqueror — a treasure of Romanesque architecture, minutes away.</p></div>
+        <div class="glass-card attraction-card anim-fade anim-delay-4" onclick="showPage('explore')"><img src="/images/saint-lo.jpg" class="attraction-img" alt="Saint-Lô"><h4>Saint-Lô</h4><div class="attraction-dist">13 km</div><p>The 'capital of ruins' reborn. Visit the stud farm, restored town walls, and evocative ruins of Notre-Dame.</p></div>
+      </div>
+      <div style="text-align:center;margin-top:2rem"><button class="btn-cyan" onclick="showPage('explore')"><span class="material-icons">explore</span> Explore All Attractions</button></div>
+    </div>
+  </section>
+
+  <section style="padding-top:0">
+    <div class="container">
+      <div class="section-label">Guest Reviews</div>
+      <h2 class="section-title">What Our <em>Guests</em> Say</h2>
+      <div class="divider"></div>
+      <div class="testimonials-grid">
+        <div class="glass-card testimonial-card anim-fade"><div class="stars">★★★★★</div><p class="testimonial-text">"Warm welcome, lovely room, comfortable bed, modern spacious bathroom, excellent breakfast."</p><div class="testimonial-author"><div class="author-avatar"><span class="material-icons">person</span></div><div><div class="author-name">Simon</div><div class="author-origin">United Kingdom</div></div></div></div>
+        <div class="glass-card testimonial-card anim-fade anim-delay-2"><div class="stars">★★★★★</div><p class="testimonial-text">"Lacked nothing for 5 days. Immaculate rooms, extensive freshly prepared breakfast, wonderful evening meal option."</p><div class="testimonial-author"><div class="author-avatar"><span class="material-icons">person</span></div><div><div class="author-name">Ingrid</div><div class="author-origin">Netherlands</div></div></div></div>
+        <div class="glass-card testimonial-card anim-fade anim-delay-4"><div class="stars">★★★★★</div><p class="testimonial-text">"Warm welcome, delightful countryside house, peaceful, close to points of interest, made-to-measure breakfast."</p><div class="testimonial-author"><div class="author-avatar"><span class="material-icons">person</span></div><div><div class="author-name">Guest</div><div class="author-origin">France</div></div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="booking-cta">
+    <div class="glass-card booking-cta-inner">
+      <div class="section-label" style="text-align:center">Reserve Your Escape</div>
+      <h2>Ready to Experience <em style="font-style:italic;color:#00E5FF">Normandy</em>?</h2>
+      <p>From €85 per night. Breakfast included. Free cancellation up to 7 days before arrival.</p>
+      <div class="cta-btns">
+        <button class="btn-primary" onclick="showPage('book')"><span class="material-icons">calendar_today</span> Book Your Stay</button>
+        <button class="btn-secondary" onclick="showPage('contact')"><span class="material-icons">mail_outline</span> Get in Touch</button>
+      </div>
+    </div>
+  </section>
+
+  <footer><div class="footer-logo">MARIANNE</div><div class="footer-tagline">"A haven of peace in the heart of Normandy"</div><div class="footer-copyright">© 2024 Marianne Cottage. All rights reserved.</div></footer>
+</div>
+
+<!-- ROOMS -->
+<div class="page" id="page-rooms">
+  <section>
+    <div class="container">
+      <div class="section-label">Accommodation</div>
+      <h1 class="section-title">Rooms &amp; <em>Amenities</em></h1>
+      <div class="divider"></div>
+      <img src="/images/gallery/living-dining-room.jpeg" class="suite-img anim-fade" alt="Marianne Cottage — living and dining area">
+      <div class="glass-card" style="padding:2.5rem;margin-bottom:3rem;border-radius:24px">
+        <div><div class="section-label">Exclusive Use</div><h2 class="section-title" style="margin-bottom:0.75rem">Spacious <em>2-Bedroom Suite</em></h2><p style="color:rgba(200,220,255,0.65);line-height:1.8;max-width:680px">Two beautifully appointed bedrooms — one double, one twin — sharing a modern walk-in shower bathroom. The suite overlooks the private garden, with fresh linens, thoughtful personal touches, and the kind of warmth only a host's home can offer.</p></div>
+      </div>
+      <div class="rooms-grid" style="margin-bottom:3rem">
+        <div class="glass-card room-card anim-fade">
+          <div class="card-img-wrap"><img src="/images/gallery/bedroom-double-wide.jpeg" alt="Bedroom One"></div>
+          <h3>Bedroom One</h3>
+          <p>A generous double bed dressed in fine cotton linens. Soft lighting, considered décor, and garden views that greet you gently each morning.</p>
+          <div><span class="room-tag">Double Bed</span><span class="room-tag">Garden Views</span><span class="room-tag">Fresh Linens</span><span class="room-tag">Electric Kettle</span></div>
+        </div>
+        <div class="glass-card room-card anim-fade anim-delay-2">
+          <div class="card-img-wrap"><img src="/images/gallery/bedroom-twin-wide.jpeg" alt="Bedroom Two"></div>
+          <h3>Bedroom Two</h3>
+          <p>Bright and airy with twin beds — perfect for friends, siblings, or those who prefer their own space. Natural light pours in throughout the day.</p>
+          <div><span class="room-tag">Twin Beds</span><span class="room-tag">Natural Light</span><span class="room-tag">Fresh Linens</span><span class="room-tag">Electric Kettle</span></div>
+        </div>
+      </div>
+      <div class="amenities-grid" style="margin-bottom:3rem">
+        <div class="glass-card amenity-item anim-fade"><span class="material-icons">king_bed</span><span>Comfortable quality beds</span></div>
+        <div class="glass-card amenity-item anim-fade anim-delay-1"><span class="material-icons">shower</span><span>Modern walk-in shower</span></div>
+        <div class="glass-card amenity-item anim-fade anim-delay-2"><span class="material-icons">dry_cleaning</span><span>Fresh towels &amp; linens</span></div>
+        <div class="glass-card amenity-item anim-fade anim-delay-3"><span class="material-icons">coffee</span><span>Electric kettle in rooms</span></div>
+        <div class="glass-card amenity-item anim-fade anim-delay-1"><span class="material-icons">yard</span><span>Private garden views</span></div>
+        <div class="glass-card amenity-item anim-fade anim-delay-2"><span class="material-icons">wifi</span><span>Free high-speed WiFi</span></div>
+        <div class="glass-card amenity-item anim-fade anim-delay-3"><span class="material-icons">local_parking</span><span>Free private parking</span></div>
+        <div class="glass-card amenity-item anim-fade anim-delay-4"><span class="material-icons">smoke_free</span><span>Non-smoking property</span></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:3rem">
+        <div class="glass-card info-box breakfast"><img src="/images/gallery/breakfast-table-set.jpeg" class="breakfast-img" alt="Breakfast at Marianne Cottage"><div class="info-box-icon"><span class="material-icons">bakery_dining</span></div><h3>Breakfast Included</h3><p>Fresh croissants and baguettes from the local boulangerie, seasonal fruits, juice, yoghurt, and homemade jams. Special dietary requests accommodated with pleasure.</p></div>
+        <div class="glass-card info-box meal"><img src="/images/gallery/dining-table.jpeg" class="breakfast-img" alt="Dining at Marianne Cottage"><div class="info-box-icon"><span class="material-icons">restaurant</span></div><h3>Evening Meal Option</h3><p>Available by prior arrangement. Mark prepares a home-cooked dinner from locally sourced ingredients — a generous meal in true Norman tradition.<br><br><span class="price-highlight">From €20 per person</span></p></div>
+      </div>
+      <div style="text-align:center"><button class="btn-primary" onclick="showPage('book')"><span class="material-icons">calendar_today</span> Book This Suite</button></div>
+    </div>
+  </section>
+  <footer><div class="footer-logo">MARIANNE</div><div class="footer-tagline">"A haven of peace in the heart of Normandy"</div><div class="footer-copyright">© 2024 Marianne Cottage.</div></footer>
+</div>
+
+<!-- EXPLORE -->
+<div class="page" id="page-explore">
+  <section>
+    <div class="container">
+      <div class="section-label">Points of Interest</div>
+      <h1 class="section-title">Explore <em>Normandy</em></h1>
+      <div class="divider"></div>
+      <p class="section-subtitle">Marianne Cottage is ideally located for exploring the rich history and natural beauty of Normandy.</p>
+      <div class="filter-bar">
+        <button class="filter-btn active" onclick="filterPOI('all',this)">All</button>
+        <button class="filter-btn" onclick="filterPOI('ww2',this)">WW2 History</button>
+        <button class="filter-btn" onclick="filterPOI('heritage',this)">Heritage</button>
+        <button class="filter-btn" onclick="filterPOI('towns',this)">Towns</button>
+        <button class="filter-btn" onclick="filterPOI('museums',this)">Museums</button>
+        <button class="sort-btn" id="sortBtn" onclick="toggleSort()"><span class="material-icons" style="font-size:1rem">swap_vert</span><span id="sortLabel">Sort: Distance</span></button>
+      </div>
+      <div class="poi-grid" id="poiGrid">
+        <div class="glass-card poi-card" data-category="ww2" data-distance="23.3" data-popularity="97"><div class="poi-img-wrap"><img src="/images/poi/omaha-beach/1.jpg" alt="Omaha Beach"></div><span class="poi-cat-badge ww2">WW2</span><h4>Omaha Beach</h4><div class="poi-dist"><span class="material-icons" style="font-size:0.85rem">near_me</span> 23.3 km</div><p>One of five Allied landing beaches on D-Day. A profoundly moving experience.</p><div class="poi-access"><span class="material-icons">accessible</span> Accessibility: Good</div></div>
+        <div class="glass-card poi-card" data-category="ww2" data-distance="23.1" data-popularity="96"><div class="poi-img-wrap"><img src="/images/poi/american-cemetery/1.jpg" alt="Normandy American Cemetery"></div><span class="poi-cat-badge ww2">WW2</span><h4>Normandy American Cemetery</h4><div class="poi-dist"><span class="material-icons" style="font-size:0.85rem">near_me</span> 23.1 km</div><p>9,387 graves overlooking Omaha Beach. A place of deep reverence and reflection.</p><div class="poi-access"><span class="material-icons">accessible</span> Accessibility: Good</div></div>
+        <div class="glass-card poi-card" data-category="ww2" data-distance="24.7" data-popularity="92"><div class="poi-img-wrap"><img src="/images/poi/pointe-du-hoc/1.jpg" alt="Pointe du Hoc"></div><span class="poi-cat-badge ww2">WW2</span><h4>Pointe du Hoc</h4><div class="poi-dist"><span class="material-icons" style="font-size:0.85rem">near_me</span> 24.7 km</div><p>US Army Rangers scaled these 30-metre cliffs under enemy fire. Bomb craters and bunkers remain eerily intact.</p><div class="poi-access"><span class="material-icons">accessible_forward</span> Accessibility: Limited</div></div>
+        <div class="glass-card poi-card" data-category="ww2" data-distance="35" data-popularity="89"><div class="poi-img-wrap"><img src="/images/poi/arromanches/1.jpg" alt="Arromanches"></div><span class="poi-cat-badge ww2">WW2</span><h4>Arromanches</h4><div class="poi-dist"><span class="material-icons" style="font-size:0.85rem">near_me</span> 35 km</div><p>Remnants of the Mulberry prefabricated harbour are still visible from the beach — a feat of wartime engineering.</p><div class="poi-access"><span class="material-icons">accessible</span> Accessibility: Good</div></div>
+        <div class="glass-card poi-card" data-category="ww2" data-distance="18" data-popularity="78"><div class="poi-img-wrap"><img src="/images/poi/la-cambe/1.jpg" alt="La Cambe German Cemetery"></div><span class="poi-cat-badge ww2">WW2</span><h4>La Cambe German Cemetery</h4><div class="poi-dist"><span class="material-icons" style="font-size:0.85rem">near_me</span> 18 km</div><p>Dark basalt crosses mark 21,000+ German soldiers. A sombre, contemplative counterpoint to the Allied memorials.</p><div class="poi-access"><span class="material-icons">accessible</span> Accessibility: Good</div></div>
+        <div class="glass-card poi-card" data-category="ww2 museums" data-distance="25" data-popularity="88"><div class="poi-img-wrap"><img src="/images/overlord-museum.jpg" alt="Overlord Museum"></div><span class="poi-cat-badge ww2">WW2</span><span class="poi-cat-badge museums">Museum</span><h4>Overlord Museum</h4><div class="poi-dist"><span class="material-icons" style="font-size:0.85rem">near_me</span> 25 km</div><p>One of the most impressive collections of original WW2 military hardware in Europe.</p><div class="poi-access"><span class="material-icons">accessible</span> Accessibility: Good</div></div>
+        <div class="glass-card poi-card" data-category="heritage" data-distance="5" data-popularity="85"><div class="poi-img-wrap"><img src="/images/cerisy-abbey.jpg" alt="Cerisy Abbey"></div><span class="poi-cat-badge heritage">Heritage</span><h4>Cerisy Abbey</h4><div class="poi-dist"><span class="material-icons" style="font-size:0.85rem">near_me</span> 5 km</div><p>Founded in 1032 by Duke Robert I, father of William the Conqueror. A magnificent Romanesque survival.</p><div class="poi-access"><span class="material-icons">accessible</span> Accessibility: Good</div><div class="poi-special-note">★ Nearest attraction</div></div>
+        <div class="glass-card poi-card" data-category="heritage" data-distance="28" data-popularity="98"><div class="poi-img-wrap"><img src="/images/bayeux-cathedral.jpg" alt="Bayeux"></div><span class="poi-cat-badge heritage">Heritage</span><h4>Bayeux</h4><div class="poi-dist"><span class="material-icons" style="font-size:0.85rem">near_me</span> 28 km</div><p>First French town liberated after D-Day. Home to the world-famous 11th-century Bayeux Tapestry.</p><div class="poi-access"><span class="material-icons">accessible</span> Accessibility: Good</div></div>
+        <div class="glass-card poi-card" data-category="heritage" data-distance="20" data-popularity="75"><div class="poi-img-wrap" style="background:rgba(255,255,255,0.04)"></div><span class="poi-cat-badge heritage">Heritage</span><h4>Château de Balleroy</h4><div class="poi-dist"><span class="material-icons" style="font-size:0.85rem">near_me</span> 20 km</div><p>One of the finest early French classical châteaux, built 1626–1636, plus a hot-air balloon museum.</p><div class="poi-access"><span class="material-icons">accessible</span> Accessibility: Good</div></div>
+        <div class="glass-card poi-card" data-category="towns" data-distance="13" data-popularity="72"><div class="poi-img-wrap"><img src="/images/poi/saint-lo/1.jpg" alt="Saint-Lô"></div><span class="poi-cat-badge towns">Town</span><h4>Saint-Lô</h4><div class="poi-dist"><span class="material-icons" style="font-size:0.85rem">near_me</span> 13 km</div><p>The 'capital of ruins' reborn. Visit the stud farm, the restored town walls, and the haunting ruins of Notre-Dame.</p><div class="poi-access"><span class="material-icons">accessible</span> Accessibility: Good</div></div>
+        <div class="glass-card poi-card" data-category="towns" data-distance="35" data-popularity="74"><div class="poi-img-wrap"><img src="/images/poi/coutances/1.jpg" alt="Coutances"></div><span class="poi-cat-badge towns">Town</span><h4>Coutances</h4><div class="poi-dist"><span class="material-icons" style="font-size:0.85rem">near_me</span> 35 km</div><p>Dominated by its magnificent Gothic cathedral rising above the Norman plain. Beautiful botanical gardens.</p><div class="poi-access"><span class="material-icons">accessible</span> Accessibility: Good</div></div>
+        <div class="glass-card poi-card" data-category="towns heritage" data-distance="71" data-popularity="99"><div class="poi-img-wrap"><img src="/images/poi/mont-saint-michel/1.jpg" alt="Mont Saint-Michel"></div><span class="poi-cat-badge towns">Town</span><span class="poi-cat-badge heritage">Heritage</span><h4>Mont Saint-Michel</h4><div class="poi-dist"><span class="material-icons" style="font-size:0.85rem">near_me</span> 71 km</div><p>UNESCO World Heritage Site. Rising dramatically from the sea — breathtaking at any tide, in any weather.</p><div class="poi-access"><span class="material-icons">accessible</span> Accessibility: Good</div><div class="poi-special-note">Worth the drive!</div></div>
+      </div>
+    </div>
+  </section>
+  <footer><div class="footer-logo">MARIANNE</div><div class="footer-tagline">"A haven of peace in the heart of Normandy"</div><div class="footer-copyright">© 2024 Marianne Cottage.</div></footer>
+</div>
+
+<!-- BOOK -->
+<div class="page" id="page-book">
+  <section>
+    <div class="container">
+      <div class="section-label">Reserve Your Stay</div>
+      <h1 class="section-title">Book <em>Marianne Cottage</em></h1>
+      <div class="divider"></div>
+      <p class="section-subtitle">Two-bedroom suite, breakfast included. Free cancellation up to 7 days before arrival.</p>
+      <div class="rates-grid">
+        <div class="glass-card rate-card anim-fade"><div class="rate-season">Low Season</div><div class="rate-period">November – February</div><div class="rate-price">€85<span>/night</span></div><div class="rate-note">Breakfast included</div></div>
+        <div class="glass-card rate-card anim-fade anim-delay-2"><div class="rate-season">High Season</div><div class="rate-period">March – October</div><div class="rate-price">€120<span>/night</span></div><div class="rate-note">Breakfast included</div></div>
+        <div class="glass-card rate-card peak anim-fade anim-delay-4"><div class="rate-season">Peak Season</div><div class="rate-period">D-Day Commemoration Week</div><div class="rate-price">€140<span>/night</span></div><div class="rate-note">Breakfast included · High demand</div></div>
+      </div>
+      <div class="glass-card" style="padding:2.5rem;border-radius:24px;margin-bottom:2rem">
+        <h2 class="section-title" style="font-size:1.6rem;margin-bottom:1.75rem">Booking <em>Enquiry</em></h2>
+        <form onsubmit="submitBooking(event)">
+          <div class="form-grid">
+            <div class="form-group"><label>Full Name</label><input type="text" placeholder="Your name" required></div>
+            <div class="form-group"><label>Email Address</label><input type="email" placeholder="your@email.com" required></div>
+            <div class="form-group"><label>Phone Number</label><input type="tel" placeholder="+44 ..."></div>
+            <div class="form-group"><label>Number of Guests</label><select><option>1 guest</option><option>2 guests</option><option>3 guests</option><option>4 guests</option></select></div>
+            <div class="form-group"><label>Check-in Date</label><input type="date" required></div>
+            <div class="form-group"><label>Check-out Date</label><input type="date" required></div>
+            <div class="form-group full-width"><label>Special Requests</label><textarea placeholder="Dietary requirements, arrival time, evening meal request…"></textarea></div>
+          </div>
+          <div class="form-submit"><button type="submit" class="btn-primary"><span class="material-icons">send</span> Send Booking Enquiry</button></div>
+        </form>
+        <div class="cancellation-note"><span class="material-icons">check_circle_outline</span> Free cancellation up to 7 days before your arrival date.</div>
+      </div>
+      <div class="alt-booking">
+        <h3>Prefer to Book Another Way?</h3>
+        <p>Also available on Booking.com, or contact us directly.</p>
+        <div class="alt-btns"><button class="btn-cyan" onclick="showPage('contact')"><span class="material-icons">mail_outline</span> Contact Us Directly</button></div>
+      </div>
+    </div>
+  </section>
+  <footer><div class="footer-logo">MARIANNE</div><div class="footer-tagline">"A haven of peace in the heart of Normandy"</div><div class="footer-copyright">© 2024 Marianne Cottage.</div></footer>
+</div>
+
+<!-- CONTACT -->
+<div class="page" id="page-contact">
+  <section>
+    <div class="container">
+      <div class="section-label">Get in Touch</div>
+      <h1 class="section-title">Contact <em>Us</em></h1>
+      <div class="divider"></div>
+      <div class="contact-grid">
+        <div>
+          <div class="contact-info-block">
+            <div class="contact-item"><div class="contact-item-icon"><span class="material-icons">location_on</span></div><div><div class="contact-item-label">Address</div><div class="contact-item-value">1 La Haye, 50680 Couvains, France</div></div></div>
+            <div class="contact-item"><div class="contact-item-icon"><span class="material-icons">email</span></div><div><div class="contact-item-label">Email</div><div class="contact-item-value"><a href="mailto:mariannecattage@gmail.com">mariannecattage@gmail.com</a></div></div></div>
+            <div class="contact-item"><div class="contact-item-icon"><span class="material-icons">phone</span></div><div><div class="contact-item-label">Phone</div><div class="contact-item-value"><a href="tel:+33780731704">+33 (0)7 80 73 17 04</a></div></div></div>
+            <div class="contact-item"><div class="contact-item-icon"><span class="material-icons">flight</span></div><div><div class="contact-item-label">Nearest Airport</div><div class="contact-item-value">Caen–Carpiquet Airport (45 km)</div></div></div>
+          </div>
+          <div class="directions-box" style="margin-top:1.25rem">
+            <h4><span class="material-icons">warning_amber</span> Important: Getting Here</h4>
+            <p><strong style="color:rgba(255,200,120,0.9)">Please arrive via the village of Couvains.</strong> Many sat-nav systems route via the Belleval road — this is a poorly maintained potholed farm track and should be avoided.</p>
+          </div>
+          <div style="margin-top:1.25rem">
+            <div class="social-links">
+              <a href="#" class="social-link"><span class="material-icons" style="font-size:1rem">hotel</span> Booking.com</a>
+              <a href="#" class="social-link"><span class="material-icons" style="font-size:1rem">rate_review</span> TripAdvisor</a>
+            </div>
+          </div>
+        </div>
+        <div class="glass-card" style="padding:2.5rem;border-radius:24px">
+          <h2 class="section-title" style="font-size:1.5rem;margin-bottom:1.75rem">Send a <em>Message</em></h2>
+          <form onsubmit="submitContact(event)">
+            <div style="display:flex;flex-direction:column;gap:1.25rem">
+              <div class="form-group"><label>Your Name</label><input type="text" placeholder="Full name" required></div>
+              <div class="form-group"><label>Email Address</label><input type="email" placeholder="your@email.com" required></div>
+              <div class="form-group"><label>Message</label><textarea style="min-height:140px" placeholder="Your question or message…" required></textarea></div>
+              <div><button type="submit" class="btn-primary"><span class="material-icons">send</span> Send Message</button></div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+  <footer><div class="footer-logo">MARIANNE</div><div class="footer-tagline">"A haven of peace in the heart of Normandy"</div><div class="footer-copyright">© 2024 Marianne Cottage.</div></footer>
+</div>
+
+</div>
+
+<div id="toast" style="position:fixed;bottom:2rem;right:2rem;padding:1rem 1.5rem;background:rgba(0,229,255,0.12);backdrop-filter:blur(16px);border:1px solid rgba(0,229,255,0.25);border-radius:14px;color:#e8f0fe;font-size:0.88rem;display:none;align-items:center;gap:0.6rem;z-index:9999;box-shadow:0 8px 30px rgba(0,0,0,0.3)">
+  <span class="material-icons" style="color:#00E5FF">check_circle</span><span id="toastMsg">Message sent!</span>
+</div>
+
+<script>
+function showPage(name){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-links a').forEach(a=>a.classList.remove('active'));
+  const page=document.getElementById('page-'+name);
+  const link=document.getElementById('nav-'+name);
+  if(page){page.classList.add('active');window.scrollTo({top:0,behavior:'smooth'});}
+  if(link)link.classList.add('active');
+  document.getElementById('navLinks').classList.remove('open');
+  document.getElementById('hamburger').querySelector('.material-icons').textContent='menu';
+  setTimeout(triggerAnimations,100);
+}
+function toggleMenu(){
+  const nl=document.getElementById('navLinks');
+  const icon=document.getElementById('hamburger').querySelector('.material-icons');
+  nl.classList.toggle('open');
+  icon.textContent=nl.classList.contains('open')?'close':'menu';
+}
+let currentFilter='all',currentSort='distance';
+function filterPOI(cat,btn){
+  currentFilter=cat;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  applyPOI();
+}
+function toggleSort(){
+  currentSort=currentSort==='distance'?'popularity':'distance';
+  document.getElementById('sortLabel').textContent='Sort: '+(currentSort==='distance'?'Distance':'Popularity');
+  applyPOI();
+}
+function applyPOI(){
+  const grid=document.getElementById('poiGrid');
+  const cards=Array.from(grid.querySelectorAll('.poi-card'));
+  cards.forEach(c=>{
+    const cats=c.dataset.category||'';
+    c.classList.toggle('hidden',currentFilter!=='all'&&!cats.includes(currentFilter));
+  });
+  const visible=cards.filter(c=>!c.classList.contains('hidden'));
+  visible.sort((a,b)=>currentSort==='distance'?parseFloat(a.dataset.distance)-parseFloat(b.dataset.distance):parseFloat(b.dataset.popularity)-parseFloat(a.dataset.popularity));
+  visible.forEach(c=>grid.appendChild(c));
+}
+function submitBooking(e){e.preventDefault();showToast("Booking enquiry sent! We'll be in touch shortly.");e.target.reset();}
+function submitContact(e){e.preventDefault();showToast("Message sent! Mark & Kim will reply soon.");e.target.reset();}
+function showToast(msg){
+  const t=document.getElementById('toast');
+  document.getElementById('toastMsg').textContent=msg;
+  t.style.display='flex';
+  setTimeout(()=>t.style.display='none',4000);
+}
+function triggerAnimations(){
+  const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.12});
+  document.querySelectorAll('.anim-fade:not(.visible)').forEach(el=>obs.observe(el));
+}
+document.addEventListener('DOMContentLoaded',triggerAnimations);
+</script>
+</body>
+</html>

@@ -835,6 +835,7 @@
 		padding: 5rem 1.5rem 4rem;
 		text-align: center;
 		border-top: 1.5px solid rgba(42, 31, 14, 0.1);
+		padding-bottom: 80px;
 	}
 
 	.cta-inner {
@@ -872,6 +873,11 @@
 		background: #ede5d5;
 		border-top: 1px solid rgba(42, 31, 14, 0.18);
 		padding: 1.25rem 1.5rem;
+		position: fixed;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		z-index: 100;
 	}
 
 	.demo-footer-inner {

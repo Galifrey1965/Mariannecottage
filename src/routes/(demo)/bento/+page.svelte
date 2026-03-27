@@ -726,6 +726,7 @@
 	.section-booking {
 		background: #F5F0E8;
 		padding: 24px 12px 48px;
+		padding-bottom: 100px;
 	}
 	.booking-grid {
 		display: grid;
@@ -851,6 +852,11 @@
 		display: flex;
 		flex-direction: column;
 		gap: 12px;
+		position: fixed;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		z-index: 100;
 	}
 	.footer-title {
 		font-family: system-ui, sans-serif;

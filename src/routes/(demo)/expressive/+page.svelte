@@ -436,6 +436,9 @@
 		margin: 0 auto;
 		padding: 5rem 2rem;
 	}
+	#shapes {
+		padding-bottom: 100px;
+	}
 
 	/* ── Scroll reveal ───────────────────────────────────────────── */
 	.reveal {
@@ -964,6 +967,11 @@
 		padding: 2.5rem 2rem 3rem;
 		background: hsl(130,14%,22%);
 		color: hsl(130,20%,80%);
+		position: fixed;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		z-index: 100;
 	}
 	.footer-title {
 		font-size: 0.7rem;

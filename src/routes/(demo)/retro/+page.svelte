@@ -790,6 +790,7 @@
 		text-align: center;
 		background: radial-gradient(ellipse at center, #0d0d1e 0%, #080808 70%);
 		border-top: 1px solid #1a1a2c;
+		padding-bottom: 80px;
 	}
 	.cta-inner {
 		max-width: 700px;
@@ -854,6 +855,11 @@
 		background: #050508;
 		border-top: 1px solid #1a1a2c;
 		padding: 1.25rem 1.5rem;
+		position: fixed;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		z-index: 100;
 	}
 	.demo-footer-inner {
 		max-width: 1200px;

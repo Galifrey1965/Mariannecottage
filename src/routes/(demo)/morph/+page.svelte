@@ -521,7 +521,7 @@
 	.demo-section {
 		max-width: 860px;
 		margin: 0 auto 5rem;
-		padding: 0 1.5rem;
+		padding: 0 1.5rem 100px;
 	}
 	.section-header {
 		margin-bottom: 2rem;
@@ -1008,6 +1008,12 @@
 		margin-top: 4rem;
 		padding: 2rem 1.5rem;
 		border-top: 1px solid rgba(0,0,0,0.08);
+		position: fixed;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		z-index: 100;
+		background: #f0eee9;
 	}
 	.demo-nav-strip {
 		display: flex;

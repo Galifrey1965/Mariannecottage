@@ -943,6 +943,7 @@
 	.booking {
 		padding: 6rem 2rem 8rem;
 		background: transparent;
+		padding-bottom: 120px;
 	}
 
 	.booking-inner {
@@ -1084,8 +1085,11 @@
 	   DEMO FOOTER NAV
 	   ═══════════════════════════════════════ */
 	.demo-footer {
-		position: relative;
-		z-index: 10;
+		position: fixed;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		z-index: 100;
 		background: #2a2a2a;
 		padding: 2.5rem 2rem;
 		display: flex;

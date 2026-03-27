@@ -683,7 +683,7 @@
 	/* ── Booking ─────────────────────────────── */
 	.booking-section {
 		max-width: 700px;
-		padding-bottom: 100px;
+		padding-bottom: 160px;
 	}
 
 	.booking-card {
@@ -776,11 +776,15 @@
 
 	/* ── Demo footer ─────────────────────────── */
 	.demo-footer {
-		position: relative;
-		z-index: 1;
+		position: fixed;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		z-index: 100;
 		padding: 40px 24px 56px;
 		display: flex;
 		justify-content: center;
+		background: #0d1f14;
 	}
 
 	.demo-nav-pill {

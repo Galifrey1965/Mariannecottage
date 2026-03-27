@@ -1340,6 +1340,7 @@ Bayeux fell without a fight on June 7 — the Resistance had specifically warned
 	.memorial-section {
 		background: #0d1117;
 		padding: 0;
+		padding-bottom: 100px;
 	}
 	.memorial-section .section-inner {
 		opacity: 0;
@@ -1528,6 +1529,11 @@ Bayeux fell without a fight on June 7 — the Resistance had specifically warned
 		padding: 3rem 2rem;
 		text-align: center;
 		border-top: 1px solid rgba(201,168,76,0.15);
+		position: fixed;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		z-index: 100;
 	}
 	.footer-label {
 		font-family: 'Courier New', monospace;

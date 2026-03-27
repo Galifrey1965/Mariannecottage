@@ -617,6 +617,7 @@
 		opacity: 0;
 		transform: translateY(40px);
 		transition: opacity 0.9s ease, transform 0.9s ease;
+		padding-bottom: 80px;
 	}
 	.s-book-footer.reveal {
 		opacity: 1;
@@ -783,6 +784,11 @@
 		font-size: 0.72rem;
 		font-family: 'Courier New', monospace;
 		letter-spacing: 0.05em;
+		position: fixed;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		z-index: 100;
 	}
 	.demo-footer-nav a { color: #8aab8a; text-decoration: none; }
 	.demo-footer-nav a:hover { color: #fff; }

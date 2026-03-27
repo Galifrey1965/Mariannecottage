@@ -822,6 +822,7 @@
 	background: #0d0b14;
 	overflow: hidden;
 	text-align: center;
+	padding-bottom: 100px;
 }
 
 .cta-orb {
@@ -903,6 +904,11 @@
 	padding: 2.5rem 2rem;
 	text-align: center;
 	border-top: 1px solid rgba(255,255,255,0.07);
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	z-index: 100;
 }
 
 .footer-label {

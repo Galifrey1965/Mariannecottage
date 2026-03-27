@@ -1,7 +1,46 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 
-	let hoveredCard: string | null = $state(null);
+	let hoveredProto: string | null = $state(null);
+	let hoveredDemo: string | null = $state(null);
+
+	const prototypes = [
+		{
+			file: '/prototypes/prototype.html',
+			name: 'Liquid Glass',
+			desc: 'Animated mesh gradient, layered glassmorphism, mouse-tracked cyan & amber accents — complete pages with real property images',
+			palette: ['#0a1a2e', '#00d4ff', '#ff8c00', '#1a3a5c'],
+			label: 'Dark · Glass',
+		},
+		{
+			file: '/prototypes/prototype-02.html',
+			name: 'Neo-Brutalist Editorial',
+			desc: 'Raw black & electric yellow, Bebas Neue, zero border-radius, offset press-effect shadows, scanline texture',
+			palette: ['#0a0a0a', '#f5e642', '#f0f0f0', '#333333'],
+			label: 'Dark · Bold',
+		},
+		{
+			file: '/prototypes/prototype-03.html',
+			name: 'Bento Spatial Light',
+			desc: 'White-mode asymmetric bento grid, Plus Jakarta Sans, Apple blue accents, spatial depth layering',
+			palette: ['#ffffff', '#0066ff', '#f5f5f7', '#1d1d1f'],
+			label: 'Light · Grid',
+		},
+		{
+			file: '/prototypes/prototype-04.html',
+			name: 'Cinematic Luxury',
+			desc: 'Deep charcoal, Cormorant Garamond italic, warm gold highlights, diagonal clip-path section cuts',
+			palette: ['#0c0a07', '#c9a96e', '#1a1410', '#f5f0e8'],
+			label: 'Dark · Luxury',
+		},
+		{
+			file: '/prototypes/prototype-05.html',
+			name: 'Terrain & Organic',
+			desc: 'Parchment warmth, Playfair Display, forest green, topographic SVG patterns, trail-style POI timeline',
+			palette: ['#f5efe0', '#5a7c5a', '#c8b89a', '#2c3e28'],
+			label: 'Light · Organic',
+		},
+	];
 
 	const categories = [
 		{
@@ -71,7 +110,7 @@
 	];
 
 	onMount(() => {
-		const sections = document.querySelectorAll<HTMLElement>('.category-section');
+		const sections = document.querySelectorAll<HTMLElement>('.animate-section');
 		const observer = new IntersectionObserver(
 			(entries) => {
 				entries.forEach((entry) => {
@@ -81,7 +120,7 @@
 					}
 				});
 			},
-			{ threshold: 0.08 }
+			{ threshold: 0.06 }
 		);
 		sections.forEach((el) => observer.observe(el));
 		return () => observer.disconnect();
@@ -90,42 +129,85 @@
 
 <svelte:head>
 	<title>Design Showcase — Marianne Cottage</title>
+	<meta name="description" content="27 UI/UX design explorations for Marianne Cottage — 5 standalone prototypes and 22 SvelteKit demos." />
 </svelte:head>
 
 <div class="page">
-	<!-- Header -->
+	<!-- Hero -->
 	<header class="hero">
 		<div class="hero-inner">
 			<a class="back-link" href="https://mariannecottage.netlify.app" target="_blank" rel="noopener">
 				← mariannecottage.netlify.app
 			</a>
 			<p class="pretitle">MARIANNE COTTAGE · DESIGN SHOWCASE</p>
-			<h1 class="headline">22 Demos. Every Trend.</h1>
+			<h1 class="headline">27 Designs.<br />Every Direction.</h1>
 			<p class="subline">
-				A living catalogue of modern web design patterns — from CSS scroll-driven animations to WW2
-				scrollytelling. Each demo is self-contained and built for a luxury Normandy cottage.
+				Five standalone HTML/CSS prototypes exploring different aesthetic directions for the cottage,
+				plus 22 SvelteKit demos covering every major modern web design trend.
 			</p>
 			<div class="pills">
-				<span class="pill">22 demos</span>
-				<span class="pill">Built with SvelteKit</span>
+				<span class="pill">5 prototypes</span>
+				<span class="pill">22 SvelteKit demos</span>
+				<span class="pill">Marianne Cottage, Normandy</span>
 			</div>
 		</div>
 	</header>
 
-	<!-- Categories -->
 	<main class="main">
+		<!-- Prototypes section -->
+		<section class="animate-section proto-section">
+			<div class="section-header">
+				<h2 class="section-title">Standalone Prototypes</h2>
+				<p class="section-sub">Complete HTML/CSS/JS multi-page experiences — no framework required</p>
+			</div>
+			<div class="proto-grid">
+				{#each prototypes as proto, i}
+					<a
+						class="proto-card"
+						href={proto.file}
+						target="_blank"
+						rel="noopener"
+						style="--delay: {i * 0.09}s"
+						onmouseenter={() => (hoveredProto = proto.file)}
+						onmouseleave={() => (hoveredProto = null)}
+						class:proto-card--hovered={hoveredProto === proto.file}
+					>
+						<div class="proto-palette">
+							{#each proto.palette as swatch}
+								<span class="swatch" style="background: {swatch}"></span>
+							{/each}
+						</div>
+						<div class="proto-body">
+							<span class="proto-label">{proto.label}</span>
+							<p class="proto-name">{proto.name}</p>
+							<p class="proto-desc">{proto.desc}</p>
+							<span class="view-link">Open prototype →</span>
+						</div>
+					</a>
+				{/each}
+			</div>
+		</section>
+
+		<div class="divider"></div>
+
+		<!-- Demo categories -->
+		<div class="demos-header animate-section">
+			<h2 class="section-title">SvelteKit Demos</h2>
+			<p class="section-sub">22 self-contained demos — each a fully-built design system for the cottage</p>
+		</div>
+
 		{#each categories as category}
-			<section class="category-section" style="--accent: {category.accent}">
-				<h2 class="category-heading">{category.label}</h2>
+			<section class="animate-section category-section" style="--accent: {category.accent}">
+				<h3 class="category-heading">{category.label}</h3>
 				<div class="card-grid">
 					{#each category.demos as demo, i}
 						<a
 							class="card"
 							href={demo.route}
 							style="--delay: {i * 0.07}s"
-							onmouseenter={() => (hoveredCard = category.id + demo.route)}
-							onmouseleave={() => (hoveredCard = null)}
-							class:card--hovered={hoveredCard === category.id + demo.route}
+							onmouseenter={() => (hoveredDemo = category.id + demo.route)}
+							onmouseleave={() => (hoveredDemo = null)}
+							class:card--hovered={hoveredDemo === category.id + demo.route}
 						>
 							<div class="card-accent-bar"></div>
 							<div class="card-body">
@@ -141,7 +223,6 @@
 		{/each}
 	</main>
 
-	<!-- Footer -->
 	<footer class="footer">
 		<div class="footer-inner">
 			<p class="footer-copy">
@@ -170,7 +251,7 @@
 	}
 
 	.hero-inner {
-		max-width: 900px;
+		max-width: 960px;
 		margin: 0 auto;
 		position: relative;
 	}
@@ -181,7 +262,7 @@
 		right: 0;
 		font-family: 'Inter', sans-serif;
 		font-size: 0.75rem;
-		color: rgba(240, 238, 233, 0.55);
+		color: rgba(240, 238, 233, 0.5);
 		text-decoration: none;
 		letter-spacing: 0.02em;
 		transition: color 0.2s;
@@ -195,7 +276,7 @@
 		font-family: 'Courier New', Courier, monospace;
 		font-size: 0.7rem;
 		letter-spacing: 0.18em;
-		color: rgba(240, 238, 233, 0.5);
+		color: rgba(240, 238, 233, 0.45);
 		margin-bottom: 1.25rem;
 		text-transform: uppercase;
 	}
@@ -214,7 +295,7 @@
 		font-size: 1rem;
 		font-weight: 300;
 		line-height: 1.65;
-		color: rgba(240, 238, 233, 0.72);
+		color: rgba(240, 238, 233, 0.7);
 		max-width: 640px;
 		margin-bottom: 1.75rem;
 	}
@@ -228,55 +309,192 @@
 	.pill {
 		display: inline-block;
 		padding: 0.35rem 0.85rem;
-		border: 1px solid rgba(240, 238, 233, 0.25);
+		border: 1px solid rgba(240, 238, 233, 0.22);
 		border-radius: 999px;
 		font-family: 'Inter', sans-serif;
 		font-size: 0.78rem;
 		font-weight: 500;
-		color: rgba(240, 238, 233, 0.75);
+		color: rgba(240, 238, 233, 0.72);
 		letter-spacing: 0.03em;
 	}
 
-	/* ── Main content ────────────────────────────────────────── */
+	/* ── Main ────────────────────────────────────────────────── */
 	.main {
 		flex: 1;
-		max-width: 960px;
+		max-width: 1040px;
 		margin: 0 auto;
 		padding: 3rem 1.5rem 4rem;
 		width: 100%;
 	}
 
-	/* ── Category sections ───────────────────────────────────── */
-	.category-section {
-		margin-bottom: 3.5rem;
+	/* ── Animate sections ─────────────────────────────────────── */
+	.animate-section {
 		opacity: 0;
 		transform: translateY(20px);
 		transition: opacity 0.5s ease, transform 0.5s ease;
 	}
 
-	.category-section.visible {
+	.animate-section.visible {
 		opacity: 1;
 		transform: translateY(0);
 	}
 
+	/* ── Section headers ──────────────────────────────────────── */
+	.section-header,
+	.demos-header {
+		margin-bottom: 1.5rem;
+	}
+
+	.section-title {
+		font-family: 'Playfair Display', Georgia, serif;
+		font-size: 1.6rem;
+		font-weight: 700;
+		color: #1a2418;
+		margin-bottom: 0.35rem;
+	}
+
+	.section-sub {
+		font-family: 'Inter', sans-serif;
+		font-size: 0.9rem;
+		color: #7a7a72;
+		font-weight: 300;
+	}
+
+	.divider {
+		border: none;
+		border-top: 1px solid rgba(58, 58, 58, 0.1);
+		margin: 3rem 0;
+	}
+
+	/* ── Prototype grid ───────────────────────────────────────── */
+	.proto-section {
+		margin-bottom: 0;
+	}
+
+	.proto-grid {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		gap: 1rem;
+	}
+
+	@media (min-width: 680px) {
+		.proto-grid {
+			grid-template-columns: repeat(3, 1fr);
+		}
+	}
+
+	@media (min-width: 900px) {
+		.proto-grid {
+			grid-template-columns: repeat(5, 1fr);
+		}
+	}
+
+	/* ── Prototype card ───────────────────────────────────────── */
+	.proto-card {
+		background: #fff;
+		border-radius: 12px;
+		box-shadow: 0 1px 4px rgba(0, 0, 0, 0.07), 0 2px 8px rgba(0, 0, 0, 0.04);
+		text-decoration: none;
+		color: inherit;
+		display: flex;
+		flex-direction: column;
+		overflow: hidden;
+		transition: transform 0.2s ease, box-shadow 0.2s ease;
+		opacity: 0;
+		transform: translateY(16px);
+	}
+
+	.animate-section.visible .proto-card {
+		opacity: 1;
+		transform: translateY(0);
+		transition:
+			opacity 0.4s ease var(--delay, 0s),
+			transform 0.4s ease var(--delay, 0s),
+			box-shadow 0.2s ease;
+	}
+
+	.proto-card--hovered,
+	.proto-card:hover {
+		transform: translateY(-3px) !important;
+		box-shadow: 0 6px 20px rgba(0, 0, 0, 0.13), 0 12px 32px rgba(0, 0, 0, 0.06) !important;
+	}
+
+	.proto-palette {
+		display: flex;
+		height: 36px;
+		flex-shrink: 0;
+	}
+
+	.swatch {
+		flex: 1;
+		display: block;
+	}
+
+	.proto-body {
+		padding: 0.85rem 0.9rem 0.8rem;
+		display: flex;
+		flex-direction: column;
+		gap: 0.3rem;
+		flex: 1;
+	}
+
+	.proto-label {
+		font-family: 'Courier New', Courier, monospace;
+		font-size: 0.62rem;
+		font-weight: 700;
+		letter-spacing: 0.08em;
+		color: #9a9a92;
+		text-transform: uppercase;
+	}
+
+	.proto-name {
+		font-family: 'Playfair Display', Georgia, serif;
+		font-size: 0.95rem;
+		font-weight: 700;
+		color: #1a2418;
+		line-height: 1.2;
+	}
+
+	.proto-desc {
+		font-family: 'Inter', sans-serif;
+		font-size: 0.78rem;
+		color: #6a6a6a;
+		line-height: 1.5;
+		flex: 1;
+	}
+
+	.view-link {
+		font-family: 'Inter', sans-serif;
+		font-size: 0.75rem;
+		font-weight: 600;
+		color: #7a9e7e;
+		display: block;
+		margin-top: 0.4rem;
+		letter-spacing: 0.02em;
+	}
+
+	/* ── Category sections ────────────────────────────────────── */
+	.category-section {
+		margin-bottom: 3rem;
+	}
+
 	.category-heading {
 		font-family: 'Inter', sans-serif;
-		font-size: 0.72rem;
+		font-size: 0.7rem;
 		font-weight: 600;
 		letter-spacing: 0.16em;
 		text-transform: uppercase;
-		font-variant: small-caps;
 		color: var(--accent);
-		margin-bottom: 1.1rem;
+		margin-bottom: 1rem;
 		padding-bottom: 0.5rem;
 		border-bottom: 1px solid rgba(58, 58, 58, 0.1);
 	}
 
-	/* ── Card grid ───────────────────────────────────────────── */
+	/* ── Demo card grid ───────────────────────────────────────── */
 	.card-grid {
 		display: grid;
 		grid-template-columns: repeat(2, 1fr);
-		gap: 1rem;
+		gap: 0.85rem;
 	}
 
 	@media (min-width: 840px) {
@@ -285,7 +503,6 @@
 		}
 	}
 
-	/* ── Demo card ───────────────────────────────────────────── */
 	.card {
 		background: #ffffff;
 		border-radius: 12px;
@@ -300,13 +517,12 @@
 		transform: translateY(16px);
 	}
 
-	.category-section.visible .card {
+	.animate-section.visible .card {
 		opacity: 1;
 		transform: translateY(0);
 		transition:
 			opacity 0.4s ease var(--delay, 0s),
 			transform 0.4s ease var(--delay, 0s),
-			box-shadow 0.2s ease,
 			box-shadow 0.2s ease;
 	}
 
@@ -334,7 +550,7 @@
 		display: inline-block;
 		align-self: flex-start;
 		font-family: 'Courier New', Courier, monospace;
-		font-size: 0.68rem;
+		font-size: 0.67rem;
 		font-weight: 600;
 		background: #1a2418;
 		color: #f0eee9;
@@ -345,7 +561,7 @@
 
 	.card-name {
 		font-family: 'Playfair Display', Georgia, serif;
-		font-size: 1.05rem;
+		font-size: 1rem;
 		font-weight: 700;
 		color: #1a2418;
 		line-height: 1.25;
@@ -354,21 +570,10 @@
 
 	.card-desc {
 		font-family: 'Inter', sans-serif;
-		font-size: 0.845rem;
+		font-size: 0.83rem;
 		color: #6a6a6a;
 		line-height: 1.5;
 		flex: 1;
-	}
-
-	.view-link {
-		font-family: 'Inter', sans-serif;
-		font-size: 0.78rem;
-		font-weight: 600;
-		color: #7a9e7e;
-		text-align: right;
-		display: block;
-		margin-top: 0.5rem;
-		letter-spacing: 0.02em;
 	}
 
 	/* ── Footer ──────────────────────────────────────────────── */
@@ -379,7 +584,7 @@
 	}
 
 	.footer-inner {
-		max-width: 900px;
+		max-width: 960px;
 		margin: 0 auto;
 		display: flex;
 		flex-direction: column;
@@ -397,7 +602,7 @@
 	.footer-back {
 		font-family: 'Inter', sans-serif;
 		font-size: 0.78rem;
-		color: rgba(240, 238, 233, 0.5);
+		color: rgba(240, 238, 233, 0.48);
 		text-decoration: none;
 		transition: color 0.2s;
 	}

@@ -323,6 +323,7 @@
 		width: 100%;
 		min-height: 100vh;
 		overflow-x: hidden;
+		padding-bottom: 100px;
 	}
 
 	/* ── 1. PARALLAX HERO ───────────────────────────────────────────────────── */
@@ -965,6 +966,11 @@
 		border-top: 1px solid rgba(58, 58, 58, 0.1);
 		text-align: center;
 		background: #f0eee9;
+		position: fixed;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		z-index: 100;
 	}
 
 	.demo-footer-label {

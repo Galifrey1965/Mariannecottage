@@ -511,6 +511,7 @@
 		max-width: 900px;
 		margin: 0 auto;
 		padding: 0 1rem;
+		padding-bottom: 100px;
 	}
 	.section {
 		padding: 3rem 0;
@@ -1033,6 +1034,11 @@
 		color: #c8c0b4;
 		padding: 2rem 1.5rem;
 		margin-top: 2rem;
+		position: fixed;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		z-index: 100;
 	}
 	.footer-label {
 		font-size: 0.7rem;

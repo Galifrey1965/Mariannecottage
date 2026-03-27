@@ -457,6 +457,7 @@
 		background: #FAFAF8;
 		padding: 6rem 6vw;
 		border-bottom: 8px solid #0D0D0D;
+		padding-bottom: 100px;
 	}
 
 	.booking-inner {
@@ -557,6 +558,11 @@
 		flex-direction: column;
 		gap: 1rem;
 		border-top: 8px solid #0D0D0D;
+		position: fixed;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		z-index: 100;
 	}
 
 	.footer-title {
