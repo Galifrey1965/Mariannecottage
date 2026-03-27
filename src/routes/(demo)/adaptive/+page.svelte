@@ -47,7 +47,7 @@
 			accentLight: '#e5edf0',
 			accentDark: '#3a5560',
 			headline: 'Walk through centuries',
-			subline: 'From tapestries to tank landings — Normandy's past is layered beneath every cobblestone.',
+			subline: "From tapestries to tank landings — Normandy's past is layered beneath every cobblestone.",
 			room: 'Historian Suite',
 			roomDesc: 'A curated library of local history, antique maps, and a writing desk facing the orchard.',
 			pois: [
