@@ -387,14 +387,10 @@
 <!-- ════════════════════════════════════════════════════════════════════════
      FOOTER NAV
      ════════════════════════════════════════════════════════════════════════ -->
-<footer class="demo-footer">
-	<nav class="demo-nav-strip">
-		<a href="/demo" class="demo-link">← All demos</a>
-		{#each demos as slug}
-			<a href="/{slug}" class="demo-link" class:demo-active={slug === 'morph'}>{slug}</a>
-		{/each}
-	</nav>
-</footer>
+<a href="/demo" class="demo-home-btn" title="Back to demo home">
+	<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+	<span>Demo home</span>
+</a>
 
 <style>
 	/* ── View Transition animations ──────────────────────────────────────────── */
@@ -1003,38 +999,35 @@
 	}
 	.nav-next:hover, .nav-confirm:hover { background: #5e8462; }
 
-	/* ── Footer nav ──────────────────────────────────────────────────────────── */
-	.demo-footer {
-		margin-top: 4rem;
-		padding: 2rem 1.5rem;
-		border-top: 1px solid rgba(0,0,0,0.08);
+	/* ── Demo home button ─────────────────────────── */
+	.demo-home-btn {
 		position: fixed;
-		bottom: 0;
-		left: 0;
-		right: 0;
-		z-index: 100;
-		background: #f0eee9;
-	}
-	.demo-nav-strip {
+		top: 14px;
+		right: 14px;
+		z-index: 9999;
 		display: flex;
-		flex-wrap: wrap;
-		gap: 0.4rem 0.6rem;
-		justify-content: center;
-		max-width: 860px;
-		margin: 0 auto;
-	}
-	.demo-link {
-		font-size: 0.78rem;
-		color: #888;
+		align-items: center;
+		gap: 7px;
+		padding: 9px 16px 9px 11px;
+		background: #b8ff3c;
+		backdrop-filter: blur(10px);
+		-webkit-backdrop-filter: blur(10px);
+		border: 1px solid rgba(140, 210, 0, 0.35);
+		border-radius: 999px;
+		color: #0d1a05;
 		text-decoration: none;
-		padding: 0.25rem 0.6rem;
-		border-radius: 4px;
-		transition: color 0.15s, background 0.15s;
-	}
-	.demo-link:hover { color: #3a3a3a; background: rgba(0,0,0,0.06); }
-	.demo-active {
-		color: #7a9e7e !important;
+		font-family: 'Inter', system-ui, -apple-system, sans-serif;
+		font-size: 0.7rem;
 		font-weight: 600;
-		background: rgba(122, 158, 126, 0.12) !important;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+		box-shadow: 0 2px 20px rgba(130, 220, 0, 0.35), 0 1px 4px rgba(0, 0, 0, 0.15);
+	}
+
+	.demo-home-btn:hover {
+		background: #caff52;
+		transform: translateY(-1px);
+		box-shadow: 0 4px 28px rgba(130, 220, 0, 0.55);
 	}
 </style>

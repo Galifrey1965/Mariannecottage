@@ -228,43 +228,10 @@
 <!-- ══════════════════════════════════════
      DEMO NAV FOOTER
      ══════════════════════════════════════ -->
-<footer class="demo-footer">
-	<p class="demo-footer-label">MarianneCottage Design Demos</p>
-	<nav class="demo-nav" aria-label="All demos">
-		<a href="/demo" class="demo-link">← All demos</a>
-		{#each [
-			['historian','Historian'],
-			['living','Living'],
-			['nature','Nature'],
-			['story','Story'],
-			['brutal','Brutal'],
-			['calm','Calm'],
-			['bento','Bento'],
-			['kinetic','Kinetic'],
-			['adaptive','Adaptive'],
-			['ambient','Ambient'],
-			['context','Context'],
-			['retro','Retro'],
-			['expressive','Expressive'],
-			['spatial','Spatial'],
-			['micro','Micro'],
-			['ergonomic','Ergonomic'],
-			['liquid','Liquid'],
-			['scroll-anim','Scroll-Anim'],
-			['morph','Morph'],
-			['handmade','Handmade'],
-			['iridescent','Iridescent'],
-			['dday','Dday'],
-		] as [slug, label]}
-			<a
-				href="/{slug}"
-				class="demo-link"
-				class:demo-link--active={slug === 'scroll-anim'}
-				aria-current={slug === 'scroll-anim' ? 'page' : undefined}
-			>{label}</a>
-		{/each}
-	</nav>
-</footer>
+<a href="/demo" class="demo-home-btn" title="Back to demo home">
+	<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+	<span>Demo home</span>
+</a>
 
 <style>
 	/* ═══════════════════════════════════════
@@ -943,7 +910,6 @@
 	.booking {
 		padding: 6rem 2rem 8rem;
 		background: transparent;
-		padding-bottom: 120px;
 	}
 
 	.booking-inner {
@@ -1081,57 +1047,36 @@
 		}
 	}
 
-	/* ═══════════════════════════════════════
-	   DEMO FOOTER NAV
-	   ═══════════════════════════════════════ */
-	.demo-footer {
+	/* ── Demo home button ─────────────────────────── */
+	.demo-home-btn {
 		position: fixed;
-		bottom: 0;
-		left: 0;
-		right: 0;
-		z-index: 100;
-		background: #2a2a2a;
-		padding: 2.5rem 2rem;
+		top: 14px;
+		right: 14px;
+		z-index: 9999;
 		display: flex;
-		flex-direction: column;
 		align-items: center;
-		gap: 1.25rem;
-	}
-
-	.demo-footer-label {
-		font-size: 0.65rem;
-		font-weight: 600;
-		letter-spacing: 0.2em;
-		text-transform: uppercase;
-		color: rgba(255,255,255,0.35);
-	}
-
-	.demo-nav {
-		display: flex;
-		flex-wrap: wrap;
-		justify-content: center;
-		gap: 0.35rem 0.5rem;
-		max-width: 860px;
-	}
-
-	.demo-link {
-		color: rgba(255,255,255,0.5);
+		gap: 7px;
+		padding: 9px 16px 9px 11px;
+		background: #b8ff3c;
+		backdrop-filter: blur(10px);
+		-webkit-backdrop-filter: blur(10px);
+		border: 1px solid rgba(140, 210, 0, 0.35);
+		border-radius: 999px;
+		color: #0d1a05;
 		text-decoration: none;
-		font-size: 0.75rem;
-		padding: 0.3rem 0.65rem;
-		border-radius: 100px;
-		border: 1px solid transparent;
-		transition: color 0.2s, border-color 0.2s, background 0.2s;
+		font-family: 'Inter', system-ui, -apple-system, sans-serif;
+		font-size: 0.7rem;
+		font-weight: 600;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+		box-shadow: 0 2px 20px rgba(130, 220, 0, 0.35), 0 1px 4px rgba(0, 0, 0, 0.15);
 	}
-	.demo-link:hover {
-		color: rgba(255,255,255,0.9);
-		border-color: rgba(255,255,255,0.2);
-		background: rgba(255,255,255,0.06);
-	}
-	.demo-link--active {
-		color: #7a9e7e;
-		border-color: rgba(122,158,126,0.5);
-		background: rgba(122,158,126,0.1);
+
+	.demo-home-btn:hover {
+		background: #caff52;
+		transform: translateY(-1px);
+		box-shadow: 0 4px 28px rgba(130, 220, 0, 0.55);
 	}
 
 	/* ═══════════════════════════════════════

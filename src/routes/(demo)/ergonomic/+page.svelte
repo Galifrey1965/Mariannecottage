@@ -426,39 +426,10 @@
 	</section>
 </main>
 
-<!-- ── Footer nav ─────────────────────────────────────────────────────────── -->
-<footer class="demo-footer">
-	<p class="footer-label">Design Trend Demos</p>
-	<nav class="footer-nav" aria-label="Demo pages">
-		<a class="footer-link" href="/demo">← All demos</a>
-		{#each [
-			['brutal', 'brutal'],
-			['calm', 'calm'],
-			['bento', 'bento'],
-			['kinetic', 'kinetic'],
-			['adaptive', 'adaptive'],
-			['ambient', 'ambient'],
-			['context', 'context'],
-			['retro', 'retro'],
-			['expressive', 'expressive'],
-			['spatial', 'spatial'],
-			['micro', 'micro'],
-			['ergonomic', 'ergonomic'],
-			['liquid', 'liquid'],
-			['scroll-anim', 'scroll-anim'],
-			['morph', 'morph'],
-			['handmade', 'handmade'],
-			['iridescent', 'iridescent'],
-			['dday', 'dday']
-		] as [href, label]}
-			<a
-				class="footer-link"
-				class:footer-active={href === 'ergonomic'}
-				href="/{href}"
-			>{label}</a>
-		{/each}
-	</nav>
-</footer>
+<a href="/demo" class="demo-home-btn" title="Back to demo home">
+	<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+	<span>Demo home</span>
+</a>
 
 <style>
 	/* ── Variables ───────────────────────────────────────────────────────── */
@@ -511,7 +482,6 @@
 		max-width: 900px;
 		margin: 0 auto;
 		padding: 0 1rem;
-		padding-bottom: 100px;
 	}
 	.section {
 		padding: 3rem 0;
@@ -1028,52 +998,36 @@
 		margin-top: 1rem;
 	}
 
-	/* ── Footer ───────────────────────────────────────────────────────────── */
-	.demo-footer {
-		background: var(--ink);
-		color: #c8c0b4;
-		padding: 2rem 1.5rem;
-		margin-top: 2rem;
+	/* ── Demo home button ─────────────────────────── */
+	.demo-home-btn {
 		position: fixed;
-		bottom: 0;
-		left: 0;
-		right: 0;
-		z-index: 100;
-	}
-	.footer-label {
-		font-size: 0.7rem;
-		font-weight: 700;
-		letter-spacing: 0.15em;
-		text-transform: uppercase;
-		color: var(--sage);
-		margin-bottom: 0.75rem;
-		text-align: center;
-	}
-	.footer-nav {
+		top: 14px;
+		right: 14px;
+		z-index: 9999;
 		display: flex;
-		flex-wrap: wrap;
-		gap: 0.4rem 0.2rem;
-		justify-content: center;
-		max-width: 720px;
-		margin: 0 auto;
-	}
-	.footer-link {
-		color: #c8c0b4;
+		align-items: center;
+		gap: 7px;
+		padding: 9px 16px 9px 11px;
+		background: #b8ff3c;
+		backdrop-filter: blur(10px);
+		-webkit-backdrop-filter: blur(10px);
+		border: 1px solid rgba(140, 210, 0, 0.35);
+		border-radius: 999px;
+		color: #0d1a05;
 		text-decoration: none;
-		font-size: 0.82rem;
-		padding: 0.3rem 0.6rem;
-		border-radius: 4px;
-		transition: color 0.15s, background 0.15s;
-	}
-	.footer-link:hover { color: #fff; background: rgba(255,255,255,0.08); }
-	.footer-link.footer-active {
-		color: var(--sage);
+		font-family: 'Inter', system-ui, -apple-system, sans-serif;
+		font-size: 0.7rem;
 		font-weight: 600;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+		box-shadow: 0 2px 20px rgba(130, 220, 0, 0.35), 0 1px 4px rgba(0, 0, 0, 0.15);
 	}
-	.footer-link:not(:last-child)::after {
-		content: ' ·';
-		color: #555;
-		margin-left: 0.2rem;
+
+	.demo-home-btn:hover {
+		background: #caff52;
+		transform: translateY(-1px);
+		box-shadow: 0 4px 28px rgba(130, 220, 0, 0.55);
 	}
 
 	/* ── Responsive ───────────────────────────────────────────────────────── */

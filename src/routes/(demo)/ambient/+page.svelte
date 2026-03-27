@@ -220,49 +220,10 @@
 		</div>
 	</section>
 
-	<!-- ── FOOTER NAV ────────────────────────────────────────────────────────── -->
-	<footer class="demo-footer">
-		<p class="demo-footer-label">Design trend demos</p>
-		<nav class="demo-nav" aria-label="Demo pages">
-			<a href="/demo">← All demos</a>
-			<span aria-hidden="true">·</span>
-			<a href="/brutal">brutal</a>
-			<span aria-hidden="true">·</span>
-			<a href="/calm">calm</a>
-			<span aria-hidden="true">·</span>
-			<a href="/bento">bento</a>
-			<span aria-hidden="true">·</span>
-			<a href="/kinetic">kinetic</a>
-			<span aria-hidden="true">·</span>
-			<a href="/adaptive">adaptive</a>
-			<span aria-hidden="true">·</span>
-			<a href="/ambient" aria-current="page">ambient</a>
-			<span aria-hidden="true">·</span>
-			<a href="/context">context</a>
-			<span aria-hidden="true">·</span>
-			<a href="/retro">retro</a>
-			<span aria-hidden="true">·</span>
-			<a href="/expressive">expressive</a>
-			<span aria-hidden="true">·</span>
-			<a href="/spatial">spatial</a>
-			<span aria-hidden="true">·</span>
-			<a href="/micro">micro</a>
-			<span aria-hidden="true">·</span>
-			<a href="/ergonomic">ergonomic</a>
-			<span aria-hidden="true">·</span>
-			<a href="/liquid">liquid</a>
-			<span aria-hidden="true">·</span>
-			<a href="/scroll-anim">scroll-anim</a>
-			<span aria-hidden="true">·</span>
-			<a href="/morph">morph</a>
-			<span aria-hidden="true">·</span>
-			<a href="/handmade">handmade</a>
-			<span aria-hidden="true">·</span>
-			<a href="/iridescent">iridescent</a>
-			<span aria-hidden="true">·</span>
-			<a href="/dday">dday</a>
-		</nav>
-	</footer>
+	<a href="/demo" class="demo-home-btn" title="Back to demo home">
+		<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+		<span>Demo home</span>
+	</a>
 
 </div>
 
@@ -272,7 +233,6 @@
 		width: 100%;
 		min-height: 100vh;
 		overflow-x: hidden;
-		padding-bottom: 100px;
 	}
 
 	/* ── 1. HERO ────────────────────────────────────────────────────────────── */
@@ -740,58 +700,35 @@
 		letter-spacing: 0.04em;
 	}
 
-	/* ── FOOTER NAV ─────────────────────────────────────────────────────────── */
-	.demo-footer {
-		padding: 2.5rem 2rem;
-		border-top: 1px solid rgba(58, 58, 58, 0.1);
-		text-align: center;
-		background: #f0eee9;
+	/* ── Demo home button ─────────────────────────── */
+	.demo-home-btn {
 		position: fixed;
-		bottom: 0;
-		left: 0;
-		right: 0;
-		z-index: 100;
-	}
-
-	.demo-footer-label {
-		font-family: 'Inter', sans-serif;
-		font-size: 0.6rem;
-		letter-spacing: 0.18em;
-		text-transform: uppercase;
-		opacity: 0.3;
-		margin-bottom: 0.85rem;
-	}
-
-	.demo-nav {
+		top: 14px;
+		right: 14px;
+		z-index: 9999;
 		display: flex;
-		flex-wrap: wrap;
-		gap: 0.25rem 0.6rem;
-		justify-content: center;
 		align-items: center;
-	}
-
-	.demo-nav a {
-		font-family: 'Inter', sans-serif;
-		font-size: 0.72rem;
-		color: #3a3a3a;
+		gap: 7px;
+		padding: 9px 16px 9px 11px;
+		background: #b8ff3c;
+		backdrop-filter: blur(10px);
+		-webkit-backdrop-filter: blur(10px);
+		border: 1px solid rgba(140, 210, 0, 0.35);
+		border-radius: 999px;
+		color: #0d1a05;
 		text-decoration: none;
-		opacity: 0.45;
-		transition: opacity 0.2s ease;
-		letter-spacing: 0.03em;
-	}
-
-	.demo-nav a:hover {
-		opacity: 0.9;
-	}
-
-	.demo-nav a[aria-current='page'] {
-		opacity: 1;
+		font-family: 'Inter', system-ui, -apple-system, sans-serif;
+		font-size: 0.7rem;
 		font-weight: 600;
-		color: var(--accent);
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+		box-shadow: 0 2px 20px rgba(130, 220, 0, 0.35), 0 1px 4px rgba(0, 0, 0, 0.15);
 	}
 
-	.demo-nav span {
-		opacity: 0.2;
-		font-size: 0.65rem;
+	.demo-home-btn:hover {
+		background: #caff52;
+		transform: translateY(-1px);
+		box-shadow: 0 4px 28px rgba(130, 220, 0, 0.55);
 	}
 </style>

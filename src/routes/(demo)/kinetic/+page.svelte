@@ -214,44 +214,15 @@
 	</div>
 </section>
 
-<!-- Footer -->
-<footer class="footer">
-	<div class="footer-logo">MARIANNE COTTAGE</div>
-	<div class="footer-demos">
-		<a href="/demo">← All demos</a>
-		<span>·</span>
-		<a href="/historian">/historian</a>
-		<span>·</span>
-		<a href="/living">/living</a>
-		<span>·</span>
-		<a href="/nature">/nature</a>
-		<span>·</span>
-		<a href="/story">/story</a>
-		<span>·</span>
-		<a href="/brutal">/brutal</a>
-		<span>·</span>
-		<a href="/calm">/calm</a>
-		<span>·</span>
-		<a href="/bento">/bento</a>
-		<span>·</span>
-		<a href="/scroll-anim">/scroll-anim</a>
-		<span>·</span>
-		<a href="/morph">/morph</a>
-		<span>·</span>
-		<a href="/handmade">/handmade</a>
-		<span>·</span>
-		<a href="/iridescent">/iridescent</a>
-		<span>·</span>
-		<a href="/dday">/dday</a>
-	</div>
-	<div class="footer-badge">Demo #44</div>
-</footer>
+<a href="/demo" class="demo-home-btn" title="Back to demo home">
+	<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+	<span>Demo home</span>
+</a>
 
 <style>
 	:global(body) {
 		margin: 0;
 		padding: 0;
-		padding-bottom: 100px;
 		background: #f5f0e8;
 	}
 
@@ -517,61 +488,35 @@
 		text-transform: uppercase;
 	}
 
-	/* Footer */
-	.footer {
-		background: #1a1a18;
-		padding: 3rem 2rem;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: 1.25rem;
+	/* ── Demo home button ─────────────────────────── */
+	.demo-home-btn {
 		position: fixed;
-		bottom: 0;
-		left: 0;
-		right: 0;
-		z-index: 100;
-	}
-
-	.footer-logo {
-		font-family: 'Anybody', sans-serif;
-		font-variation-settings: 'wght' 200, 'wdth' 100;
-		font-size: 1.1rem;
-		letter-spacing: 0.12em;
-		color: #f5f0e8;
-	}
-
-	.footer-demos {
+		top: 14px;
+		right: 14px;
+		z-index: 9999;
 		display: flex;
-		flex-wrap: wrap;
-		gap: 0.4rem 0.6rem;
 		align-items: center;
-		justify-content: center;
-	}
-
-	.footer-demos a {
-		font-family: 'Anybody', sans-serif;
-		font-weight: 300;
-		font-size: 0.8rem;
-		letter-spacing: 0.04em;
-		color: #8a8a85;
+		gap: 7px;
+		padding: 9px 16px 9px 11px;
+		background: #b8ff3c;
+		backdrop-filter: blur(10px);
+		-webkit-backdrop-filter: blur(10px);
+		border: 1px solid rgba(140, 210, 0, 0.35);
+		border-radius: 999px;
+		color: #0d1a05;
 		text-decoration: none;
-	}
-
-	.footer-demos a:hover {
-		color: #6b8f71;
-	}
-
-	.footer-demos span {
-		color: #3a3a38;
-		font-size: 0.8rem;
-	}
-
-	.footer-badge {
-		font-family: 'Anybody', sans-serif;
-		font-weight: 300;
+		font-family: 'Inter', system-ui, -apple-system, sans-serif;
 		font-size: 0.7rem;
-		letter-spacing: 0.1em;
-		color: #3a3a38;
+		font-weight: 600;
+		letter-spacing: 0.06em;
 		text-transform: uppercase;
+		transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+		box-shadow: 0 2px 20px rgba(130, 220, 0, 0.35), 0 1px 4px rgba(0, 0, 0, 0.15);
+	}
+
+	.demo-home-btn:hover {
+		background: #caff52;
+		transform: translateY(-1px);
+		box-shadow: 0 4px 28px rgba(130, 220, 0, 0.55);
 	}
 </style>

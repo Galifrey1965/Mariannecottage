@@ -299,22 +299,10 @@
 	<div class="fab-state-layer"></div>
 </button>
 
-<!-- ══════════════════════════════════════════════════════════════
-     DEMO FOOTER NAV
-═══════════════════════════════════════════════════════════════ -->
-<footer class="demo-footer">
-	<p class="footer-title">Design Demos</p>
-	<nav class="footer-nav">
-		<a href="/demo" class="footer-link">← All demos</a>
-		{#each demos as demo}
-			<a
-				href="/{ demo}"
-				class="footer-link"
-				class:footer-active={demo === 'expressive'}
-			>{demo}</a>
-		{/each}
-	</nav>
-</footer>
+<a href="/demo" class="demo-home-btn" title="Back to demo home">
+	<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+	<span>Demo home</span>
+</a>
 
 <style>
 	/* ── CSS custom properties (M3 tonal palette) ───────────────── */
@@ -437,7 +425,6 @@
 		padding: 5rem 2rem;
 	}
 	#shapes {
-		padding-bottom: 100px;
 	}
 
 	/* ── Scroll reveal ───────────────────────────────────────────── */
@@ -961,49 +948,36 @@
 		opacity: 0.12;
 	}
 
-	/* ── DEMO FOOTER ─────────────────────────────────────────────── */
-	.demo-footer {
-		margin-top: 4rem;
-		padding: 2.5rem 2rem 3rem;
-		background: hsl(130,14%,22%);
-		color: hsl(130,20%,80%);
+	/* ── Demo home button ─────────────────────────── */
+	.demo-home-btn {
 		position: fixed;
-		bottom: 0;
-		left: 0;
-		right: 0;
-		z-index: 100;
-	}
-	.footer-title {
+		top: 14px;
+		right: 14px;
+		z-index: 9999;
+		display: flex;
+		align-items: center;
+		gap: 7px;
+		padding: 9px 16px 9px 11px;
+		background: #b8ff3c;
+		backdrop-filter: blur(10px);
+		-webkit-backdrop-filter: blur(10px);
+		border: 1px solid rgba(140, 210, 0, 0.35);
+		border-radius: 999px;
+		color: #0d1a05;
+		text-decoration: none;
+		font-family: 'Inter', system-ui, -apple-system, sans-serif;
 		font-size: 0.7rem;
 		font-weight: 600;
-		letter-spacing: 0.14em;
+		letter-spacing: 0.06em;
 		text-transform: uppercase;
-		opacity: 0.6;
-		margin-bottom: 1rem;
+		transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+		box-shadow: 0 2px 20px rgba(130, 220, 0, 0.35), 0 1px 4px rgba(0, 0, 0, 0.15);
 	}
-	.footer-nav {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.5rem;
-	}
-	.footer-link {
-		padding: 0.375rem 0.875rem;
-		border-radius: 9999px;
-		font-size: 0.8125rem;
-		text-decoration: none;
-		color: hsl(130,20%,70%);
-		background: hsl(130,12%,28%);
-		transition: background 0.2s, color 0.2s, transform 0.3s var(--spring);
-	}
-	.footer-link:hover {
-		background: hsl(130,22%,36%);
-		color: #fff;
-		transform: translateY(-2px);
-	}
-	.footer-link.footer-active {
-		background: var(--md-primary);
-		color: var(--md-on-primary);
-		font-weight: 600;
+
+	.demo-home-btn:hover {
+		background: #caff52;
+		transform: translateY(-1px);
+		box-shadow: 0 4px 28px rgba(130, 220, 0, 0.55);
 	}
 
 	/* ── Responsive ──────────────────────────────────────────────── */

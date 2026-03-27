@@ -288,26 +288,10 @@
 	</div>
 </section>
 
-<!-- ── DEMO FOOTER ── -->
-<footer class="demo-footer">
-	<div class="demo-footer-inner">
-		<a href="/demo" class="demo-link">← All demos</a>
-		<span class="demo-footer-label">demos →</span>
-		{#each [
-			['historian','historian'],['living','living'],['nature','nature'],['story','story'],
-			['brutal','brutal'],['calm','calm'],['bento','bento'],['kinetic','kinetic'],
-			['adaptive','adaptive'],['ambient','ambient'],['context','context'],['retro','retro'],
-			['expressive','expressive'],['spatial','spatial'],['micro','micro'],['ergonomic','ergonomic'],
-			['liquid','liquid'],['handmade','handmade'],['iridescent','iridescent'],['dday','dday']
-		] as [slug, label]}
-			<a
-				href={`/${slug}`}
-				class="demo-link"
-				class:demo-link--active={slug === 'handmade'}
-			>{label}</a>
-		{/each}
-	</div>
-</footer>
+<a href="/demo" class="demo-home-btn" title="Back to demo home">
+	<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+	<span>Demo home</span>
+</a>
 
 <style>
 	/* ── Palette ── */
@@ -835,7 +819,6 @@
 		padding: 5rem 1.5rem 4rem;
 		text-align: center;
 		border-top: 1.5px solid rgba(42, 31, 14, 0.1);
-		padding-bottom: 80px;
 	}
 
 	.cta-inner {
@@ -868,54 +851,36 @@
 		display: block;
 	}
 
-	/* ── DEMO FOOTER ── */
-	.demo-footer {
-		background: #ede5d5;
-		border-top: 1px solid rgba(42, 31, 14, 0.18);
-		padding: 1.25rem 1.5rem;
+	/* ── Demo home button ─────────────────────────── */
+	.demo-home-btn {
 		position: fixed;
-		bottom: 0;
-		left: 0;
-		right: 0;
-		z-index: 100;
-	}
-
-	.demo-footer-inner {
-		max-width: 1200px;
-		margin: 0 auto;
+		top: 14px;
+		right: 14px;
+		z-index: 9999;
 		display: flex;
-		flex-wrap: wrap;
-		gap: 0.35rem 0.6rem;
 		align-items: center;
-	}
-
-	.demo-footer-label {
-		font-family: 'Courier New', monospace;
-		font-size: 0.6rem;
-		color: rgba(42, 31, 14, 0.4);
-		letter-spacing: 0.1em;
-		text-transform: uppercase;
-		margin-right: 0.3rem;
-	}
-
-	.demo-link {
-		font-family: 'Courier New', Courier, monospace;
-		font-size: 0.65rem;
-		color: rgba(42, 31, 14, 0.45);
+		gap: 7px;
+		padding: 9px 16px 9px 11px;
+		background: #b8ff3c;
+		backdrop-filter: blur(10px);
+		-webkit-backdrop-filter: blur(10px);
+		border: 1px solid rgba(140, 210, 0, 0.35);
+		border-radius: 999px;
+		color: #0d1a05;
 		text-decoration: none;
-		letter-spacing: 0.05em;
-		transition: color 0.18s;
-		padding: 0.1rem 0.2rem;
+		font-family: 'Inter', system-ui, -apple-system, sans-serif;
+		font-size: 0.7rem;
+		font-weight: 600;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+		box-shadow: 0 2px 20px rgba(130, 220, 0, 0.35), 0 1px 4px rgba(0, 0, 0, 0.15);
 	}
 
-	.demo-link:hover {
-		color: var(--rust);
-	}
-
-	.demo-link--active {
-		color: var(--rust);
-		text-decoration: underline;
-		text-underline-offset: 2px;
+	.demo-home-btn:hover {
+		background: #caff52;
+		transform: translateY(-1px);
+		box-shadow: 0 4px 28px rgba(130, 220, 0, 0.55);
 	}
 
 	/* ── Responsive ── */

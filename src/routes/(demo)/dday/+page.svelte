@@ -719,21 +719,10 @@ Bayeux fell without a fight on June 7 — the Resistance had specifically warned
 <!-- ══════════════════════════════════════════════════════════════════
      SECTION 7 · FOOTER NAV
 ══════════════════════════════════════════════════════════════════ -->
-<footer class="demo-footer">
-	<p class="footer-label">All Demos</p>
-	<nav class="footer-nav">
-		<a href="/demo" class="footer-link">← All demos</a>
-		{#each allDemos as demo}
-			<a
-				href="/{demo}"
-				class="footer-link"
-				class:active={demo === 'dday'}
-				aria-current={demo === 'dday' ? 'page' : undefined}
-			>{demo}</a>
-		{/each}
-	</nav>
-	<p class="footer-copy">© Marianne Cottage · Normandy, France</p>
-</footer>
+<a href="/demo" class="demo-home-btn" title="Back to demo home">
+	<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+	<span>Demo home</span>
+</a>
 
 <style>
 	/* ── Reset & base ──────────────────────────────────────────────────────── */
@@ -1340,7 +1329,6 @@ Bayeux fell without a fight on June 7 — the Resistance had specifically warned
 	.memorial-section {
 		background: #0d1117;
 		padding: 0;
-		padding-bottom: 100px;
 	}
 	.memorial-section .section-inner {
 		opacity: 0;
@@ -1523,55 +1511,36 @@ Bayeux fell without a fight on June 7 — the Resistance had specifically warned
 		letter-spacing: 0.05em;
 	}
 
-	/* ── FOOTER NAV ──────────────────────────────────────────────────────── */
-	.demo-footer {
-		background: #0a0d12;
-		padding: 3rem 2rem;
-		text-align: center;
-		border-top: 1px solid rgba(201,168,76,0.15);
+	/* ── Demo home button ─────────────────────────── */
+	.demo-home-btn {
 		position: fixed;
-		bottom: 0;
-		left: 0;
-		right: 0;
-		z-index: 100;
-	}
-	.footer-label {
-		font-family: 'Courier New', monospace;
-		font-size: 0.65rem;
-		letter-spacing: 0.2em;
-		text-transform: uppercase;
-		color: #c9a84c;
-		margin-bottom: 1rem;
-	}
-	.footer-nav {
+		top: 14px;
+		right: 14px;
+		z-index: 9999;
 		display: flex;
-		flex-wrap: wrap;
-		justify-content: center;
-		gap: 0.4rem 0.8rem;
-		max-width: 900px;
-		margin: 0 auto 1.5rem;
-	}
-	.footer-link {
-		font-family: 'Courier New', monospace;
-		font-size: 0.72rem;
-		letter-spacing: 0.08em;
-		color: #6a6a7a;
+		align-items: center;
+		gap: 7px;
+		padding: 9px 16px 9px 11px;
+		background: #b8ff3c;
+		backdrop-filter: blur(10px);
+		-webkit-backdrop-filter: blur(10px);
+		border: 1px solid rgba(140, 210, 0, 0.35);
+		border-radius: 999px;
+		color: #0d1a05;
 		text-decoration: none;
-		padding: 0.2rem 0.4rem;
-		border-radius: 3px;
-		transition: color 0.15s ease;
+		font-family: 'Inter', system-ui, -apple-system, sans-serif;
+		font-size: 0.7rem;
+		font-weight: 600;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+		box-shadow: 0 2px 20px rgba(130, 220, 0, 0.35), 0 1px 4px rgba(0, 0, 0, 0.15);
 	}
-	.footer-link:hover { color: #c9a84c; }
-	.footer-link.active {
-		color: #c9a84c;
-		background: rgba(201,168,76,0.12);
-		font-weight: bold;
-	}
-	.footer-copy {
-		font-family: 'Courier New', monospace;
-		font-size: 0.65rem;
-		letter-spacing: 0.1em;
-		color: #3a3a4a;
+
+	.demo-home-btn:hover {
+		background: #caff52;
+		transform: translateY(-1px);
+		box-shadow: 0 4px 28px rgba(130, 220, 0, 0.55);
 	}
 
 	/* ── RESPONSIVE ──────────────────────────────────────────────────────── */
