@@ -147,6 +147,8 @@
 <footer class="site-footer observe">
 	<div class="footer-title">MARIANNE COTTAGE — NORMANDY — FRANCE</div>
 	<div class="footer-demos">
+		<a href="/demo">← ALL DEMOS</a>
+		<span class="footer-sep">|</span>
 		<a href="/">← BACK TO SITE</a>
 		<span class="footer-sep">|</span>
 		<a href="/historian">HISTORIAN</a>

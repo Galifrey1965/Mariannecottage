@@ -300,6 +300,7 @@
 <footer class="demo-footer">
 	<p class="footer-label">Demo explorations</p>
 	<nav class="footer-nav" aria-label="Demo pages">
+		<a href="/demo" class="footer-link">← All demos</a>
 		{#each [
 			['historian',   '/historian'],
 			['living',      '/living'],

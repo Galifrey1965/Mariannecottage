@@ -231,6 +231,8 @@
 	<!-- DEMO NAV FOOTER -->
 	<footer class="demo-footer">
 		<div class="demo-footer-inner">
+			<a href="/demo" class="demo-link">← ALL DEMOS</a>
+			<span class="demo-footer-label">|</span>
 			<span class="demo-footer-label">DEMOS:</span>
 			{#each [
 				['brutal', 'brutal'],

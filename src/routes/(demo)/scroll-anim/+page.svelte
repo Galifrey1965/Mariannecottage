@@ -231,6 +231,7 @@
 <footer class="demo-footer">
 	<p class="demo-footer-label">MarianneCottage Design Demos</p>
 	<nav class="demo-nav" aria-label="All demos">
+		<a href="/demo" class="demo-link">← All demos</a>
 		{#each [
 			['historian','Historian'],
 			['living','Living'],

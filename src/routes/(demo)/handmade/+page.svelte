@@ -291,6 +291,7 @@
 <!-- ── DEMO FOOTER ── -->
 <footer class="demo-footer">
 	<div class="demo-footer-inner">
+		<a href="/demo" class="demo-link">← All demos</a>
 		<span class="demo-footer-label">demos →</span>
 		{#each [
 			['historian','historian'],['living','living'],['nature','nature'],['story','story'],

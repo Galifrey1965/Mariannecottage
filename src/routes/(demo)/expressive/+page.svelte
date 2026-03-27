@@ -305,6 +305,7 @@
 <footer class="demo-footer">
 	<p class="footer-title">Design Demos</p>
 	<nav class="footer-nav">
+		<a href="/demo" class="footer-link">← All demos</a>
 		{#each demos as demo}
 			<a
 				href="/{ demo}"

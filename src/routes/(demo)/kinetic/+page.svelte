@@ -218,6 +218,8 @@
 <footer class="footer">
 	<div class="footer-logo">MARIANNE COTTAGE</div>
 	<div class="footer-demos">
+		<a href="/demo">← All demos</a>
+		<span>·</span>
 		<a href="/historian">/historian</a>
 		<span>·</span>
 		<a href="/living">/living</a>

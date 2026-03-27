@@ -207,6 +207,7 @@
      ═══════════════════════════════════════════ -->
 <footer class="demo-footer">
 	<nav class="demo-nav-pill glass-card">
+		<a href="/demo" class="demo-link">← All demos</a>
 		{#each [
 			['brutal','brutal'],['calm','calm'],['bento','bento'],['kinetic','kinetic'],
 			['adaptive','adaptive'],['ambient','ambient'],['context','context'],

@@ -161,6 +161,7 @@
 			<p class="footer-title">Until then, Normandy waits.</p>
 			<p class="footer-sub">Marianne Cottage · Normandy · France</p>
 			<p class="demo-links">
+				<a href="/demo">← all demos</a> ·
 				<a href="/">← site</a> ·
 				<a href="/historian">historian</a> ·
 				<a href="/living">living</a> ·

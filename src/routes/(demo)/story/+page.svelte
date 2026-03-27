@@ -331,6 +331,8 @@
 </footer>
 
 <nav class="demo-footer-nav" aria-label="Demo pages">
+	<a href="/demo">← All demos</a>
+	<span>|</span>
 	<a href="/">← Site</a>
 	<span>|</span>
 	<a href="/historian">historian</a>

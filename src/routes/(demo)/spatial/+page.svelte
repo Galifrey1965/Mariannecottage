@@ -269,6 +269,8 @@
 	<footer class="demo-footer">
 		<p class="demo-footer-label">Design trend demos</p>
 		<nav class="demo-nav" aria-label="Demo pages">
+			<a href="/demo">← All demos</a>
+			<span aria-hidden="true">·</span>
 			<a href="/brutal">brutal</a>
 			<span aria-hidden="true">·</span>
 			<a href="/calm">calm</a>

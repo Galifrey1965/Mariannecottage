@@ -722,6 +722,7 @@ Bayeux fell without a fight on June 7 — the Resistance had specifically warned
 <footer class="demo-footer">
 	<p class="footer-label">All Demos</p>
 	<nav class="footer-nav">
+		<a href="/demo" class="footer-link">← All demos</a>
 		{#each allDemos as demo}
 			<a
 				href="/{demo}"

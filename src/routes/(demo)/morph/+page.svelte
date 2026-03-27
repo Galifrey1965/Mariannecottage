@@ -389,6 +389,7 @@
      ════════════════════════════════════════════════════════════════════════ -->
 <footer class="demo-footer">
 	<nav class="demo-nav-strip">
+		<a href="/demo" class="demo-link">← All demos</a>
 		{#each demos as slug}
 			<a href="/{slug}" class="demo-link" class:demo-active={slug === 'morph'}>{slug}</a>
 		{/each}

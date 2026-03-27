@@ -335,6 +335,8 @@
 
 	<!-- ── Demo footer nav ─────────────────────────────────────────────────── -->
 	<nav class="demo-nav">
+		<a href="/demo">← All demos</a>
+		<span>·</span>
 		<a href="/brutal">brutal</a>
 		<span>·</span>
 		<a href="/calm">calm</a>

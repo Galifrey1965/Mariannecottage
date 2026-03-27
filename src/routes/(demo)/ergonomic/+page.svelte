@@ -430,6 +430,7 @@
 <footer class="demo-footer">
 	<p class="footer-label">Design Trend Demos</p>
 	<nav class="footer-nav" aria-label="Demo pages">
+		<a class="footer-link" href="/demo">← All demos</a>
 		{#each [
 			['brutal', 'brutal'],
 			['calm', 'calm'],

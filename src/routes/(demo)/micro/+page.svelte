@@ -371,6 +371,7 @@
 	<!-- FOOTER NAV -->
 	<footer class="demo-footer">
 		<p class="demo-nav">
+			<a href="/demo">← All demos</a> ·
 			<a href="/brutal">brutal</a> ·
 			<a href="/calm">calm</a> ·
 			<a href="/bento">bento</a> ·
