@@ -443,7 +443,11 @@
 			['spatial', 'spatial'],
 			['micro', 'micro'],
 			['ergonomic', 'ergonomic'],
-			['liquid', 'liquid']
+			['liquid', 'liquid'],
+			['scroll-anim', 'scroll-anim'],
+			['morph', 'morph'],
+			['handmade', 'handmade'],
+			['iridescent', 'iridescent']
 		] as [href, label]}
 			<a
 				class="footer-link"

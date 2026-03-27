@@ -360,6 +360,14 @@
 		<a href="/ergonomic">ergonomic</a>
 		<span>·</span>
 		<a href="/liquid">liquid</a>
+		<span>·</span>
+		<a href="/scroll-anim">scroll-anim</a>
+		<span>·</span>
+		<a href="/morph">morph</a>
+		<span>·</span>
+		<a href="/handmade">handmade</a>
+		<span>·</span>
+		<a href="/iridescent">iridescent</a>
 	</nav>
 </div>
 

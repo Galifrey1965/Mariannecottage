@@ -211,7 +211,8 @@
 			['brutal','brutal'],['calm','calm'],['bento','bento'],['kinetic','kinetic'],
 			['adaptive','adaptive'],['ambient','ambient'],['context','context'],
 			['retro','retro'],['expressive','expressive'],['spatial','spatial'],
-			['micro','micro'],['ergonomic','ergonomic'],['liquid','liquid']
+			['micro','micro'],['ergonomic','ergonomic'],['liquid','liquid'],
+			['scroll-anim','scroll-anim'],['morph','morph'],['handmade','handmade'],['iridescent','iridescent']
 		] as [slug, label]}
 			<a href="/{ slug}" class="demo-link" class:demo-active={slug === 'liquid'}>{label}</a>
 		{/each}

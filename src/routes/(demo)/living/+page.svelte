@@ -410,6 +410,7 @@
 	<a href="/micro">micro</a>
 	<a href="/ergonomic">ergonomic</a>
 	<a href="/liquid">liquid</a>
+	· <a href="/scroll-anim">scroll-anim</a> · <a href="/morph">morph</a> · <a href="/handmade">handmade</a> · <a href="/iridescent">iridescent</a>
 </nav>
 
 <style>

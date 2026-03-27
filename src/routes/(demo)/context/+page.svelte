@@ -315,6 +315,14 @@
 			<a href="/ergonomic">ergonomic</a>
 			<span aria-hidden="true">·</span>
 			<a href="/liquid">liquid</a>
+			<span aria-hidden="true">·</span>
+			<a href="/scroll-anim">scroll-anim</a>
+			<span aria-hidden="true">·</span>
+			<a href="/morph">morph</a>
+			<span aria-hidden="true">·</span>
+			<a href="/handmade">handmade</a>
+			<span aria-hidden="true">·</span>
+			<a href="/iridescent">iridescent</a>
 		</nav>
 	</footer>
 

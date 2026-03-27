@@ -167,6 +167,10 @@
 		<a href="/micro">MICRO</a>
 		<a href="/ergonomic">ERGONOMIC</a>
 		<a href="/liquid">LIQUID</a>
+		<a href="/scroll-anim">SCROLL-ANIM</a>
+		<a href="/morph">MORPH</a>
+		<a href="/handmade">HANDMADE</a>
+		<a href="/iridescent">IRIDESCENT</a>
 	</div>
 	<div class="footer-issue">DEMO #44</div>
 </footer>

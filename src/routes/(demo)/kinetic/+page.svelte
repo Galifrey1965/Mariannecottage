@@ -231,6 +231,14 @@
 		<a href="/calm">/calm</a>
 		<span>·</span>
 		<a href="/bento">/bento</a>
+		<span>·</span>
+		<a href="/scroll-anim">/scroll-anim</a>
+		<span>·</span>
+		<a href="/morph">/morph</a>
+		<span>·</span>
+		<a href="/handmade">/handmade</a>
+		<span>·</span>
+		<a href="/iridescent">/iridescent</a>
 	</div>
 	<div class="footer-badge">Demo #44</div>
 </footer>

@@ -246,6 +246,14 @@
 		<a href="/calm">/calm</a>
 		<span>·</span>
 		<a href="/kinetic">/kinetic</a>
+		<span>·</span>
+		<a href="/scroll-anim">/scroll-anim</a>
+		<span>·</span>
+		<a href="/morph">/morph</a>
+		<span>·</span>
+		<a href="/handmade">/handmade</a>
+		<span>·</span>
+		<a href="/iridescent">/iridescent</a>
 	</div>
 	<p class="footer-demo-tag">Demo #44</p>
 </footer>

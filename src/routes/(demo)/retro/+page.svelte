@@ -245,7 +245,11 @@
 				['spatial', 'spatial'],
 				['micro', 'micro'],
 				['ergonomic', 'ergonomic'],
-				['liquid', 'liquid']
+				['liquid', 'liquid'],
+				['scroll-anim', 'scroll-anim'],
+				['morph', 'morph'],
+				['handmade', 'handmade'],
+				['iridescent', 'iridescent']
 			] as [slug, label]}
 				<a href="/{slug}" class="demo-link" class:active={slug === 'retro'}>{label}</a>
 			{/each}

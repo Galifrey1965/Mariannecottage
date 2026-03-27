@@ -76,7 +76,8 @@
 	const demos = [
 		'brutal','calm','bento','kinetic','adaptive',
 		'ambient','context','retro','expressive',
-		'spatial','micro','ergonomic','liquid'
+		'spatial','micro','ergonomic','liquid',
+		'scroll-anim','morph','handmade','iridescent'
 	];
 </script>
 
