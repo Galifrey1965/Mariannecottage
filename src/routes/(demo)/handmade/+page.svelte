@@ -297,7 +297,7 @@
 			['brutal','brutal'],['calm','calm'],['bento','bento'],['kinetic','kinetic'],
 			['adaptive','adaptive'],['ambient','ambient'],['context','context'],['retro','retro'],
 			['expressive','expressive'],['spatial','spatial'],['micro','micro'],['ergonomic','ergonomic'],
-			['liquid','liquid'],['handmade','handmade']
+			['liquid','liquid'],['handmade','handmade'],['iridescent','iridescent'],['dday','dday']
 		] as [slug, label]}
 			<a
 				href={`/${slug}`}

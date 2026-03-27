@@ -368,6 +368,8 @@
 		<a href="/handmade">handmade</a>
 		<span>·</span>
 		<a href="/iridescent">iridescent</a>
+		<span>·</span>
+		<a href="/dday">dday</a>
 	</nav>
 </div>
 

@@ -171,6 +171,7 @@
 		<a href="/morph">MORPH</a>
 		<a href="/handmade">HANDMADE</a>
 		<a href="/iridescent">IRIDESCENT</a>
+		<a href="/dday">DDAY</a>
 	</div>
 	<div class="footer-issue">DEMO #44</div>
 </footer>

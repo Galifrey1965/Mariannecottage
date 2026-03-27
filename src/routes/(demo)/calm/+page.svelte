@@ -178,7 +178,7 @@
 				<a href="/spatial">spatial</a> ·
 				<a href="/micro">micro</a> ·
 				<a href="/ergonomic">ergonomic</a> ·
-				<a href="/liquid">liquid</a> · <a href="/scroll-anim">scroll-anim</a> · <a href="/morph">morph</a> · <a href="/handmade">handmade</a> · <a href="/iridescent">iridescent</a>
+				<a href="/liquid">liquid</a> · <a href="/scroll-anim">scroll-anim</a> · <a href="/morph">morph</a> · <a href="/handmade">handmade</a> · <a href="/iridescent">iridescent</a> · <a href="/dday">dday</a>
 			</p>
 			<p class="demo-number">Demo #44</p>
 		</div>

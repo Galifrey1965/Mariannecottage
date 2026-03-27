@@ -322,6 +322,7 @@
 			['morph',       '/morph'],
 			['handmade',    '/handmade'],
 			['iridescent',  '/iridescent'],
+			['dday',        '/dday'],
 		] as [label, href]}
 			<a
 				{href}

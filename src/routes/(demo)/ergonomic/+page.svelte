@@ -447,7 +447,8 @@
 			['scroll-anim', 'scroll-anim'],
 			['morph', 'morph'],
 			['handmade', 'handmade'],
-			['iridescent', 'iridescent']
+			['iridescent', 'iridescent'],
+			['dday', 'dday']
 		] as [href, label]}
 			<a
 				class="footer-link"

@@ -254,6 +254,8 @@
 		<a href="/handmade">/handmade</a>
 		<span>·</span>
 		<a href="/iridescent">/iridescent</a>
+		<span>·</span>
+		<a href="/dday">/dday</a>
 	</div>
 	<p class="footer-demo-tag">Demo #44</p>
 </footer>

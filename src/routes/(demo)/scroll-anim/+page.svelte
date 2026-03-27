@@ -253,6 +253,7 @@
 			['morph','Morph'],
 			['handmade','Handmade'],
 			['iridescent','Iridescent'],
+			['dday','Dday'],
 		] as [slug, label]}
 			<a
 				href="/{slug}"

@@ -239,6 +239,8 @@
 		<a href="/handmade">/handmade</a>
 		<span>·</span>
 		<a href="/iridescent">/iridescent</a>
+		<span>·</span>
+		<a href="/dday">/dday</a>
 	</div>
 	<div class="footer-badge">Demo #44</div>
 </footer>

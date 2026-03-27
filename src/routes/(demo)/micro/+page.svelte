@@ -387,7 +387,8 @@
 			<a href="/scroll-anim">scroll-anim</a> ·
 			<a href="/morph">morph</a> ·
 			<a href="/handmade">handmade</a> ·
-			<a href="/iridescent">iridescent</a>
+			<a href="/iridescent">iridescent</a> ·
+			<a href="/dday">dday</a>
 		</p>
 	</footer>
 

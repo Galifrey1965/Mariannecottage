@@ -323,6 +323,8 @@
 			<a href="/handmade">handmade</a>
 			<span aria-hidden="true">·</span>
 			<a href="/iridescent">iridescent</a>
+			<span aria-hidden="true">·</span>
+			<a href="/dday">dday</a>
 		</nav>
 	</footer>
 
