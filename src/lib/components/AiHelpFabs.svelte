@@ -52,16 +52,24 @@
 	.fab {
 		display: inline-flex;
 		align-items: center;
-		gap: 0.25rem;
-		padding: 0.25rem 0.6rem;
+		gap: 0.3rem;
+		padding: 0.3rem 0.7rem;
 		border-radius: 1rem;
 		font-size: 0.7rem;
 		font-weight: 600;
 		text-decoration: none;
-		transition: opacity 0.2s;
+		transition: background 0.2s, border-color 0.2s;
+		/* Frosted glass — works on the dark footer in both light and dark mode */
+		background: rgba(255, 255, 255, 0.08);
+		border: 1px solid rgba(255, 255, 255, 0.18);
+		color: rgba(255, 255, 255, 0.85);
+	}
+	.fab:hover {
+		background: rgba(255, 255, 255, 0.16);
+		border-color: rgba(255, 255, 255, 0.3);
 		color: white;
 	}
-	.fab:hover { opacity: 0.85; }
-	.fab-chatgpt { background: var(--color-chatgpt, #10a37f); }
-	.fab-claude { background: var(--color-claude-ai, #c96442); }
+	/* Brand colors on the icon only — lighter shades for dark-bg readability */
+	.fab-chatgpt svg { color: var(--color-chatgpt, #5ddbb4); }
+	.fab-claude svg  { color: var(--color-claude-ai, #f0a07a); }
 </style>

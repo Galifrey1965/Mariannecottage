@@ -62,6 +62,10 @@
 
 	/* Disabled */
 	--color-disabled: #9ca3af;
+
+	/* AI brand icon tints — light versions for dark footer background */
+	--color-chatgpt: #5ddbb4;
+	--color-claude-ai: #f0a07a;
 }
 
 @media (prefers-color-scheme: dark) {
