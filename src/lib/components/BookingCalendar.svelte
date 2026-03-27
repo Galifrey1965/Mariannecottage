@@ -197,7 +197,7 @@
 	.weekday { text-align: center; font-size: 0.75rem; font-weight: 600; color: var(--color-text-muted); padding: 0.5rem 0; }
 
 	.day {
-		aspect-ratio: 1; border-radius: var(--md-shape-corner-small); font-size: 0.875rem; font-weight: 500;
+		aspect-ratio: 1; min-height: 44px; border-radius: var(--md-shape-corner-small); font-size: 0.875rem; font-weight: 500;
 		border: none; cursor: pointer; transition: all 0.15s ease;
 	}
 	.day.available { background: var(--md-sys-color-surface-container-lowest); color: var(--color-text); }

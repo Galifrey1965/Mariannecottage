@@ -332,20 +332,22 @@
 	.layout { display: grid; grid-template-columns: 1fr; gap: 2rem; margin-bottom: 3rem; }
 	@media (min-width: 840px) { .layout { grid-template-columns: 2fr 1fr; } }
 	.main-col { display: flex; flex-direction: column; gap: 1.5rem; }
-	.sidebar { position: sticky; top: 6rem; align-self: start; display: flex; flex-direction: column; gap: 1.5rem; }
+	.sidebar { display: flex; flex-direction: column; gap: 1.5rem; }
+	@media (min-width: 840px) { .sidebar { position: sticky; top: 6rem; align-self: start; } }
 
 	/* Form card */
-	.form-card { background: var(--color-cream); border-radius: 16px; padding: 1.5rem; }
+	.form-card { background: var(--color-cream); border-radius: var(--md-shape-corner-medium); padding: 1.5rem; }
 	.section-heading { font-family: 'Lora', serif; font-size: 1.25rem; font-weight: 600; color: var(--color-text); margin: 0 0 1.5rem; }
 	.form-fields { display: flex; flex-direction: column; gap: 1.25rem; }
 	.field {}
 	.field-label { display: block; font-size: 0.875rem; font-weight: 500; color: var(--color-text); margin-bottom: 0.375rem; }
+	@media (max-width: 599px) { .field-label { font-size: 1rem; } }
 	.field-input {
 		width: 100%; padding: 0.75rem 1rem;
-		border: 1px solid var(--color-cream-dark); border-radius: 8px;
+		border: 1px solid var(--color-cream-dark); border-radius: var(--md-shape-corner-small);
 		background: var(--color-bg); color: var(--color-text);
 		font-size: 0.875rem; transition: border-color 0.2s;
-		box-sizing: border-box;
+		box-sizing: border-box; min-height: 44px;
 	}
 	.field-input:focus { outline: none; border-color: var(--color-sage); box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-sage) 20%, transparent); }
 	.field-input.error { border-color: var(--md-sys-color-error); }
@@ -368,13 +370,13 @@
 	.actions { display: flex; gap: 0.75rem; padding-top: 0.5rem; }
 	.btn-outline {
 		padding: 0.75rem 1.5rem; border: 1px solid var(--color-cream-dark);
-		color: var(--color-text); border-radius: 8px; background: transparent;
+		color: var(--color-text); border-radius: var(--md-shape-corner-small); background: transparent;
 		cursor: pointer; transition: background 0.2s; font-size: 0.875rem;
 	}
 	.btn-outline:hover { background: var(--color-cream-dark); }
 	.btn-primary {
 		padding: 0.75rem 1.5rem; background: var(--color-sage); color: white;
-		font-weight: 600; border-radius: 8px; border: none; cursor: pointer;
+		font-weight: 600; border-radius: var(--md-shape-corner-small); border: none; cursor: pointer;
 		transition: opacity 0.2s; font-size: 0.875rem;
 	}
 	.btn-primary:hover { opacity: 0.9; }
@@ -382,7 +384,7 @@
 	.flex-1 { flex: 1; }
 
 	/* Rates */
-	.rates-box { background: var(--color-cream); border-radius: 16px; padding: 1rem; }
+	.rates-box { background: var(--color-cream); border-radius: var(--md-shape-corner-medium); padding: 1rem; }
 	.rates-title { font-size: 0.875rem; font-weight: 600; color: var(--color-text); margin: 0 0 0.75rem; }
 	.rates-list { display: flex; flex-direction: column; gap: 0.5rem; }
 	.rate-row { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--color-text-muted); }
@@ -396,7 +398,7 @@
 	.btn-secondary {
 		display: inline-block; padding: 0.75rem 2rem;
 		background: var(--color-brown); color: white; font-weight: 600;
-		border-radius: 8px; text-decoration: none; transition: opacity 0.2s;
+		border-radius: var(--md-shape-corner-small); text-decoration: none; transition: opacity 0.2s;
 	}
 	.btn-secondary:hover { opacity: 0.9; }
 </style>

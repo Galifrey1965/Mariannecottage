@@ -272,7 +272,7 @@
 		align-items: center;
 		gap: 0.2rem;
 		flex-shrink: 0;
-		font-size: 0.7rem;
+		font-size: 0.75rem;
 		font-weight: 500;
 	}
 
@@ -390,11 +390,11 @@
 
 	.poi-card__fav-btn:hover {
 		background: var(--color-cream, #f5f0e8);
-		color: #e53e3e;
+		color: var(--md-sys-color-error, #e53e3e);
 	}
 
 	.poi-card__fav-btn--active {
-		color: #e53e3e;
+		color: var(--md-sys-color-error, #e53e3e);
 	}
 
 	.poi-card__fav-btn:focus-visible {

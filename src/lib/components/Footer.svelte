@@ -105,10 +105,16 @@
 
 	.footer-brand {
 		font-family: 'Lora', serif;
-		font-size: 1.5rem;
+		font-size: 1.25rem;
 		font-weight: 600;
 		margin: 0 0 0.5rem;
 		color: var(--color-footer-text);
+	}
+
+	@media (min-width: 600px) {
+		.footer-brand {
+			font-size: 1.5rem;
+		}
 	}
 
 	.footer-tagline {

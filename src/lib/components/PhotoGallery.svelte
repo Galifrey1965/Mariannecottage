@@ -110,7 +110,8 @@
 	.filter-chip.active { background: var(--color-sage); border-color: var(--color-sage); color: #fff; font-weight: 600; }
 	.filter-chip.active:hover { background: var(--color-sage-hover); border-color: var(--color-sage-hover); }
 
-	.gallery-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+	.gallery-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+	@media (min-width: 480px) { .gallery-grid { grid-template-columns: repeat(2, 1fr); } }
 	@media (min-width: 600px) { .gallery-grid { grid-template-columns: repeat(3, 1fr); } }
 	@media (min-width: 840px) { .gallery-grid { grid-template-columns: repeat(4, 1fr); } }
 
@@ -128,11 +129,11 @@
 	.lightbox-nav {
 		position: absolute; top: 50%; transform: translateY(-50%);
 		background: rgba(255,255,255,0.2); color: white; border: none;
-		padding: 0.75rem; border-radius: 50%; cursor: pointer; font-size: 1.25rem;
+		min-width: 44px; min-height: 44px; padding: 0.75rem; border-radius: 50%; cursor: pointer; font-size: 1.25rem;
 		transition: background 0.2s ease;
 	}
 	.lightbox-nav:hover { background: rgba(255,255,255,0.4); }
 	.lightbox-nav.prev { left: 1rem; }
 	.lightbox-nav.next { right: 1rem; }
-	.lightbox-close { position: absolute; top: 1rem; right: 1rem; color: white; font-size: 1.5rem; background: none; border: none; cursor: pointer; }
+	.lightbox-close { position: absolute; top: 1rem; right: 1rem; color: white; font-size: 1.5rem; background: none; border: none; cursor: pointer; min-width: 44px; min-height: 44px; display: flex; align-items: center; justify-content: center; }
 </style>

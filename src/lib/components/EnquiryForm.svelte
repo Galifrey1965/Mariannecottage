@@ -119,7 +119,7 @@
 
 	.alert {
 		padding: 1rem;
-		border-radius: 8px;
+		border-radius: var(--md-shape-corner-small);
 		font-size: 0.875rem;
 	}
 
@@ -148,7 +148,7 @@
 		font-weight: 600;
 		font-size: 1rem;
 		border: none;
-		border-radius: 8px;
+		border-radius: var(--md-shape-corner-small);
 		cursor: pointer;
 		transition: background-color 0.2s ease;
 	}

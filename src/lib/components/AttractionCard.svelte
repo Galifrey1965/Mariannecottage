@@ -36,6 +36,7 @@
 	.card:hover { box-shadow: var(--md-elevation-shadow-3); }
 	.card-image-wrapper { position: relative; overflow: hidden; }
 	.card-image { width: 100%; height: 10rem; object-fit: cover; transition: transform 0.3s ease; }
+	@media (min-width: 480px) { .card-image { height: 12rem; } }
 	.card:hover .card-image { transform: scale(1.05); }
 	.card-body { padding: 1rem; }
 	.card-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 0.5rem; }

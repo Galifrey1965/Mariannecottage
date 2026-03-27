@@ -43,17 +43,15 @@
 	.hero {
 		position: relative;
 		width: 100%;
-		height: 24rem;
+		height: 16rem;
 		overflow: hidden;
-		border-radius: 16px;
-		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+		border-radius: var(--md-shape-corner-medium);
+		box-shadow: var(--md-elevation-shadow-2);
 	}
 
-	@media (min-width: 600px) {
-		.hero {
-			height: 500px;
-		}
-	}
+	@media (min-width: 480px) { .hero { height: 20rem; } }
+	@media (min-width: 600px) { .hero { height: 28rem; } }
+	@media (min-width: 840px) { .hero { height: 500px; } }
 
 	.hero-image {
 		width: 100%;
@@ -81,7 +79,7 @@
 
 	.hero-title {
 		font-family: 'Lora', serif;
-		font-size: 2.5rem;
+		font-size: 1.75rem;
 		font-weight: 400;
 		line-height: 1.1;
 		color: white;
@@ -90,11 +88,9 @@
 		margin: 0;
 	}
 
-	@media (min-width: 600px) {
-		.hero-title {
-			font-size: 3.5rem;
-		}
-	}
+	@media (min-width: 480px) { .hero-title { font-size: 2.25rem; } }
+	@media (min-width: 600px) { .hero-title { font-size: 2.75rem; } }
+	@media (min-width: 840px) { .hero-title { font-size: 3.5rem; } }
 
 	.hero-description {
 		font-size: 1.125rem;

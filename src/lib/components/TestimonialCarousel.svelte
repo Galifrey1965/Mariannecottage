@@ -51,10 +51,10 @@
 	.carousel-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; }
 	.carousel-title { font-family: 'Lora', serif; font-size: 1.5rem; font-weight: 600; color: var(--color-brown); margin: 0; }
 	.dots { display: flex; gap: 0.5rem; }
-	.dot { width: 0.75rem; height: 0.75rem; border-radius: 50%; border: none; cursor: pointer; background: var(--color-cream-dark); transition: background 0.2s ease; }
+	.dot { width: 0.75rem; height: 0.75rem; border-radius: 50%; border: none; cursor: pointer; background: var(--color-cream-dark); transition: background 0.2s ease; padding: 0.75rem; background-clip: content-box; box-sizing: content-box; }
 	.dot.active { background: var(--color-sage); }
-	.carousel-body { position: relative; height: 8rem; }
-	@media (min-width: 600px) { .carousel-body { height: 6rem; } }
+	.carousel-body { position: relative; min-height: 6rem; }
+	@media (max-width: 599px) { .carousel-body { min-height: 8rem; } }
 	.testimonial { position: absolute; inset: 0; opacity: 0; transition: opacity 0.5s ease; }
 	.testimonial.visible { opacity: 1; }
 	blockquote { font-style: italic; color: var(--color-text-muted); margin: 0 0 1rem; }

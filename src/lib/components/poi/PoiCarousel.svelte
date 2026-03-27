@@ -251,8 +251,8 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		width: 2.25rem;
-		height: 2.25rem;
+		width: 2.75rem;
+		height: 2.75rem;
 		padding: 0;
 		border: none;
 		border-radius: 50%;
@@ -302,16 +302,18 @@
 	.carousel__dot {
 		width: 0.5rem;
 		height: 0.5rem;
-		padding: 0;
+		padding: 0.75rem;
+		background-clip: content-box;
+		box-sizing: content-box;
 		border: none;
 		border-radius: 50%;
-		background: rgba(255, 255, 255, 0.5);
+		background-color: rgba(255, 255, 255, 0.5);
 		cursor: pointer;
-		transition: background 0.2s, transform 0.2s;
+		transition: background-color 0.2s, transform 0.2s;
 	}
 
 	.carousel__dot--active {
-		background: #fff;
+		background-color: #fff;
 		transform: scale(1.3);
 	}
 

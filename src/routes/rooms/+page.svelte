@@ -71,8 +71,10 @@
 	.section-block { margin-bottom: 3rem; }
 	.section-heading { font-family: 'Lora', serif; font-size: 1.5rem; font-weight: 600; color: var(--color-brown); margin: 0 0 1rem; }
 	.description { color: var(--color-text-muted); font-size: 1.125rem; margin: 0 0 2rem; line-height: 1.6; }
-	.image-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-	.room-image { width: 100%; height: 12rem; object-fit: cover; border-radius: var(--md-shape-corner-medium); }
+	.image-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+	@media (min-width: 480px) { .image-grid { grid-template-columns: 1fr 1fr; } }
+	.room-image { width: 100%; height: 10rem; object-fit: cover; border-radius: var(--md-shape-corner-medium); }
+	@media (min-width: 480px) { .room-image { height: 12rem; } }
 	.amenities-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; }
 	@media (min-width: 600px) { .amenities-grid { grid-template-columns: 1fr 1fr; } }
 	.amenity-item { display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.75rem; background: var(--color-cream); border-radius: var(--md-shape-corner-small); }

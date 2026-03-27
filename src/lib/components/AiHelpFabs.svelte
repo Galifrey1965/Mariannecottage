@@ -62,6 +62,6 @@
 		color: white;
 	}
 	.fab:hover { opacity: 0.85; }
-	.fab-chatgpt { background: #10a37f; }
-	.fab-claude { background: #c96442; }
+	.fab-chatgpt { background: var(--color-chatgpt, #10a37f); }
+	.fab-claude { background: var(--color-claude-ai, #c96442); }
 </style>
