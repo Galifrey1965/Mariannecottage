@@ -341,7 +341,7 @@
 	/* Layout */
 	.layout { display: grid; grid-template-columns: 1fr; gap: 2rem; margin-bottom: 3rem; }
 	@media (min-width: 960px) { .layout { grid-template-columns: 2fr 1fr; } }
-	.main-col { display: flex; flex-direction: column; gap: 1.5rem; }
+	.main-col { display: flex; flex-direction: column; gap: 1.5rem; position: relative; z-index: 1; }
 	.sidebar { display: flex; flex-direction: column; gap: 1.5rem; }
 	@media (min-width: 960px) { .sidebar { position: sticky; top: 5rem; align-self: start; max-height: calc(100vh - 5.5rem); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; } }
 
