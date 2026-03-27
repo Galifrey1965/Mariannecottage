@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-
 	let hoveredProto: string | null = $state(null);
 	let hoveredDemo: string | null = $state(null);
 
@@ -109,22 +107,6 @@
 		},
 	];
 
-	onMount(() => {
-		const sections = document.querySelectorAll<HTMLElement>('.animate-section');
-		const observer = new IntersectionObserver(
-			(entries) => {
-				entries.forEach((entry) => {
-					if (entry.isIntersecting) {
-						entry.target.classList.add('visible');
-						observer.unobserve(entry.target);
-					}
-				});
-			},
-			{ threshold: 0.06 }
-		);
-		sections.forEach((el) => observer.observe(el));
-		return () => observer.disconnect();
-	});
 </script>
 
 <svelte:head>
@@ -328,15 +310,13 @@
 	}
 
 	/* ── Animate sections ─────────────────────────────────────── */
-	.animate-section {
-		opacity: 0;
-		transform: translateY(20px);
-		transition: opacity 0.5s ease, transform 0.5s ease;
+	@keyframes fadeUp {
+		from { opacity: 0; transform: translateY(18px); }
+		to   { opacity: 1; transform: translateY(0); }
 	}
 
-	.animate-section.visible {
-		opacity: 1;
-		transform: translateY(0);
+	.animate-section {
+		animation: fadeUp 0.5s ease both;
 	}
 
 	/* ── Section headers ──────────────────────────────────────── */
@@ -400,17 +380,7 @@
 		flex-direction: column;
 		overflow: hidden;
 		transition: transform 0.2s ease, box-shadow 0.2s ease;
-		opacity: 0;
-		transform: translateY(16px);
-	}
-
-	.animate-section.visible .proto-card {
-		opacity: 1;
-		transform: translateY(0);
-		transition:
-			opacity 0.4s ease var(--delay, 0s),
-			transform 0.4s ease var(--delay, 0s),
-			box-shadow 0.2s ease;
+		animation: fadeUp 0.4s ease var(--delay, 0s) both;
 	}
 
 	.proto-card--hovered,
@@ -513,17 +483,7 @@
 		flex-direction: column;
 		overflow: hidden;
 		transition: transform 0.2s ease, box-shadow 0.2s ease;
-		opacity: 0;
-		transform: translateY(16px);
-	}
-
-	.animate-section.visible .card {
-		opacity: 1;
-		transform: translateY(0);
-		transition:
-			opacity 0.4s ease var(--delay, 0s),
-			transform 0.4s ease var(--delay, 0s),
-			box-shadow 0.2s ease;
+		animation: fadeUp 0.4s ease var(--delay, 0s) both;
 	}
 
 	.card--hovered,
