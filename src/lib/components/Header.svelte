@@ -5,26 +5,24 @@
 	import { localePath, t } from '$lib/i18n';
 	import type { Messages, Locale } from '$lib/i18n';
 
+	interface NavItem {
+		label: string;
+		icon: string;
+		href: string;
+	}
+
 	interface Props {
 		lang: Locale;
 		messages: Messages;
+		navItems: NavItem[];
 	}
 
-	let { lang, messages }: Props = $props();
+	let { lang, messages, navItems }: Props = $props();
 
 	let menuOpen = $state(false);
 	let toggleBtnEl: HTMLElement | undefined = $state();
 	let drawerNavEl: HTMLElement | undefined = $state();
 	let wasMenuOpen = false;
-
-	const navLinks = [
-		{ label: t(messages, 'nav.home'), href: '/', icon: '🏠' },
-		{ label: t(messages, 'nav.rooms'), href: '/rooms', icon: '🛏️' },
-		{ label: t(messages, 'nav.gallery'), href: '/gallery', icon: '🖼️' },
-		{ label: t(messages, 'nav.explore'), href: '/explore', icon: '🗺️' },
-		{ label: t(messages, 'nav.contact'), href: '/contact', icon: '📧' },
-		{ label: t(messages, 'nav.book'), href: '/book', icon: '✨' }
-	];
 
 	const isActive = (href: string) => {
 		return $page.url.pathname === href || $page.url.pathname.startsWith(href + '/');
@@ -60,13 +58,25 @@
 		</a>
 
 		<nav class="desktop-nav" aria-label={t(messages, 'a11y.main_navigation')}>
-			{#each navLinks as link}
+			{#each navItems as link}
 				<a
-					href={localePath(lang, link.href)}
+					href={link.href}
 					class="nav-link"
 					class:active={isActive(link.href)}
 					aria-current={isActive(link.href) ? 'page' : undefined}
 				>
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						width="18"
+						height="18"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						aria-hidden="true"
+					>{@html link.icon}</svg>
 					{link.label}
 				</a>
 			{/each}
@@ -92,15 +102,27 @@
 {#if menuOpen}
 	<div class="overlay" onclick={closeMenu} aria-hidden="true"></div>
 	<nav bind:this={drawerNavEl} class="mobile-drawer" aria-label={t(messages, 'a11y.mobile_navigation')}>
-		{#each navLinks as link}
+		{#each navItems as link}
 			<a
-				href={localePath(lang, link.href)}
+				href={link.href}
 				class="drawer-link"
 				class:active={isActive(link.href)}
 				aria-current={isActive(link.href) ? 'page' : undefined}
 				onclick={closeMenu}
 			>
-				<span class="drawer-icon" aria-hidden="true">{link.icon}</span>
+				<svg
+					class="drawer-icon"
+					xmlns="http://www.w3.org/2000/svg"
+					width="20"
+					height="20"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					aria-hidden="true"
+				>{@html link.icon}</svg>
 				{link.label}
 			</a>
 		{/each}
@@ -166,6 +188,9 @@
 	}
 
 	.nav-link {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
 		padding: 0.5rem 0.75rem;
 		border-radius: 12px;
 		transition: all 0.2s ease;
@@ -262,8 +287,6 @@
 	}
 
 	.drawer-icon {
-		font-size: 1.25rem;
-		width: 1.5rem;
-		text-align: center;
+		flex-shrink: 0;
 	}
 </style>

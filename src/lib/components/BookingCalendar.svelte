@@ -183,33 +183,34 @@
 </div>
 
 <style>
-	.calendar { width: 100%; background: var(--color-cream); border-radius: var(--md-shape-corner-medium); padding: 1.5rem; box-shadow: var(--md-elevation-shadow-1); }
-	.cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
-	.nav-btn { display: inline-flex; align-items: center; justify-content: center; width: 2.5rem; height: 2.5rem; padding: 0; border-radius: 50%; border: none; background: transparent; cursor: pointer; color: var(--color-brown); transition: background 0.2s ease; }
+	.calendar { width: 100%; background: var(--color-cream); border-radius: var(--md-shape-corner-medium); padding: 1.5rem; box-shadow: var(--md-elevation-shadow-1); font-family: 'Source Sans 3', sans-serif; }
+	.cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; padding-bottom: 0.5rem; }
+	.nav-btn { display: inline-flex; align-items: center; justify-content: center; width: 2.75rem; height: 2.75rem; padding: 0; border-radius: 50%; border: none; background: transparent; cursor: pointer; color: var(--color-brown); transition: background 0.2s ease; }
 	.nav-btn:hover { background: var(--color-cream-dark); }
 	.nav-btn:active { background: color-mix(in srgb, var(--color-sage) 20%, transparent); }
-	.month-title { font-family: 'Lora', serif; font-size: 1.25rem; font-weight: 600; margin: 0; }
+	.month-title { font-family: 'Lora', serif; font-size: 1.375rem; font-weight: 600; margin: 0; }
 
 	.hint { text-align: center; font-size: 0.8rem; color: var(--color-sage); font-weight: 500; margin-bottom: 0.75rem; animation: fadeIn 0.2s ease; }
 
-	.weekdays, .days-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.5rem; }
+	.weekdays { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.5rem; }
+	.days-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.25rem; }
 	.weekdays { margin-bottom: 1rem; }
-	.weekday { text-align: center; font-size: 0.75rem; font-weight: 600; color: var(--color-text-muted); padding: 0.5rem 0; }
+	.weekday { text-align: center; font-size: 0.7rem; font-weight: 600; color: var(--color-text-muted); padding: 0.5rem 0; letter-spacing: 0.05em; text-transform: uppercase; }
 
 	.day {
-		aspect-ratio: 1; min-height: 44px; border-radius: var(--md-shape-corner-small); font-size: 0.875rem; font-weight: 500;
+		aspect-ratio: 1; min-height: 44px; border-radius: 50%; font-size: 0.875rem; font-weight: 500;
 		border: none; cursor: pointer; transition: all 0.15s ease;
 	}
 	.day.available { background: var(--md-sys-color-surface-container-lowest); color: var(--color-text); }
 	.day.available:hover { background: var(--color-cream-dark); }
 	.day.unavailable { background: var(--md-sys-color-error); color: var(--md-sys-color-on-error); cursor: not-allowed; }
 	.day.past { color: var(--color-text-muted); opacity: 0.3; cursor: not-allowed; background: transparent; }
-	.day.selected-endpoint { background: var(--color-sage); color: var(--md-sys-color-on-primary); font-weight: 700; }
+	.day.selected-endpoint { background: var(--color-sage); color: var(--md-sys-color-on-primary); font-weight: 700; box-shadow: 0 2px 8px color-mix(in srgb, var(--color-sage) 40%, transparent); }
 	.day.selected-range { background: color-mix(in srgb, var(--color-sage) 25%, transparent); color: var(--color-text); }
 	.day.hover-range { background: color-mix(in srgb, var(--color-sage) 12%, transparent); color: var(--color-text); }
 	.day.preview-invalid { background: color-mix(in srgb, var(--md-sys-color-error) 10%, transparent); color: var(--color-text-muted); }
 
-	.legend { margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--color-cream-dark); display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.75rem; }
+	.legend { margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--color-cream-dark); display: flex; flex-direction: row; flex-wrap: wrap; gap: 0.75rem 1.5rem; font-size: 0.75rem; }
 	.legend-item { display: flex; align-items: center; gap: 0.5rem; }
 	.legend-swatch { width: 1rem; height: 1rem; border-radius: 4px; }
 	.legend-swatch.available { background: var(--md-sys-color-surface-container-lowest); border: 1px solid var(--color-cream-dark); }
@@ -219,7 +220,7 @@
 	.selection-info {
 		margin-top: 1.5rem; padding: 0.75rem 1rem; background: color-mix(in srgb, var(--color-sage) 15%, transparent);
 		border-radius: var(--md-shape-corner-small); font-size: 0.875rem; color: var(--color-text);
-		display: flex; justify-content: space-between; align-items: center;
+		display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; flex-wrap: wrap;
 	}
 	.selection-info.preview { opacity: 0.7; }
 	.selection-info.invalid { background: color-mix(in srgb, var(--md-sys-color-error) 10%, transparent); color: var(--md-sys-color-error); }

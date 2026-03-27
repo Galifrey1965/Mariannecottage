@@ -28,7 +28,20 @@
 			aria-current={isActive(item.href) ? 'page' : undefined}
 			title={item.label}
 		>
-			<span class="rail-icon" aria-hidden="true">{item.icon}</span>
+			<span class="active-indicator" aria-hidden="true"></span>
+			<svg
+				class="rail-icon"
+				xmlns="http://www.w3.org/2000/svg"
+				width="22"
+				height="22"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="2"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				aria-hidden="true"
+			>{@html item.icon}</svg>
 			<span class="rail-label">{item.label}</span>
 		</a>
 	{/each}
@@ -43,13 +56,12 @@
 		left: 0;
 		top: 56px;
 		bottom: 0;
-		width: 80px;
+		width: 72px;
 		background-color: var(--color-bg);
 		border-right: 1px solid var(--color-cream-dark);
 		z-index: 30;
-		padding: 1rem 0;
+		padding: 0.5rem 0;
 		gap: 0.25rem;
-		overflow-y: auto;
 	}
 
 	@media (min-width: 600px) {
@@ -69,15 +81,15 @@
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
-		gap: 0.25rem;
-		padding: 0.75rem;
-		border-radius: 16px;
-		margin: 0 0.5rem;
-		transition: all 0.2s ease;
+		gap: 4px;
+		height: 56px;
+		width: 60px;
+		border-radius: 12px;
+		margin: 0 6px;
+		transition: background 0.15s, color 0.15s;
 		text-decoration: none;
 		color: var(--color-text-muted);
-		min-height: 48px;
-		min-width: 48px;
+		position: relative;
 	}
 
 	.rail-item:hover {
@@ -86,19 +98,38 @@
 	}
 
 	.rail-item.active {
+		color: var(--color-sage);
+		background-color: color-mix(in srgb, var(--color-sage) 12%, transparent);
+	}
+
+	.active-indicator {
+		display: none;
+		position: absolute;
+		top: 0;
+		left: 50%;
+		transform: translateX(-50%);
+		width: 32px;
+		height: 3px;
 		background-color: var(--color-sage);
-		color: var(--md-sys-color-on-primary);
+		border-radius: 0 0 3px 3px;
+	}
+
+	.rail-item.active .active-indicator {
+		display: block;
 	}
 
 	.rail-icon {
-		font-size: 1.5rem;
+		flex-shrink: 0;
 	}
 
 	.rail-label {
-		font-size: 0.75rem;
+		font-size: 10px;
+		font-weight: 500;
 		text-align: center;
 		line-height: 1.2;
-		font-weight: 500;
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
 	}
-
 </style>

@@ -70,6 +70,8 @@
 		background-color: var(--color-footer-bg);
 		color: var(--color-footer-text);
 		margin-top: 4rem;
+		position: relative;
+		z-index: 10;
 	}
 
 	.footer-inner {

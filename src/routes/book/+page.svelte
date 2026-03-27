@@ -209,7 +209,10 @@
 
 						<div class="actions">
 							<button onclick={() => step = 1} class="btn-outline">{t(messages, 'book.back')}</button>
-							<button onclick={goToReview} class="btn-primary flex-1">{t(messages, 'book.review_booking')}</button>
+							<button onclick={goToReview} class="btn-primary flex-1">
+								<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+								{t(messages, 'book.review_booking')}
+							</button>
 						</div>
 					</div>
 				</div>
@@ -259,7 +262,12 @@
 					<div class="actions">
 						<button onclick={() => step = 2} class="btn-outline">{t(messages, 'book.back')}</button>
 						<button onclick={submitBooking} disabled={submitting} class="btn-primary flex-1">
-							{#if submitting}{t(messages, 'book.submitting')}{:else}{t(messages, 'book.confirm_booking')}{/if}
+							{#if submitting}
+								{t(messages, 'book.submitting')}
+							{:else}
+								<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+								{t(messages, 'book.confirm_booking')}
+							{/if}
 						</button>
 					</div>
 
@@ -295,6 +303,7 @@
 	<div class="support-section">
 		<p class="support-text">{t(messages, 'book.need_help')}</p>
 		<a href={localePath(lang, '/contact')} class="btn-secondary">
+			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
 			{t(messages, 'book.contact_us')}
 		</a>
 	</div>
@@ -304,6 +313,7 @@
 	.page-section { max-width: 1440px; margin: 0 auto; padding: 4rem 1rem; }
 	@media (min-width: 600px) { .page-section { padding: 4rem 1.5rem; } }
 	.page-title { font-family: 'Lora', serif; font-size: 2.5rem; font-weight: 700; color: var(--color-text); margin: 0 0 0.5rem; }
+	@media (max-width: 599px) { .page-title { font-size: 1.75rem; } }
 
 	/* Steps */
 	.steps { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 2rem; }
@@ -330,10 +340,10 @@
 
 	/* Layout */
 	.layout { display: grid; grid-template-columns: 1fr; gap: 2rem; margin-bottom: 3rem; }
-	@media (min-width: 840px) { .layout { grid-template-columns: 2fr 1fr; } }
+	@media (min-width: 960px) { .layout { grid-template-columns: 2fr 1fr; } }
 	.main-col { display: flex; flex-direction: column; gap: 1.5rem; }
 	.sidebar { display: flex; flex-direction: column; gap: 1.5rem; }
-	@media (min-width: 840px) { .sidebar { position: sticky; top: 6rem; align-self: start; } }
+	@media (min-width: 960px) { .sidebar { position: sticky; top: 5rem; align-self: start; max-height: calc(100vh - 5.5rem); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; } }
 
 	/* Form card */
 	.form-card { background: var(--color-cream); border-radius: var(--md-shape-corner-medium); padding: 1.5rem; }
@@ -370,13 +380,14 @@
 	.actions { display: flex; gap: 0.75rem; padding-top: 0.5rem; }
 	.btn-outline {
 		padding: 0.75rem 1.5rem; border: 1px solid var(--color-cream-dark);
-		color: var(--color-text); border-radius: var(--md-shape-corner-small); background: transparent;
+		color: var(--color-text); border-radius: 9999px; background: transparent;
 		cursor: pointer; transition: background 0.2s; font-size: 0.875rem;
 	}
 	.btn-outline:hover { background: var(--color-cream-dark); }
 	.btn-primary {
+		display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
 		padding: 0.75rem 1.5rem; background: var(--color-sage); color: white;
-		font-weight: 600; border-radius: var(--md-shape-corner-small); border: none; cursor: pointer;
+		font-weight: 600; border-radius: 9999px; border: none; cursor: pointer;
 		transition: opacity 0.2s; font-size: 0.875rem;
 	}
 	.btn-primary:hover { opacity: 0.9; }
@@ -396,9 +407,9 @@
 	.support-section { text-align: center; margin-top: 3rem; }
 	.support-text { color: var(--color-text-muted); margin: 0 0 1rem; }
 	.btn-secondary {
-		display: inline-block; padding: 0.75rem 2rem;
+		display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 2rem;
 		background: var(--color-brown); color: white; font-weight: 600;
-		border-radius: var(--md-shape-corner-small); text-decoration: none; transition: opacity 0.2s;
+		border-radius: 9999px; text-decoration: none; transition: opacity 0.2s;
 	}
 	.btn-secondary:hover { opacity: 0.9; }
 </style>
