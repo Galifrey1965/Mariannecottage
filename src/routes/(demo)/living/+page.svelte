@@ -13,7 +13,7 @@
 		{
 			id: 'cottage',
 			label: 'Marianne Cottage',
-			sub: '1 La Haye, Couvains · GPS 49.1728, -0.9887',
+			sub: '1 La Haye, Couvains · GPS 49.172937, -0.988765',
 			desc: 'Your restored 1800s longère. Lime-wash walls, oak beams, Pierre de Caen stone — and two en-suite rooms looking out over the orchard.',
 			cx: 340,
 			cy: 300,
@@ -73,7 +73,7 @@
 	];
 
 	const LEAFLET_MARKERS = [
-		{ lat: 49.1728, lng: -0.9887, title: 'Marianne Cottage', type: 'cottage', color: '#4a586e' },
+		{ lat: 49.172937, lng: -0.988765, title: 'Marianne Cottage', type: 'cottage', color: '#4a586e' },
 		{ lat: 49.189, lng: -0.943, title: 'Cerisy-la-Forêt Abbey', type: 'abbey', color: '#8a7a5a' },
 		{ lat: 49.369, lng: -0.8564, title: 'Omaha Beach', type: 'ww2', color: '#7a6060' },
 		{ lat: 49.342, lng: -0.6295, title: 'Gold Beach (Arromanches)', type: 'ww2', color: '#7a6060' },

@@ -448,4 +448,4 @@ export const POIS: Poi[] = [
 ];
 
 // Cottage origin — used for Haversine and map centering
-export const COTTAGE_ORIGIN = { lat: 49.1728, lng: -0.9887 };
+export const COTTAGE_ORIGIN = { lat: 49.172937, lng: -0.988765 };

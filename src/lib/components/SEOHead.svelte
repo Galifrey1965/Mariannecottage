@@ -38,8 +38,8 @@
 		},
 		geo: {
 			'@type': 'GeoCoordinates',
-			latitude: 49.17283,
-			longitude: -0.98868
+			latitude: 49.172937,
+			longitude: -0.988765
 		},
 		telephone: '+33 7 80 73 17 04',
 		email: 'mariannecattage@gmail.com',
