@@ -161,12 +161,24 @@
 			<p class="footer-title">Until then, Normandy waits.</p>
 			<p class="footer-sub">Marianne Cottage · Normandy · France</p>
 			<p class="demo-links">
-				<a href="/historian">/historian</a> ·
-				<a href="/living">/living</a> ·
-				<a href="/nature">/nature</a> ·
-				<a href="/story">/story</a> ·
-				<a href="/brutal">/brutal</a> ·
-				<a href="/">back to site</a>
+				<a href="/">← site</a> ·
+				<a href="/historian">historian</a> ·
+				<a href="/living">living</a> ·
+				<a href="/nature">nature</a> ·
+				<a href="/story">story</a> ·
+				<a href="/brutal">brutal</a> ·
+				<a href="/calm" aria-current="page">calm</a> ·
+				<a href="/bento">bento</a> ·
+				<a href="/kinetic">kinetic</a> ·
+				<a href="/adaptive">adaptive</a> ·
+				<a href="/ambient">ambient</a> ·
+				<a href="/context">context</a> ·
+				<a href="/retro">retro</a> ·
+				<a href="/expressive">expressive</a> ·
+				<a href="/spatial">spatial</a> ·
+				<a href="/micro">micro</a> ·
+				<a href="/ergonomic">ergonomic</a> ·
+				<a href="/liquid">liquid</a>
 			</p>
 			<p class="demo-number">Demo #44</p>
 		</div>

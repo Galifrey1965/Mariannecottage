@@ -330,6 +330,29 @@
 	</div>
 </footer>
 
+<nav class="demo-footer-nav" aria-label="Demo pages">
+	<a href="/">← Site</a>
+	<span>|</span>
+	<a href="/historian">historian</a>
+	<a href="/living">living</a>
+	<a href="/nature">nature</a>
+	<a href="/story" aria-current="page">story</a>
+	<span>·</span>
+	<a href="/brutal">brutal</a>
+	<a href="/calm">calm</a>
+	<a href="/bento">bento</a>
+	<a href="/kinetic">kinetic</a>
+	<a href="/adaptive">adaptive</a>
+	<a href="/ambient">ambient</a>
+	<a href="/context">context</a>
+	<a href="/retro">retro</a>
+	<a href="/expressive">expressive</a>
+	<a href="/spatial">spatial</a>
+	<a href="/micro">micro</a>
+	<a href="/ergonomic">ergonomic</a>
+	<a href="/liquid">liquid</a>
+</nav>
+
 <style>
 	/* ── Scroll stage ── */
 	.scroll-stage {
@@ -746,4 +769,20 @@
 			grid-template-columns: 1fr;
 		}
 	}
+	.demo-footer-nav {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.4rem 0.75rem;
+		align-items: center;
+		justify-content: center;
+		padding: 1rem 1.5rem;
+		background: #1e2a1e;
+		font-size: 0.72rem;
+		font-family: 'Courier New', monospace;
+		letter-spacing: 0.05em;
+	}
+	.demo-footer-nav a { color: #8aab8a; text-decoration: none; }
+	.demo-footer-nav a:hover { color: #fff; }
+	.demo-footer-nav a[aria-current] { color: #fff; font-weight: 700; }
+	.demo-footer-nav span { color: #4a6a4a; }
 </style>

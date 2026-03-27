@@ -153,7 +153,20 @@
 		<a href="/living">LIVING</a>
 		<a href="/nature">NATURE</a>
 		<a href="/story">STORY</a>
+		<span class="footer-sep">·</span>
+		<a href="/brutal" aria-current="page">BRUTAL</a>
 		<a href="/calm">CALM</a>
+		<a href="/bento">BENTO</a>
+		<a href="/kinetic">KINETIC</a>
+		<a href="/adaptive">ADAPTIVE</a>
+		<a href="/ambient">AMBIENT</a>
+		<a href="/context">CONTEXT</a>
+		<a href="/retro">RETRO</a>
+		<a href="/expressive">EXPRESSIVE</a>
+		<a href="/spatial">SPATIAL</a>
+		<a href="/micro">MICRO</a>
+		<a href="/ergonomic">ERGONOMIC</a>
+		<a href="/liquid">LIQUID</a>
 	</div>
 	<div class="footer-issue">DEMO #44</div>
 </footer>
