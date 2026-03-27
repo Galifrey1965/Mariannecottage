@@ -1,0 +1,1737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Marianne Cottage — A haven of peace in the heart of Normandy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Nunito:wght@300;400;500;600&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ===== RESET & BASE ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #f5efe0;
+  --surface: #ede6d8;
+  --green: #5a7c5a;
+  --green-light: #7a9e7a;
+  --brown: #8b7355;
+  --brown-light: #b09a7e;
+  --dark: #3d2b1f;
+  --mid: #6b5440;
+  --border: #d4c9b8;
+  --card-shadow: 4px 4px 0 #d4c9b8;
+  --radius: 12px;
+  --nav-h: 64px;
+}
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 300;
+  background: var(--bg);
+  color: var(--dark);
+  line-height: 1.65;
+  min-height: 100vh;
+}
+h1, h2, h3, h4 { font-family: 'Playfair Display', serif; color: var(--dark); }
+a { color: var(--green); text-decoration: none; }
+a:hover { text-decoration: underline; }
+img { max-width: 100%; display: block; }
+button { cursor: pointer; font-family: 'Nunito', sans-serif; }
+
+/* ===== TOPO SVG PATTERN ===== */
+.topo-pattern {
+  position: relative;
+}
+.topo-pattern::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cdefs%3E%3Cpattern id='topo' x='0' y='0' width='200' height='200' patternUnits='userSpaceOnUse'%3E%3Ccircle cx='100' cy='100' r='90' fill='none' stroke='rgba(90,124,90,0.06)' stroke-width='1'/%3E%3Ccircle cx='100' cy='100' r='72' fill='none' stroke='rgba(90,124,90,0.06)' stroke-width='1'/%3E%3Ccircle cx='100' cy='100' r='54' fill='none' stroke='rgba(90,124,90,0.06)' stroke-width='1'/%3E%3Ccircle cx='100' cy='100' r='36' fill='none' stroke='rgba(90,124,90,0.06)' stroke-width='1'/%3E%3Ccircle cx='100' cy='100' r='18' fill='none' stroke='rgba(90,124,90,0.06)' stroke-width='1'/%3E%3Ccircle cx='0' cy='0' r='45' fill='none' stroke='rgba(90,124,90,0.04)' stroke-width='1'/%3E%3Ccircle cx='0' cy='0' r='27' fill='none' stroke='rgba(90,124,90,0.04)' stroke-width='1'/%3E%3Ccircle cx='200' cy='200' r='45' fill='none' stroke='rgba(90,124,90,0.04)' stroke-width='1'/%3E%3Ccircle cx='200' cy='200' r='27' fill='none' stroke='rgba(90,124,90,0.04)' stroke-width='1'/%3E%3Ccircle cx='0' cy='200' r='45' fill='none' stroke='rgba(90,124,90,0.04)' stroke-width='1'/%3E%3Ccircle cx='200' cy='0' r='45' fill='none' stroke='rgba(90,124,90,0.04)' stroke-width='1'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='200' height='200' fill='url(%23topo)'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+.topo-pattern > * { position: relative; z-index: 1; }
+
+/* ===== NAV ===== */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: var(--nav-h);
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  box-shadow: 0 2px 8px rgba(61,43,31,0.07);
+}
+.nav-brand {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.15rem;
+  color: var(--dark);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+}
+.nav-brand span {
+  display: block;
+  font-size: 0.7rem;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 400;
+  color: var(--brown);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.nav-links {
+  display: flex;
+  gap: 0.25rem;
+  list-style: none;
+}
+.nav-links li a {
+  display: block;
+  padding: 0.35rem 0.85rem;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 500;
+  font-size: 0.9rem;
+  color: var(--mid);
+  border-bottom: 2px solid transparent;
+  transition: color 0.2s, border-color 0.2s;
+  letter-spacing: 0.02em;
+}
+.nav-links li a:hover,
+.nav-links li a.active {
+  color: var(--green);
+  border-bottom-color: var(--green);
+  text-decoration: none;
+}
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  padding: 6px;
+}
+.hamburger span {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: var(--dark);
+  border-radius: 2px;
+  transition: all 0.3s;
+}
+.hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.hamburger.open span:nth-child(2) { opacity: 0; }
+.hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+.mobile-menu {
+  display: none;
+  position: fixed;
+  top: var(--nav-h);
+  left: 0; right: 0;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  padding: 1rem 2rem;
+  z-index: 99;
+  box-shadow: 0 4px 12px rgba(61,43,31,0.1);
+}
+.mobile-menu.open { display: block; }
+.mobile-menu ul { list-style: none; }
+.mobile-menu ul li { border-bottom: 1px solid var(--border); }
+.mobile-menu ul li:last-child { border-bottom: none; }
+.mobile-menu ul li a {
+  display: block;
+  padding: 0.85rem 0;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 500;
+  color: var(--mid);
+  font-size: 1rem;
+}
+.mobile-menu ul li a.active { color: var(--green); }
+
+/* ===== PAGE SYSTEM ===== */
+.page { display: none; }
+.page.active { display: block; }
+main { padding-top: var(--nav-h); }
+
+/* ===== UTILITIES ===== */
+.container { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; }
+.section { padding: 5rem 0; }
+.section-sm { padding: 3rem 0; }
+.section-title {
+  font-size: clamp(1.8rem, 4vw, 2.5rem);
+  margin-bottom: 0.5rem;
+  line-height: 1.2;
+}
+.section-subtitle {
+  color: var(--brown);
+  font-size: 1rem;
+  font-weight: 400;
+  margin-bottom: 2.5rem;
+  font-style: italic;
+}
+.divider {
+  width: 60px;
+  height: 2px;
+  background: var(--green);
+  margin: 1rem 0 2rem;
+}
+
+/* ===== BUTTONS ===== */
+.btn {
+  display: inline-block;
+  padding: 0.75rem 1.75rem;
+  border-radius: 6px;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.2s;
+  border: none;
+  letter-spacing: 0.03em;
+}
+.btn-primary {
+  background: var(--green);
+  color: #fff;
+}
+.btn-primary:hover {
+  background: #4a6a4a;
+  color: #fff;
+  text-decoration: none;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(90,124,90,0.3);
+}
+.btn-outline {
+  background: transparent;
+  color: var(--green);
+  border: 2px solid var(--green);
+}
+.btn-outline:hover {
+  background: var(--green);
+  color: #fff;
+  text-decoration: none;
+}
+
+/* ===== CARDS ===== */
+.card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--card-shadow);
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.card:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 5px 5px 0 #d4c9b8;
+}
+
+/* ===== ENTRANCE ANIMATIONS ===== */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+
+/* ===== TOAST ===== */
+.toast {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  background: var(--dark);
+  color: #fff;
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  z-index: 999;
+  transform: translateY(100px);
+  opacity: 0;
+  transition: all 0.35s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  max-width: 340px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+}
+.toast.show {
+  transform: translateY(0);
+  opacity: 1;
+}
+.toast-icon { font-size: 1.2rem; }
+
+/* ===========================
+   PAGE: HOME
+=========================== */
+
+/* Hero */
+.hero {
+  background: var(--bg);
+  min-height: calc(100vh - var(--nav-h));
+  display: flex;
+  align-items: center;
+  padding: 4rem 0;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cdefs%3E%3Cpattern id='topo2' x='0' y='0' width='300' height='300' patternUnits='userSpaceOnUse'%3E%3Ccircle cx='150' cy='150' r='130' fill='none' stroke='rgba(90,124,90,0.07)' stroke-width='1.5'/%3E%3Ccircle cx='150' cy='150' r='104' fill='none' stroke='rgba(90,124,90,0.07)' stroke-width='1.5'/%3E%3Ccircle cx='150' cy='150' r='78' fill='none' stroke='rgba(90,124,90,0.06)' stroke-width='1'/%3E%3Ccircle cx='150' cy='150' r='52' fill='none' stroke='rgba(90,124,90,0.05)' stroke-width='1'/%3E%3Ccircle cx='150' cy='150' r='26' fill='none' stroke='rgba(90,124,90,0.05)' stroke-width='1'/%3E%3Ccircle cx='0' cy='0' r='65' fill='none' stroke='rgba(90,124,90,0.04)' stroke-width='1'/%3E%3Ccircle cx='300' cy='300' r='65' fill='none' stroke='rgba(90,124,90,0.04)' stroke-width='1'/%3E%3Ccircle cx='0' cy='300' r='65' fill='none' stroke='rgba(90,124,90,0.04)' stroke-width='1'/%3E%3Ccircle cx='300' cy='0' r='65' fill='none' stroke='rgba(90,124,90,0.04)' stroke-width='1'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='300' height='300' fill='url(%23topo2)'/%3E%3C/svg%3E");
+  pointer-events: none;
+}
+.hero-inner {
+  position: relative;
+  z-index: 1;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+}
+.hero-fleuron {
+  font-size: 2rem;
+  color: var(--green);
+  margin-bottom: 0.75rem;
+  display: block;
+  line-height: 1;
+}
+.hero-eyebrow {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 400;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--brown);
+  margin-bottom: 1rem;
+}
+.hero-title {
+  font-size: clamp(2.2rem, 5vw, 3.4rem);
+  line-height: 1.15;
+  margin-bottom: 0.5rem;
+  font-style: italic;
+}
+.hero-title strong {
+  font-style: normal;
+  color: var(--green);
+}
+.hero-tagline {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: 1.15rem;
+  color: var(--brown);
+  margin-bottom: 1.5rem;
+  line-height: 1.4;
+}
+.hero-tagline::before { content: '❧ '; }
+.hero-body {
+  font-size: 1rem;
+  color: var(--mid);
+  margin-bottom: 2rem;
+  max-width: 480px;
+  font-weight: 400;
+}
+.hero-ctas { display: flex; gap: 1rem; flex-wrap: wrap; }
+.hero-image-side {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+.hero-photo-frame {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: 6px 6px 0 #d4c9b8;
+  overflow: hidden;
+  aspect-ratio: 4/3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.hero-photo-placeholder {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #e8dfd0 0%, #d8cfc0 50%, #c8bfb0 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  color: var(--brown);
+}
+.hero-photo-placeholder .placeholder-icon { font-size: 3rem; opacity: 0.4; }
+.hero-photo-placeholder .placeholder-text {
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 400;
+  opacity: 0.6;
+  letter-spacing: 0.05em;
+}
+.hero-address-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--card-shadow);
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+.hero-address-card .addr-icon { font-size: 1.4rem; margin-top: 2px; }
+.hero-address-card .addr-text h4 {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--dark);
+  margin-bottom: 0.15rem;
+  font-family: 'Nunito', sans-serif;
+}
+.hero-address-card .addr-text p {
+  font-size: 0.85rem;
+  color: var(--mid);
+  font-weight: 400;
+}
+
+/* Amenity Strip */
+.amenity-strip {
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 1.25rem 0;
+}
+.amenity-strip-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+.amenity-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--mid);
+  white-space: nowrap;
+}
+.amenity-item .emo { font-size: 1.2rem; }
+
+/* Testimonials */
+.testimonials-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+.testimonial-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--card-shadow);
+  padding: 1.75rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.testimonial-card:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 5px 5px 0 #d4c9b8;
+}
+.testimonial-quote-mark {
+  font-size: 3.5rem;
+  line-height: 0.8;
+  color: var(--green);
+  font-family: 'Playfair Display', serif;
+  margin-bottom: 0.5rem;
+  display: block;
+  opacity: 0.5;
+}
+.testimonial-text {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: 0.975rem;
+  line-height: 1.6;
+  color: var(--dark);
+  margin-bottom: 1.25rem;
+}
+.testimonial-author {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--brown);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* ===========================
+   PAGE: ROOMS
+=========================== */
+.rooms-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+.room-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--card-shadow);
+  overflow: hidden;
+}
+.room-photo {
+  height: 200px;
+  background: linear-gradient(135deg, #e8dfd0 0%, #d0c8b8 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--brown-light);
+  font-size: 2.5rem;
+}
+.room-body { padding: 1.5rem; }
+.room-body h3 {
+  font-size: 1.3rem;
+  margin-bottom: 0.25rem;
+}
+.room-body .room-type {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--brown);
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+.room-features {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.room-features li {
+  font-size: 0.9rem;
+  color: var(--mid);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.room-features li::before {
+  content: '✦';
+  color: var(--green);
+  font-size: 0.6rem;
+  flex-shrink: 0;
+}
+
+.breakfast-section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2rem;
+  margin-bottom: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+.breakfast-section::after {
+  content: '☕';
+  position: absolute;
+  right: 2rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 5rem;
+  opacity: 0.07;
+  pointer-events: none;
+}
+.breakfast-section h3 {
+  font-size: 1.4rem;
+  margin-bottom: 0.35rem;
+}
+.breakfast-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 1rem;
+}
+.breakfast-tag {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 0.3rem 0.9rem;
+  font-size: 0.83rem;
+  color: var(--mid);
+  font-weight: 500;
+}
+
+/* Rates */
+.rates-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+.rate-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--card-shadow);
+  padding: 2rem 1.5rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.rate-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: var(--green);
+}
+.rate-card.peak::before { background: var(--brown); }
+.rate-ribbon {
+  position: absolute;
+  top: 14px;
+  right: -22px;
+  background: var(--brown);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 3px 32px;
+  transform: rotate(45deg);
+}
+.rate-card.peak .rate-ribbon { background: #b05a30; }
+.rate-season {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.25rem;
+  margin-bottom: 0.25rem;
+}
+.rate-period {
+  font-size: 0.8rem;
+  color: var(--brown);
+  font-weight: 500;
+  margin-bottom: 1.25rem;
+  font-style: italic;
+}
+.rate-price {
+  font-family: 'Courier Prime', monospace;
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--dark);
+  line-height: 1;
+}
+.rate-price sup { font-size: 1rem; vertical-align: top; margin-top: 0.35rem; }
+.rate-price-unit {
+  font-size: 0.8rem;
+  color: var(--mid);
+  margin-top: 0.35rem;
+}
+.rate-includes {
+  margin-top: 1rem;
+  font-size: 0.8rem;
+  color: var(--green);
+  font-weight: 600;
+}
+.evening-meal-note {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--green);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+.evening-meal-note .em-icon { font-size: 1.5rem; }
+.evening-meal-note p { font-size: 0.9rem; color: var(--mid); }
+.evening-meal-note strong { color: var(--dark); }
+
+/* ===========================
+   PAGE: EXPLORE
+=========================== */
+.poi-filter-bar {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  margin-bottom: 2.5rem;
+}
+.filter-btn {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 0.4rem 1rem;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--mid);
+  transition: all 0.2s;
+}
+.filter-btn:hover,
+.filter-btn.active {
+  background: var(--green);
+  border-color: var(--green);
+  color: #fff;
+}
+
+.poi-trail {
+  position: relative;
+  padding-left: 2rem;
+}
+.poi-trail::before {
+  content: '';
+  position: absolute;
+  left: 9px;
+  top: 8px;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(to bottom, var(--green), var(--border));
+}
+.poi-item {
+  position: relative;
+  padding: 0 0 2rem 1.5rem;
+  transition: opacity 0.2s;
+}
+.poi-item.hidden { display: none; }
+.poi-dot {
+  position: absolute;
+  left: -1.5rem;
+  top: 6px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--green);
+  background: var(--bg);
+  z-index: 1;
+}
+.poi-item:hover .poi-dot {
+  background: var(--green);
+}
+.poi-inner {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--card-shadow);
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.poi-inner:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 5px 5px 0 #d4c9b8;
+}
+.poi-distance {
+  font-family: 'Courier Prime', monospace;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--dark);
+  white-space: nowrap;
+  min-width: 70px;
+  text-align: right;
+}
+.poi-distance-unit {
+  font-size: 0.7rem;
+  color: var(--mid);
+  font-weight: 400;
+  display: block;
+  text-align: right;
+}
+.poi-info { flex: 1; }
+.poi-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.05rem;
+  color: var(--dark);
+  margin-bottom: 0.25rem;
+}
+.poi-cats { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+.poi-badge {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+.poi-badge.ww2 { background: #f5e8d0; color: #8b5a2b; }
+.poi-badge.museum { background: #e0e8f0; color: #3a5878; }
+.poi-badge.heritage { background: #e8f0e0; color: #3d5a30; }
+.poi-badge.towns { background: #f0e8f0; color: #5a3a5a; }
+.poi-badge.nearest {
+  background: var(--green);
+  color: #fff;
+}
+.poi-separator {
+  width: 6px;
+  height: 2px;
+  background: var(--border);
+  margin: 0 0.25rem;
+}
+
+/* ===========================
+   PAGE: BOOK
+=========================== */
+.booking-layout {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 3rem;
+  align-items: start;
+}
+.form-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--card-shadow);
+  padding: 2.5rem;
+}
+.form-title {
+  font-size: 1.5rem;
+  margin-bottom: 0.25rem;
+}
+.form-subtitle {
+  font-size: 0.875rem;
+  color: var(--brown);
+  font-style: italic;
+  margin-bottom: 2rem;
+}
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+.form-group {
+  margin-bottom: 1.25rem;
+}
+.form-group label {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--dark);
+  margin-bottom: 0.4rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.7rem 1rem;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.95rem;
+  color: var(--dark);
+  font-weight: 400;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  outline: none;
+}
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: var(--green);
+  box-shadow: 0 0 0 3px rgba(90,124,90,0.12);
+}
+.form-group textarea { resize: vertical; min-height: 100px; }
+.form-group select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238b7355' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 1rem center; padding-right: 2.5rem; }
+.form-submit { width: 100%; padding: 0.9rem; font-size: 1rem; margin-top: 0.5rem; }
+
+.booking-sidebar { display: flex; flex-direction: column; gap: 1.5rem; }
+.sidebar-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--card-shadow);
+  padding: 1.5rem;
+}
+.sidebar-card h4 {
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+.sidebar-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(212,201,184,0.4);
+  font-size: 0.875rem;
+}
+.sidebar-info-row:last-child { border-bottom: none; }
+.sidebar-info-row .label { color: var(--mid); font-weight: 400; }
+.sidebar-info-row .value {
+  font-family: 'Courier Prime', monospace;
+  font-weight: 700;
+  color: var(--dark);
+}
+.sidebar-note {
+  font-size: 0.8rem;
+  color: var(--brown);
+  font-style: italic;
+  margin-top: 0.75rem;
+  line-height: 1.5;
+}
+
+/* ===========================
+   PAGE: CONTACT
+=========================== */
+.contact-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: start;
+}
+.contact-info-block { display: flex; flex-direction: column; gap: 1.5rem; }
+.contact-detail {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+.contact-detail .c-icon {
+  width: 44px;
+  height: 44px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+.contact-detail .c-text h4 {
+  font-size: 0.85rem;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.2rem;
+  color: var(--dark);
+}
+.contact-detail .c-text p, .contact-detail .c-text a {
+  font-size: 0.95rem;
+  color: var(--mid);
+}
+.contact-map-placeholder {
+  background: linear-gradient(135deg, #e8dfd0 0%, #d5ccbe 100%);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--card-shadow);
+  height: 220px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  color: var(--brown);
+  margin-top: 1.5rem;
+}
+.contact-map-placeholder .map-icon { font-size: 2.5rem; opacity: 0.4; }
+.contact-map-placeholder p { font-size: 0.8rem; opacity: 0.6; font-weight: 500; }
+.contact-map-placeholder .map-coords {
+  font-family: 'Courier Prime', monospace;
+  font-size: 0.75rem;
+  opacity: 0.5;
+}
+
+/* ===========================
+   FOOTER
+=========================== */
+footer {
+  background: var(--dark);
+  color: rgba(245,239,224,0.75);
+  padding: 3rem 0 2rem;
+  margin-top: 4rem;
+}
+.footer-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 3rem;
+  margin-bottom: 2rem;
+}
+footer h4 {
+  color: #f5efe0;
+  font-size: 0.9rem;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 1rem;
+}
+footer p { font-size: 0.875rem; line-height: 1.7; }
+footer ul { list-style: none; }
+footer ul li { margin-bottom: 0.5rem; }
+footer ul li a {
+  color: rgba(245,239,224,0.65);
+  font-size: 0.875rem;
+  transition: color 0.2s;
+}
+footer ul li a:hover { color: #f5efe0; text-decoration: none; }
+.footer-brand {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.3rem;
+  color: #f5efe0;
+  margin-bottom: 0.75rem;
+}
+.footer-tagline {
+  font-style: italic;
+  color: rgba(245,239,224,0.5);
+  font-size: 0.85rem;
+  margin-bottom: 1rem;
+}
+.footer-bottom {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1.5rem 1.5rem 0;
+  border-top: 1px solid rgba(245,239,224,0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.footer-bottom p { font-size: 0.78rem; color: rgba(245,239,224,0.4); }
+
+/* ===========================
+   RESPONSIVE
+=========================== */
+@media (max-width: 900px) {
+  .hero-inner { grid-template-columns: 1fr; gap: 2rem; }
+  .hero-image-side { display: none; }
+  .testimonials-grid { grid-template-columns: 1fr; }
+  .rooms-grid { grid-template-columns: 1fr; }
+  .rates-grid { grid-template-columns: 1fr; }
+  .booking-layout { grid-template-columns: 1fr; }
+  .booking-sidebar { order: -1; }
+  .contact-layout { grid-template-columns: 1fr; }
+  .footer-inner { grid-template-columns: 1fr; gap: 2rem; }
+}
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .hamburger { display: flex; }
+  .section { padding: 3rem 0; }
+  .hero { min-height: auto; padding: 3rem 0; }
+  .form-row { grid-template-columns: 1fr; }
+  .amenity-strip-inner { gap: 1rem; }
+}
+@media (max-width: 480px) {
+  nav { padding: 0 1rem; }
+  .container { padding: 0 1rem; }
+  .form-card { padding: 1.5rem; }
+  .poi-inner { flex-direction: column; align-items: flex-start; gap: 0.75rem; }
+  .poi-distance { min-width: auto; text-align: left; }
+  .amenity-item span:not(.emo) { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== TOAST ===== -->
+<div class="toast" id="toast" role="alert" aria-live="polite">
+  <span class="toast-icon">✓</span>
+  <span id="toast-msg">Message sent!</span>
+</div>
+
+<!-- ===== NAV ===== -->
+<nav aria-label="Main navigation">
+  <div class="nav-brand">
+    Marianne Cottage
+    <span>Couvains, Normandy</span>
+  </div>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#" class="active" onclick="showPage('home',this)">Home</a></li>
+    <li><a href="#" onclick="showPage('rooms',this)">Rooms</a></li>
+    <li><a href="#" onclick="showPage('explore',this)">Explore</a></li>
+    <li><a href="#" onclick="showPage('book',this)">Book</a></li>
+    <li><a href="#" onclick="showPage('contact',this)">Contact</a></li>
+  </ul>
+  <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- Mobile menu -->
+<div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+  <ul>
+    <li><a href="#" class="active" onclick="showPage('home',this);closeMobile()">Home</a></li>
+    <li><a href="#" onclick="showPage('rooms',this);closeMobile()">Rooms</a></li>
+    <li><a href="#" onclick="showPage('explore',this);closeMobile()">Explore</a></li>
+    <li><a href="#" onclick="showPage('book',this);closeMobile()">Book</a></li>
+    <li><a href="#" onclick="showPage('contact',this);closeMobile()">Contact</a></li>
+  </ul>
+</div>
+
+<main>
+
+<!-- ===========================
+     PAGE: HOME
+=========================== -->
+<div class="page active" id="page-home">
+
+  <!-- Hero -->
+  <section class="hero topo-pattern">
+    <div class="hero-inner">
+      <div class="hero-content">
+        <span class="hero-fleuron">❧</span>
+        <p class="hero-eyebrow">Chambres d'hôtes · Normandy, France</p>
+        <h1 class="hero-title">Welcome to<br><strong>Marianne Cottage</strong></h1>
+        <p class="hero-tagline">A haven of peace in the heart of Normandy</p>
+        <p class="hero-body">
+          A warm and welcoming rural retreat in the Norman countryside. Hosted by Mark & Kim, Marianne Cottage offers comfortable rooms, an exceptional breakfast, and easy access to the D-Day beaches, Bayeux, and beyond.
+        </p>
+        <div class="hero-ctas">
+          <button class="btn btn-primary" onclick="showPage('book', document.querySelector('.nav-links a[onclick*=book]'))">Book Your Stay</button>
+          <button class="btn btn-outline" onclick="showPage('rooms', document.querySelector('.nav-links a[onclick*=rooms]'))">Our Rooms</button>
+        </div>
+      </div>
+      <div class="hero-image-side">
+        <div class="hero-photo-frame">
+          <div class="hero-photo-placeholder">
+            <span class="placeholder-icon">🌿</span>
+            <span class="placeholder-text">Marianne Cottage</span>
+          </div>
+        </div>
+        <div class="hero-address-card">
+          <span class="addr-icon">📍</span>
+          <div class="addr-text">
+            <h4>1 La Haye, 50680 Couvains</h4>
+            <p>Normandy, France &nbsp;·&nbsp; Hosted by Mark &amp; Kim</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Amenity Strip -->
+  <div class="amenity-strip">
+    <div class="amenity-strip-inner">
+      <div class="amenity-item"><span class="emo">☕</span><span>Breakfast Included</span></div>
+      <div class="amenity-item"><span class="emo">🚗</span><span>Free Parking</span></div>
+      <div class="amenity-item"><span class="emo">📶</span><span>WiFi</span></div>
+      <div class="amenity-item"><span class="emo">🌿</span><span>Garden Views</span></div>
+      <div class="amenity-item"><span class="emo">🦉</span><span>Wildlife</span></div>
+      <div class="amenity-item"><span class="emo">🚭</span><span>Non-Smoking</span></div>
+    </div>
+  </div>
+
+  <!-- Testimonials -->
+  <section class="section topo-pattern">
+    <div class="container">
+      <div class="reveal">
+        <h2 class="section-title">What Our Guests Say</h2>
+        <div class="divider"></div>
+        <p class="section-subtitle">Honest words from those who've stayed with us</p>
+      </div>
+      <div class="testimonials-grid">
+        <div class="testimonial-card reveal reveal-delay-1">
+          <span class="testimonial-quote-mark">"</span>
+          <p class="testimonial-text">Warm welcome, lovely room, comfortable bed, modern spacious bathroom, excellent breakfast.</p>
+          <p class="testimonial-author">Simon &mdash; United Kingdom</p>
+        </div>
+        <div class="testimonial-card reveal reveal-delay-2">
+          <span class="testimonial-quote-mark">"</span>
+          <p class="testimonial-text">Lacked nothing for 5 days. Immaculate rooms, extensive freshly prepared breakfast, wonderful evening meal option.</p>
+          <p class="testimonial-author">Ingrid &mdash; Netherlands</p>
+        </div>
+        <div class="testimonial-card reveal reveal-delay-3">
+          <span class="testimonial-quote-mark">"</span>
+          <p class="testimonial-text">Warm welcome, delightful countryside house, peaceful, close to points of interest, made-to-measure breakfast.</p>
+          <p class="testimonial-author">Guest &mdash; France</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick CTA -->
+  <section class="section-sm" style="background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+    <div class="container" style="text-align: center;">
+      <div class="reveal">
+        <h2 class="section-title" style="margin-bottom: 0.5rem;">Ready to visit Normandy?</h2>
+        <p style="color: var(--mid); margin-bottom: 1.5rem; font-size: 1rem;">Rates from <span style="font-family: 'Courier Prime', monospace; font-weight: 700; color: var(--dark);">€85</span>/night, breakfast included.</p>
+        <button class="btn btn-primary" onclick="showPage('book', document.querySelector('.nav-links a[onclick*=book]'))">Check Availability</button>
+      </div>
+    </div>
+  </section>
+
+</div><!-- /page-home -->
+
+
+<!-- ===========================
+     PAGE: ROOMS
+=========================== -->
+<div class="page" id="page-rooms">
+  <section class="section">
+    <div class="container">
+      <div class="reveal">
+        <h2 class="section-title">Rooms &amp; Facilities</h2>
+        <div class="divider"></div>
+        <p class="section-subtitle">A private two-bedroom suite with everything you need for a comfortable stay</p>
+      </div>
+
+      <div class="rooms-grid">
+        <div class="room-card reveal reveal-delay-1">
+          <div class="room-photo">🛏</div>
+          <div class="room-body">
+            <h3>Bedroom One</h3>
+            <p class="room-type">Double Room</p>
+            <ul class="room-features">
+              <li>Comfortable double bed</li>
+              <li>Fresh linen &amp; towels provided</li>
+              <li>Views over the garden</li>
+              <li>Electric kettle &amp; tray</li>
+              <li>WiFi access</li>
+            </ul>
+          </div>
+        </div>
+        <div class="room-card reveal reveal-delay-2">
+          <div class="room-photo">🛏</div>
+          <div class="room-body">
+            <h3>Bedroom Two</h3>
+            <p class="room-type">Twin Room</p>
+            <ul class="room-features">
+              <li>Two comfortable single beds</li>
+              <li>Fresh linen &amp; towels provided</li>
+              <li>Views over the garden</li>
+              <li>Electric kettle &amp; tray</li>
+              <li>WiFi access</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Shared bathroom -->
+      <div class="breakfast-section reveal" style="margin-bottom: 2rem;">
+        <h3>Shared Bathroom</h3>
+        <p style="color: var(--mid); font-size: 0.95rem; margin-top: 0.35rem;">Both bedrooms share a modern, spacious walk-in shower bathroom with fresh towels and toiletries. The suite is available for sole or shared use depending on your booking.</p>
+        <div class="breakfast-items">
+          <span class="breakfast-tag">Walk-in shower</span>
+          <span class="breakfast-tag">Modern fittings</span>
+          <span class="breakfast-tag">Fresh towels</span>
+          <span class="breakfast-tag">Shared by suite only</span>
+        </div>
+      </div>
+
+      <!-- Breakfast -->
+      <div class="breakfast-section reveal">
+        <h3>Breakfast — Included</h3>
+        <p style="color: var(--mid); font-size: 0.95rem; margin-top: 0.35rem;">Start each morning with a generous, freshly prepared breakfast using local and seasonal produce.</p>
+        <div class="breakfast-items">
+          <span class="breakfast-tag">🥐 Croissants</span>
+          <span class="breakfast-tag">🥖 Baguettes</span>
+          <span class="breakfast-tag">🍓 Seasonal Fruits</span>
+          <span class="breakfast-tag">🥛 Juice</span>
+          <span class="breakfast-tag">🥣 Yoghurt</span>
+          <span class="breakfast-tag">🫙 Homemade Jams</span>
+        </div>
+      </div>
+
+      <!-- Evening meal note -->
+      <div class="evening-meal-note reveal">
+        <span class="em-icon">🍽</span>
+        <p><strong>Evening meal available by arrangement</strong> — locally sourced, home-cooked, from <span style="font-family: 'Courier Prime', monospace; font-weight: 700;">€20</span> per person. Please enquire when booking.</p>
+      </div>
+
+      <!-- Rates -->
+      <div class="reveal" style="margin-top: 3.5rem;">
+        <h2 class="section-title">Rates</h2>
+        <div class="divider"></div>
+        <p class="section-subtitle">Breakfast always included · Two-bedroom suite</p>
+      </div>
+      <div class="rates-grid">
+        <div class="rate-card reveal reveal-delay-1">
+          <div class="rate-ribbon">Low</div>
+          <h3 class="rate-season">Low Season</h3>
+          <p class="rate-period">November – February</p>
+          <div class="rate-price"><sup>€</sup>85</div>
+          <p class="rate-price-unit">per night</p>
+          <p class="rate-includes">☕ Breakfast included</p>
+        </div>
+        <div class="rate-card reveal reveal-delay-2">
+          <div class="rate-ribbon">High</div>
+          <h3 class="rate-season">High Season</h3>
+          <p class="rate-period">March – October</p>
+          <div class="rate-price"><sup>€</sup>120</div>
+          <p class="rate-price-unit">per night</p>
+          <p class="rate-includes">☕ Breakfast included</p>
+        </div>
+        <div class="rate-card peak reveal reveal-delay-3">
+          <div class="rate-ribbon">Peak</div>
+          <h3 class="rate-season">D-Day Week</h3>
+          <p class="rate-period">Anniversary week in June</p>
+          <div class="rate-price"><sup>€</sup>140</div>
+          <p class="rate-price-unit">per night</p>
+          <p class="rate-includes">☕ Breakfast included</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+</div><!-- /page-rooms -->
+
+
+<!-- ===========================
+     PAGE: EXPLORE
+=========================== -->
+<div class="page" id="page-explore">
+  <section class="section">
+    <div class="container">
+      <div class="reveal">
+        <h2 class="section-title">Explore Normandy</h2>
+        <div class="divider"></div>
+        <p class="section-subtitle">Points of interest within easy reach of Marianne Cottage</p>
+      </div>
+
+      <div class="poi-filter-bar reveal">
+        <button class="filter-btn active" onclick="filterPOIs('all', this)">All</button>
+        <button class="filter-btn" onclick="filterPOIs('ww2', this)">⚔ D-Day &amp; WW2</button>
+        <button class="filter-btn" onclick="filterPOIs('museum', this)">🏛 Museums</button>
+        <button class="filter-btn" onclick="filterPOIs('heritage', this)">⛪ Heritage</button>
+        <button class="filter-btn" onclick="filterPOIs('towns', this)">🏘 Towns</button>
+      </div>
+
+      <div class="poi-trail" id="poiTrail">
+        <!-- Items are sorted by distance, injected by JS -->
+      </div>
+
+    </div>
+  </section>
+</div><!-- /page-explore -->
+
+
+<!-- ===========================
+     PAGE: BOOK
+=========================== -->
+<div class="page" id="page-book">
+  <section class="section">
+    <div class="container">
+      <div class="reveal">
+        <h2 class="section-title">Book Your Stay</h2>
+        <div class="divider"></div>
+        <p class="section-subtitle">Send us an enquiry and we'll confirm availability within 24 hours</p>
+      </div>
+      <div class="booking-layout">
+        <div class="form-card reveal">
+          <h3 class="form-title">Enquiry Form</h3>
+          <p class="form-subtitle">❧ We look forward to welcoming you</p>
+          <form id="bookingForm" onsubmit="handleBooking(event)">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="b-first">First Name</label>
+                <input type="text" id="b-first" name="first" placeholder="Your first name" required>
+              </div>
+              <div class="form-group">
+                <label for="b-last">Last Name</label>
+                <input type="text" id="b-last" name="last" placeholder="Your last name" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="b-email">Email Address</label>
+              <input type="email" id="b-email" name="email" placeholder="your@email.com" required>
+            </div>
+            <div class="form-group">
+              <label for="b-phone">Phone (optional)</label>
+              <input type="tel" id="b-phone" name="phone" placeholder="+44 or +33...">
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="b-checkin">Check-in Date</label>
+                <input type="date" id="b-checkin" name="checkin" required>
+              </div>
+              <div class="form-group">
+                <label for="b-checkout">Check-out Date</label>
+                <input type="date" id="b-checkout" name="checkout" required>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="b-rooms">Rooms Required</label>
+                <select id="b-rooms" name="rooms">
+                  <option value="1">Bedroom 1 only (double)</option>
+                  <option value="2">Bedroom 2 only (twin)</option>
+                  <option value="both" selected>Both bedrooms</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="b-guests">Guests</label>
+                <select id="b-guests" name="guests">
+                  <option value="1">1 guest</option>
+                  <option value="2" selected>2 guests</option>
+                  <option value="3">3 guests</option>
+                  <option value="4">4 guests</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="b-evening">Evening Meal</label>
+              <select id="b-evening" name="evening">
+                <option value="no" selected>No, thank you</option>
+                <option value="yes">Yes — please enquire (€20+/pp)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="b-notes">Additional Notes</label>
+              <textarea id="b-notes" name="notes" placeholder="Dietary requirements, special requests, questions..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary form-submit">Send Enquiry</button>
+          </form>
+        </div>
+
+        <div class="booking-sidebar">
+          <div class="sidebar-card reveal reveal-delay-1">
+            <h4>Rate Summary</h4>
+            <div class="sidebar-info-row">
+              <span class="label">Low season (Nov–Feb)</span>
+              <span class="value">€85/night</span>
+            </div>
+            <div class="sidebar-info-row">
+              <span class="label">High season (Mar–Oct)</span>
+              <span class="value">€120/night</span>
+            </div>
+            <div class="sidebar-info-row">
+              <span class="label">D-Day week</span>
+              <span class="value">€140/night</span>
+            </div>
+            <p class="sidebar-note">All rates include a full freshly prepared breakfast. Evening meal by arrangement, from €20/pp.</p>
+          </div>
+          <div class="sidebar-card reveal reveal-delay-2">
+            <h4>What's Included</h4>
+            <div class="sidebar-info-row">
+              <span class="label">Breakfast</span>
+              <span class="value">✓ Included</span>
+            </div>
+            <div class="sidebar-info-row">
+              <span class="label">Parking</span>
+              <span class="value">✓ Free</span>
+            </div>
+            <div class="sidebar-info-row">
+              <span class="label">WiFi</span>
+              <span class="value">✓ Free</span>
+            </div>
+            <div class="sidebar-info-row">
+              <span class="label">Fresh linen</span>
+              <span class="value">✓ Included</span>
+            </div>
+            <div class="sidebar-info-row">
+              <span class="label">Garden access</span>
+              <span class="value">✓ Included</span>
+            </div>
+          </div>
+          <div class="sidebar-card reveal reveal-delay-3">
+            <h4>Contact Hosts Directly</h4>
+            <div class="sidebar-info-row">
+              <span class="label">📧 Email</span>
+              <span class="value" style="font-family: 'Nunito', sans-serif; font-size: 0.78rem;">mariannecattage<br>@gmail.com</span>
+            </div>
+            <div class="sidebar-info-row">
+              <span class="label">📞 Phone</span>
+              <span class="value" style="font-family: 'Courier Prime', monospace; font-size: 0.85rem;">+33 7 80 73 17 04</span>
+            </div>
+            <p class="sidebar-note">Mark &amp; Kim usually respond within a few hours.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div><!-- /page-book -->
+
+
+<!-- ===========================
+     PAGE: CONTACT
+=========================== -->
+<div class="page" id="page-contact">
+  <section class="section">
+    <div class="container">
+      <div class="reveal">
+        <h2 class="section-title">Get in Touch</h2>
+        <div class="divider"></div>
+        <p class="section-subtitle">We'd love to hear from you</p>
+      </div>
+      <div class="contact-layout">
+        <div class="contact-info-block reveal">
+          <div class="contact-detail">
+            <div class="c-icon">📍</div>
+            <div class="c-text">
+              <h4>Address</h4>
+              <p>1 La Haye, 50680 Couvains<br>Normandy, France</p>
+            </div>
+          </div>
+          <div class="contact-detail">
+            <div class="c-icon">📧</div>
+            <div class="c-text">
+              <h4>Email</h4>
+              <a href="mailto:mariannecattage@gmail.com">mariannecattage@gmail.com</a>
+            </div>
+          </div>
+          <div class="contact-detail">
+            <div class="c-icon">📞</div>
+            <div class="c-text">
+              <h4>Phone</h4>
+              <a href="tel:+33780731704">+33 (0)7 80 73 17 04</a>
+            </div>
+          </div>
+          <div class="contact-detail">
+            <div class="c-icon">👤</div>
+            <div class="c-text">
+              <h4>Your Hosts</h4>
+              <p>Mark &amp; Kim — welcoming guests since they fell in love with Normandy.</p>
+            </div>
+          </div>
+          <div class="contact-map-placeholder">
+            <span class="map-icon">🗺</span>
+            <p>Couvains, Normandy</p>
+            <span class="map-coords">49.0831° N, 1.0472° W</span>
+          </div>
+        </div>
+
+        <div class="form-card reveal reveal-delay-1">
+          <h3 class="form-title">Send a Message</h3>
+          <p class="form-subtitle">❧ Questions, availability, anything at all</p>
+          <form id="contactForm" onsubmit="handleContact(event)">
+            <div class="form-group">
+              <label for="c-name">Your Name</label>
+              <input type="text" id="c-name" name="name" placeholder="Your full name" required>
+            </div>
+            <div class="form-group">
+              <label for="c-email">Email Address</label>
+              <input type="email" id="c-email" name="email" placeholder="your@email.com" required>
+            </div>
+            <div class="form-group">
+              <label for="c-subject">Subject</label>
+              <select id="c-subject" name="subject">
+                <option value="availability">Availability enquiry</option>
+                <option value="booking">Booking question</option>
+                <option value="directions">Getting there</option>
+                <option value="other">General question</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="c-message">Message</label>
+              <textarea id="c-message" name="message" placeholder="How can we help?" required style="min-height: 140px;"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary form-submit">Send Message</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+</div><!-- /page-contact -->
+
+</main>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-brand">Marianne Cottage</div>
+      <p class="footer-tagline">❧ A haven of peace in the heart of Normandy</p>
+      <p>1 La Haye, 50680 Couvains<br>Normandy, France<br><br>Hosted by Mark &amp; Kim</p>
+    </div>
+    <div>
+      <h4>Navigate</h4>
+      <ul>
+        <li><a href="#" onclick="showPage('home', null)">Home</a></li>
+        <li><a href="#" onclick="showPage('rooms', null)">Rooms &amp; Rates</a></li>
+        <li><a href="#" onclick="showPage('explore', null)">Explore</a></li>
+        <li><a href="#" onclick="showPage('book', null)">Book</a></li>
+        <li><a href="#" onclick="showPage('contact', null)">Contact</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Contact</h4>
+      <ul>
+        <li><a href="mailto:mariannecattage@gmail.com">mariannecattage@gmail.com</a></li>
+        <li><a href="tel:+33780731704">+33 (0)7 80 73 17 04</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 Marianne Cottage · All rights reserved</p>
+    <p>Couvains, Manche, Normandy, France</p>
+  </div>
+</footer>
+
+<script>
+// ===== POI DATA =====
+const POIS = [
+  { name: "Cerisy Abbey",           cats: ["heritage"],         dist: 5.0,  nearest: true  },
+  { name: "Saint-Lô",               cats: ["towns"],            dist: 13.0               },
+  { name: "La Cambe German Cemetery",cats: ["ww2"],             dist: 18.0               },
+  { name: "Château de Balleroy",    cats: ["heritage"],         dist: 20.0               },
+  { name: "American Cemetery",      cats: ["ww2"],              dist: 23.1               },
+  { name: "Omaha Beach",            cats: ["ww2"],              dist: 23.3               },
+  { name: "Overlord Museum",        cats: ["ww2", "museum"],    dist: 25.0               },
+  { name: "Pointe du Hoc",          cats: ["ww2"],              dist: 24.7               },
+  { name: "Bayeux",                 cats: ["heritage"],         dist: 28.0               },
+  { name: "Arromanches",            cats: ["ww2"],              dist: 35.0               },
+  { name: "Coutances",              cats: ["towns"],            dist: 35.0               },
+  { name: "Mont Saint-Michel",      cats: ["towns", "heritage"],dist: 71.0               },
+];
+
+const BADGE_LABELS = {
+  ww2:      "D-Day / WW2",
+  museum:   "Museum",
+  heritage: "Heritage",
+  towns:    "Town",
+};
+
+function renderPOIs(filter = "all") {
+  const sorted = [...POIS].sort((a, b) => a.dist - b.dist);
+  const trail = document.getElementById("poiTrail");
+  trail.innerHTML = "";
+  sorted.forEach((p, i) => {
+    const show = filter === "all" || p.cats.includes(filter);
+    const item = document.createElement("div");
+    item.className = "poi-item reveal" + (show ? "" : " hidden");
+    item.style.transitionDelay = (i * 0.05) + "s";
+    item.dataset.cats = p.cats.join(" ");
+
+    const badges = p.cats.map(c => {
+      const isNearest = p.nearest && c === "heritage";
+      if (p.nearest) {
+        return `<span class="poi-badge nearest">Nearest</span>`;
+      }
+      return `<span class="poi-badge ${c}">${BADGE_LABELS[c] || c}</span>`;
+    });
+    // deduplicate nearest badge
+    const uniqueBadges = [];
+    let addedNearest = false;
+    p.cats.forEach(c => {
+      if (p.nearest && !addedNearest) {
+        uniqueBadges.push(`<span class="poi-badge nearest">Nearest</span>`);
+        addedNearest = true;
+      }
+      if (!p.nearest) {
+        uniqueBadges.push(`<span class="poi-badge ${c}">${BADGE_LABELS[c] || c}</span>`);
+      }
+    });
+
+    item.innerHTML = `
+      <div class="poi-dot"></div>
+      <div class="poi-inner">
+        <div style="text-align:right; flex-shrink:0; min-width:70px;">
+          <span class="poi-distance">${p.dist.toFixed(1)}</span>
+          <span class="poi-distance-unit">km</span>
+        </div>
+        <div class="poi-info">
+          <div class="poi-name">${p.name}</div>
+          <div class="poi-cats">${uniqueBadges.join("")}</div>
+        </div>
+      </div>
+    `;
+    trail.appendChild(item);
+  });
+  // trigger intersection observer for new elements
+  trail.querySelectorAll(".reveal").forEach(el => observer.observe(el));
+}
+
+function filterPOIs(cat, btn) {
+  document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+  if (btn) btn.classList.add("active");
+  document.querySelectorAll(".poi-item").forEach(el => {
+    if (cat === "all" || el.dataset.cats.includes(cat)) {
+      el.classList.remove("hidden");
+    } else {
+      el.classList.add("hidden");
+    }
+  });
+}
+
+// ===== PAGE NAVIGATION =====
+function showPage(id, linkEl) {
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  document.getElementById("page-" + id).classList.add("active");
+
+  // update nav active state
+  document.querySelectorAll(".nav-links a, .mobile-menu a").forEach(a => a.classList.remove("active"));
+  if (linkEl) {
+    // find both desktop and mobile equivalents
+    document.querySelectorAll(".nav-links a[onclick*='" + id + "'], .mobile-menu a[onclick*='" + id + "']")
+      .forEach(a => a.classList.add("active"));
+  }
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
+
+  // init POIs on explore page
+  if (id === "explore") {
+    const trail = document.getElementById("poiTrail");
+    if (!trail.children.length) renderPOIs("all");
+  }
+  return false;
+}
+
+// ===== HAMBURGER =====
+const hamburger = document.getElementById("hamburger");
+const mobileMenu = document.getElementById("mobileMenu");
+hamburger.addEventListener("click", () => {
+  const open = mobileMenu.classList.toggle("open");
+  hamburger.classList.toggle("open", open);
+  hamburger.setAttribute("aria-expanded", open);
+  mobileMenu.setAttribute("aria-hidden", !open);
+});
+
+function closeMobile() {
+  mobileMenu.classList.remove("open");
+  hamburger.classList.remove("open");
+  hamburger.setAttribute("aria-expanded", false);
+  mobileMenu.setAttribute("aria-hidden", true);
+}
+
+// ===== INTERSECTION OBSERVER =====
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add("visible");
+      observer.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.12 });
+
+document.querySelectorAll(".reveal").forEach(el => observer.observe(el));
+
+// ===== TOAST =====
+function showToast(msg) {
+  const toast = document.getElementById("toast");
+  document.getElementById("toast-msg").textContent = msg;
+  toast.classList.add("show");
+  setTimeout(() => toast.classList.remove("show"), 3500);
+}
+
+// ===== FORMS =====
+function handleBooking(e) {
+  e.preventDefault();
+  const first = document.getElementById("b-first").value;
+  showToast("Thanks " + first + "! Your enquiry has been sent. We'll reply within 24 hours.");
+  e.target.reset();
+}
+
+function handleContact(e) {
+  e.preventDefault();
+  const name = document.getElementById("c-name").value.split(" ")[0];
+  showToast("Message sent, " + name + "! Mark & Kim will be in touch soon.");
+  e.target.reset();
+}
+
+// ===== INIT =====
+// Set min dates for booking
+(function() {
+  const today = new Date().toISOString().split("T")[0];
+  const ci = document.getElementById("b-checkin");
+  const co = document.getElementById("b-checkout");
+  if (ci) ci.min = today;
+  if (co) co.min = today;
+  ci && ci.addEventListener("change", () => { if (co) co.min = ci.value; });
+})();
+</script>
+</body>
+</html>
