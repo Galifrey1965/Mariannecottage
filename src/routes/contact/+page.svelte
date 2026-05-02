@@ -25,7 +25,7 @@
 
 			<div class="info-block">
 				<h3 class="info-heading">{t(messages, 'contact.email_label')}</h3>
-				<a href="mailto:mariannecattage@gmail.com" class="info-link">
+				<a href="mailto:mariannecottage@gmail.com" class="info-link">
 					{t(messages, 'contact.email')}
 				</a>
 			</div>

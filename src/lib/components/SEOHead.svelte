@@ -42,7 +42,7 @@
 			longitude: -0.988765
 		},
 		telephone: '+33 7 80 73 17 04',
-		email: 'mariannecattage@gmail.com',
+		email: 'mariannecottage@gmail.com',
 		priceRange: '€€',
 		aggregateRating: {
 			'@type': 'AggregateRating',

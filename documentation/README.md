@@ -7,7 +7,7 @@ Charming 1800s farmhouse B&B in Normandy with 2 bedrooms. Multi-language site (E
 | **Live site** | https://mariannecottage.netlify.app |
 | **Repo** | https://github.com/Galifrey1965/Mariannecottage |
 | **Default branch** | `develop` (PRs target this, not `main`) |
-| **Contact** | 1 La Haye, 50680 Couvains, France · mariannecattage@gmail.com · +33 (0)7 80 73 17 04 |
+| **Contact** | 1 La Haye, 50680 Couvains, France · mariannecottage@gmail.com · +33 (0)7 80 73 17 04 |
 
 ---
 

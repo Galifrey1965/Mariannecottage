@@ -87,6 +87,20 @@ Original message:
 
 ---
 
+## Batch 3 — operational integrity
+
+**Sent:** 2026-05-02
+**Status:** 🟡 awaiting answer
+
+### Q13 — Typo'd contact email
+**Question:** Every page of the cottage's existing site lists `mariannec**a**ttage@gmail.com` (with "cattage", a-t-t) as the contact address — header, footer, contact form, all 3 language translations. Rob has confirmed the *correct* address is `mariannec**o**ttage@gmail.com` (with "cottage", o-t-t), and we've fixed the project-wide typo on `develop`. Two follow-up things that need your input:
+1. Roughly how long has the typo been live on the public site? (helps gauge how much email may have gone astray)
+2. Do you know whether `mariannec**a**ttage@gmail.com` (the typo address) is owned by anyone? If unclaimed, worth registering it yourself as a catch-all so any guest who learned the wrong address can still reach you. If claimed by a stranger, they may have been receiving cottage enquiries — worth a one-time check.
+
+*(Action: typo-fix already committed on `develop`; depending on Mark's answer we may add a redirect / catch-all gmail; no further code change needed unless he wants the catch-all wired.)*
+
+---
+
 ## How to use this file
 
 - **Adding a question:** create a new batch with date, append questions inside.
