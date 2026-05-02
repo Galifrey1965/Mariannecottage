@@ -112,16 +112,18 @@ This is a single-developer end-to-end estimate. Realistically split across calen
 | Item | Annual |
 |---|---|
 | Netlify Personal plan (already in place — 1,000 credits/mo bundles hosting + AI Gateway + builds + functions) | **$108 / ~£86** |
-| Domain registration | **~£10** |
+| Domain registration (`mariannecottage.fr` only — no defensive `.com` initially) | **~£7/yr** (amortised from £66 one-off OVH 10-year prepay; nothing payable until 2036) |
 | Stripe per-transaction fees (~€2/booking × 100 bookings/yr) | **~€200 / ~£170** |
 | LLM token usage (~325 credits/mo of the 1,000-credit allowance) | **£0 — included in Netlify Personal** |
 | Supabase database | **£0 (free tier)** |
 | Resend transactional + marketing | **£0 (free tier)** |
 | Google Business Profile + Places API | **£0** |
 | Plausible / external analytics | **£0 (self-hosted)** |
-| **Total recurring** | **~£266/year** |
+| **Total recurring** | **~£263/year** |
 
-Of which **only £96 is fixed** (Netlify + domain); the £170 Stripe portion only happens when direct bookings happen — costs scale with revenue. Forecast LLM + hosting usage is ~600 credits/mo, leaving ~400 credits headroom (~40%) before any overage at $5 per 500 extra credits.
+Of which **only £93 is fixed** (Netlify + amortised domain); the £170 Stripe portion only happens when direct bookings happen — costs scale with revenue. Forecast LLM + hosting usage is ~600 credits/mo, leaving ~400 credits headroom (~40%) before any overage at $5 per 500 extra credits.
+
+Note on the domain: the £66 OVH 10-year prepay is a one-off paid by Mark up front. After that nothing is payable for the domain until 2036.
 
 ### vs current state
 
@@ -131,7 +133,7 @@ Of which **only £96 is fixed** (Netlify + domain); the £170 Stripe portion onl
 | Direct booking infrastructure | manual emails, no payments, placeholder testimonials | full payment + GDPR-compliant + AI-augmented |
 | Single-OTA dependency risk | high (Booking.com only) | reducing as Gîtes de France + Google Hotel Center come online |
 
-**Net financial story:** the cottage gets meaningfully better operational tooling for ~£266/year and a direct path to clawing back ~€1,000+/year of Booking.com commission — for ~22 days of build.
+**Net financial story:** the cottage gets meaningfully better operational tooling for ~£263/year and a direct path to clawing back ~€1,000+/year of Booking.com commission — for ~22 days of build plus a £66 one-off domain registration.
 
 ---
 

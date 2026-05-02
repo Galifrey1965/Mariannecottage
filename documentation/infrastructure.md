@@ -53,10 +53,13 @@ Updated as services are added or changed.
 |---|---|
 | **Current URL** | https://mariannecottage.netlify.app |
 | **Custom domain (chosen)** | **`mariannecottage.fr`** — confirmed by Mark 2026-05-02 |
-| **Planned action** | Register `mariannecottage.fr` via Cloudflare Registrar (~£8/year at cost) or Gandi (~£12/year). Point DNS at Netlify. |
-| **Email sending domain** | `mariannecottage.fr` — same domain. SPF/DKIM/DMARC records added at registrar for Resend. |
+| **Registrar (chosen)** | **OVH** — French registrar, AFNIC-accredited, decades established. 10-year prepay, no annual renewal hassle for a decade. |
+| **Planned action** | Mark registers `mariannecottage.fr` at OVH for 10 years (~€78). Point nameservers at Netlify DNS so the registrar is purely a billing intermediary. Add DKIM/SPF/DMARC records (later, when Resend goes live in Phase 2). |
+| **Email sending domain** | `mariannecottage.fr` — same domain |
 | **Account owner** | Mark |
-| **Cost** | £8–12/year |
+| **Cost** | **~€78 / £66 once**, valid for 10 years. Then ~€8/yr renewal. |
+| **Why not the cheaper alternatives** | Regery (~€57) is Ukraine-based — geopolitical + mixed-support risk for a 10-year horizon. Cloudflare (~£70-80 over 10yr) only sells 1-year terms. Infomaniak (~€72) is Swiss and viable, but OVH is the home-turf registrar for .fr and Mark can deal with them in French if anything ever needs sorting. |
+| **Why not `.com` defensively** | Decided against initial registration. Cottage's name has no global commercial value yet; squatter risk on a low-profile French rural cottage is minimal. Can be added later (potentially via Netlify's own registrar, which supports `.com`) for ~$10/yr if commercial reach justifies it. |
 
 ---
 
