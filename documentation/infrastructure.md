@@ -75,6 +75,21 @@ _Not yet provisioned. Planned: **Stripe** in test mode, then live mode once GDPR
 
 ---
 
+## LLM / AI inference
+
+| Field | Value |
+|---|---|
+| **Primary provider (planned)** | Google Gemini API (free tier) — Gemini 2.5 Flash-Lite for classify, Gemini 2.5 Flash for draft |
+| **Fallback provider (planned)** | Netlify AI Gateway → Claude Sonnet 4.6 (used for ~5% of complex messages) |
+| **Account owner** | Mark — Gemini API key created on his Google account; Netlify AI Gateway runs through the existing Netlify account |
+| **Free tier limits** | Gemini 2.5 Flash-Lite: 15 RPM / **1,000 requests/day** · Gemini 2.5 Flash: 10 RPM / 250/day · Reset midnight Pacific |
+| **Cottage daily usage estimate** | ~30 LLM calls (classify + draft for ~15 emails). Well under the 1,000/day Flash-Lite limit. |
+| **Cost** | £0–£2/month |
+| **Abstraction** | All LLM calls go through `src/lib/server/llm.ts` (built per [`discussions/booking-payment/06a-inbox-agent-design.md`](discussions/booking-payment/06a-inbox-agent-design.md)). Provider switch via `LLM_PROVIDER` env var. Swappable to Anthropic-direct, OpenRouter, or self-hosted Ollama with a one-line config change. |
+| **Alternatives if Gemini free tier shrinks** | Claude via Netlify Gateway (~£1–3/mo) · Anthropic direct API · OpenRouter · Self-hosted Ollama on a VPS |
+
+---
+
 ## Analytics
 
 _Not yet provisioned. Planned: **Plausible** (self-hosted free, or £6/mo hosted) — to be confirmed during modular-stack walkthrough._
