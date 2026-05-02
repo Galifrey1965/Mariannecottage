@@ -221,6 +221,7 @@ A genuinely demonstrable end-to-end AI-augmented small-business platform. The co
 
 - Visual design direction (Sawday's-style boutique editorial, vs current Material-Design template feel) — its own discussion when we get to Phase 5 polish
 - Whether to add Trustpilot alongside Google reviews — defer until reviews actually accumulate
+- **Dynamic pricing — implementation detail parked (2026-05-02).** Row 4 of Table A is locked at the high-level shape (Monday digest, Approve/Reject/Edit per row, agent never writes without explicit click). Open sub-questions deferred to a separate dynamic-pricing discussion when Phase 4 is closer: (i) competitor-rate source — light scrape vs Hotel Center aggregate vs Mark's manual input; (ii) suggestion cadence and lookahead window; (iii) override granularity (per-week vs per-night vs both); (iv) whether to use occupancy-targeting math or pure event-driven heuristics. None of these block Phase 1–3.
 
 ---
 
