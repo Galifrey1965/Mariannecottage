@@ -1,8 +1,21 @@
-# 03e — Deposits, Refunds & Cancellation Policy
+# 03e — Refunds & Cancellation Policy (no deposits)
 
 Rob's question: with Stripe, what about deposits? How do refunds work if there's a deposit? How close to check-in can a deposit be refundable?
 
-This is the policy-and-mechanics question that goes hand-in-hand with the Row 7 (Stripe) confirmation. Mark's call to make the policy choice; we just need to build it flexibly enough to support whatever he picks.
+This is the policy-and-mechanics question that goes hand-in-hand with the Row 7 (Stripe) confirmation.
+
+---
+
+## ✅ Mark's choice (2026-05-02)
+
+| Decision | Choice |
+|---|---|
+| **Deposit structure** | **(a) Full payment at booking** — guest pays 100% upfront; no balance to chase later |
+| **Cancellation policy** | **Moderate** — free cancel up to 14 days before check-in; 50% refund 14–7 days; no refund inside 7 days |
+
+This drastically simplifies the build vs the alternatives that were on the table. No deposit/balance logic, no scheduled balance-charge job, no balance-failure retry flow. Just: take payment at booking, refund per policy on cancellation.
+
+The full options analysis from the original discussion is preserved below for context — but the chosen path is locked.
 
 ---
 
@@ -148,7 +161,7 @@ CREATE TABLE cancellation_policies (
 
 ---
 
-## Outstanding issue + question for Mark
+## Outstanding issue
 
-- Adding **B-06** to `outstanding-issues.md` — schema + UI + flow for deposits and refunds.
-- Adding **Q10** to `questions-for-mark.md` — which cancellation policy he wants (Flexible / Moderate / Firm / Strict / something else); whether he wants Option A (full upfront), B (deposit + balance), or C (deposit + on-arrival balance).
+- **B-06** in `outstanding-issues.md` — now scoped to the chosen full-payment + Moderate policy path. ~3 days build (down from the ~5 day estimate that included deposit/balance flow).
+- Q10 in `questions-for-mark.md` — ✅ answered 2026-05-02.

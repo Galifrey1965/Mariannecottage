@@ -13,7 +13,7 @@ Running ledger of questions we need Mark's input on, with his answers when recei
 ## Batch 1 — booking direction sizing
 
 **Sent:** 2026-05-02
-**Status:** ✅ mostly answered (Q4 outstanding)
+**Status:** ✅ all answered
 
 Original message:
 
@@ -33,70 +33,57 @@ Original message:
 **Question:** Is the cottage listed anywhere apart from Booking.com? (Airbnb, Gîtes de France, your own social media, anywhere else?)
 **Answer (2026-05-02):** Not listed anywhere else
 
-### Q4 — Admin appetite 🟡
+### Q4 — Admin appetite ✅
 **Question:** If guests booked direct via the website, how much faff are you happy to take on yourself — chasing payment, confirming bookings, sending invoices? Or would you rather it all happened automatically with the money landing in your account?
-**Answer:** _outstanding — needs follow-up_
+**Answer (2026-05-02):** Happy to take it all on. *(Implication: the AI agent network from `06-` is a bonus — we can build it knowing Mark would manage things himself if it weren't there. Removes urgency from the auto-send phases of the inbox agent — Phase 1 drafts-only is fine indefinitely.)*
 
 ### Q5 — Channel managers ✅
 **Question:** Have you come across "channel manager" tools like Lodgify, Smoobu or Beds24? They're a paid alternative — sync calendars across all platforms and include a built-in booking site for around £20–40/month.
 **Answer (2026-05-02):** Hadn't seen them
 
-### Q6 — Other listings & SEO history 🟡
+### Q6 — Other listings & SEO history ✅
 **Question:** Are you aware of any other places we should list the cottage — local tourist boards, regional directories, niche sites (D-Day stays, walking holidays, anything you've seen other cottages on)? Anyone you know in Saint-Lô / Bayeux / Couvains tourism? And has anyone ever done any SEO work or paid Google Ads for the cottage in the past?
-**Answer:** _awaiting_
+**Answer (2026-05-02):** Unaware of any. *(Implication: clean slate — no inherited SEO, no other accounts to integrate, no contacts to call. The demote-Booking.com plan in `03-` runs from zero.)*
 
 ---
 
 ## Batch 2 — domain & infrastructure
 
-**Sent:** _not yet — pending Rob_
-**Status:** 🟡 drafted, ready to send
+**Sent:** 2026-05-02
+**Status:** ✅ all answered
 
-Suggested message tone:
+### Q7 — Custom domain ✅
+**Question:** What domain name do you want for the cottage's own website?
+**Answer (2026-05-02):** **`mariannecottage.fr`**. *(Action: register via Cloudflare Registrar or Gandi, ~£10/yr; configure DNS at Netlify; set up DKIM/SPF/DMARC for Resend on the domain.)*
 
-> Couple more for ya, mate.
+### Q8 — Booking.com iCal feed URL ✅
+**Question:** Can you grab the iCal export URL from BC's extranet?
+**Answer (2026-05-02):** `https://ical.booking.com/v1/export?t=a56d3a57-c26c-42b0-8324-40de8b58b090`
+*(Action: store in Netlify env as `BOOKING_COM_ICAL_URL`; unblocks S-02 once scheduler is wired.)*
 
-### Q7 — Custom domain 🟡
-**Question:** What domain name do you want for the cottage's own website? Right now it's at `mariannecottage.netlify.app` — we want to register a proper domain. Worth checking availability for these variants:
-> - `mariannecottage.com`
-> - `mariannecottage.fr`
-> - `marianne-cottage.com` / `.fr`
-> - `mariannecottage.house`
-> - `mariannecottage.cottage`
->
-> Any preference? Roughly £8–15/year to register.
+### Q9 — Historical bookings CSV export ❌
+**Question:** Can you also pull a CSV of past reservations from BC's extranet?
+**Answer (2026-05-02):** "I can't, ignore it." *(Action: drop **B-05** from `outstanding-issues.md` — no historical seeding. Implication: dynamic pricing agent starts with no occupancy history; works from competitor data + going-forward bookings only. Email list grows organically rather than being seeded.)*
 
-### Q8 — Booking.com iCal feed URL 🟡
-**Question:** Can you log into your Booking.com extranet and grab the iCal export URL for the cottage? It's under **Property → Sync calendars → Export**. We need it so the website can automatically know which dates Booking.com guests have booked. Long URL ending `.ics`. Just paste it back to me.
+### Q10 — Deposit structure & cancellation policy ✅
+**Question:** Pick a deposit structure (a) and a cancellation policy (b).
+**Answer (2026-05-02):**
+- **(a) Full payment at booking time** — simplest, best cash flow, no balance to chase
+- **(b) Moderate cancellation policy** — free cancel up to 14 days, 50% refund 14–7 days, no refund inside 7 days
 
-### Q9 — Historical bookings CSV export 🟡
-**Question:** While you're in the Booking.com extranet, can you also pull a CSV export of all your past reservations? Should be under **Reservations → Export → CSV**. As far back as it lets you go is great. We're going to import them so your website calendar shows the cottage's full history, and so the AI tools we're building have real data to work with for things like pricing suggestions. Won't be used for marketing — those guests booked through BC, not us.
+*(Implication: drastically simplifies **B-06**. No deposit/balance logic, no scheduled balance-charge job, no balance-failure retry flow. Build drops from ~5 days to ~2 days for the cancellation/refund flow only. Schema additions reduce to just `cancellation_policy_id`, `cancelled_at`, `refund_amount`, `refunded_at`, `refunded_by`.)*
 
-### Q11 — Personal AI subscription? 🟡
-**Question:** Separate from the AI we're building into the cottage's website. Do you want a personal Claude Pro or ChatGPT Plus subscription (around £16/month) to use as your own assistant — drafting newsletters in your voice, weird guest questions, ad-hoc translation, sense-checking decisions, etc.? It's a totally separate thing from the website's automation. Worth it if you'd genuinely use it for an hour a week or more on cottage admin; not worth it if the agents are doing it all for you.
+### Q11 — Personal AI subscription? ✅
+**Question:** Separate Claude Pro / ChatGPT Plus for Mark personally?
+**Answer (2026-05-02):** Not for now. *(No action — agents handle it.)*
 
-### Q10 — Deposit structure & cancellation policy 🟡
-**Question:** When we wire up payments, two things to settle. They're related so worth thinking about together.
->
-> **(a) Deposit structure** — pick one:
-> - **Full payment at booking** — guest pays 100% up front, no balance to chase later. Best for cash flow, simplest to run.
-> - **30% deposit + balance auto-charged 14 days before arrival** — industry standard, balanced cash flow. Charges the saved card automatically; you don't have to do anything.
-> - **30% deposit + balance on arrival** — guest pays you in person or by bank transfer when they show up. Common in French chambres d'hôtes but more admin for you.
->
-> **(b) Cancellation policy** — pick one (these are the well-trodden options):
-> - **Flexible:** free cancel up to 24h before, then no refund.
-> - **Moderate:** free cancel up to 14 days before, 50% refund 14–7 days, no refund inside 7 days. *(My recommendation — fair to guests, protects you in the last week.)*
-> - **Firm:** free cancel up to 30 days, 50% refund 30–14 days, no refund inside 14 days.
-> - **Strict:** free cancel up to 60 days, 50% refund 60–30 days, no refund inside 30 days.
->
-> You can change either of these later via the admin screens — it's just the starting policy.
+### Q12 — Taxe de séjour rate & VAT registration ✅
+**Question:** Confirm the *taxe de séjour* rate and the VAT regime.
+**Answer (2026-05-02):**
+- **(a)** **€0.68/person/night**
+- **(b)** **régime micro-BIC** — no VAT collection
 
-### Q12 — Taxe de séjour rate & VAT registration 🟡
-**Question:** Two quick tax things, related so easier together.
->
-> **(a) Taxe de séjour rate** — what's your *commune* charging per person per night for chambres d'hôtes / B&B? Should be on a notice from the *Office de Tourisme Saint-Lô Agglo*, or you can ask them. We need the actual rate because the website is currently applying a flat 10% which is wrong (it's per-person per-night, fixed amount, not a percentage). Likely somewhere between €0.50–€2/night/person depending on classification.
->
-> **(b) VAT registration** — are you VAT-registered, or under the *régime micro-BIC* (the "below-the-threshold" regime that most small B&Bs use, no VAT collection required)? Affects how receipts get formatted.
+*(Action: fix **B-04** — replace flat 10% with `num_guests × num_nights × 0.68`. Stripe receipts no need to show VAT line. Admin field for the rate so it can be updated when the *commune* changes it.)*
 
 ---
 

@@ -42,6 +42,7 @@ Commission analysis is in [`01-commission-options.md`](01-commission-options.md)
 
 - [x] Commission options — see [`01-commission-options.md`](01-commission-options.md)
 - [x] Mark's answers + what they reshape — see [`02-marks-answers-and-implications.md`](02-marks-answers-and-implications.md)
+- [x] Mark's full Q1–Q12 answers — recorded in [`questions-for-mark.md`](questions-for-mark.md) (all batches resolved 2026-05-02)
 - [x] What if we drop Booking.com? — see [`03-dropping-booking-com.md`](03-dropping-booking-com.md)
   - [x] Demotion execution & automation — see [`03a-demotion-execution-and-automation.md`](03a-demotion-execution-and-automation.md)
   - [x] GDPR opt-in & French enforcement reality — see [`03b-gdpr-opt-in-and-enforcement.md`](03b-gdpr-opt-in-and-enforcement.md)
@@ -54,8 +55,9 @@ Commission analysis is in [`01-commission-options.md`](01-commission-options.md)
 - [x] Edge cases & creative ideas — see [`05-edge-cases-and-creative-ideas.md`](05-edge-cases-and-creative-ideas.md)
 - [x] AI-augmented admin workflow — see [`06-ai-augmented-admin-workflow.md`](06-ai-augmented-admin-workflow.md)
 - [x] **Decision point: ambitious build via modular stack** — confirmed via row-by-row review, see [`03d-modular-replacement-stack.md`](03d-modular-replacement-stack.md) "Confirmed modular stack" section
-- [ ] **Send Batch 2 of questions to Mark** (Q7–Q12 in [`questions-for-mark.md`](questions-for-mark.md))
-- [ ] **Q4 follow-up to Mark** (admin appetite — automated vs manual booking workflow)
+- [x] Send Batch 2 of questions to Mark — answered 2026-05-02
+- [x] Q4 follow-up — answered 2026-05-02 ("happy to take it all on")
+- [ ] **Write `99-decision.md`** — single consolidated decision document for Mark + Kim
 - [ ] Mark's Q4 answer (admin appetite — automated vs manual booking workflow)
 - [ ] Running costs of each option (Stripe fees, Supabase tier, Netlify, email sending, channel managers)
 - [ ] Infrastructure and ops burden (who owns it long-term?)

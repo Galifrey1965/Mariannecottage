@@ -43,33 +43,27 @@ Each issue has: a short ID, where it lives in the code (when applicable), what's
 
 ### B-04 — French taxe de séjour not modelled
 - **Where:** booking pricing in `src/routes/api/book/+server.ts`
-- **What:** Site applies a flat 10% "tax" line. Real *taxe de séjour* for B&B-style accommodation in France is a per-person, per-night fixed amount set by the local *commune*, not a percentage. Needs sorting before invoicing real money.
+- **What:** Site applies a flat 10% "tax" line. Real *taxe de séjour* is per-person per-night fixed amount. **Mark confirmed rate: €0.68/person/night** (2026-05-02). Replace `subtotal × 0.10` with `num_guests × num_nights × 0.68`. Store rate in admin-editable Supabase field (not hardcoded) so Mark can update when the *commune* changes it.
+- **VAT context:** Mark is on *régime micro-BIC* (under VAT threshold) — no VAT collection required. Stripe receipts show booking total + *taxe de séjour* line without VAT breakdown.
 - **Severity:** 🟠 high — compliance + invoicing accuracy
 - **Added:** 2026-05-02
 - **Status:** open
 
-### B-06 — Deposits, balance charges, refunds & cancellation policy
-- **Where:** new schema columns on `bookings`, new `cancellation_policies` table, Stripe integration code, admin + guest UI flows
-- **What:** Full structure for handling deposits at booking, balance auto-charge N days before arrival, policy-driven refund computation on cancellation, and admin override.
-- **Schema additions:** `deposit_amount`, `balance_amount`, `balance_due_at`, `balance_paid_at`, `balance_charge_id`, `cancellation_policy_id`, `cancelled_at`, `refund_amount`, `refunded_at`, `refunded_by`. New `cancellation_policies` table with free-window, partial-window, partial-percent fields (admin-editable like rate_plans should be).
-- **Build pieces:** Stripe deposit + scheduled balance charge (~2 days); admin UI for policy management + cancel-with-override (~1 day); guest-facing cancel flow (~0.5 day); scheduled job for balance + retry on failure (~0.5 day); email templates (~0.5 day); schema migration + seed policies (~0.5 day).
-- **Severity:** 🟠 high — required before going live with real payments, but only after B-01..B-04 are done
-- **Total effort:** ~5 days on top of basic Stripe wiring
-- **Depends on:** Mark's policy choice (see Q10 in `questions-for-mark.md`)
+### B-06 — Cancellation & refund flow (no deposits)
+- **Where:** new schema columns on `bookings`, new `cancellation_policies` table, Stripe integration, admin + guest UI flows
+- **What:** Mark chose **full payment at booking + Moderate cancellation policy** (Q10, 2026-05-02). No deposit/balance complexity needed. Full payment via Stripe at booking; refund on cancellation per policy.
+- **Refund schedule:** ≥14 days before check-in → 100% refund (less Stripe fee); 14–7 days → 50%; <7 days → 0%
+- **Schema additions:** `paid_at`, `cancellation_policy_id`, `cancelled_at`, `refund_amount`, `refunded_at`, `refunded_by` on `bookings`. New `cancellation_policies` table (admin-editable so Mark can change policy later) with free-window, partial-window, partial-percent fields.
+- **Build pieces:** Stripe full-payment integration (~1 day); admin policy management UI (~0.5 day); admin cancel-with-policy-driven-refund-preview (~0.5 day); guest-facing cancel flow (~0.5 day); email templates for confirmation + cancellation refund (~0.5 day); schema migration (~0.25 day).
+- **Severity:** 🟠 high — required before going live with real payments
+- **Total effort:** **~3 days** (down from ~5 in original draft because no deposit/balance flow needed)
 - **Detail doc:** `discussions/booking-payment/03e-deposits-refunds-cancellation-policy.md`
 - **Added:** 2026-05-02
 - **Status:** open
 
 ### B-05 — Historical bookings import tool
-- **Where:** new admin route, e.g. `/admin/import-bookings`
-- **What:** Pre-populate the `bookings` table with past Booking.com reservations from a CSV export (BC extranet → Reservations → Export CSV). Map BC's columns to our schema; insert with `status='confirmed'`, `synced_from='booking.com'`, an `imported_at` flag, and `marketing_consent=false` so AI agents and the email-list tool don't market to them without fresh opt-in.
-- **Why:** seeds revenue/occupancy history for the dynamic-pricing AI agent in `06-`; enables repeat-guest detection by email; gives the admin dashboard real data to work with.
-- **GDPR note:** imported PII is fine for operational/analytical use under legitimate interest. **Marketing requires fresh consent** — flag imported records appropriately.
-- **Severity:** 🟡 medium — nice to have, not blocking
-- **Effort:** ~0.5 day
-- **Depends on:** Mark exporting CSV from BC extranet (Q9 in `questions-for-mark.md`)
-- **Added:** 2026-05-02
-- **Status:** open
+- ~~Where: new admin route, `/admin/import-bookings`. What: import past BC reservations from CSV.~~
+- **Status:** ❌ **dropped 2026-05-02** — Mark confirmed he can't get the CSV export from BC's extranet (Q9 in `questions-for-mark.md`). No historical data to import. Dynamic pricing agent works from competitor data + going-forward bookings only; email list grows organically.
 
 ---
 

@@ -52,13 +52,11 @@ Updated as services are added or changed.
 | Field | Value |
 |---|---|
 | **Current URL** | https://mariannecottage.netlify.app |
-| **Custom domain** | _Not yet registered_ |
-| **Planned action** | Register a custom domain (e.g., `mariannecottage.com`, `mariannecottage.fr`, `cottage-marianne.fr`) via Cloudflare Registrar (~£8/year at cost) or Gandi (£12/year). Point DNS at Netlify. |
-| **Email sending domain** | TBC — same domain or subdomain (`mail.mariannecottage.com`) for SPF/DKIM/DMARC alignment |
-| **Account owner** | TBC |
-| **Cost** | £8–15/year |
-
-**Open question for Mark:** what domain name does he want? Worth checking availability for `.com`, `.fr`, `.cottage`, `.house` variants.
+| **Custom domain (chosen)** | **`mariannecottage.fr`** — confirmed by Mark 2026-05-02 |
+| **Planned action** | Register `mariannecottage.fr` via Cloudflare Registrar (~£8/year at cost) or Gandi (~£12/year). Point DNS at Netlify. |
+| **Email sending domain** | `mariannecottage.fr` — same domain. SPF/DKIM/DMARC records added at registrar for Resend. |
+| **Account owner** | Mark |
+| **Cost** | £8–12/year |
 
 ---
 
@@ -111,7 +109,7 @@ All third-party service accounts (Supabase, Netlify, etc.) are owned by **Mark**
 |---|---|---|
 | Supabase service role key | `.env` (local) + Netlify env vars | Mark |
 | Supabase anon key | `.env` (local) + Netlify env vars | Mark |
-| Booking.com iCal feed URL | Netlify env (`BOOKING_COM_ICAL_URL`) | Mark — currently `REPLACE_ME`, awaiting feed URL from his BC extranet |
+| Booking.com iCal feed URL | Netlify env (`BOOKING_COM_ICAL_URL`) | Mark — confirmed 2026-05-02: `https://ical.booking.com/v1/export?t=a56d3a57-c26c-42b0-8324-40de8b58b090` (to be set in Netlify env when scheduler is wired) |
 | Sync secret | Netlify env (`SYNC_SECRET`) | Mark |
 | Future: Stripe keys | Netlify env | Mark |
 | Future: Resend API key | Netlify env | Mark |
