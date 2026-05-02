@@ -14,14 +14,21 @@ Each issue has: a short ID, where it lives in the code (when applicable), what's
 
 ## Booking system
 
-### B-01 — Hardcoded nightly rate + tax; admin UI for rate plans missing
-- **Where:** `src/routes/api/book/+server.ts:29-31`
-- **What:** Nightly rate (`120`) and tax rate (`0.1`) are inline magic numbers. To change them today, a developer must edit the file and redeploy. The `rate_plans` table and `getRatePlanForDate()` helper in `src/lib/server/supabase.ts:144` already exist — they're just not being called.
-- **Two-part fix:**
-  1. Wire the booking API to call `getRatePlanForDate()` instead of using the magic number (~1 hour)
-  2. Build admin screens to manage rate plans (create / edit / end-date) — the table exists, the UI doesn't (~0.5 day)
+### B-01 — Hardcoded nightly rate + tax; admin UI for rate plans missing; per-guest pricing absent
+- **Where:** `src/routes/api/book/+server.ts:29-31`; `supabase-schema.sql` (`rate_plans` table)
+- **GitHub issue:** [#48](https://github.com/Galifrey1965/Mariannecottage/issues/48) — "Pricing is incorrect and doesn't account for the number of guests"
+- **What:** Three layered gaps:
+  1. Nightly rate (`120`) and tax rate (`0.1`) are inline magic numbers. To change them today, a developer must edit the file and redeploy. The `rate_plans` table and `getRatePlanForDate()` helper in `src/lib/server/supabase.ts:144` already exist — they're just not being called.
+  2. No admin UI to manage rate plans — the table exists, the screens don't.
+  3. **Schema doesn't model per-guest pricing.** Current `rate_plans` has a single `rate_per_night` field. Mark's pricing structure (per issue #48 reference images) charges different rates by guest count. Booking form also doesn't let the guest pick guest count and reflect the price.
+- **Three-part fix:**
+  1. Schema: add per-guest rate tiers to `rate_plans` — either columns (`rate_2_guests`, `rate_3_guests`, `rate_4_guests`) or a related `rate_plan_tiers` table keyed on `(rate_plan_id, num_guests)`. Migration + seed update (~0.5 day).
+  2. Wire the booking API to call a guest-count-aware `getRatePlanForDate(date, num_guests)` helper (~1 hour).
+  3. Build admin screens to manage rate plans + per-guest tiers (create / edit / end-date) — table exists, UI doesn't (~0.75 day).
 - **Severity:** 🟠 high — needs fixing before any real-money flow lands
+- **Total effort:** ~1.5 days (was ~0.6 day before per-guest scope was added)
 - **Added:** 2026-05-02
+- **Updated:** 2026-05-02 — scope expanded to cover per-guest pricing per GitHub issue #48
 - **Status:** open
 
 ### B-02 — No inventory locking on submit (race condition) + payment-lifecycle state machine
@@ -46,6 +53,7 @@ Each issue has: a short ID, where it lives in the code (when applicable), what's
 
 ### B-04 — French taxe de séjour not modelled
 - **Where:** booking pricing in `src/routes/api/book/+server.ts`
+- **GitHub issue:** [#48](https://github.com/Galifrey1965/Mariannecottage/issues/48) — overlapping issue (per-guest cost allocation also needs the booking form to capture `num_guests` correctly, which this fix depends on)
 - **What:** Site applies a flat 10% "tax" line. Real *taxe de séjour* is per-person per-night fixed amount. **Mark confirmed rate: €0.68/person/night** (2026-05-02). Replace `subtotal × 0.10` with `num_guests × num_nights × 0.68`. Store rate in admin-editable Supabase field (not hardcoded) so Mark can update when the *commune* changes it.
 - **VAT context:** Mark is on *régime micro-BIC* (under VAT threshold) — no VAT collection required. Stripe receipts show booking total + *taxe de séjour* line without VAT breakdown.
 - **Severity:** 🟠 high — compliance + invoicing accuracy

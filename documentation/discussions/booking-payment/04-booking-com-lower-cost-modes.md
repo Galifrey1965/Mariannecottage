@@ -18,44 +18,46 @@ Rob asked: is there a "read-only" or lower-tier mode? Short answer: **no, not of
 
 ---
 
-## Tactic 1: Price-up on Booking.com — split commission saving 10% / 5%
+## Tactic 1: Price-up on Booking.com — 5% direct discount
 
 **Legal in France** (Loi Macron 2015 banned narrow parity clauses).
 
-✅ **Locked strategy (Rob, 2026-05-02):** the **10/5 split** — pass 10% to the guest as visible saving, keep 5% as additional margin on direct bookings.
+✅ **Locked strategy (Mark, GitHub issue #48 of 2026-04-03; reaffirmed 2026-05-02):** **direct site shows BC price minus 5%**. Guest gets a 5% saving on the cottage's own site vs Booking.com; Mark keeps the remaining commission saving as direct-channel margin (~10% of the listed BC price, since BC commission is ~15%).
 
-**Formula:** `BC_list_price = Direct_list_price ÷ 0.9` (equivalently `Direct = BC × 0.9`).
+> **History note:** A "10/5 split" refinement (Rob, 2026-05-02) was briefly locked — pass 10% to the guest, retain 5% as Mark's margin. Reverted same day on Mark's preference: his issue body said 5% and his word stands. Audit trail preserved in commit `9aaeb09` (lock) and the reverting commit (revert).
 
-Worked example:
+**Formula:** `Direct_list_price = BC_list_price × 0.95` (equivalently `BC_list = Direct ÷ 0.95`).
+
+Worked example anchored on €141 BC list:
 
 | Channel | Listed price | Mark's net | Notes |
 |---|---|---|---|
-| Direct site | **€127/night** | **€124.80** *(after ~1.5% Stripe + €0.25)* | Mark earns ~€5/night more than the BC route |
+| Direct site | **€134/night** *(€141 × 0.95)* | **€131.69** *(after ~1.5% Stripe + €0.25)* | Mark earns ~€11.84/night more than the BC route |
 | Booking.com | **€141/night** | €119.85 *(after 15% commission)* | "Anchor" price the guest sees on BC |
 
 The guest sees:
 - Booking.com: €141/night
-- Cottage's own site: €127/night
-- **Saves ~€14/night (10%)** — clear, motivating, real
+- Cottage's own site: €134/night
+- **Saves ~€7/night (5%)** — visible, real, modest by design
 
-**Why 10% and not 15%:**
+**Why 5% rather than other points (option space at decision time):**
 
-| Discount to guest | Mark's extra direct margin/night | Likely conversion lift |
+| Discount to guest | Mark's extra direct margin/night vs BC | Conversion lift |
 |---|---|---|
-| 15% (full passthrough) | −€2 (loses to Stripe fee) | High — but Mark earns less per direct booking than BC |
-| **10% (chosen)** | **+€5** | High — 10% is psychologically strong; conversion barely below 15% |
-| 5% | +€12 | Low — 5% saving doesn't move the needle |
+| 15% (full passthrough) | −€2 (loses to Stripe fee) | Highest, but Mark earns less per direct booking than BC |
+| 10% | +€5 | High — 10% is psychologically strong, but Mark forgoes margin |
+| **5% (Mark's call)** | **+€11.84** | Modest conversion lift; significantly higher per-booking margin to Mark |
 | 0% | +€19 | Direct conversion craters |
 
-Conversion effect of discount % isn't linear: 5%→10% probably more than doubles direct conversion; 10%→15% gives only modest additional lift. **10% is the sweet spot.**
+The 5% choice prioritises **per-booking margin** over **conversion volume**. Mark's reasoning (implicit in issue #48): even a small visible saving plus the better service / no BC fees / direct relationship is enough to convert price-aware guests, while preserving most of the commission saving as cottage-side margin.
 
 **Booking.com algorithm response:**
 
-Booking.com's algorithm penalises listings with worse-than-direct prices in their ranking. Their "punishment" is *only* algorithmic — Loi Macron 2015 makes parity clauses legally unenforceable in France, so they have no contractual or legal teeth. Some loss of BC search visibility is the cost of the strategy; net is positive because the goal *is* to shift bookings off BC.
+Booking.com's algorithm penalises listings with worse-than-direct prices in their ranking. Their "punishment" is *only* algorithmic — Loi Macron 2015 makes parity clauses legally unenforceable in France, so they have no contractual or legal teeth. Some loss of BC search visibility is the cost of the strategy; net is positive because the goal *is* to shift bookings off BC. A 5% gap is also less algorithmically conspicuous than a 10% one — possibly less BC penalty.
 
 **Bot-blocking is not worth it** — cat-and-mouse, fragile, no legal benefit (BC can't enforce parity in France anyway).
 
-**Note on absolute price level:** the formula above describes the *gap* between BC and direct, not Mark's absolute pricing. His current ~€2,000/yr BC commission implies ~€13,300 of bookings — actual nightly rate depends on occupancy mix. Mark's absolute pricing strategy is handled by the Row 12 dynamic-pricing agent + his own choice; the 10/5 split applies whatever the absolute number is.
+**Note on absolute price level:** the formula above describes the *gap* between BC and direct, not Mark's absolute pricing. His current ~€2,000/yr BC commission implies ~€13,300 of bookings — actual nightly rate depends on occupancy mix. Mark's absolute pricing strategy is handled by the Row 12 dynamic-pricing agent + his own choice; the 5% direct discount applies whatever the absolute number is.
 
 ---
 
