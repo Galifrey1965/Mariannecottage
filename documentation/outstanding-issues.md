@@ -48,6 +48,18 @@ Each issue has: a short ID, where it lives in the code (when applicable), what's
 - **Added:** 2026-05-02
 - **Status:** open
 
+### B-06 — Deposits, balance charges, refunds & cancellation policy
+- **Where:** new schema columns on `bookings`, new `cancellation_policies` table, Stripe integration code, admin + guest UI flows
+- **What:** Full structure for handling deposits at booking, balance auto-charge N days before arrival, policy-driven refund computation on cancellation, and admin override.
+- **Schema additions:** `deposit_amount`, `balance_amount`, `balance_due_at`, `balance_paid_at`, `balance_charge_id`, `cancellation_policy_id`, `cancelled_at`, `refund_amount`, `refunded_at`, `refunded_by`. New `cancellation_policies` table with free-window, partial-window, partial-percent fields (admin-editable like rate_plans should be).
+- **Build pieces:** Stripe deposit + scheduled balance charge (~2 days); admin UI for policy management + cancel-with-override (~1 day); guest-facing cancel flow (~0.5 day); scheduled job for balance + retry on failure (~0.5 day); email templates (~0.5 day); schema migration + seed policies (~0.5 day).
+- **Severity:** 🟠 high — required before going live with real payments, but only after B-01..B-04 are done
+- **Total effort:** ~5 days on top of basic Stripe wiring
+- **Depends on:** Mark's policy choice (see Q10 in `questions-for-mark.md`)
+- **Detail doc:** `discussions/booking-payment/03e-deposits-refunds-cancellation-policy.md`
+- **Added:** 2026-05-02
+- **Status:** open
+
 ### B-05 — Historical bookings import tool
 - **Where:** new admin route, e.g. `/admin/import-bookings`
 - **What:** Pre-populate the `bookings` table with past Booking.com reservations from a CSV export (BC extranet → Reservations → Export CSV). Map BC's columns to our schema; insert with `status='confirmed'`, `synced_from='booking.com'`, an `imported_at` flag, and `marketing_consent=false` so AI agents and the email-list tool don't market to them without fresh opt-in.

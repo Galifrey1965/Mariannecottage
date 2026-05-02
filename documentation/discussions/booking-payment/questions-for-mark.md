@@ -72,6 +72,22 @@ Suggested message tone:
 ### Q9 — Historical bookings CSV export 🟡
 **Question:** While you're in the Booking.com extranet, can you also pull a CSV export of all your past reservations? Should be under **Reservations → Export → CSV**. As far back as it lets you go is great. We're going to import them so your website calendar shows the cottage's full history, and so the AI tools we're building have real data to work with for things like pricing suggestions. Won't be used for marketing — those guests booked through BC, not us.
 
+### Q10 — Deposit structure & cancellation policy 🟡
+**Question:** When we wire up payments, two things to settle. They're related so worth thinking about together.
+>
+> **(a) Deposit structure** — pick one:
+> - **Full payment at booking** — guest pays 100% up front, no balance to chase later. Best for cash flow, simplest to run.
+> - **30% deposit + balance auto-charged 14 days before arrival** — industry standard, balanced cash flow. Charges the saved card automatically; you don't have to do anything.
+> - **30% deposit + balance on arrival** — guest pays you in person or by bank transfer when they show up. Common in French chambres d'hôtes but more admin for you.
+>
+> **(b) Cancellation policy** — pick one (these are the well-trodden options):
+> - **Flexible:** free cancel up to 24h before, then no refund.
+> - **Moderate:** free cancel up to 14 days before, 50% refund 14–7 days, no refund inside 7 days. *(My recommendation — fair to guests, protects you in the last week.)*
+> - **Firm:** free cancel up to 30 days, 50% refund 30–14 days, no refund inside 14 days.
+> - **Strict:** free cancel up to 60 days, 50% refund 60–30 days, no refund inside 30 days.
+>
+> You can change either of these later via the admin screens — it's just the starting policy.
+
 ---
 
 ## How to use this file
