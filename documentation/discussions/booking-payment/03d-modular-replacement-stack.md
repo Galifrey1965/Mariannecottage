@@ -150,19 +150,28 @@ The original 6–7 day build queue from `03a-` is essentially correct. We're jus
 
 ## What still needs deciding
 
-Three small choices within the modular stack — none of them blockers:
+✅ **All resolved during the row-by-row review.** The three small choices originally flagged here landed as:
 
-1. **Email list provider:** MailerLite (free, includes a designer Mark can use for newsletters) vs Buttondown ($9/mo, cleaner API for AI-driven sending). Either works.
-2. **Analytics:** Plausible self-hosted (free, more setup) vs Plausible hosted (£6/mo, zero setup) vs nothing yet (free, defer).
-3. **Reviews source:** Google reviews only (simplest), or Google + Trustpilot (more credibility, more setup), or aggregate from Booking.com/Airbnb too (more complex).
-
-These can be picked one-by-one as we hit them.
+1. **Email list provider:** ✅ **Resend** — same provider as transactional, single account, single bill (Row 9).
+2. **Analytics:** ✅ **Self-hosted server-side logging in Supabase** — no third-party analytics product (Row 14).
+3. **Reviews source:** ✅ **Google Business Profile + Places API** only initially (Row 10); Trustpilot revisited if/when the cottage wants a non-Google source.
 
 ---
 
 ## Outcome
 
-Modular replacement stack is the answer. Total ongoing cost ~£0–100/year (per-use only). Total build ~5 days for items not already done, plus the agent layer per `06-`. Two-way real-time channel sync is the one capability we explicitly skip — it's overkill for cottage volume and cleanly addable later as a single component if needed.
+✅ **Modular replacement stack confirmed and fully specified through row-by-row review (2026-05-02).**
+
+| Metric | Value |
+|---|---|
+| **Ongoing subscription cost** | $9/month (Netlify Personal — already in place) bundles hosting + AI Gateway + builds + functions in one bill |
+| **Per-transaction costs** | Stripe ~1.5% + €0.25 on EU bookings |
+| **Per-token costs** | LLM ~£18/year at full agent-network volume |
+| **Total recurring** | **~£120/year** — replaces ~€2,000/year Booking.com commission once direct bookings are flowing |
+| **New build effort** | ~5 days for items in the modular stack not already built (iCal OUT, Stripe, deposit/cancellation, tax, analytics, GDPR tooling) + ~5 days for the AI agent layer per `06-`/`06a-`/`06b-` + ~1 day Paraglide migration = **~11 days end to end** |
+| **Capability gaps vs Smoobu** | Real-time two-way channel manager (Row 6 explicitly skipped). iCal polling at 1–4 hour cadence is adequate at cottage volume. |
+| **Open questions for Mark** | Q4, Q6–Q12 in [`questions-for-mark.md`](questions-for-mark.md) — domain choice, BC iCal feed URL, BC CSV history, deposit + cancellation policy, taxe de séjour rate, VAT regime, personal AI subscription, admin appetite |
+| **Pre-go-live blockers** | B-01..B-04, B-06, F-04 in [`outstanding-issues.md`](../../outstanding-issues.md) — all in scope of the build queue above |
 
 ---
 
@@ -187,4 +196,5 @@ Filled in row-by-row as Rob confirms each choice. Items struck through were cons
 | 13 | Tax & invoicing | ✅ **Stripe receipts + correct *taxe de séjour* line + admin report** | Stripe handles receipt formatting, VAT presentation, and total breakdowns. We add: B-04 fix (replace flat 10% with `num_guests × num_nights × rate`), admin field for the rate, admin report exporting collected *taxe de séjour* per period for Mark's *Office de Tourisme* return. **Depends on Q12 answer** (Mark confirms rate + VAT regime). ~1 day build. |
 | 14 | Site analytics | ✅ **Self-hosted server-side logging in Supabase + admin charts** | Server-side log on every SvelteKit page load — path, referrer, User-Agent, country (free from Netlify edge `context.geo.country`), session hash. No cookies, no client script, no consent banner. Admin `/admin/analytics` page with 6–8 charts. **Conversion attribution joined to bookings** is the killer feature Plausible can't match — JOIN `analytics_events ↔ bookings` to answer "which referrer / page sequence converts best". ~1.75 day build. £0/yr forever. Plausible Cloud (£70/yr) revisited if traffic ever justifies it. |
 | 15 | Multi-language support | ✅ **Migrate to Paraglide JS** (~1 day) | Replace current hand-rolled i18n with SvelteKit's officially recommended Paraglide JS. Keeps JSON files (AI translation agent from `06b-` still works the same way). Adds type safety (typos caught at build time), tree-shaken bundles (~70% smaller i18n payload), official long-term maintenance path. Tracked as **F-05** in [`outstanding-issues.md`](../../outstanding-issues.md). |
+| 16 | GDPR data handling | ✅ **In-house — privacy policy + consent UI + admin DSAR / erasure tooling** | No third-party GDPR product needed at cottage scale. Concrete deliverables: rewrite `/legal` privacy section to cover all third-parties (Stripe / Resend / Supabase / Netlify / Google / Anthropic-via-Netlify); consent UI per [`03b-`](03b-gdpr-opt-in-and-enforcement.md); admin `/admin/dsar` route for search/export/erasure; retention schedule via nightly cron (bookings 5yr, subscribers until unsubscribe, analytics 90d raw → aggregated). Standard DPAs accepted in each provider's dashboard (~30 min total). One-page processing register at `/legal/data-processing-register`. Breach response one-pager. ~1.5 day build. |
 

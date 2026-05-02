@@ -53,7 +53,9 @@ Commission analysis is in [`01-commission-options.md`](01-commission-options.md)
 - [x] Cheaper ways to use Booking.com — see [`04-booking-com-lower-cost-modes.md`](04-booking-com-lower-cost-modes.md)
 - [x] Edge cases & creative ideas — see [`05-edge-cases-and-creative-ideas.md`](05-edge-cases-and-creative-ideas.md)
 - [x] AI-augmented admin workflow — see [`06-ai-augmented-admin-workflow.md`](06-ai-augmented-admin-workflow.md)
-- [ ] **Decision point: ambitious build vs lightweight tactics vs status quo**
+- [x] **Decision point: ambitious build via modular stack** — confirmed via row-by-row review, see [`03d-modular-replacement-stack.md`](03d-modular-replacement-stack.md) "Confirmed modular stack" section
+- [ ] **Send Batch 2 of questions to Mark** (Q7–Q12 in [`questions-for-mark.md`](questions-for-mark.md))
+- [ ] **Q4 follow-up to Mark** (admin appetite — automated vs manual booking workflow)
 - [ ] Mark's Q4 answer (admin appetite — automated vs manual booking workflow)
 - [ ] Running costs of each option (Stripe fees, Supabase tier, Netlify, email sending, channel managers)
 - [ ] Infrastructure and ops burden (who owns it long-term?)
