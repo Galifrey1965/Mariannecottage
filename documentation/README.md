@@ -70,6 +70,7 @@ Netlify auto-deploys from `develop`. Build command `npm run build`, publish dire
 | [`features/material-design.md`](features/material-design.md) | M3 design system notes |
 | [`payments/stripe-plan.md`](payments/stripe-plan.md) | Stripe integration — parked, scope outlined |
 | [`design/landing-page-poc/`](design/landing-page-poc/) | 4 landing-page concept POCs |
+| [`infrastructure.md`](infrastructure.md) | Where everything physically runs — hosting, DB, domain, email, payments, secrets, backups |
 | [`outstanding-issues.md`](outstanding-issues.md) | Running list of known issues, gaps, tech debt — appended as we find them |
 | [`archive/phase-history.md`](archive/phase-history.md) | Phase 1–5 implementation history |
 | [`archive/prompts/`](archive/prompts/) | Original AI prompts used to scaffold the site |
