@@ -139,14 +139,26 @@ Note on the domain: the £66 OVH 10-year prepay is a one-off paid by Mark up fro
 
 ## What this gives Mark
 
-- **A direct booking site that takes real payments**, with proper cancellation policy and refund handling
-- **A Google Maps presence + Google Hotels free booking listing** — discovery he doesn't have today
-- **An AI-augmented inbox** that drafts replies in guests' languages, available in his existing Gmail with no new tool to learn
-- **Auto-suggested pricing** every Monday — even a 5–10% revenue uplift is worth more than the entire commission saving
-- **Pre-arrival concierge** — every guest gets D-7 and D-1 messages with directions, recommendations, weather; in their language; without him doing anything
-- **Listing packs** for Gîtes de France and Airbnb — multi-channel diversification with AI doing 95% of the content work
-- **Full GDPR compliance** built in from day one
-- **Account ownership** — everything billed to and owned by Mark; no lock-in to Rob
+### Concrete unpacking — what each capability means in his daily life
+
+| Item | What this actually means in Mark's day |
+|---|---|
+| **Direct booking site** | Guests book at `mariannecottage.fr`, money lands in his Stripe account, calendar updates automatically — no email back-and-forth required |
+| **Real payments** | Stripe takes 100% of the booking at reservation time; Mark sees confirmed bookings only (no "pending — chase the bank transfer") |
+| **AI inbox** | Opens Gmail → drafts already written under each guest email in their language → reads for 30 seconds, hits Send (or edits). Spam and notifications classified out automatically. |
+| **Dynamic pricing** | Monday-morning email with rate suggestions for the next 8 weeks based on local events / school holidays / competitors. Click "Approve" — done. |
+| **Pre-arrival concierge** | Every guest gets D-7 + D-1 messages with directions, weather, recommendations, in their language. Mark does nothing. |
+| **Google Maps + Hotels presence** | Cottage shows up in Google searches for "B&B near Saint-Lô" / "Normandy cottage" with a "Visit website" button → direct traffic. Listings sit alongside Booking.com's paid result, at zero commission. |
+| **Listing packs for Gîtes de France + Airbnb** | One-click admin button → AI generates a complete submission pack (description in 3 languages, photo selection + captions, pricing, amenities). Mark spends ~1 hour pasting into each platform's wizard. Diversifies away from BC dependency. |
+| **GDPR compliance** | Privacy policy covers all third parties; consent UI on every form; admin "search by guest email → export everything" + "delete everything" buttons. If CNIL ever asks, audit trail is right there. |
+
+### Plus what's implied but not explicit
+
+| Implicit benefit | What it means |
+|---|---|
+| **Account ownership** | Everything billed to and owned by Mark — Netlify, Stripe, OVH, Resend, Google. No lock-in to Rob; if he wanted to take it over himself or hand to another developer, no migration drama. |
+| **AI can't run away with itself** | Phase 1 is drafts-only with 100% human review; Mark approves every send for the first month. Trust progression is gradual + reversible. |
+| **Stops being a hostage to Booking.com's algorithm** | Right now if BC ranks the listing lower or de-lists, occupancy crashes. After this build, BC is one of 4-5 discovery channels — single-channel risk drops materially. |
 
 ---
 
