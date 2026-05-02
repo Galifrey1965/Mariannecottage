@@ -44,7 +44,7 @@ A **modular AI-augmented booking platform** for the cottage. The site stays on i
 | 4 | Booking.com → us calendar sync | Existing iCal puller (URL provided by Mark) |
 | 5 | Us → Booking.com calendar sync | New 0.5-day endpoint emitting our bookings as iCal |
 | 6 | Real-time two-way channel manager | ❌ Skipped — overkill at cottage scale |
-| 7 | Payment processing | Stripe — full payment at booking, ~1.5% + €0.25 per transaction |
+| 7 | Payment processing | Stripe — full payment at booking, ~1.5% + €0.25 per transaction. **PayPal enabled as a native Stripe payment method** (Stripe added PayPal support in 2023) → one account, one dashboard, single refund flow. Choice rationale in [`07-payment-provider-choice.md`](07-payment-provider-choice.md). |
 | 8 | Transactional email | Resend (free tier covers cottage volume forever) |
 | 9 | Marketing email / newsletter | Resend Audiences (same provider, single bill) |
 | 10 | Reviews | Google Business Profile + Places API (free) |
@@ -143,7 +143,7 @@ Note on the domain: the £66 OVH 10-year prepay is a one-off paid by Mark up fro
 
 | Item | What this actually means in Mark's day |
 |---|---|
-| **Direct booking site** | Guests book at `mariannecottage.fr`, money lands in his Stripe account, calendar updates automatically — no email back-and-forth required |
+| **Direct booking site** | Guests book at `mariannecottage.fr`, money lands in his Stripe account (cards + PayPal both flow into the same account), calendar updates automatically — no email back-and-forth required. Site carries a **prominent "Book Direct — save 10%" call-to-action** (hero banner + sticky on listing pages) alongside the BC-vs-direct price comparison, to actively steer comparison-shoppers off OTAs |
 | **Real payments** | Stripe takes 100% of the booking at reservation time; Mark sees confirmed bookings only (no "pending — chase the bank transfer") |
 | **AI inbox** | Opens Gmail → drafts already written under each guest email in their language → reads for 30 seconds, hits Send (or edits). Spam and notifications classified out automatically. |
 | **Dynamic pricing** | Monday-morning email with rate suggestions for the next 8 weeks based on local events / school holidays / competitors. Click "Approve" — done. |

@@ -100,14 +100,14 @@ Make direct bookings actually work end-to-end with money attached. Stripe takes 
 
 | Deliverable | Issue ref | Description |
 |---|---|---|
-| Stripe full-payment integration | **B-06** part 1 | Stripe Checkout / Payment Intent at booking submit; webhook handler for `payment_intent.succeeded` updating `bookings.paid_at` and `status='confirmed'` |
+| Stripe full-payment integration | **B-06** part 1 | Stripe Checkout / Payment Intent at booking submit; **PayPal enabled as a native Stripe payment method** (no separate PayPal merchant account); webhook handler for `payment_intent.succeeded` updating `bookings.paid_at` and `status='confirmed'`. Provider choice rationale: [`discussions/booking-payment/07-payment-provider-choice.md`](discussions/booking-payment/07-payment-provider-choice.md) |
 | Cancellation + refund flow | **B-06** part 2 | New `cancellation_policies` table seeded with Moderate; admin cancel-with-policy-driven-refund-preview button; guest-facing cancel page with magic link |
 | iCal OUT endpoint | row 5 | New `/api/ical/cottage.ics` emitting `bookings` as RFC 5545 feed; HTTP cache headers; documented for Mark to plug into BC's extranet |
 | BC iCal scheduler | **S-02** | Netlify scheduled function calling the existing sync endpoint hourly |
 | Stale-block clearing | **S-01** | Modify sync to remove stale `synced_from='booking.com'` rows when no longer in feed |
 | Email list infrastructure | row 9 | New `subscribers` table; GDPR-compliant capture across booking form + enquiry form + footer; admin manage page; Resend Audiences integration |
 | Transactional email integration | row 8 | Wrapper module fleshed out; templates for booking confirmed / cancelled / refund issued, in EN/FR/DE |
-| **Direct-booking incentive widget** | tactic from `04-` | Visible price comparison on cottage site: "BC price €141 / Direct €127 / Save 10%". **10/5 split:** guest sees 10% saving, Mark keeps 5% as extra margin on direct bookings (~€5/night). Logic: `displayed_BC_price = direct_rate ÷ 0.9` (equivalently direct is 10% off BC). Strategy in `discussions/booking-payment/04-booking-com-lower-cost-modes.md` Tactic 1; Loi Macron 2015 makes this legal in France. Drives comparison-shoppers toward direct booking — forecast ~30% conversion → ~€540/year of saved commission *plus* ~€500/year of margin on direct bookings. |
+| **Direct-booking incentive widget + CTA** | tactic from `04-` | Two complementary elements: (a) **prominent "Book Direct — save 10%" call-to-action** as a hero banner / sticky CTA on key pages (home, rooms, dates picker), making the offer visible without the user having to look for it; (b) **price comparison block** at the booking step: "BC price €141 / Direct €127 / Save 10%". **10/5 split:** guest sees 10% saving, Mark keeps 5% as extra margin on direct bookings (~€5/night). Logic: `displayed_BC_price = direct_rate ÷ 0.9` (equivalently direct is 10% off BC). Strategy in `discussions/booking-payment/04-booking-com-lower-cost-modes.md` Tactic 1; Loi Macron 2015 makes this legal in France. Drives comparison-shoppers toward direct booking — forecast ~30% conversion → ~€540/year of saved commission *plus* ~€500/year of margin on direct bookings. |
 
 ### Dependencies
 
