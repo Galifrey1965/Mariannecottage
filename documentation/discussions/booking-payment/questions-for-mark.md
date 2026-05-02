@@ -91,6 +91,13 @@ Suggested message tone:
 >
 > You can change either of these later via the admin screens — it's just the starting policy.
 
+### Q12 — Taxe de séjour rate & VAT registration 🟡
+**Question:** Two quick tax things, related so easier together.
+>
+> **(a) Taxe de séjour rate** — what's your *commune* charging per person per night for chambres d'hôtes / B&B? Should be on a notice from the *Office de Tourisme Saint-Lô Agglo*, or you can ask them. We need the actual rate because the website is currently applying a flat 10% which is wrong (it's per-person per-night, fixed amount, not a percentage). Likely somewhere between €0.50–€2/night/person depending on classification.
+>
+> **(b) VAT registration** — are you VAT-registered, or under the *régime micro-BIC* (the "below-the-threshold" regime that most small B&Bs use, no VAT collection required)? Affects how receipts get formatted.
+
 ---
 
 ## How to use this file
