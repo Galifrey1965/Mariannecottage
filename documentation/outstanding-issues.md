@@ -24,13 +24,16 @@ Each issue has: a short ID, where it lives in the code (when applicable), what's
 - **Added:** 2026-05-02
 - **Status:** open
 
-### B-02 — No inventory locking on submit (race condition)
-- **Where:** `src/routes/api/book/+server.ts` + `src/lib/server/supabase.ts:createBooking()`
+### B-02 — No inventory locking on submit (race condition) + payment-lifecycle state machine
+- **Where:** `src/routes/api/book/+server.ts` + `src/lib/server/supabase.ts:createBooking()` + `bookings` schema
 - **What:** Two simultaneous bookings for the same dates can both succeed. No row-level lock or transactional check against `availability` inside `createBooking()`.
 - **Failure mode:** Guest A submits at 11:00:00.000, Guest B submits at 11:00:00.005 — both see the dates as free, both inserts succeed, two confirmed bookings exist for the same nights. The `booking_reference UNIQUE` constraint doesn't help; references differ.
-- **Fix:** Postgres transaction that atomically (a) checks availability for the requested range and (b) inserts the booking + writes `availability=false` rows. Concurrent attempts: one wins, the other rolls back with a clean error the user sees as "those dates were just booked". ~0.5 day with tests.
-- **Severity:** 🔴 blocker — once Stripe is wired and money is being taken, this could double-book and force refund + apologies. At cottage volume the probability is statistically small but the consequence is loud.
+- **Two-phase fix:**
+  1. **Phase 1 (Stabilise):** Postgres transaction that atomically (a) checks availability for the requested range and (b) inserts the booking + writes `availability=false` rows. Concurrent attempts: one wins, the other rolls back with a clean error the user sees as "those dates were just booked". ~0.5 day with tests. Sufficient for current pre-Stripe email-only flow.
+  2. **Phase 2 (Direct-booking foundations):** Replace the simple atomic insert with a **soft-reserve state machine** wired to the Stripe payment lifecycle. Every payment attempt creates a row — no silent drop-offs. New `bookings.status` enum: `pending_payment` (soft-reserved with TTL ~15–20 min) → `confirmed` (Stripe success) / `payment_failed` (Stripe rejected, row retained for forensics + retry) / `expired` (TTL passed, dates released). Plus existing `cancelled` / `refunded`. New columns: `pending_until` (timestamp), `payment_attempts` (int), `last_payment_error` (text). Availability calc treats `pending_payment` rows as blocked until TTL. Background sweep job (Netlify scheduled function) flips expired pending → `expired` and releases dates. Admin gets a drop-off funnel view; AI inbox agent (Phase 4) can spot recurring `payment_failed` and follow up.
+- **Severity:** 🔴 blocker — once Stripe is wired and money is being taken, this could double-book and force refund + apologies. At cottage volume the probability is statistically small but the consequence is loud. Phase 2 state machine also gives free conversion analytics + AI follow-up hooks.
 - **Added:** 2026-05-02
+- **Updated:** 2026-05-02 — split into Phase 1 minimal fix + Phase 2 full state machine, per Row 2 walk-through decision
 - **Status:** open
 
 ### B-03 — RLS view policy too permissive
