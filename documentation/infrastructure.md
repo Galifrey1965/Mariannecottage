@@ -13,7 +13,7 @@ Updated as services are added or changed.
 | **Provider** | Netlify |
 | **Plan** | Free tier |
 | **Limits** | 100 GB bandwidth/month · 300 build minutes/month |
-| **Account owner** | _Mark / shared — TBC_ |
+| **Account owner** | Mark |
 | **Auto-deploy from** | `develop` branch on `Galifrey1965/Mariannecottage` |
 | **Build command** | `npm run build` |
 | **Publish directory** | `build` |
@@ -32,7 +32,7 @@ Updated as services are added or changed.
 | **Plan** | Free tier |
 | **What we use** | Postgres database (~5% of Supabase's bundled features). Tables: `bookings`, `availability`, `rate_plans` (+ planned `subscribers`) |
 | **Limits** | 500 MB DB · 1 GB file storage · 5 GB egress/month |
-| **Account owner** | _MintyMods — TBC who Mark wants on it long-term_ |
+| **Account owner** | Mark |
 | **Region** | _check Supabase dashboard — should be EU for GDPR alignment_ |
 | **Cost** | £0/year forever at cottage scale |
 | **Quirk** | Free-tier projects pause after 7 days of inactivity. Mitigation: trivial monthly cron ping or daily Netlify scheduled function hit. |
@@ -83,17 +83,19 @@ _Not yet provisioned. Planned: **Plausible** (self-hosted free, or £6/mo hosted
 
 ## Secrets / accounts
 
+All third-party service accounts (Supabase, Netlify, etc.) are owned by **Mark** — Rob has been guiding him on what to create / sign up for, but the accounts and billing live in Mark's name. No handover required later.
+
 | Item | Where | Owner |
 |---|---|---|
-| Supabase service role key | `.env` (local) + Netlify env vars | MintyMods |
-| Supabase anon key | `.env` (local) + Netlify env vars | MintyMods |
-| Booking.com iCal feed URL | Netlify env (`BOOKING_COM_ICAL_URL`) | TBC — currently `REPLACE_ME` |
-| Sync secret | Netlify env (`SYNC_SECRET`) | TBC |
-| Future: Stripe keys | Netlify env | TBC |
-| Future: Resend API key | Netlify env | TBC |
-| Future: domain registrar login | TBC | TBC |
+| Supabase service role key | `.env` (local) + Netlify env vars | Mark |
+| Supabase anon key | `.env` (local) + Netlify env vars | Mark |
+| Booking.com iCal feed URL | Netlify env (`BOOKING_COM_ICAL_URL`) | Mark — currently `REPLACE_ME`, awaiting feed URL from his BC extranet |
+| Sync secret | Netlify env (`SYNC_SECRET`) | Mark |
+| Future: Stripe keys | Netlify env | Mark |
+| Future: Resend API key | Netlify env | Mark |
+| Future: domain registrar login | TBC — see Q7 in [`discussions/booking-payment/questions-for-mark.md`](discussions/booking-payment/questions-for-mark.md) | Mark |
 
-**Sticking point:** several accounts are likely under Rob's / MintyMods' personal email. Long-term these should belong to Mark (or a cottage-specific email) so he isn't dependent on Rob to pay/renew/recover. Worth a "handover audit" once we're past initial build.
+**Owner separation principle:** Mark owns the cottage's accounts and pays for them; Rob has access for development but is not a single point of failure for billing or recovery.
 
 ---
 
