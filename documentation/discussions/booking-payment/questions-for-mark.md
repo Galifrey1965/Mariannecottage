@@ -72,6 +72,9 @@ Suggested message tone:
 ### Q9 — Historical bookings CSV export 🟡
 **Question:** While you're in the Booking.com extranet, can you also pull a CSV export of all your past reservations? Should be under **Reservations → Export → CSV**. As far back as it lets you go is great. We're going to import them so your website calendar shows the cottage's full history, and so the AI tools we're building have real data to work with for things like pricing suggestions. Won't be used for marketing — those guests booked through BC, not us.
 
+### Q11 — Personal AI subscription? 🟡
+**Question:** Separate from the AI we're building into the cottage's website. Do you want a personal Claude Pro or ChatGPT Plus subscription (around £16/month) to use as your own assistant — drafting newsletters in your voice, weird guest questions, ad-hoc translation, sense-checking decisions, etc.? It's a totally separate thing from the website's automation. Worth it if you'd genuinely use it for an hour a week or more on cottage admin; not worth it if the agents are doing it all for you.
+
 ### Q10 — Deposit structure & cancellation policy 🟡
 **Question:** When we wire up payments, two things to settle. They're related so worth thinking about together.
 >

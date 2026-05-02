@@ -11,16 +11,17 @@ Updated as services are added or changed.
 | Field | Value |
 |---|---|
 | **Provider** | Netlify |
-| **Plan** | Free tier |
-| **Limits** | 100 GB bandwidth/month · 300 build minutes/month |
+| **Plan** | Free tier today; **planned upgrade to Personal ($9/mo)** once AI agents land — needed for credit headroom on AI inference |
+| **Limits (Free)** | 300 credits/mo (covers builds, function invocations, AI usage combined) |
+| **Limits (Personal)** | 1,000 credits/mo |
 | **Account owner** | Mark |
 | **Auto-deploy from** | `develop` branch on `Galifrey1965/Mariannecottage` |
 | **Build command** | `npm run build` |
 | **Publish directory** | `build` |
-| **Cost** | £0/year forever at cottage scale |
+| **Cost** | £0/yr today; ~£100/yr once Personal plan lands (bundles hosting + AI inference + email + builds — single bill) |
 | **Alternatives if we ever need to move** | Cloudflare Pages, Vercel, or a £3/mo VPS with Caddy |
 
-**Notes:** The cottage's traffic will not exceed Netlify's free tier limits at any realistic occupancy. No upgrade pressure.
+**Notes:** Static-site traffic stays well within the Free plan. The Personal upgrade is driven by the AI Gateway credit budget once the agent network goes live — see LLM section below.
 
 ---
 
@@ -79,14 +80,16 @@ _Not yet provisioned. Planned: **Stripe** in test mode, then live mode once GDPR
 
 | Field | Value |
 |---|---|
-| **Primary provider (planned)** | Google Gemini API (free tier) — Gemini 2.5 Flash-Lite for classify, Gemini 2.5 Flash for draft |
-| **Fallback provider (planned)** | Netlify AI Gateway → Claude Sonnet 4.6 (used for ~5% of complex messages) |
-| **Account owner** | Mark — Gemini API key created on his Google account; Netlify AI Gateway runs through the existing Netlify account |
-| **Free tier limits** | Gemini 2.5 Flash-Lite: 15 RPM / **1,000 requests/day** · Gemini 2.5 Flash: 10 RPM / 250/day · Reset midnight Pacific |
-| **Cottage daily usage estimate** | ~30 LLM calls (classify + draft for ~15 emails). Well under the 1,000/day Flash-Lite limit. |
-| **Cost** | £0–£2/month |
-| **Abstraction** | All LLM calls go through `src/lib/server/llm.ts` (built per [`discussions/booking-payment/06a-inbox-agent-design.md`](discussions/booking-payment/06a-inbox-agent-design.md)). Provider switch via `LLM_PROVIDER` env var. Swappable to Anthropic-direct, OpenRouter, or self-hosted Ollama with a one-line config change. |
-| **Alternatives if Gemini free tier shrinks** | Claude via Netlify Gateway (~£1–3/mo) · Anthropic direct API · OpenRouter · Self-hosted Ollama on a VPS |
+| **Primary route (planned)** | **Netlify AI Gateway** — zero-key-management, single bill, models accessed via Vercel AI SDK abstraction in `src/lib/server/llm.ts` |
+| **Models in the mix** | Gemini 2.5 Flash-Lite ($0.10/$0.40 per M tokens) for classification; Claude Haiku 4.5 ($1/$5) for routine drafts; Claude Sonnet 4.6 ($3/$15) for complex drafts (~10% of volume) |
+| **Account owner** | Mark — runs through existing Netlify account, no separate AI provider account needed |
+| **Plan needed** | Netlify Personal $9/mo (1,000 credits = $5.55 of AI usage included) — comfortable headroom over forecast usage |
+| **Cottage forecast usage** | ~370 calls / ~330k input + ~100k output tokens per month across all agent network tasks |
+| **Cost forecast** | **~£1.50/mo of LLM** ($1.85), bundled into Personal plan. Net total: $9/mo for hosting + AI + builds. |
+| **Abstraction** | All LLM calls go through `src/lib/server/llm.ts`. Provider switch via env var: Netlify Gateway → Anthropic direct → OpenRouter → self-hosted Ollama, all with one-line config change. |
+| **Why not free tier** | Gemini's free tier is shared globally and frequently capped within minutes of midnight-Pacific reset. Pay-per-use is the reliable baseline. |
+| **Why not direct API** | Could save ~£90/year on the Personal plan, but ops simplicity (single bill, no API keys, no separate account) is worth more for a small-business deployment Mark will manage long-term. |
+| **Detail** | [`discussions/booking-payment/06b-llm-costs-and-broader-ai-tasks.md`](discussions/booking-payment/06b-llm-costs-and-broader-ai-tasks.md) has full pricing tables, cottage volume sizing, and the broader 15-task agent network catalogue |
 
 ---
 
