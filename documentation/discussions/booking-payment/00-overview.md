@@ -42,6 +42,11 @@ Commission analysis is in [`01-commission-options.md`](01-commission-options.md)
 
 - [x] Commission options — see [`01-commission-options.md`](01-commission-options.md)
 - [x] Mark's answers + what they reshape — see [`02-marks-answers-and-implications.md`](02-marks-answers-and-implications.md)
+- [x] What if we drop Booking.com? — see [`03-dropping-booking-com.md`](03-dropping-booking-com.md)
+- [x] Cheaper ways to use Booking.com — see [`04-booking-com-lower-cost-modes.md`](04-booking-com-lower-cost-modes.md)
+- [x] Edge cases & creative ideas — see [`05-edge-cases-and-creative-ideas.md`](05-edge-cases-and-creative-ideas.md)
+- [x] AI-augmented admin workflow — see [`06-ai-augmented-admin-workflow.md`](06-ai-augmented-admin-workflow.md)
+- [ ] **Decision point: ambitious build vs lightweight tactics vs status quo**
 - [ ] Mark's Q4 answer (admin appetite — automated vs manual booking workflow)
 - [ ] Running costs of each option (Stripe fees, Supabase tier, Netlify, email sending, channel managers)
 - [ ] Infrastructure and ops burden (who owns it long-term?)
