@@ -69,6 +69,9 @@ Suggested message tone:
 ### Q8 — Booking.com iCal feed URL 🟡
 **Question:** Can you log into your Booking.com extranet and grab the iCal export URL for the cottage? It's under **Property → Sync calendars → Export**. We need it so the website can automatically know which dates Booking.com guests have booked. Long URL ending `.ics`. Just paste it back to me.
 
+### Q9 — Historical bookings CSV export 🟡
+**Question:** While you're in the Booking.com extranet, can you also pull a CSV export of all your past reservations? Should be under **Reservations → Export → CSV**. As far back as it lets you go is great. We're going to import them so your website calendar shows the cottage's full history, and so the AI tools we're building have real data to work with for things like pricing suggestions. Won't be used for marketing — those guests booked through BC, not us.
+
 ---
 
 ## How to use this file

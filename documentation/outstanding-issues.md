@@ -43,6 +43,17 @@ Each issue has: a short ID, where it lives in the code (when applicable), what's
 - **Added:** 2026-05-02
 - **Status:** open
 
+### B-05 — Historical bookings import tool
+- **Where:** new admin route, e.g. `/admin/import-bookings`
+- **What:** Pre-populate the `bookings` table with past Booking.com reservations from a CSV export (BC extranet → Reservations → Export CSV). Map BC's columns to our schema; insert with `status='confirmed'`, `synced_from='booking.com'`, an `imported_at` flag, and `marketing_consent=false` so AI agents and the email-list tool don't market to them without fresh opt-in.
+- **Why:** seeds revenue/occupancy history for the dynamic-pricing AI agent in `06-`; enables repeat-guest detection by email; gives the admin dashboard real data to work with.
+- **GDPR note:** imported PII is fine for operational/analytical use under legitimate interest. **Marketing requires fresh consent** — flag imported records appropriately.
+- **Severity:** 🟡 medium — nice to have, not blocking
+- **Effort:** ~0.5 day
+- **Depends on:** Mark exporting CSV from BC extranet (Q9 in `questions-for-mark.md`)
+- **Added:** 2026-05-02
+- **Status:** open
+
 ---
 
 ## Booking.com sync
