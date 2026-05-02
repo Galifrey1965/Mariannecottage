@@ -21,3 +21,6 @@ Thumbs.db
 # Vite
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# Local scratch — iCal/CSV/etc. exports pulled for inspection, never source
+exports/
