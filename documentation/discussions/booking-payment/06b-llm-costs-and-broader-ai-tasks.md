@@ -200,7 +200,7 @@ Adds ~1.25 days to `06-`'s baseline. Not material.
 
 - Pay-per-use is the right baseline. Free tiers are unreliable in practice.
 - **At full cottage agent-network volume, total LLM cost is ~£18/year** with a sensible Haiku + Sonnet mix.
-- **Recommendation: Netlify AI Gateway via the Personal plan ($9/mo)** for operational simplicity — bundles hosting + AI + email + builds on one bill, no separate API keys to chase.
+- **Mark is already on Netlify Personal** ($9/mo, 1,000 credits/month) as of Apr 23, 2026 — the plan we'd have recommended is already in place. AI Gateway is included; the credit pool covers hosting + AI + functions + builds in one bill. No upgrade required.
 - Keep the abstraction layer flexible: Netlify Gateway today, Anthropic-direct or OpenRouter or self-hosted tomorrow with a one-line config change.
 - The agent network can do **far more than email** — 15+ distinct capabilities, all running on the same plumbing for the same ~£20/year LLM cost.
 - Whether Mark separately wants Claude Pro / ChatGPT Plus for personal use is a question for him.

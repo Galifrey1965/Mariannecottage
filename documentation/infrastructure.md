@@ -11,17 +11,21 @@ Updated as services are added or changed.
 | Field | Value |
 |---|---|
 | **Provider** | Netlify |
-| **Plan** | Free tier today; **planned upgrade to Personal ($9/mo)** once AI agents land — needed for credit headroom on AI inference |
-| **Limits (Free)** | 300 credits/mo (covers builds, function invocations, AI usage combined) |
-| **Limits (Personal)** | 1,000 credits/mo |
+| **Plan** | **Personal** ($9/mo) — active since Apr 23, 2026 |
+| **Allowance** | 1,000 credits/month covering builds, deploys, bandwidth, function compute, AI inference combined |
+| **Recent usage** | ~0.8 credits used so far this billing period (Apr 23 – May 22) — site is essentially idle from a credit perspective |
+| **Forecast usage at full agent-network volume** | ~600 credits/month (~150 deploys + ~100 bandwidth + ~25 functions + ~330 AI). Comfortable headroom. |
+| **Add-on credits** | 0 |
+| **Auto-recharge** | Disabled — if we ever exceed 1,000 in a month it stops gracefully rather than racking up a surprise bill |
 | **Account owner** | Mark |
 | **Auto-deploy from** | `develop` branch on `Galifrey1965/Mariannecottage` |
 | **Build command** | `npm run build` |
 | **Publish directory** | `build` |
-| **Cost** | £0/yr today; ~£100/yr once Personal plan lands (bundles hosting + AI inference + email + builds — single bill) |
+| **Cost** | $9/month (~£100/yr) — bundles hosting + AI Gateway + email-function compute + builds in a single bill |
+| **What this includes vs Free** | 1,000 credits (vs 300 hard-capped); smart secret detection (auto-scans for leaked API keys); 7-day analytics; priority email support; ability to purchase overage packs ($5 per 500 credits) |
 | **Alternatives if we ever need to move** | Cloudflare Pages, Vercel, or a £3/mo VPS with Caddy |
 
-**Notes:** Static-site traffic stays well within the Free plan. The Personal upgrade is driven by the AI Gateway credit budget once the agent network goes live — see LLM section below.
+**Notes:** Mark already has the headroom we need for the full AI agent network. No upgrade required. The plan covers the entire modular stack's runtime — hosting + functions + AI inference — in one place.
 
 ---
 
@@ -83,7 +87,7 @@ _Not yet provisioned. Planned: **Stripe** in test mode, then live mode once GDPR
 | **Primary route (planned)** | **Netlify AI Gateway** — zero-key-management, single bill, models accessed via Vercel AI SDK abstraction in `src/lib/server/llm.ts` |
 | **Models in the mix** | Gemini 2.5 Flash-Lite ($0.10/$0.40 per M tokens) for classification; Claude Haiku 4.5 ($1/$5) for routine drafts; Claude Sonnet 4.6 ($3/$15) for complex drafts (~10% of volume) |
 | **Account owner** | Mark — runs through existing Netlify account, no separate AI provider account needed |
-| **Plan needed** | Netlify Personal $9/mo (1,000 credits = $5.55 of AI usage included) — comfortable headroom over forecast usage |
+| **Plan needed** | **Already on Netlify Personal** ($9/mo, 1,000 credits/month covers AI + hosting + builds + functions) — no upgrade required |
 | **Cottage forecast usage** | ~370 calls / ~330k input + ~100k output tokens per month across all agent network tasks |
 | **Cost forecast** | **~£1.50/mo of LLM** ($1.85), bundled into Personal plan. Net total: $9/mo for hosting + AI + builds. |
 | **Abstraction** | All LLM calls go through `src/lib/server/llm.ts`. Provider switch via env var: Netlify Gateway → Anthropic direct → OpenRouter → self-hosted Ollama, all with one-line config change. |
