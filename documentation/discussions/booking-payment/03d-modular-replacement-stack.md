@@ -172,5 +172,6 @@ Filled in row-by-row as Rob confirms each choice. Items struck through were cons
 
 | # | Concern | Decision | Notes |
 |---|---|---|---|
-| 1 | Marketing / property listing site | ✅ **Existing SvelteKit site** | Framework + code quality + tests + i18n confirmed as the right foundation. Visual layer (SMUI v8 alpha + 30-theme picker) flagged as a separate concern — to be addressed in its own doc later. The cottage's visual direction needs commitment to one boutique aesthetic rather than swappable themes. |
+| 1 | Marketing / property listing site | ✅ **Existing SvelteKit site** | Framework + code quality + tests + i18n confirmed as the right foundation. Visual layer (SMUI v8 alpha + 30-theme picker) flagged as a separate concern — to be addressed in its own doc later. The cottage's visual direction needs commitment to one boutique aesthetic rather than swappable themes. Related issues: **F-01, F-02, F-03** in [`outstanding-issues.md`](../../outstanding-issues.md). |
+| 2 | Booking flow / checkout | ✅ **Existing `/book` wizard** | 3-step (dates → guest details → review). Wired to availability via `+page.server.ts`. Posts to `/api/book`. Related issues to fix before real-money flow: **B-01** (hardcoded rate), **B-02** (no inventory lock), **B-03** (RLS too permissive), **B-04** (French *taxe de séjour* not modelled) in [`outstanding-issues.md`](../../outstanding-issues.md). |
 
