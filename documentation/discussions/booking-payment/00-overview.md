@@ -1,6 +1,6 @@
 # Booking & Payment — Overview
 
-**Status:** 🟡 in progress
+**Status:** ✅ resolved 2026-05-02 — see [`99-decision.md`](99-decision.md)
 **Started:** 2026-05-02
 
 ---
@@ -57,7 +57,7 @@ Commission analysis is in [`01-commission-options.md`](01-commission-options.md)
 - [x] **Decision point: ambitious build via modular stack** — confirmed via row-by-row review, see [`03d-modular-replacement-stack.md`](03d-modular-replacement-stack.md) "Confirmed modular stack" section
 - [x] Send Batch 2 of questions to Mark — answered 2026-05-02
 - [x] Q4 follow-up — answered 2026-05-02 ("happy to take it all on")
-- [ ] **Write `99-decision.md`** — single consolidated decision document for Mark + Kim
+- [x] **`99-decision.md`** — consolidated decision document, see [`99-decision.md`](99-decision.md)
 - [ ] Mark's Q4 answer (admin appetite — automated vs manual booking workflow)
 - [ ] Running costs of each option (Stripe fees, Supabase tier, Netlify, email sending, channel managers)
 - [ ] Infrastructure and ops burden (who owns it long-term?)

@@ -10,7 +10,7 @@ The goal is to make our reasoning legible for the owners (Mark & Kim) — they s
 
 | Thread | Status | Summary |
 |---|---|---|
-| [`booking-payment/`](booking-payment/) | 🟡 in progress | Should the site take direct bookings + payments, or step back to a brochure-with-enquiries model? Driven by commission costs on Booking.com. |
+| [`booking-payment/`](booking-payment/) | ✅ resolved 2026-05-02 | Direction locked: modular custom stack with AI agent layer. See [`booking-payment/99-decision.md`](booking-payment/99-decision.md) for the consolidated decision. |
 
 ---
 
