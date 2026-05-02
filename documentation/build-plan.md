@@ -107,6 +107,7 @@ Make direct bookings actually work end-to-end with money attached. Stripe takes 
 | Stale-block clearing | **S-01** | Modify sync to remove stale `synced_from='booking.com'` rows when no longer in feed |
 | Email list infrastructure | row 9 | New `subscribers` table; GDPR-compliant capture across booking form + enquiry form + footer; admin manage page; Resend Audiences integration |
 | Transactional email integration | row 8 | Wrapper module fleshed out; templates for booking confirmed / cancelled / refund issued, in EN/FR/DE |
+| **Direct-booking incentive widget** | tactic from `04-` | Visible price comparison on cottage site: "BC price €141 / Direct €120 / Save 15%". Logic: `displayed_BC_price = direct_rate × 1.176`. Strategy in `discussions/booking-payment/04-booking-com-lower-cost-modes.md` Tactic 1; Loi Macron 2015 makes this legal in France. Drives comparison-shoppers toward direct booking — forecast ~30% conversion → ~€540/year of saved commission on its own. |
 
 ### Dependencies
 
