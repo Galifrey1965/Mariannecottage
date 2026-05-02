@@ -40,7 +40,9 @@ Commission analysis is in [`01-commission-options.md`](01-commission-options.md)
 
 ## Topics still to discuss
 
-- [ ] Commission options (this is the immediate one — see `01-`)
+- [x] Commission options — see [`01-commission-options.md`](01-commission-options.md)
+- [x] Mark's answers + what they reshape — see [`02-marks-answers-and-implications.md`](02-marks-answers-and-implications.md)
+- [ ] Mark's Q4 answer (admin appetite — automated vs manual booking workflow)
 - [ ] Running costs of each option (Stripe fees, Supabase tier, Netlify, email sending, channel managers)
 - [ ] Infrastructure and ops burden (who owns it long-term?)
 - [ ] Privacy / GDPR — controller vs processor, data minimisation, retention, DSARs
