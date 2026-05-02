@@ -11,6 +11,7 @@ The goal is to make our reasoning legible for the owners (Mark & Kim) — they s
 | Thread | Status | Summary |
 |---|---|---|
 | [`booking-payment/`](booking-payment/) | ✅ resolved 2026-05-02 | Direction locked: modular custom stack with AI agent layer. See [`booking-payment/99-decision.md`](booking-payment/99-decision.md) for the consolidated decision. |
+| [`visual-direction/`](visual-direction/) | 🟡 in progress (kicked off 2026-05-02) | What committed visual direction + underlying CSS / component / token system should the cottage adopt? Driver issues F-01 (SMUI alpha risk), F-02 (visual direction undecided), F-03 (demo routes bulk). See [`visual-direction/00-overview.md`](visual-direction/00-overview.md). |
 
 ---
 

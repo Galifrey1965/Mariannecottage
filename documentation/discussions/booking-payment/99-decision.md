@@ -219,7 +219,7 @@ A genuinely demonstrable end-to-end AI-augmented small-business platform. The co
 
 ## Outstanding questions, none blocking
 
-- Visual design direction (Sawday's-style boutique editorial, vs current Material-Design template feel) — its own discussion when we get to Phase 5 polish
+- Visual design direction (Sawday's-style boutique editorial, vs current Material-Design template feel) — dedicated thread kicked off 2026-05-02 in [`../visual-direction/`](../visual-direction/00-overview.md). Decision will land in [`../visual-direction/99-decision.md`](../visual-direction/) when worked through. Doesn't block Phases 1–4; ideally lands before Phase 5 polish
 - Whether to add Trustpilot alongside Google reviews — defer until reviews actually accumulate
 - **Agent + listing operational mechanics — parked for Mark-input round (2026-05-02).** Four rows of Table A locked at high-level shape but with implementation details deferred until they can be discussed directly with Mark closer to the relevant phase:
   - **Row 4 — Dynamic pricing.** Locked: Monday digest, per-row Approve/Reject/Edit, agent never writes without explicit click. Open: (i) competitor-rate source — light scrape vs Hotel Center aggregate vs Mark's manual input; (ii) suggestion cadence and lookahead window; (iii) override granularity (per-week vs per-night vs both); (iv) occupancy-targeting math vs pure event-driven heuristics.

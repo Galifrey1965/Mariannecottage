@@ -110,9 +110,9 @@ Each issue has: a short ID, where it lives in the code (when applicable), what's
 - **Where:** design layer broadly; `src/styles/`, `src/theme/`, theme picker components
 - **What:** Last theme work shipped a 30-theme picker with light/dark variants per theme. That's exploration, not commitment. The cottage needs one strong boutique aesthetic that fits the 1800s Normandy farmhouse brand, not 30 swappable themes. Material Design as the underlying language is also questionable for the brand.
 - **Severity:** 🟡 medium — site works, just doesn't feel right
-- **Fix:** dedicated visual-direction discussion (deferred until modular stack walk-through is complete)
+- **Fix:** dedicated visual-direction discussion → kicked off 2026-05-02 in [`discussions/visual-direction/`](discussions/visual-direction/00-overview.md). Working through brand fit, the 4 POC concepts vs alternatives, SMUI alpha handling (F-01), underlying language commitment, typography/spacing system, photography strategy (issue #30), tone of voice, demo-routes disposition (F-03), and Mark+Kim sign-off
 - **Added:** 2026-05-02
-- **Status:** open
+- **Status:** open — discussion in progress
 
 ### F-05 — Migrate i18n to Paraglide JS
 - **Where:** `src/lib/i18n.ts`, `src/lib/i18n.test.ts`, `messages/{en,fr,de}.json`, all components calling `t()`
