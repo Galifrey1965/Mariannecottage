@@ -14,17 +14,22 @@ Each issue has: a short ID, where it lives in the code (when applicable), what's
 
 ## Booking system
 
-### B-01 — Hardcoded nightly rate + tax
+### B-01 — Hardcoded nightly rate + tax; admin UI for rate plans missing
 - **Where:** `src/routes/api/book/+server.ts:29-31`
-- **What:** Nightly rate (`120`) and tax rate (`10%`) are inline magic numbers. The `rate_plans` Supabase table and `getRatePlanForDate()` helper exist but are not called from the booking API.
+- **What:** Nightly rate (`120`) and tax rate (`0.1`) are inline magic numbers. To change them today, a developer must edit the file and redeploy. The `rate_plans` table and `getRatePlanForDate()` helper in `src/lib/server/supabase.ts:144` already exist — they're just not being called.
+- **Two-part fix:**
+  1. Wire the booking API to call `getRatePlanForDate()` instead of using the magic number (~1 hour)
+  2. Build admin screens to manage rate plans (create / edit / end-date) — the table exists, the UI doesn't (~0.5 day)
 - **Severity:** 🟠 high — needs fixing before any real-money flow lands
 - **Added:** 2026-05-02
 - **Status:** open
 
-### B-02 — No inventory locking on submit
+### B-02 — No inventory locking on submit (race condition)
 - **Where:** `src/routes/api/book/+server.ts` + `src/lib/server/supabase.ts:createBooking()`
 - **What:** Two simultaneous bookings for the same dates can both succeed. No row-level lock or transactional check against `availability` inside `createBooking()`.
-- **Severity:** 🔴 blocker — once Stripe is wired and money is being taken, this could double-book and force refund + apologies. At cottage volume the risk is statistically small but the consequence is loud.
+- **Failure mode:** Guest A submits at 11:00:00.000, Guest B submits at 11:00:00.005 — both see the dates as free, both inserts succeed, two confirmed bookings exist for the same nights. The `booking_reference UNIQUE` constraint doesn't help; references differ.
+- **Fix:** Postgres transaction that atomically (a) checks availability for the requested range and (b) inserts the booking + writes `availability=false` rows. Concurrent attempts: one wins, the other rolls back with a clean error the user sees as "those dates were just booked". ~0.5 day with tests.
+- **Severity:** 🔴 blocker — once Stripe is wired and money is being taken, this could double-book and force refund + apologies. At cottage volume the probability is statistically small but the consequence is loud.
 - **Added:** 2026-05-02
 - **Status:** open
 
