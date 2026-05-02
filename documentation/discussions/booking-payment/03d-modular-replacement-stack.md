@@ -172,5 +172,5 @@ Filled in row-by-row as Rob confirms each choice. Items struck through were cons
 
 | # | Concern | Decision | Notes |
 |---|---|---|---|
-| _pending review_ | | | |
+| 1 | Marketing / property listing site | ✅ **Existing SvelteKit site** | Framework + code quality + tests + i18n confirmed as the right foundation. Visual layer (SMUI v8 alpha + 30-theme picker) flagged as a separate concern — to be addressed in its own doc later. The cottage's visual direction needs commitment to one boutique aesthetic rather than swappable themes. |
 
