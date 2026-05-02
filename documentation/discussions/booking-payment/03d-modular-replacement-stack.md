@@ -1,0 +1,163 @@
+# 03d — Modular Replacement Stack (Decompose a Proven Solution)
+
+Rob's angle: take a proven SaaS (e.g. Smoobu) — break it down into parts — find a free or per-use replacement for each part — glue them together. Result: same functional outcome, no subscription, more work upfront.
+
+This is genuinely a sound engineering approach. The trade we're making is **convenience for control + zero recurring cost.**
+
+---
+
+## Decomposing Smoobu
+
+Smoobu (~£20–25/month) is essentially a bundle of these distinct concerns:
+
+| # | Concern | What Smoobu does |
+|---|---|---|
+| 1 | Marketing / property listing site | Templated direct-booking website per property |
+| 2 | Booking flow + checkout | Multi-step booking wizard with availability |
+| 3 | Calendar / availability storage | Central calendar across all channels |
+| 4 | iCal IN sync | Pulls bookings from Booking.com / Airbnb / VRBO every ~1 hour |
+| 5 | iCal OUT sync | Exposes feeds for OTAs to poll our direct bookings |
+| 6 | **Two-way real-time channel manager** | API push to Booking.com / Airbnb (rates, availability, restrictions) — not just iCal |
+| 7 | Payment processing | Stripe integration for direct bookings |
+| 8 | Transactional email | Booking confirmations, payment receipts, etc. |
+| 9 | Email marketing / newsletter | Guest messaging, post-stay follow-ups, mailing lists |
+| 10 | Reviews collection + display | Guest review request, aggregation across channels |
+| 11 | Guest messaging / unified inbox | Replies from all OTAs land in one inbox |
+| 12 | Pricing engine / dynamic pricing | Rate suggestions and seasonal rules |
+| 13 | Tax & invoicing | French VAT-compliant invoices, *taxe de séjour* |
+| 14 | Analytics / reporting | Occupancy %, revenue, channel breakdown |
+| 15 | Multi-language support | Site + emails in guest's language |
+| 16 | GDPR data handling | DPA, data export, retention rules |
+
+That's 16 distinct concerns. Each has good free or per-use alternatives.
+
+---
+
+## Module-by-module replacement
+
+| # | Concern | Replacement | Cost | Build effort |
+|---|---|---|---|---|
+| 1 | Marketing site | **Existing SvelteKit site** | £0 | done |
+| 2 | Booking flow | **Existing wizard at `/book`** | £0 | done |
+| 3 | Calendar storage | **Existing Supabase `availability` + `bookings` tables** | £0 (free tier covers cottage volume forever) | done |
+| 4 | iCal IN sync | **Existing `src/lib/server/ical.ts` + sync endpoint** | £0 | done |
+| 5 | iCal OUT sync | **New `/api/ical/cottage.ics` endpoint** — emit our `bookings` table as standard iCal feed | £0 | 0.5 day |
+| 6 | Two-way real-time channel | **Skipped intentionally** — iCal polling at 1–4 hour cadence is good enough for cottage volume. See trade-off note below. | £0 | n/a |
+| 7 | Payments | **Stripe** (no monthly fee, ~1.5% + 25¢ per txn) | per-transaction only | 2 days |
+| 8 | Transactional email | **Resend** (3,000 emails/month free; cottage uses ~50/month) | £0 | 0.5 day |
+| 9 | Email marketing | **MailerLite** (free up to 1,000 subscribers / 12k emails per month) — or **Buttondown** ($9/mo if we prefer their API) | £0 | included in 03a- email list build |
+| 10 | Reviews display | **Google Business Profile + Places API** for displaying reviews on the site | £0 | 0.5 day |
+| 10b | Reviews collection | **Post-stay email asking for a Google review** (drives Google reviews, which feed back into search ranking) | £0 | 0 — text only |
+| 11 | Unified inbox | **Gmail API** + Claude inbox-watch agent (per `06-`) → all OTA emails land in Mark's Gmail anyway; the agent classifies them | £0 (Gmail) | included in `06-` |
+| 12 | Dynamic pricing | **Claude agent** weekly suggestion (per `06-`) — analyses competitor rates, local events, suggests adjustments | API usage only | included in `06-` |
+| 13 | Tax & invoicing | **Stripe** handles French VAT on payments. *Taxe de séjour* (per-person per-night fixed fee) added as line item — small custom logic. | £0 (Stripe receipts) | 1 day |
+| 14 | Analytics | **Plausible** (self-hosted free, or £6/mo hosted) for site analytics; **internal admin dashboard** for booking metrics | £0–£70/yr | 0.5 day |
+| 15 | Multi-language | **Existing i18n** (EN/FR/DE) | £0 | done |
+| 16 | GDPR | **Our responsibility** — privacy policy, consent UI, audit trail, easy erasure (per `03b-`) | £0 | included in email-list build |
+
+**Total ongoing cost: £0** (Stripe per-transaction fees + Claude API usage scale with bookings).
+
+**Total new build effort: ~5 days** for items not already done. Plus the 4–6 days of the AI agent layer in `06-`.
+
+---
+
+## What we lose vs Smoobu (be honest)
+
+The single material thing we don't get is **real-time two-way channel management** (item #6). Smoobu can:
+
+- Push a rate change to Booking.com in seconds
+- Block a date on Airbnb the instant Booking.com books it
+- Manage rates / restrictions / minimum stays via API per channel
+
+iCal-based sync (which is what we have + plan to keep) has:
+
+- 1–4 hour polling delays
+- Read-only inbound (Booking.com → us); read-only outbound (us → Booking.com)
+- No rate management — if Mark wants to change his Booking.com rate, he does it in their extranet directly
+
+**Why this is fine for the cottage:** at 100 bookings/year (~2/week), the probability of two simultaneous bookings inside the same 1-hour window for the same dates is **vanishingly small**. The "double-booking" risk that two-way sync solves is a problem at high-occupancy multi-property scale, not at 2-bedroom cottage scale.
+
+If/when occupancy or property count grows, we can buy the two-way channel manager *as a single component* (e.g. NextPax, Channex — both expose APIs we'd integrate with) without scrapping the rest.
+
+---
+
+## What we gain
+
+| Gain | Real value |
+|---|---|
+| Zero ongoing subscription | ~£250–500/year not paid forever |
+| Full control over the booking UX | Marketing site, demos, design system stay distinct from any vendor template |
+| AI agent layer is first-class | Agents drive the workflow rather than working around a SaaS admin UI |
+| Components swappable individually | If Resend pricing changes, swap to Postmark in a day. Not so with Smoobu. |
+| Portable — can be deployed for other clients | Per Rob's "show what we can do" angle in `06-` — modular stack is more reusable than a Smoobu deployment |
+
+---
+
+## The proposed modular stack (one-page summary)
+
+```
+                    ┌─────────────────────────────────────┐
+                    │  SvelteKit site (existing)          │
+                    │  • multilingual marketing           │
+                    │  • /book wizard                     │
+                    │  • /admin dashboard                 │
+                    │  • i18n flow                        │
+                    └─────────────────────────────────────┘
+                                   │
+                ┌──────────────────┼──────────────────┐
+                ▼                  ▼                  ▼
+        ┌──────────────┐   ┌──────────────┐   ┌──────────────┐
+        │  Supabase    │   │  Resend      │   │  Stripe      │
+        │  • bookings  │   │  • txn email │   │  • payments  │
+        │  • availab.  │   │  free tier   │   │  per-txn fee │
+        │  • subscribe │   │              │   │              │
+        └──────┬───────┘   └──────────────┘   └──────────────┘
+               │
+        ┌──────┴───────┐   ┌──────────────┐   ┌──────────────┐
+        │ iCal IN/OUT  │   │  MailerLite  │   │  Google Biz  │
+        │  • Booking.com│   │  • newsletter │   │  Profile +   │
+        │  • Airbnb    │   │  free tier    │   │  Places API  │
+        │  • our feed  │   │              │   │  (reviews)   │
+        └──────────────┘   └──────────────┘   └──────────────┘
+                                   │
+                    ┌──────────────┴──────────────┐
+                    ▼                             ▼
+            ┌──────────────┐              ┌──────────────┐
+            │  Claude API  │              │  Plausible   │
+            │  (the brain) │              │  analytics   │
+            │  per-token   │              │  free/£6mo   │
+            └──────────────┘              └──────────────┘
+```
+
+Every component is either **already in our stack**, **free at cottage volume**, or **per-use** (only pay when something happens). No flat monthly fee.
+
+---
+
+## Honest recommendation
+
+This is the answer that best fits Rob's stated preference of *less features and no commission* over *more features and commission*. It:
+
+- Costs effectively £0/year (Claude API is volume-priced, will run €40–100/year)
+- Doesn't lose meaningful capability vs Smoobu for cottage-scale ops
+- Preserves the "show what AI can do" portfolio angle
+- Has each component independently replaceable
+
+The original 6–7 day build queue from `03a-` is essentially correct. We're just being explicit that we use **named third-party modules** (Resend, MailerLite, Stripe, Google Places, Claude API, Plausible) rather than rolling absolutely everything ourselves. **Use libraries, don't build SaaS.**
+
+---
+
+## What still needs deciding
+
+Three small choices within the modular stack — none of them blockers:
+
+1. **Email list provider:** MailerLite (free, includes a designer Mark can use for newsletters) vs Buttondown ($9/mo, cleaner API for AI-driven sending). Either works.
+2. **Analytics:** Plausible self-hosted (free, more setup) vs Plausible hosted (£6/mo, zero setup) vs nothing yet (free, defer).
+3. **Reviews source:** Google reviews only (simplest), or Google + Trustpilot (more credibility, more setup), or aggregate from Booking.com/Airbnb too (more complex).
+
+These can be picked one-by-one as we hit them.
+
+---
+
+## Outcome
+
+Modular replacement stack is the answer. Total ongoing cost ~£0–100/year (per-use only). Total build ~5 days for items not already done, plus the agent layer per `06-`. Two-way real-time channel sync is the one capability we explicitly skip — it's overkill for cottage volume and cleanly addable later as a single component if needed.
