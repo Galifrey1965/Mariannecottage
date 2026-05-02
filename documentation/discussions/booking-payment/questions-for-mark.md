@@ -16,6 +16,8 @@ Rob and I have been going through the booking side of the cottage site to work o
 
 5. Have you come across "channel manager" tools like Lodgify, Smoobu or Beds24? They're a paid alternative — sync calendars across all platforms and include a built-in booking site for around £20–40/month. Wondering if you've already considered that route or if it's new to you.
 
+6. Are you aware of any other places we should list the cottage — local tourist boards, regional directories, niche sites (D-Day stays, walking holidays, anything you've seen other cottages on)? Anyone you know in Saint-Lô / Bayeux / Couvains tourism? And has anyone ever done any SEO work or paid Google Ads for the cottage in the past?
+
 ---
 
 Cheers mate.

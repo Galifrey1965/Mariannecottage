@@ -41,7 +41,9 @@ Self-serve via airbnb.com/host. Account → listing wizard → publish.
 
 Calendar sync is the interesting bit: Airbnb exposes an iCal feed and accepts imports of one. We already have the iCal parser working (see `src/lib/server/ical.ts`) for Booking.com. Adding Airbnb is a config change, not a build.
 
-### What we can build to make this a one-shot job
+### What we can build to make this a one-shot job — ✅ LOCKED IN
+
+**Decision (Rob, 2026-05-02):** we produce a signup pack per platform — Mark just follows the instructions and fills in the blanks.
 
 A small admin tool: **"Generate listing pack for [platform]"**.
 
@@ -50,6 +52,8 @@ A small admin tool: **"Generate listing pack for [platform]"**.
 - Mark downloads the doc, follows the steps, listing is live in an hour.
 
 Build cost: ~1 day. Reuses content already on the cottage's own site (room descriptions, attractions, amenities) — no new data entry needed.
+
+**Open question to Mark added to [`questions-for-mark.md`](questions-for-mark.md):** what other listings, directories, tourist boards, regional sites etc. is he aware of where the cottage could be listed? And any prior SEO work / paid ads experience?
 
 ---
 
