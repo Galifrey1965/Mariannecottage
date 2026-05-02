@@ -59,39 +59,55 @@ Netlify auto-deploys from `develop`. Build command `npm run build`, publish dire
 
 ---
 
+## Where to start
+
+Pick the path that matches what you're trying to do:
+
+| If you're... | Read in this order |
+|---|---|
+| **Mark / Kim** wanting to understand what's being built | [`discussions/booking-payment/99-decision.md`](discussions/booking-payment/99-decision.md) — the consolidated answer |
+| **Starting to build** (Rob or anyone picking up the work) | [`build-plan.md`](build-plan.md) → relevant phase spec under `specs/` (written at phase start) → [`outstanding-issues.md`](outstanding-issues.md) for any open items |
+| **Future Claude session** resuming work | This README → [`build-plan.md`](build-plan.md) → [`discussions/booking-payment/99-decision.md`](discussions/booking-payment/99-decision.md) → `outstanding-issues.md` |
+| **Wanting the design reasoning** behind any decision | [`discussions/`](discussions/) — numbered files within each thread are the audit trail |
+| **Looking for "where does X actually run?"** | [`infrastructure.md`](infrastructure.md) |
+
+---
+
 ## Documentation index
 
 | Path | Contents |
 |---|---|
+| [`build-plan.md`](build-plan.md) | **The roadmap** — 5 phases, ~22 days, dependencies, deliverables. Read first if starting work. |
+| [`infrastructure.md`](infrastructure.md) | Where everything physically runs — hosting, DB, domain, email, payments, secrets, backups, accounts |
+| [`outstanding-issues.md`](outstanding-issues.md) | Running list of known issues, gaps, tech debt — appended as we find them |
+| [`discussions/`](discussions/) | Design discussions with their reasoning preserved. Booking-payment thread resolved 2026-05-02. |
 | [`setup/supabase.md`](setup/supabase.md) | Supabase project + schema setup |
 | [`features/booking-system.md`](features/booking-system.md) | Booking flow, API, admin dashboard, pricing |
 | [`features/booking-com-sync.md`](features/booking-com-sync.md) | iCal sync from Booking.com → availability table |
 | [`features/explore-poi.md`](features/explore-poi.md) | Explore page POI design |
 | [`features/material-design.md`](features/material-design.md) | M3 design system notes |
-| [`payments/stripe-plan.md`](payments/stripe-plan.md) | Stripe integration — parked, scope outlined |
+| [`payments/stripe-plan.md`](payments/stripe-plan.md) | Stripe integration — *superseded by 99-decision; kept for history* |
 | [`design/landing-page-poc/`](design/landing-page-poc/) | 4 landing-page concept POCs |
-| [`build-plan.md`](build-plan.md) | **The roadmap** — 5 phases, ~22 days, dependencies, deliverables. Read first if starting work. |
-| [`infrastructure.md`](infrastructure.md) | Where everything physically runs — hosting, DB, domain, email, payments, secrets, backups |
-| [`outstanding-issues.md`](outstanding-issues.md) | Running list of known issues, gaps, tech debt — appended as we find them |
-| [`archive/phase-history.md`](archive/phase-history.md) | Phase 1–5 implementation history |
+| [`archive/phase-history.md`](archive/phase-history.md) | Phase 1–5 (legacy) implementation history |
 | [`archive/prompts/`](archive/prompts/) | Original AI prompts used to scaffold the site |
+
+`specs/` directory will appear when the first phase spec is written.
 
 ---
 
 ## Status
 
+**Direction locked 2026-05-02** — modular AI-augmented platform per [`discussions/booking-payment/99-decision.md`](discussions/booking-payment/99-decision.md).
+
 | Phase | Status |
 |---|---|
-| 1: Static brochure | ✅ |
-| 2: Interactive maps | ✅ |
-| 2.5: Material Design 3 system | ✅ |
-| 3: Booking system | ✅ |
-| 4: SMUI migration | ✅ |
-| 5: i18n completion | ✅ |
-| Email confirmations | 🔲 parked |
-| Stripe payments | 🔲 parked — see [`payments/stripe-plan.md`](payments/stripe-plan.md) |
+| Build Phase 1: Stabilise (~5 days) | 🔲 not started |
+| Build Phase 2: Direct-booking foundations (~6 days) | 🔲 not started |
+| Build Phase 3: Discovery & marketing (~4 days) | 🔲 not started |
+| Build Phase 4: AI agent layer (~5 days) | 🔲 not started |
+| Build Phase 5: Polish (~2 days) | 🔲 not started |
 
-Full phase-by-phase history: [`archive/phase-history.md`](archive/phase-history.md).
+Legacy site phases (1–5: brochure, maps, M3, booking, SMUI, i18n) are all complete — see [`archive/phase-history.md`](archive/phase-history.md).
 
 ---
 
