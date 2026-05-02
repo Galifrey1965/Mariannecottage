@@ -33,7 +33,9 @@ That's 16 distinct concerns. Each has good free or per-use alternatives.
 
 ---
 
-## Module-by-module replacement
+## Module-by-module replacement — *proposed, pending row-by-row review*
+
+The table below is the proposal. Rob and I are walking through it one row at a time; confirmed rows are recorded in [Confirmed modular stack](#confirmed-modular-stack) at the bottom.
 
 | # | Concern | Replacement | Cost | Build effort |
 |---|---|---|---|---|
@@ -161,3 +163,14 @@ These can be picked one-by-one as we hit them.
 ## Outcome
 
 Modular replacement stack is the answer. Total ongoing cost ~£0–100/year (per-use only). Total build ~5 days for items not already done, plus the agent layer per `06-`. Two-way real-time channel sync is the one capability we explicitly skip — it's overkill for cottage volume and cleanly addable later as a single component if needed.
+
+---
+
+## Confirmed modular stack
+
+Filled in row-by-row as Rob confirms each choice. Items struck through were considered and dropped.
+
+| # | Concern | Decision | Notes |
+|---|---|---|---|
+| _pending review_ | | | |
+
