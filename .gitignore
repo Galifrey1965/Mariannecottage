@@ -24,3 +24,7 @@ vite.config.ts.timestamp-*
 
 # Local scratch — iCal/CSV/etc. exports pulled for inspection, never source
 exports/
+
+# Playwright
+test-results/
+.playwright-mcp/
