@@ -57,7 +57,7 @@ Make the existing site safe to take real payments. Fix the things that would cau
 | Tightened RLS on `bookings` | **B-03** | Replace `USING (true)` with lookup-by-`booking_reference` policy; admin reads use service role |
 | Correct *taxe de séjour* | **B-04** | Replace flat 10% with `num_guests × num_nights × 0.68`; admin field for the rate |
 | Remove BC-sourced testimonials | **F-04** | Delete the three testimonial keys from `messages/{en,fr,de}.json`; hide carousel on home page until Google reviews aggregate |
-| Domain registered | infra | `mariannecottage.fr` registered (Cloudflare Registrar or Gandi); DNS pointed at Netlify; HTTPS verified |
+| Domain registered + email forwarding wired | infra | `mariannecottage.fr` registered at **OVH** (10-year prepay, ~€78 / £66 paid by Mark); DNS pointed at Netlify; HTTPS verified. **Plus email-channel setup:** 7 forwarding aliases configured in OVH (`bookings@`, `hello@`, `mark@`, `kim@`, `postmaster@`, `abuse@`, `dmarc-reports@` → all forwarding to `mariannecottage@gmail.com`); Gmail "Send mail as" configured against OVH's outbound SMTP so Mark replies appear from the branded domain; SPF + DMARC TXT records published. **Pre-purchase verification checklist** to walk through before Mark commits the prepay: [`infrastructure.md` Domain section](infrastructure.md#domain). Resend's DKIM record waits until Phase 2 (when Resend goes live). |
 
 ### Dependencies
 

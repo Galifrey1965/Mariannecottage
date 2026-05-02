@@ -61,6 +61,50 @@ Updated as services are added or changed.
 | **Why not the cheaper alternatives** | Regery (~€57) is Ukraine-based — geopolitical + mixed-support risk for a 10-year horizon. Cloudflare (~£70-80 over 10yr) only sells 1-year terms. Infomaniak (~€72) is Swiss and viable, but OVH is the home-turf registrar for .fr and Mark can deal with them in French if anything ever needs sorting. |
 | **Why not `.com` defensively** | Decided against initial registration. Cottage's name has no global commercial value yet; squatter risk on a low-profile French rural cottage is minimal. Can be added later (potentially via Netlify's own registrar, which supports `.com`) for ~$10/yr if commercial reach justifies it. |
 
+### Pre-purchase verification checklist
+
+Things to confirm in the OVH ordering flow / account dashboard **before** Mark commits the €78 prepay. The build assumptions downstream (single-Gmail inbox, branded outbound, Resend on the same domain) all depend on items 1–4 being available. If any of those are missing from the cheapest `.fr` package, either upgrade the package or switch to the Cloudflare Email Routing fallback (note item 13).
+
+**Must-verify (build-blocking):**
+
+| # | Item | Why it matters |
+|---|---|---|
+| 1 | **Free email forwarding (MX Plan / aliases / redirections) bundled with the `.fr` registration** — unlimited aliases pointing to `mariannecottage@gmail.com` | The "single Gmail inbox" design (Row 3 of `99-decision.md` Table A) depends on this. Aliases needed: `bookings@`, `hello@`, `mark@`, `kim@`, `postmaster@`, `abuse@`, `dmarc-reports@` |
+| 2 | **Outbound SMTP credentials available** for Gmail "Send mail as" — server hostname (`smtp.mail.ovh.net` or similar), port 465/587, auth method | Lets Mark reply from `bookings@mariannecottage.fr` while staying in his Gmail inbox. Without this we'd need to host a real mailbox somewhere |
+| 3 | **Full DNS delegation supported** — we can point nameservers at Netlify DNS, OR manage all records (A, MX, TXT, CNAME) at OVH if we keep DNS there | Need this for Netlify deployment + Resend DKIM + future records. Either model works; the registrar must allow at least one |
+| 4 | **`.fr` AFNIC eligibility** confirmed for Mark — resident of France with valid French address (1 La Haye, 50680 Couvains ✓) | `.fr` requires EU/France connection; ordering form must accept Mark's details. If rejected, the whole domain choice changes |
+
+**Should-verify (operational):**
+
+| # | Item | Why it matters |
+|---|---|---|
+| 5 | **Auto-renew can be disabled** in the account dashboard | 10-year prepay covers us until 2036; we don't want a card on file silently re-charging in 2027 if Mark forgets it's prepaid |
+| 6 | **VAT-inclusive invoice** issued to Mark's name + cottage address | Needed for *micro-BIC* accounting; confirm OVH provides a proper invoice (not just a receipt) |
+| 7 | **Free WHOIS privacy / GDPR-redacted public WHOIS** included | Hides Mark's home address from public WHOIS lookups — for a personal cottage, this matters. Most EU registrars now include it free post-GDPR; confirm OVH does |
+| 8 | **DNSSEC supported** | Worth enabling once DNS is delegated; OVH supports DNSSEC for `.fr` but the toggle is in the domain dashboard |
+| 9 | **Transfer-out terms** — auth code / EPP code can be obtained on demand; no transfer lock beyond the standard 60-day post-registration window | Insurance against ever wanting to leave OVH. Should be free; if OVH charges for the auth code, that's a yellow flag |
+| 10 | **Total cost confirmed at checkout** matches the ~€78 / £66 / 10-year figure quoted in the table above (incl. VAT, no hidden setup fees) | If the actual checkout total exceeds €90, pause and re-check pricing |
+
+**Nice-to-have:**
+
+| # | Item | Why it matters |
+|---|---|---|
+| 11 | **French-language interface and support available** | Mark can deal with OVH in French if anything ever needs sorting — one of the reasons OVH was chosen over Cloudflare/Regery |
+| 12 | **Two-factor auth available** on the OVH account | Standard hygiene for the account that ultimately controls the cottage's online identity |
+| 13 | **Cloudflare Email Routing as a documented fallback** if item 1 turns out to not be free | Free email forwarding service from Cloudflare; would require pointing MX records at Cloudflare (DNS still elsewhere). Adds one external dependency but unblocks the single-inbox design if OVH has trimmed MX from its cheapest `.fr` package |
+
+### Post-purchase setup steps (Phase 1)
+
+In order, before any Phase 2 work touches Stripe or Resend:
+
+1. Register `mariannecottage.fr` at OVH for 10 years against Mark's account
+2. Configure DNS — either delegate nameservers to Netlify (preferred) or manage records at OVH
+3. Verify HTTPS at https://mariannecottage.fr (Netlify auto-provisions Let's Encrypt cert)
+4. Set up the 7 forwarding aliases in OVH's email dashboard (all → `mariannecottage@gmail.com`)
+5. In Mark's Gmail: add `bookings@mariannecottage.fr` as a "Send mail as" address with OVH's outbound SMTP credentials. Send a test email; verify it arrives with the cottage's domain in the "From" header
+6. Add SPF (`v=spf1 include:_spf.ovh.com include:resend.com -all`) and DMARC (`v=DMARC1; p=quarantine; rua=mailto:dmarc-reports@mariannecottage.fr`) TXT records — Resend's DKIM record is added later in Phase 2 when Resend goes live
+7. Send test emails from gmail's send-as → confirm DKIM passes / DMARC report arrives at `dmarc-reports@mariannecottage.fr`
+
 ---
 
 ## Email — transactional
