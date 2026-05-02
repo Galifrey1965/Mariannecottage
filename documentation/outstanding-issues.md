@@ -109,6 +109,15 @@ Each issue has: a short ID, where it lives in the code (when applicable), what's
 - **Added:** 2026-05-02
 - **Status:** open
 
+### F-05 — Migrate i18n to Paraglide JS
+- **Where:** `src/lib/i18n.ts`, `src/lib/i18n.test.ts`, `messages/{en,fr,de}.json`, all components calling `t()`
+- **What:** Replace the current hand-rolled JSON-based i18n with **Paraglide JS** — SvelteKit's officially recommended i18n library. Compiler-based (tree-shakes unused translations into bundles ~70% smaller). Type-safe — catches typos and missing keys at build time. JSON message files keep their current shape, so the AI translation maintenance agent from `06b-` continues to work without changes.
+- **Why:** Catches translation errors at build time instead of when a guest visits in their language. Smaller bundle = faster mobile loads. SvelteKit's recommended path means longer-term maintenance is easier.
+- **Effort:** ~1 day. Mechanical migration: install Paraglide, run codemod-style replace of `t()` calls, add Paraglide compile step to build.
+- **Severity:** 🟡 medium — works fine today; this is polish + insurance against silent translation drift
+- **Added:** 2026-05-02
+- **Status:** open
+
 ### F-04 — Testimonials likely sourced from Booking.com (republishing risk)
 - **Where:** `messages/{en,fr,de}.json` keys `home.testimonials.simon*`, `home.testimonials.ingrid*`, `home.testimonials.guest3*`; rendered by `src/lib/components/TestimonialCarousel.svelte`
 - **What:** The home-page testimonial carousel shows 3 guest reviews ("Simon, UK", "Ingrid, Netherlands", "Guest, France"). These almost certainly originated from the cottage's Booking.com page — and even if paraphrased, we have no documented consent from those guests to republish on our own site.
