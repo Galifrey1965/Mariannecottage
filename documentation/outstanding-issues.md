@@ -109,6 +109,16 @@ Each issue has: a short ID, where it lives in the code (when applicable), what's
 - **Added:** 2026-05-02
 - **Status:** open
 
+### F-04 — Testimonials likely sourced from Booking.com (republishing risk)
+- **Where:** `messages/{en,fr,de}.json` keys `home.testimonials.simon*`, `home.testimonials.ingrid*`, `home.testimonials.guest3*`; rendered by `src/lib/components/TestimonialCarousel.svelte`
+- **What:** The home-page testimonial carousel shows 3 guest reviews ("Simon, UK", "Ingrid, Netherlands", "Guest, France"). These almost certainly originated from the cottage's Booking.com page — and even if paraphrased, we have no documented consent from those guests to republish on our own site.
+- **Why this is a problem:** Booking.com's terms of service forbid republishing reviews off-platform without permission. Reviews are jointly owned by the reviewer and Booking.com. Republishing creates copyright + ToS exposure independent of any GDPR concerns.
+- **Fix:** before going live with the custom domain / real bookings, **remove the testimonials entirely** and replace with the live Google reviews component (Row 10 of the modular stack — Google Business Profile + Places API). Until Google reviews aggregate, hide the carousel. We could also reach out to the original guests asking them to leave a Google review themselves — legitimate but slow.
+- **Severity:** 🔴 blocker — must be done before going live with custom domain
+- **Effort:** 1 hour to delete + replace with placeholder; ~0.5 day for the Google reviews component (already covered in Row 10's effort estimate)
+- **Added:** 2026-05-02
+- **Status:** open
+
 ### F-03 — Demo routes are ~70% of the codebase
 - **Where:** `src/routes/(demo)/` — 23 self-contained demos
 - **What:** Roughly 70% of the lines in `src/` are demos (adaptive, ambient, bento, brutal, calm, dday, expressive, handmade, historian, etc.) — exploration / portfolio work, not B&B functionality. Not bad code, but worth deciding whether to (a) keep them publicly accessible, (b) gate them, or (c) prune.
