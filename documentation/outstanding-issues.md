@@ -29,7 +29,7 @@ Each issue has: a short ID, where it lives in the code (when applicable), what's
 - **Total effort:** ~1.5 days (was ~0.6 day before per-guest scope was added)
 - **Added:** 2026-05-02
 - **Updated:** 2026-05-02 — scope expanded to cover per-guest pricing per GitHub issue #48
-- **Status:** open
+- **Status:** ✅ fixed 2026-05-03 — migration `2026-05-03-07-rate-plan-tiers.sql` adds per-guest tier columns (`rate_2_guests` / `rate_3_guests` / `rate_4_guests`) backfilled from `rate_per_night`; `getRateForBooking(date, num_guests)` is now server-authoritative on rates (no client-supplied `nightly_rate`, 400 + `no_rate_plan` when no plan covers); admin UI at `/admin/rate-plans` (list + new + edit + archive) with `agent_events` audit logs; booking form derives the rate reactively from check-in date + guest count. PR 4, commit `d281a99`.
 
 ### B-02 — No inventory locking on submit (race condition) + payment-lifecycle state machine
 - **Where:** `src/routes/api/book/+server.ts` + `src/lib/server/supabase.ts:createBooking()` + `bookings` schema
@@ -41,7 +41,7 @@ Each issue has: a short ID, where it lives in the code (when applicable), what's
 - **Severity:** 🔴 blocker — once Stripe is wired and money is being taken, this could double-book and force refund + apologies. At cottage volume the probability is statistically small but the consequence is loud. Phase 2 state machine also gives free conversion analytics + AI follow-up hooks.
 - **Added:** 2026-05-02
 - **Updated:** 2026-05-02 — split into Phase 1 minimal fix + Phase 2 full state machine, per Row 2 walk-through decision
-- **Status:** open
+- **Status:** Phase 1 ✅ fixed 2026-05-03 — migration `2026-05-03-05-book-dates-atomic.sql` defines `book_dates_atomic(jsonb)` as a SECURITY DEFINER plpgsql function guarded by a single-cottage advisory lock; `createBookingAtomic()` calls it via RPC and maps `SQLSTATE P0001 / DATES_TAKEN` to a 409 with `error_code='dates_taken'`. Concurrent Playwright spec verifies one wins / one loses. PR 2, commit `e4aefad`. Phase 2 soft-reserve state machine still open.
 
 ### B-03 — RLS view policy too permissive
 - **Where:** `supabase-schema.sql` — policy `anyone_can_view_bookings` on `bookings`
@@ -86,7 +86,7 @@ Each issue has: a short ID, where it lives in the code (when applicable), what's
 - **Severity:** 🔴 blocker — must land before going live with custom domain or real bookings
 - **Effort:** ~1 day (Supabase Auth setup, SvelteKit hooks, three seeded users, view-as toggle, lightweight audit log)
 - **Added:** 2026-05-03
-- **Status:** open — folded into Phase 1
+- **Status:** ✅ fixed 2026-05-03 — migration `2026-05-03-06-supabase-auth.sql` creates `user_profiles` (linked to `auth.users`, `display_name` + `role` enum) and `agent_events` (audit log); `handle_new_auth_user` trigger seeds profiles from invite metadata so personal emails never live in committed SQL. SvelteKit `hooks.server.ts` middleware uses `@supabase/ssr` + `safeGetSession` to populate `event.locals.user`/`event.locals.profile`. Old `/api/admin/login` deleted. Admin layout shows display name + role pill; developer role gets "view as" dropdown wired to `/admin/view-as`. Admin mutations call `logAdminEvent`. **Auth invites for Mark/Kim/Rob NOT yet sent** — Rob is holding those for a final onboarding event when the whole site is done. PR 3, commits `0bf4eaa` + `b6b1354`.
 
 ### B-05 — Historical bookings import tool
 - ~~Where: new admin route, `/admin/import-bookings`. What: import past BC reservations from CSV.~~
@@ -101,14 +101,14 @@ Each issue has: a short ID, where it lives in the code (when applicable), what's
 - **What:** Sync is one-way: it adds `available=false` rows for currently-blocked dates. If a Booking.com booking is cancelled and disappears from the feed, our `availability` row stays `false` until manually cleared. Could cause loss of bookable nights during high-turnover periods.
 - **Severity:** 🟡 medium — affects revenue rather than data correctness
 - **Added:** 2026-05-02
-- **Status:** open
+- **Status:** ✅ fixed 2026-05-03 — sync route now loads existing `synced_from='booking.com'` rows from today onwards and diffs against the current feed; dates dropped from the feed get `available=true`, manually-set rows are never touched. Pure helper `diffBcAvailability()` in `src/lib/server/bc-sync.ts` is unit-tested. PR 5, commit `bfffbfc`.
 
 ### S-02 — No scheduler wired up
 - **Where:** repo-wide
 - **What:** The endpoint exists but nothing triggers it. No Netlify scheduled function declared in `netlify.toml`. Currently has to be invoked manually via curl.
 - **Severity:** 🟠 high — without scheduling, the sync isn't happening in production at all
 - **Added:** 2026-05-02
-- **Status:** open
+- **Status:** ✅ code committed 2026-05-03 — `netlify/functions/sync-bc.ts` is a Netlify Functions v2 scheduled handler (`export const config = { schedule: '@hourly' }`) that POSTs to `/api/sync-booking-com` with `SYNC_SECRET`. **Deploy + Netlify-dashboard verification pending push.** PR 5, commit `bfffbfc`.
 
 ---
 
