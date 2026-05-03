@@ -71,9 +71,15 @@ describe('PoiCard', () => {
 			expect(getByText('Good')).toBeInTheDocument();
 		});
 
-		it('renders distance label', () => {
-			const { getByText } = render(PoiCard, { props: defaultProps });
-			expect(getByText(/23\.3 km/)).toBeInTheDocument();
+		it('renders distance label (miles for en, km for other locales)', () => {
+			// 23.3 km → 14.5 mi when lang=en
+			const { container: enContainer } = render(PoiCard, { props: defaultProps });
+			expect(enContainer.textContent).toMatch(/14\.5\s*mi/);
+
+			const { container: frContainer } = render(PoiCard, {
+				props: { ...defaultProps, lang: 'fr' as const }
+			});
+			expect(frContainer.textContent).toMatch(/23\.3\s*km/);
 		});
 
 		it('shows "Worth the drive" for distant POIs (>60km)', () => {

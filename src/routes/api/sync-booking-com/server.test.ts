@@ -1,10 +1,12 @@
 // @vitest-environment node
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-// Mock env vars
-vi.mock('$env/static/private', () => ({
-	BOOKING_COM_ICAL_URL: 'https://example.com/cal.ics',
-	SYNC_SECRET: 'test-secret'
+// Mock env vars (route uses $env/dynamic/private)
+vi.mock('$env/dynamic/private', () => ({
+	env: {
+		BOOKING_COM_ICAL_URL: 'https://example.com/cal.ics',
+		SYNC_SECRET: 'test-secret'
+	}
 }));
 
 // Mock supabase adminClient

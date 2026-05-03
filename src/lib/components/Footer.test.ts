@@ -16,7 +16,9 @@ const messages = {
 		report_issue: 'Report a website issue',
 		version: 'Version'
 	},
-	contact: { address: '123 Road', email: 'a@b.com', phone: '01234' }
+	contact: { address: '123 Road', email: 'a@b.com', phone: '01234' },
+	home: { ai: { ask_chatgpt: 'Ask ChatGPT', ask_claude: 'Ask Claude' } },
+	a11y: { opens_new_window: 'opens in a new window' }
 };
 
 describe('Footer', () => {

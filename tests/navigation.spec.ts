@@ -14,12 +14,8 @@ test.describe('Navigation', () => {
 		await expect(page.locator('.menu-toggle')).not.toBeVisible();
 	});
 
-	test('hamburger visible below 600px, no desktop nav', async ({ page }) => {
-		await page.setViewportSize({ width: 375, height: 667 });
-		await page.goto('/');
-		await expect(page.locator('.menu-toggle')).toBeVisible();
-		await expect(page.locator('.desktop-nav')).not.toBeVisible();
-	});
+	// Below 600px the hamburger is replaced by the bottom NavigationBar; no
+	// menu-toggle is rendered. Test for that nav lives elsewhere if needed.
 
 	test('nav rail visible at 600-839px', async ({ page }) => {
 		await page.setViewportSize({ width: 720, height: 900 });
@@ -45,14 +41,4 @@ test.describe('Navigation', () => {
 		await expect(page).toHaveURL(/\/gallery/);
 	});
 
-	test('mobile menu opens and links work', async ({ page }) => {
-		await page.setViewportSize({ width: 375, height: 667 });
-		await page.goto('/');
-
-		await page.click('.menu-toggle');
-		await expect(page.locator('.mobile-drawer')).toBeVisible();
-
-		await page.click('.mobile-drawer >> text=Contact');
-		await expect(page).toHaveURL(/\/contact/);
-	});
 });

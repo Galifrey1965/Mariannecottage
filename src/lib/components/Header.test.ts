@@ -20,29 +20,36 @@ const messages = {
 	a11y: { main_navigation: 'Main navigation', mobile_navigation: 'Mobile navigation', toggle_menu: 'Toggle menu' }
 };
 
+const navItems = [
+	{ label: 'Home', icon: 'home', href: '/' },
+	{ label: 'Rooms', icon: 'rooms', href: '/rooms' },
+	{ label: 'Gallery', icon: 'gallery', href: '/gallery' },
+	{ label: 'Book', icon: 'book', href: '/book' }
+];
+
 describe('Header', () => {
 	it('renders logo', () => {
-		const { getByText } = render(Header, { props: { lang: 'en', messages } });
+		const { getByText } = render(Header, { props: { lang: 'en', messages, navItems } });
 		expect(getByText('Marianne')).toBeInTheDocument();
 		expect(getByText('Cottage')).toBeInTheDocument();
 	});
 
 	it('renders nav links', () => {
-		const { getByText } = render(Header, { props: { lang: 'en', messages } });
+		const { getByText } = render(Header, { props: { lang: 'en', messages, navItems } });
 		expect(getByText('Home')).toBeInTheDocument();
 		expect(getByText('Rooms')).toBeInTheDocument();
 		expect(getByText('Book')).toBeInTheDocument();
 	});
 
 	it('has menu toggle button with aria-expanded=false initially', () => {
-		const { container } = render(Header, { props: { lang: 'en', messages } });
+		const { container } = render(Header, { props: { lang: 'en', messages, navItems } });
 		const toggle = container.querySelector('.menu-toggle');
 		expect(toggle).toBeInTheDocument();
 		expect(toggle?.getAttribute('aria-expanded')).toBe('false');
 	});
 
 	it('toggle opens mobile drawer and sets aria-expanded=true', async () => {
-		const { container } = render(Header, { props: { lang: 'en', messages } });
+		const { container } = render(Header, { props: { lang: 'en', messages, navItems } });
 		const toggle = container.querySelector('.menu-toggle') as HTMLElement;
 
 		await fireEvent.click(toggle);
@@ -53,7 +60,7 @@ describe('Header', () => {
 	});
 
 	it('Escape key closes open drawer', async () => {
-		const { container } = render(Header, { props: { lang: 'en', messages } });
+		const { container } = render(Header, { props: { lang: 'en', messages, navItems } });
 		const toggle = container.querySelector('.menu-toggle') as HTMLElement;
 		await fireEvent.click(toggle);
 
@@ -65,7 +72,7 @@ describe('Header', () => {
 	});
 
 	it('mobile drawer moves focus to first link when opened', async () => {
-		const { container } = render(Header, { props: { lang: 'en', messages } });
+		const { container } = render(Header, { props: { lang: 'en', messages, navItems } });
 		const toggle = container.querySelector('.menu-toggle') as HTMLElement;
 		await fireEvent.click(toggle);
 		await tick();
@@ -75,7 +82,7 @@ describe('Header', () => {
 	});
 
 	it('mobile drawer is hidden after Escape and focus returns to toggle', async () => {
-		const { container } = render(Header, { props: { lang: 'en', messages } });
+		const { container } = render(Header, { props: { lang: 'en', messages, navItems } });
 		const toggle = container.querySelector('.menu-toggle') as HTMLElement;
 		await fireEvent.click(toggle);
 		await tick();
