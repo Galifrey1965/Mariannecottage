@@ -11,9 +11,10 @@ At-a-glance dashboard. Updated as work shifts. For detail, follow the links.
 | | |
 |---|---|
 | **Active branch** | `develop` |
-| **In flight** | Visual-direction discussion (F-02) — uncommitted prototypes + topic 01a draft |
-| **Next planned work** | Design-independent Phase 1 backend — F-04, B-03, B-04 as a single PR (see [build-plan.md §Phase 1](build-plan.md#phase-1--stabilise-5-days)) |
-| **Blocked on** | Mark + Kim sign-off on visual direction before any public-facing UI work |
+| **In flight** | Phase 1 planning complete; ready to start PR 1 (F-04 + B-03 + B-04 quick wins) |
+| **Spec** | [`specs/phase-1-stabilise.md`](specs/phase-1-stabilise.md) — 5 PRs, ~5 days, 7 deliverables |
+| **Parallel** | Visual-direction discussion (F-02) — uncommitted prototypes + topic 01a draft |
+| **Open question** | Per-guest pricing structure (columns vs table) — only blocks PR 4; recommend columns when we get there |
 
 ---
 
@@ -21,22 +22,23 @@ At-a-glance dashboard. Updated as work shifts. For detail, follow the links.
 
 | Item | Where | Notes |
 |---|---|---|
+| **Phase 1 — Stabilise** | [`specs/phase-1-stabilise.md`](specs/phase-1-stabilise.md) | Spec written 2026-05-03. Findings 1–3 resolved (admin auth → B-07, migration convention → option B, RLS → server-side reads). Q3 (per-guest pricing schema) still open. PR 1 next. |
 | Visual-direction thread | [`discussions/visual-direction/`](discussions/visual-direction/00-overview.md) | Topic 01 (brand & audience) committed `193b3f6`. Topic 01a (page architecture) + 3 prototypes drafted, uncommitted. |
 
 ---
 
-## Up next (design-independent backend)
+## Up next — Phase 1 PR queue
 
-Order of attack — none of these depend on the visual direction landing:
+| PR | Deliverables | Effort | Status |
+|---|---|---|---|
+| PR 1 | F-04 + B-03 + B-04 | ~1 day | next |
+| PR 2 | B-02 Phase 1 (atomic locking) | ~0.5 day | blocked by PR 1 |
+| PR 3 | B-07 (Supabase Auth) | ~1 day | blocked by PR 2 |
+| PR 4 | B-01 (rate plans + admin UI) | ~1.5 days | blocked by PR 3 |
+| PR 5 | S-01 + S-02 (BC sync) | ~0.5 day | independent |
+| Infra | Domain + email forwarding | ~0.5 day | Mark-driven, independent |
 
-1. **F-04** — remove BC-sourced testimonials (~1 hour, blocker)
-2. **B-03** — tighten RLS on `bookings` (high)
-3. **B-04** — *taxe de séjour* fix (high)
-4. **B-02 Phase 1** — atomic inventory locking transaction (blocker)
-5. **B-01** — rate-plans schema + per-guest tiers + booking API wiring + admin UI (~1.5 days, high)
-6. **S-01 / S-02** — BC sync stale-block clearing + Netlify scheduled function
-
-When Phase 1 kicks off properly, write `specs/phase-1-stabilise.md` per the [build-plan convention](build-plan.md#how-to-start-a-phase) — per-deliverable progress lives in that spec.
+Per-PR detail: [`specs/phase-1-stabilise.md`](specs/phase-1-stabilise.md). Per-deliverable progress tracked in that spec's progress log.
 
 ---
 
@@ -46,7 +48,7 @@ Mirror of [`build-plan.md`](build-plan.md) phase table. Source of truth is the b
 
 | Phase | Status |
 |---|---|
-| 1 — Stabilise | 🔲 not started |
+| 1 — Stabilise | 🟡 in progress (spec written 2026-05-03; PR 1 next) |
 | 2 — Direct-booking foundations | 🔲 not started |
 | 3 — Discovery & marketing | 🔲 not started |
 | 4 — AI agent layer | 🔲 not started |

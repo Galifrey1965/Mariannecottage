@@ -72,6 +72,22 @@ Each issue has: a short ID, where it lives in the code (when applicable), what's
 - **Added:** 2026-05-02
 - **Status:** open
 
+### B-07 — Admin auth is a hardcoded password in source
+- **Where:** `src/routes/api/admin/login/+server.ts:5` — `const ADMIN_PASSWORD = 'marianne2024';`
+- **What:** Admin login uses a single hardcoded password committed to a public GitHub repo. Anyone reading the source can log into `/admin` and see every booking row (guest names, emails, phones). The comment in source acknowledges this was always intended as a placeholder ("replace with Supabase Auth when keys are available").
+- **Why this is a problem:** Public repo + admin route exposing PII = GDPR exposure today, before any payment is even involved. Once Phase 2 adds Stripe `payment_intent_id` and refund flows, the blast radius grows.
+- **Fix — Supabase Auth, per-user accounts (shape (i)):** Mark, Kim, and Rob each get a Supabase Auth account. All three are full admins (same permissions). Admin UI personalises by display name; audit log captures who took which action. Rob (developer) can "view as Mark / view as Kim" for debugging — same data, just framed from their perspective. Rationale for shape (i) over role-restricted alternatives: Rob and Mark are long-term trusted friends; Rob is writing the site so technically has implicit access regardless. No artificial permission walls; just attribution.
+- **Implementation pieces:**
+  1. New `user_profiles` table linked to `auth.users` with `display_name`, `role` (display only: "owner" / "developer"), `created_at`. Seeded with three rows (Mark, Kim, Rob).
+  2. Replace `/api/admin/login` with Supabase Auth login flow (email + password, simplest path; magic link optional later).
+  3. Replace `/admin/+layout.server.ts` cookie check with Supabase session check via SvelteKit hooks.
+  4. Admin nav shows logged-in display name + role; developer role gets a "view as" dropdown.
+  5. `agent_events` audit table (which Phase 4 needs anyway) lands lightweight here so admin actions log who-did-what from day one.
+- **Severity:** 🔴 blocker — must land before going live with custom domain or real bookings
+- **Effort:** ~1 day (Supabase Auth setup, SvelteKit hooks, three seeded users, view-as toggle, lightweight audit log)
+- **Added:** 2026-05-03
+- **Status:** open — folded into Phase 1
+
 ### B-05 — Historical bookings import tool
 - ~~Where: new admin route, `/admin/import-bookings`. What: import past BC reservations from CSV.~~
 - **Status:** ❌ **dropped 2026-05-02** — Mark confirmed he can't get the CSV export from BC's extranet (Q9 in `questions-for-mark.md`). No historical data to import. Dynamic pricing agent works from competitor data + going-forward bookings only; email list grows organically.

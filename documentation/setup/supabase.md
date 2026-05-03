@@ -160,9 +160,76 @@ VALUES
   (CURRENT_DATE + INTERVAL '6 day', false, 140);
 ```
 
+## Migrations
+
+**Convention adopted 2026-05-03 (Option B from Finding 2 of Phase 1 spec).**
+
+We track schema evolution as a folder of plain-SQL migration files plus the canonical `supabase-schema.sql` at repo root showing current shape.
+
+### Layout
+
+```
+supabase-schema.sql                                     ← canonical "current state"
+supabase/
+  migrations/
+    2026-05-04-01-init-migrations-tracking.sql          ← first migration; creates _migrations table
+    2026-05-04-02-tighten-bookings-rls.sql              ← B-03
+    2026-05-04-03-tax-settings-table.sql                ← B-04
+    ...
+```
+
+### File-naming rule
+
+`YYYY-MM-DD-NN-short-description.sql` — `NN` is a two-digit ordinal for multiple migrations in one day.
+
+### File format
+
+```sql
+-- Migration: 2026-05-04-02-tighten-bookings-rls.sql
+-- Issue: B-03
+-- Purpose: Drop the open SELECT policy on bookings; restrict reads to server-side admin client.
+-- Date: 2026-05-04
+-- Author: Rob
+
+-- Idempotent: re-runnable safely.
+
+DROP POLICY IF EXISTS "anyone_can_view_bookings" ON bookings;
+
+-- (any other DDL here)
+
+-- Record application
+INSERT INTO _migrations (filename, applied_at)
+VALUES ('2026-05-04-02-tighten-bookings-rls.sql', NOW())
+ON CONFLICT (filename) DO NOTHING;
+```
+
+### `_migrations` tracking table
+
+Created by the first migration (`2026-05-04-01-init-migrations-tracking.sql`):
+
+```sql
+CREATE TABLE IF NOT EXISTS _migrations (
+  filename TEXT PRIMARY KEY,
+  applied_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  applied_by TEXT
+);
+```
+
+### Rules
+
+1. **Every schema change** lands as a migration file *and* an update to `supabase-schema.sql` (canonical state). Both go in the same PR.
+2. **Idempotent SQL** wherever possible — `CREATE TABLE IF NOT EXISTS`, `DROP POLICY IF EXISTS`, `ALTER TABLE ... ADD COLUMN IF NOT EXISTS`. Re-runs must not error.
+3. **Mark applies migrations** by pasting each new file into the Supabase dashboard SQL editor. After applying, he replies "applied" on the PR / in chat.
+4. **Verify with `SELECT * FROM _migrations ORDER BY applied_at`** to see what's already been run.
+5. **Filename is the migration ID** — never rename a file once it's applied to live DB.
+6. **One concern per migration** — easier review, easier rollback, easier "what broke".
+
+### Future graduation
+
+The folder name `supabase/migrations/` matches the Supabase CLI's expected layout, so we can run `npx supabase init` and `supabase db push` later without renaming anything if Mark wants tooling-managed migrations.
+
+---
+
 ## Next Steps
 
-- Phase 3b: Connect SvelteKit to Supabase
-- Phase 3c: Implement booking form submission
-- Phase 3d: Create confirmation page with email service
-- Phase 4: Stripe payment integration
+*(Stale references — doc was written when build plan had different phase numbering. See [`build-plan.md`](../build-plan.md) for current 5-phase plan; Supabase work is touched throughout Phase 1.)*
