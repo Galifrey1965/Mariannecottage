@@ -50,6 +50,10 @@ CREATE TABLE rate_plans (
   name TEXT NOT NULL,
   description TEXT,
   rate_per_night DECIMAL(10,2) NOT NULL,
+  -- B-01 / PR 4: per-guest tier rates. rate_per_night is the 1-guest base.
+  rate_2_guests DECIMAL(10,2) NOT NULL,
+  rate_3_guests DECIMAL(10,2) NOT NULL,
+  rate_4_guests DECIMAL(10,2) NOT NULL,
   valid_from DATE NOT NULL,
   valid_until DATE NOT NULL,
   created_by TEXT,
@@ -94,10 +98,10 @@ INSERT INTO availability (date, available, nightly_rate) VALUES
   (CURRENT_DATE + 5, true, 140),
   (CURRENT_DATE + 6, true, 140);
 
-INSERT INTO rate_plans (name, rate_per_night, valid_from, valid_until, is_active) VALUES
-  ('Low Season', 85, '2026-01-01', '2026-02-28', true),
-  ('High Season', 120, '2026-03-01', '2026-05-31', true),
-  ('Peak Season', 140, '2026-06-01', '2026-06-08', true);
+INSERT INTO rate_plans (name, rate_per_night, rate_2_guests, rate_3_guests, rate_4_guests, valid_from, valid_until, is_active) VALUES
+  ('Low Season',  85,  85,  85,  85, '2026-01-01', '2026-02-28', true),
+  ('High Season', 120, 120, 120, 120, '2026-03-01', '2026-05-31', true),
+  ('Peak Season', 140, 140, 140, 140, '2026-06-01', '2026-06-08', true);
 
 INSERT INTO tax_settings (id, taxe_de_sejour_per_person_per_night) VALUES (1, 0.68);
 

@@ -56,10 +56,25 @@ export interface RatePlan {
 	name: string;
 	description?: string;
 	rate_per_night: number;
+	rate_2_guests: number;
+	rate_3_guests: number;
+	rate_4_guests: number;
 	valid_from: string;
 	valid_until: string;
 	created_by?: string;
 	is_active: boolean;
+}
+
+export interface RatePlanInput {
+	name: string;
+	description?: string | null;
+	rate_per_night: number;
+	rate_2_guests: number;
+	rate_3_guests: number;
+	rate_4_guests: number;
+	valid_from: string;
+	valid_until: string;
+	is_active?: boolean;
 }
 
 export interface TaxSettings {
@@ -183,7 +198,7 @@ export async function setAvailability(date: string, available: boolean, nightly_
 }
 
 // Rate plan operations
-export async function getRatePlans() {
+export async function getRatePlans(): Promise<RatePlan[]> {
 	const { data, error } = await anonClient
 		.from('rate_plans')
 		.select('*')
@@ -191,10 +206,12 @@ export async function getRatePlans() {
 		.order('valid_from', { ascending: true });
 
 	if (error) throw error;
-	return data;
+	return (data as RatePlan[] | null) ?? [];
 }
 
-export async function getRatePlanForDate(date: string) {
+// B-01 / PR 4: returns the active rate plan covering `date`, picking the
+// highest base rate on overlap (matches the legacy ordering).
+export async function getRatePlanForDate(date: string): Promise<RatePlan | null> {
 	const { data, error } = await anonClient
 		.from('rate_plans')
 		.select('*')
@@ -203,10 +220,75 @@ export async function getRatePlanForDate(date: string) {
 		.gte('valid_until', date)
 		.order('rate_per_night', { ascending: false })
 		.limit(1)
-		.single();
+		.maybeSingle();
 
-	if (error) return null; // No matching rate plan
-	return data;
+	if (error) return null;
+	return (data as RatePlan | null) ?? null;
+}
+
+// B-01 / PR 4: per-guest rate selector. num_guests must be 1..4 (matches
+// bookings.num_guests CHECK). Returns null when no active plan covers the date.
+export function rateForGuestCount(plan: RatePlan, num_guests: number): number {
+	switch (num_guests) {
+		case 1: return Number(plan.rate_per_night);
+		case 2: return Number(plan.rate_2_guests);
+		case 3: return Number(plan.rate_3_guests);
+		case 4: return Number(plan.rate_4_guests);
+		default: throw new Error(`num_guests out of range: ${num_guests}`);
+	}
+}
+
+export async function getRateForBooking(
+	date: string,
+	num_guests: number
+): Promise<{ plan: RatePlan; nightly_rate: number } | null> {
+	const plan = await getRatePlanForDate(date);
+	if (!plan) return null;
+	return { plan, nightly_rate: rateForGuestCount(plan, num_guests) };
+}
+
+// Admin rate-plan helpers (service-role only).
+export async function listRatePlansAdmin(includeInactive = true): Promise<RatePlan[]> {
+	let query = adminClient.from('rate_plans').select('*');
+	if (!includeInactive) query = query.eq('is_active', true);
+	const { data, error } = await query.order('valid_from', { ascending: true });
+	if (error) throw error;
+	return (data as RatePlan[] | null) ?? [];
+}
+
+export async function getRatePlanByIdAdmin(id: string): Promise<RatePlan | null> {
+	const { data, error } = await adminClient
+		.from('rate_plans')
+		.select('*')
+		.eq('id', id)
+		.maybeSingle();
+	if (error) return null;
+	return (data as RatePlan | null) ?? null;
+}
+
+export async function createRatePlan(input: RatePlanInput): Promise<RatePlan> {
+	const { data, error } = await adminClient
+		.from('rate_plans')
+		.insert([{ ...input, is_active: input.is_active ?? true }])
+		.select()
+		.single();
+	if (error) throw error;
+	return data as RatePlan;
+}
+
+export async function updateRatePlan(id: string, patch: Partial<RatePlanInput>): Promise<RatePlan> {
+	const { data, error } = await adminClient
+		.from('rate_plans')
+		.update({ ...patch, updated_at: new Date().toISOString() })
+		.eq('id', id)
+		.select()
+		.single();
+	if (error) throw error;
+	return data as RatePlan;
+}
+
+export async function archiveRatePlan(id: string): Promise<RatePlan> {
+	return updateRatePlan(id, { is_active: false });
 }
 
 // Tax settings (B-04)

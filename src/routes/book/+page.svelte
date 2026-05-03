@@ -4,6 +4,7 @@
 	import BookingCalendar from '$lib/components/BookingCalendar.svelte';
 	import BookingSummary from '$lib/components/BookingSummary.svelte';
 	import type { PageData } from './$types';
+	import type { RatePlan } from '$lib/server/supabase';
 
 	let { data }: { data: PageData } = $props();
 	const { lang, messages } = data;
@@ -12,8 +13,32 @@
 
 	let checkInDate: Date | undefined = $state();
 	let checkOutDate: Date | undefined = $state();
-	const nightly_rate = 120;
 	const cancellationPolicy = $derived(t(messages, 'book.cancellation_policy'));
+
+	const ratePlans: RatePlan[] = data.ratePlans ?? [];
+
+	function formatDateISO(d: Date): string {
+		return d.toISOString().split('T')[0];
+	}
+
+	function findRatePlan(plans: RatePlan[], dateISO: string): RatePlan | null {
+		const matches = plans.filter(
+			(p) => p.is_active && p.valid_from <= dateISO && p.valid_until >= dateISO
+		);
+		if (matches.length === 0) return null;
+		matches.sort((a, b) => Number(b.rate_per_night) - Number(a.rate_per_night));
+		return matches[0];
+	}
+
+	function rateFor(plan: RatePlan, n: number): number {
+		switch (n) {
+			case 1: return Number(plan.rate_per_night);
+			case 2: return Number(plan.rate_2_guests);
+			case 3: return Number(plan.rate_3_guests);
+			case 4: return Number(plan.rate_4_guests);
+			default: return Number(plan.rate_per_night);
+		}
+	}
 
 	let guestName = $state('');
 	let guestEmail = $state('');
@@ -42,7 +67,11 @@
 			: 0
 	);
 
-	const formatDateISO = (d: Date) => d.toISOString().split('T')[0];
+	const matchingPlan = $derived(
+		checkInDate ? findRatePlan(ratePlans, formatDateISO(checkInDate)) : null
+	);
+	const nightly_rate = $derived(matchingPlan ? rateFor(matchingPlan, guests) : 0);
+	const noRatePlan = $derived(Boolean(checkInDate) && !matchingPlan);
 
 	function validate(): boolean {
 		const errors: Record<string, string> = {};
@@ -60,6 +89,10 @@
 
 	async function submitBooking() {
 		if (!validate() || !checkInDate || !checkOutDate) return;
+		if (noRatePlan) {
+			formError = t(messages, 'book.error_no_rate_plan');
+			return;
+		}
 		submitting = true;
 		formError = '';
 		try {
@@ -74,8 +107,7 @@
 					num_guests: guests,
 					check_in_date: formatDateISO(checkInDate),
 					check_out_date: formatDateISO(checkOutDate),
-					special_requests: specialRequests.trim() || undefined,
-					nightly_rate
+					special_requests: specialRequests.trim() || undefined
 				})
 			});
 			const result = await res.json();
@@ -279,6 +311,11 @@
 
 		<!-- Sidebar Summary -->
 		<div class="sidebar">
+			{#if noRatePlan}
+				<div class="warning-banner" role="alert">
+					{t(messages, 'book.error_no_rate_plan')}
+				</div>
+			{/if}
 			<BookingSummary
 				{messages}
 				{lang}
@@ -376,6 +413,7 @@
 	.review-value { font-weight: 500; color: var(--color-text); margin: 0; }
 	.divider { border: none; border-top: 1px solid var(--color-cream-dark); margin: 0 0 1.5rem; }
 	.error-box { padding: 1rem; margin-bottom: 1rem; background: var(--color-error-bg); color: var(--color-error-text); border-radius: var(--md-shape-corner-small); font-size: 0.875rem; }
+	.warning-banner { padding: 0.875rem 1rem; background: var(--color-warning-bg); color: var(--color-warning-text); border-radius: var(--md-shape-corner-small); font-size: 0.8125rem; }
 	.cancel-note { font-size: 0.75rem; color: var(--color-text-muted); margin: 1rem 0 0; text-align: center; }
 
 	/* Buttons */

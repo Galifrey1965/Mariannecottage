@@ -4,13 +4,13 @@ import {
 	createBookingAtomic,
 	BookingDatesTakenError,
 	generateBookingReference,
-	getTaxSettings
+	getTaxSettings,
+	getRateForBooking
 } from '$lib/server/supabase';
 
 export const POST: RequestHandler = async ({ request }) => {
 	const body = await request.json();
 
-	// Validate required fields
 	const required = ['guest_name', 'guest_email', 'num_guests', 'check_in_date', 'check_out_date'];
 	for (const field of required) {
 		if (!body[field]) {
@@ -18,12 +18,15 @@ export const POST: RequestHandler = async ({ request }) => {
 		}
 	}
 
-	// Email validation
 	if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(body.guest_email)) {
 		return json({ success: false, error: 'Invalid email address' }, { status: 400 });
 	}
 
-	// Date validation
+	const num_guests = Number(body.num_guests);
+	if (!Number.isInteger(num_guests) || num_guests < 1 || num_guests > 4) {
+		return json({ success: false, error: 'num_guests must be 1-4' }, { status: 400 });
+	}
+
 	const checkIn = new Date(body.check_in_date);
 	const checkOut = new Date(body.check_out_date);
 	if (checkOut <= checkIn) {
@@ -31,14 +34,24 @@ export const POST: RequestHandler = async ({ request }) => {
 	}
 
 	const num_nights = Math.ceil((checkOut.getTime() - checkIn.getTime()) / (1000 * 60 * 60 * 24));
-	const nightly_rate = body.nightly_rate || 120;
-	const subtotal = num_nights * nightly_rate;
+
+	// B-01 / PR 4: rate is determined server-side by check-in date + guest count.
+	// Reject if no active plan covers the check-in (no silent 120 fallback).
+	const rate = await getRateForBooking(body.check_in_date, num_guests);
+	if (!rate) {
+		return json(
+			{ success: false, error_code: 'no_rate_plan', error: 'No rate plan covers those dates' },
+			{ status: 400 }
+		);
+	}
+	const nightly_rate = rate.nightly_rate;
+	const subtotal = Math.round(num_nights * nightly_rate * 100) / 100;
 
 	const taxSettings = await getTaxSettings();
 	const taxRate = taxSettings.taxe_de_sejour_per_person_per_night;
-	const tax = Math.round(body.num_guests * num_nights * taxRate * 100) / 100;
+	const tax = Math.round(num_guests * num_nights * taxRate * 100) / 100;
 
-	const total_cost = subtotal + tax;
+	const total_cost = Math.round((subtotal + tax) * 100) / 100;
 	const booking_reference = generateBookingReference();
 
 	try {
@@ -47,7 +60,7 @@ export const POST: RequestHandler = async ({ request }) => {
 			guest_email: body.guest_email,
 			guest_phone: body.guest_phone || null,
 			guest_country: body.guest_country || null,
-			num_guests: body.num_guests,
+			num_guests,
 			check_in_date: body.check_in_date,
 			check_out_date: body.check_out_date,
 			num_nights,

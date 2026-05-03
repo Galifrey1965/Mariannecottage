@@ -207,7 +207,8 @@
 		"error_phone_invalid": "Invalid phone number",
 		"error_booking_failed": "Booking failed. Please try again.",
 		"error_network": "Network error. Please try again.",
-		"error_dates_taken": "Those dates were just booked. Please pick different dates."
+		"error_dates_taken": "Those dates were just booked. Please pick different dates.",
+		"error_no_rate_plan": "No rate plan covers those dates. Please choose different dates or contact us."
 	},
 	"booking_confirm": {
 		"title": "Booking Confirmed",

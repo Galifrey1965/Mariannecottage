@@ -17,12 +17,26 @@ vi.mock('$lib/server/supabase', () => {
 			id: 1,
 			taxe_de_sejour_per_person_per_night: 0.68,
 			updated_at: '2026-05-03T00:00:00Z'
+		})),
+		getRateForBooking: vi.fn(async (_date: string, num_guests: number) => ({
+			plan: {
+				id: 'plan-1',
+				name: 'Test',
+				rate_per_night: 100,
+				rate_2_guests: 120,
+				rate_3_guests: 140,
+				rate_4_guests: 160,
+				valid_from: '2026-01-01',
+				valid_until: '2026-12-31',
+				is_active: true
+			},
+			nightly_rate: [100, 120, 140, 160][num_guests - 1] ?? 120
 		}))
 	};
 });
 
 import { POST } from './+server';
-import { createBookingAtomic, BookingDatesTakenError } from '$lib/server/supabase';
+import { createBookingAtomic, BookingDatesTakenError, getRateForBooking } from '$lib/server/supabase';
 
 function makeRequest(body: Record<string, unknown>) {
 	return {
@@ -39,8 +53,7 @@ const validBody = {
 	guest_email: 'john@example.com',
 	num_guests: 2,
 	check_in_date: '2026-04-01',
-	check_out_date: '2026-04-04',
-	nightly_rate: 120
+	check_out_date: '2026-04-04'
 };
 
 beforeEach(() => {
@@ -49,7 +62,7 @@ beforeEach(() => {
 
 describe('POST /api/book', () => {
 	it('400 when guest_name missing', async () => {
-		const { guest_name, ...body } = validBody;
+		const { guest_name: _g, ...body } = validBody;
 		const res = await POST(makeRequest(body));
 		expect(res.status).toBe(400);
 		const data = await res.json();
@@ -57,13 +70,13 @@ describe('POST /api/book', () => {
 	});
 
 	it('400 when guest_email missing', async () => {
-		const { guest_email, ...body } = validBody;
+		const { guest_email: _e, ...body } = validBody;
 		const res = await POST(makeRequest(body));
 		expect(res.status).toBe(400);
 	});
 
 	it('400 when num_guests missing', async () => {
-		const { num_guests, ...body } = validBody;
+		const { num_guests: _n, ...body } = validBody;
 		const res = await POST(makeRequest(body));
 		expect(res.status).toBe(400);
 	});
@@ -73,6 +86,11 @@ describe('POST /api/book', () => {
 		expect(res.status).toBe(400);
 		const data = await res.json();
 		expect(data.error).toContain('email');
+	});
+
+	it('400 when num_guests out of range (5)', async () => {
+		const res = await POST(makeRequest({ ...validBody, num_guests: 5 }));
+		expect(res.status).toBe(400);
 	});
 
 	it('400 when checkout <= checkin', async () => {
@@ -86,16 +104,38 @@ describe('POST /api/book', () => {
 		expect(data.error).toContain('Check-out');
 	});
 
+	it('400 with no_rate_plan when no plan covers the dates', async () => {
+		vi.mocked(getRateForBooking).mockResolvedValueOnce(null);
+		const res = await POST(makeRequest(validBody));
+		expect(res.status).toBe(400);
+		const data = await res.json();
+		expect(data.error_code).toBe('no_rate_plan');
+		expect(createBookingAtomic).not.toHaveBeenCalled();
+	});
+
 	it('calculates nights correctly for 3-night stay', async () => {
 		vi.mocked(createBookingAtomic).mockResolvedValueOnce({ id: '1', booking_reference: 'MC-20260323-TEST' } as any);
 		await POST(makeRequest(validBody));
 		expect(createBookingAtomic).toHaveBeenCalledWith(expect.objectContaining({ num_nights: 3 }));
 	});
 
+	it('uses per-guest rate from rate plan (2 guests => 120)', async () => {
+		vi.mocked(createBookingAtomic).mockResolvedValueOnce({ id: '1' } as any);
+		await POST(makeRequest(validBody));
+		expect(createBookingAtomic).toHaveBeenCalledWith(expect.objectContaining({ nightly_rate: 120 }));
+	});
+
+	it('uses per-guest rate from rate plan (3 guests => 140)', async () => {
+		vi.mocked(createBookingAtomic).mockResolvedValueOnce({ id: '1' } as any);
+		await POST(makeRequest({ ...validBody, num_guests: 3 }));
+		expect(createBookingAtomic).toHaveBeenCalledWith(expect.objectContaining({ nightly_rate: 140 }));
+	});
+
 	it('calculates taxe de séjour as guests × nights × per-person-per-night rate', async () => {
 		vi.mocked(createBookingAtomic).mockResolvedValueOnce({ id: '1' } as any);
 		await POST(makeRequest(validBody));
 		// 2 guests × 3 nights × 0.68 = 4.08
+		// nightly_rate = 120 (mocked plan rate_2_guests)
 		// subtotal = 3 × 120 = 360
 		// total = 360 + 4.08 = 364.08
 		expect(createBookingAtomic).toHaveBeenCalledWith(expect.objectContaining({
@@ -105,17 +145,11 @@ describe('POST /api/book', () => {
 		}));
 	});
 
-	it('defaults nightly_rate to 120 when not provided', async () => {
+	it('ignores any client-supplied nightly_rate (server-authoritative)', async () => {
 		vi.mocked(createBookingAtomic).mockResolvedValueOnce({ id: '1' } as any);
-		const { nightly_rate, ...body } = validBody;
-		await POST(makeRequest(body));
+		await POST(makeRequest({ ...validBody, nightly_rate: 9999 }));
+		// rate plan still wins
 		expect(createBookingAtomic).toHaveBeenCalledWith(expect.objectContaining({ nightly_rate: 120 }));
-	});
-
-	it('uses provided nightly_rate', async () => {
-		vi.mocked(createBookingAtomic).mockResolvedValueOnce({ id: '1' } as any);
-		await POST(makeRequest({ ...validBody, nightly_rate: 150 }));
-		expect(createBookingAtomic).toHaveBeenCalledWith(expect.objectContaining({ nightly_rate: 150 }));
 	});
 
 	it('returns booking on success', async () => {

@@ -1,5 +1,6 @@
-import { getAvailability, getTaxSettings } from '$lib/server/supabase';
+import { getAvailability, getTaxSettings, getRatePlans } from '$lib/server/supabase';
 import type { PageServerLoad } from './$types';
+import type { RatePlan } from '$lib/server/supabase';
 
 export const load: PageServerLoad = async () => {
 	const today = new Date();
@@ -11,6 +12,7 @@ export const load: PageServerLoad = async () => {
 
 	const availabilityMap: Record<string, boolean> = {};
 	let taxRate = 0.68;
+	let ratePlans: RatePlan[] = [];
 
 	try {
 		const availability = await getAvailability(startStr, endStr);
@@ -30,5 +32,11 @@ export const load: PageServerLoad = async () => {
 		// fall through with sane default
 	}
 
-	return { availability: availabilityMap, taxRate };
+	try {
+		ratePlans = await getRatePlans();
+	} catch {
+		ratePlans = [];
+	}
+
+	return { availability: availabilityMap, taxRate, ratePlans };
 };
