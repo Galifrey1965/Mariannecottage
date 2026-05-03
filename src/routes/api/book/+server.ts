@@ -1,6 +1,11 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { createBooking, generateBookingReference, getTaxSettings } from '$lib/server/supabase';
+import {
+	createBookingAtomic,
+	BookingDatesTakenError,
+	generateBookingReference,
+	getTaxSettings
+} from '$lib/server/supabase';
 
 export const POST: RequestHandler = async ({ request }) => {
 	const body = await request.json();
@@ -37,7 +42,7 @@ export const POST: RequestHandler = async ({ request }) => {
 	const booking_reference = generateBookingReference();
 
 	try {
-		const booking = await createBooking({
+		const booking = await createBookingAtomic({
 			guest_name: body.guest_name,
 			guest_email: body.guest_email,
 			guest_phone: body.guest_phone || null,
@@ -57,6 +62,12 @@ export const POST: RequestHandler = async ({ request }) => {
 
 		return json({ success: true, booking });
 	} catch (err) {
+		if (err instanceof BookingDatesTakenError) {
+			return json(
+				{ success: false, error_code: 'dates_taken', error: 'Those dates were just booked' },
+				{ status: 409 }
+			);
+		}
 		console.error('Booking creation failed:', err);
 		return json({ success: false, error: 'Failed to create booking' }, { status: 500 });
 	}

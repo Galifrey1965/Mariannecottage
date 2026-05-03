@@ -206,7 +206,8 @@
 		"error_email_invalid": "Email invalide",
 		"error_phone_invalid": "Numéro de téléphone invalide",
 		"error_booking_failed": "Échec de la réservation. Veuillez réessayer.",
-		"error_network": "Erreur réseau. Veuillez réessayer."
+		"error_network": "Erreur réseau. Veuillez réessayer.",
+		"error_dates_taken": "Ces dates viennent d'être réservées. Veuillez choisir d'autres dates."
 	},
 	"booking_confirm": {
 		"title": "Réservation Confirmée",

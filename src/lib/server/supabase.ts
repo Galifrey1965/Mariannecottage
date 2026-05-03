@@ -70,6 +70,18 @@ export interface TaxSettings {
 }
 
 // Booking operations
+
+// B-02 Phase 1: error thrown when book_dates_atomic detects a conflict.
+// /api/book maps this to HTTP 409.
+export class BookingDatesTakenError extends Error {
+	constructor() {
+		super('DATES_TAKEN');
+		this.name = 'BookingDatesTakenError';
+	}
+}
+
+// Deprecated in favour of createBookingAtomic — retained for now in case
+// of out-of-tree callers; safe to remove once confirmed unused.
 export async function createBooking(booking: Omit<Booking, 'id' | 'created_at' | 'updated_at'>) {
 	const { data, error } = await adminClient
 		.from('bookings')
@@ -79,6 +91,23 @@ export async function createBooking(booking: Omit<Booking, 'id' | 'created_at' |
 
 	if (error) throw error;
 	return data;
+}
+
+// B-02 Phase 1: atomic availability-check + insert + availability-mark
+// inside a single transaction guarded by an advisory lock.
+// Throws BookingDatesTakenError on date conflict (Postgres SQLSTATE P0001 / message 'DATES_TAKEN').
+export async function createBookingAtomic(
+	booking: Omit<Booking, 'id' | 'created_at' | 'updated_at'>
+): Promise<{ id: string; booking_reference: string }> {
+	const { data, error } = await adminClient.rpc('book_dates_atomic', { p_booking: booking });
+
+	if (error) {
+		if (error.code === 'P0001' || /DATES_TAKEN/.test(error.message ?? '')) {
+			throw new BookingDatesTakenError();
+		}
+		throw error;
+	}
+	return data as { id: string; booking_reference: string };
 }
 
 export async function getBooking(bookingId: string) {

@@ -100,3 +100,74 @@ INSERT INTO rate_plans (name, rate_per_night, valid_from, valid_until, is_active
   ('Peak Season', 140, '2026-06-01', '2026-06-08', true);
 
 INSERT INTO tax_settings (id, taxe_de_sejour_per_person_per_night) VALUES (1, 0.68);
+
+-- B-02 Phase 1 (2026-05-03): atomic booking function.
+-- Single-cottage advisory lock serialises concurrent bookings.
+-- Raises SQLSTATE 'P0001' / message 'DATES_TAKEN' on conflict.
+-- Service-role only; called from src/lib/server/supabase.ts createBookingAtomic.
+CREATE OR REPLACE FUNCTION public.book_dates_atomic(p_booking jsonb)
+RETURNS jsonb
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+  v_check_in  DATE := (p_booking->>'check_in_date')::date;
+  v_check_out DATE := (p_booking->>'check_out_date')::date;
+  v_id        UUID;
+  v_reference TEXT;
+BEGIN
+  PERFORM pg_advisory_xact_lock(73656452);
+
+  IF EXISTS (
+    SELECT 1
+    FROM availability
+    WHERE date >= v_check_in
+      AND date <  v_check_out
+      AND available = false
+  ) THEN
+    RAISE EXCEPTION 'DATES_TAKEN' USING ERRCODE = 'P0001';
+  END IF;
+
+  INSERT INTO bookings (
+    guest_name, guest_email, guest_phone, guest_country,
+    num_guests, check_in_date, check_out_date, num_nights,
+    special_requests, nightly_rate, subtotal, tax, total_cost,
+    status, booking_reference
+  ) VALUES (
+    p_booking->>'guest_name',
+    p_booking->>'guest_email',
+    p_booking->>'guest_phone',
+    p_booking->>'guest_country',
+    (p_booking->>'num_guests')::int,
+    v_check_in,
+    v_check_out,
+    (p_booking->>'num_nights')::int,
+    p_booking->>'special_requests',
+    (p_booking->>'nightly_rate')::numeric,
+    (p_booking->>'subtotal')::numeric,
+    (p_booking->>'tax')::numeric,
+    (p_booking->>'total_cost')::numeric,
+    COALESCE(p_booking->>'status', 'pending'),
+    p_booking->>'booking_reference'
+  )
+  RETURNING id, booking_reference INTO v_id, v_reference;
+
+  INSERT INTO availability (date, available, synced_from, synced_at)
+  SELECT d::date, false, 'manual', NOW()
+  FROM generate_series(v_check_in, v_check_out - INTERVAL '1 day', INTERVAL '1 day') AS d
+  ON CONFLICT (date) DO UPDATE
+    SET available   = false,
+        synced_from = 'manual',
+        synced_at   = NOW();
+
+  RETURN jsonb_build_object(
+    'id', v_id,
+    'booking_reference', v_reference
+  );
+END;
+$$;
+
+REVOKE ALL ON FUNCTION public.book_dates_atomic(jsonb) FROM PUBLIC;
+REVOKE ALL ON FUNCTION public.book_dates_atomic(jsonb) FROM anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.book_dates_atomic(jsonb) TO service_role;

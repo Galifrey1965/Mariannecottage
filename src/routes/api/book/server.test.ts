@@ -1,19 +1,28 @@
 // @vitest-environment node
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-// Mock supabase before importing the handler
-vi.mock('$lib/server/supabase', () => ({
-	createBooking: vi.fn(),
-	generateBookingReference: vi.fn(() => 'MC-20260323-TEST'),
-	getTaxSettings: vi.fn(async () => ({
-		id: 1,
-		taxe_de_sejour_per_person_per_night: 0.68,
-		updated_at: '2026-05-03T00:00:00Z'
-	}))
-}));
+// Mock supabase before importing the handler.
+vi.mock('$lib/server/supabase', () => {
+	class FakeBookingDatesTakenError extends Error {
+		constructor() {
+			super('DATES_TAKEN');
+			this.name = 'BookingDatesTakenError';
+		}
+	}
+	return {
+		createBookingAtomic: vi.fn(),
+		BookingDatesTakenError: FakeBookingDatesTakenError,
+		generateBookingReference: vi.fn(() => 'MC-20260323-TEST'),
+		getTaxSettings: vi.fn(async () => ({
+			id: 1,
+			taxe_de_sejour_per_person_per_night: 0.68,
+			updated_at: '2026-05-03T00:00:00Z'
+		}))
+	};
+});
 
 import { POST } from './+server';
-import { createBooking } from '$lib/server/supabase';
+import { createBookingAtomic, BookingDatesTakenError } from '$lib/server/supabase';
 
 function makeRequest(body: Record<string, unknown>) {
 	return {
@@ -78,18 +87,18 @@ describe('POST /api/book', () => {
 	});
 
 	it('calculates nights correctly for 3-night stay', async () => {
-		vi.mocked(createBooking).mockResolvedValueOnce({ id: '1', booking_reference: 'MC-20260323-TEST' } as any);
+		vi.mocked(createBookingAtomic).mockResolvedValueOnce({ id: '1', booking_reference: 'MC-20260323-TEST' } as any);
 		await POST(makeRequest(validBody));
-		expect(createBooking).toHaveBeenCalledWith(expect.objectContaining({ num_nights: 3 }));
+		expect(createBookingAtomic).toHaveBeenCalledWith(expect.objectContaining({ num_nights: 3 }));
 	});
 
 	it('calculates taxe de séjour as guests × nights × per-person-per-night rate', async () => {
-		vi.mocked(createBooking).mockResolvedValueOnce({ id: '1' } as any);
+		vi.mocked(createBookingAtomic).mockResolvedValueOnce({ id: '1' } as any);
 		await POST(makeRequest(validBody));
 		// 2 guests × 3 nights × 0.68 = 4.08
 		// subtotal = 3 × 120 = 360
 		// total = 360 + 4.08 = 364.08
-		expect(createBooking).toHaveBeenCalledWith(expect.objectContaining({
+		expect(createBookingAtomic).toHaveBeenCalledWith(expect.objectContaining({
 			subtotal: 360,
 			tax: 4.08,
 			total_cost: 364.08
@@ -97,21 +106,21 @@ describe('POST /api/book', () => {
 	});
 
 	it('defaults nightly_rate to 120 when not provided', async () => {
-		vi.mocked(createBooking).mockResolvedValueOnce({ id: '1' } as any);
+		vi.mocked(createBookingAtomic).mockResolvedValueOnce({ id: '1' } as any);
 		const { nightly_rate, ...body } = validBody;
 		await POST(makeRequest(body));
-		expect(createBooking).toHaveBeenCalledWith(expect.objectContaining({ nightly_rate: 120 }));
+		expect(createBookingAtomic).toHaveBeenCalledWith(expect.objectContaining({ nightly_rate: 120 }));
 	});
 
 	it('uses provided nightly_rate', async () => {
-		vi.mocked(createBooking).mockResolvedValueOnce({ id: '1' } as any);
+		vi.mocked(createBookingAtomic).mockResolvedValueOnce({ id: '1' } as any);
 		await POST(makeRequest({ ...validBody, nightly_rate: 150 }));
-		expect(createBooking).toHaveBeenCalledWith(expect.objectContaining({ nightly_rate: 150 }));
+		expect(createBookingAtomic).toHaveBeenCalledWith(expect.objectContaining({ nightly_rate: 150 }));
 	});
 
 	it('returns booking on success', async () => {
-		const mockBooking = { id: '1', booking_reference: 'MC-20260323-TEST', guest_name: 'John Doe' };
-		vi.mocked(createBooking).mockResolvedValueOnce(mockBooking as any);
+		const mockBooking = { id: '1', booking_reference: 'MC-20260323-TEST' };
+		vi.mocked(createBookingAtomic).mockResolvedValueOnce(mockBooking as any);
 		const res = await POST(makeRequest(validBody));
 		expect(res.status).toBe(200);
 		const data = await res.json();
@@ -119,8 +128,17 @@ describe('POST /api/book', () => {
 		expect(data.booking.booking_reference).toBe('MC-20260323-TEST');
 	});
 
-	it('500 when createBooking throws', async () => {
-		vi.mocked(createBooking).mockRejectedValueOnce(new Error('DB error'));
+	it('returns 409 with dates_taken error_code when BookingDatesTakenError thrown', async () => {
+		vi.mocked(createBookingAtomic).mockRejectedValueOnce(new BookingDatesTakenError());
+		const res = await POST(makeRequest(validBody));
+		expect(res.status).toBe(409);
+		const data = await res.json();
+		expect(data.success).toBe(false);
+		expect(data.error_code).toBe('dates_taken');
+	});
+
+	it('500 when createBookingAtomic throws unexpected error', async () => {
+		vi.mocked(createBookingAtomic).mockRejectedValueOnce(new Error('DB error'));
 		const res = await POST(makeRequest(validBody));
 		expect(res.status).toBe(500);
 		const data = await res.json();
