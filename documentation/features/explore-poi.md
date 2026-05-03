@@ -19,7 +19,7 @@ Holiday cottage rental website for **Marianne Cottage**, a restored 1800s farmho
 | Language | TypeScript |
 | UI components | SMUI v8.0.0-alpha.0 (Material Design 3, `runes={false}` compat) |
 | CSS | MD3 token system (`src/styles/tokens/`), light + dark themes |
-| Maps | Leaflet 1.9.4 (CDN, OpenStreetMap tiles) |
+| Maps | Google Maps JavaScript API (`@googlemaps/js-api-loader`); requires `PUBLIC_GOOGLE_MAPS_API_KEY` env var, domain-restricted in Google Cloud (swapped from Leaflet/OpenStreetMap on 2026-05-03 — Mark already runs a Google Cloud project for Hotel Center, so consolidating onto one provider) |
 | Backend/DB | Supabase (bookings, admin auth) |
 | iCal | ical.js 2.2.1 (Booking.com sync) |
 | i18n | Custom `t()` helper, locales: `en` / `fr` / `de` |
@@ -45,7 +45,7 @@ src/
     +layout.svelte               — app shell: skip-link, Header, NavigationRail, main, NavigationBar, Footer
     +page.svelte                 — home page
     book/                        — booking flow (calendar, guest details, review, confirm)
-    explore/                     — Normandy attractions with Leaflet map
+    explore/                     — Normandy attractions with Google Maps
     contact/                     — enquiry form + map
     gallery/                     — filterable photo gallery
     rooms/                       — suite & amenities

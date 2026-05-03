@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type L from 'leaflet';
+	import { env } from '$env/dynamic/public';
 	import type { Poi } from '$lib/data/poi.js';
 	import { COTTAGE_ORIGIN } from '$lib/data/poi.js';
 	import type { Messages } from '$lib/i18n.js';
@@ -14,10 +14,9 @@
 
 	let { poi, open, onclose, messages }: Props = $props();
 
-	// Map container — reactive so $effect can track when it mounts/unmounts
 	let mapContainer: HTMLDivElement | undefined = $state(undefined);
+	let missingKey = $state(false);
 
-	// Category colours for the POI marker dot
 	const CATEGORY_COLORS: Record<string, string> = {
 		ww2: '#8b5e3c',
 		heritage: '#7b5ea7',
@@ -25,67 +24,83 @@
 		museums: '#0d9488'
 	};
 
-	// Distance label — use the "exception" key for distant POIs (>60km, e.g. Mont Saint-Michel)
 	const distanceLabel = $derived(
 		poi.distanceKm > 60
 			? t(messages, 'poi.distance.exception')
 			: `${poi.distanceKm.toFixed(1)} km ${t(messages, 'poi.distance.from_cottage')}`
 	);
 
-	// Initialise Leaflet when the container element is in the DOM (i.e. when open=true renders it)
 	$effect(() => {
 		const container = mapContainer;
 		if (!container) return;
 
-		let map: L.Map;
+		const apiKey = env.PUBLIC_GOOGLE_MAPS_API_KEY;
+		if (!apiKey) {
+			missingKey = true;
+			return;
+		}
 
-		import('leaflet').then(({ default: L }) => {
-			map = L.map(container, { zoomControl: true, attributionControl: true });
+		let map: google.maps.Map | undefined;
 
-			L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-				attribution: '© <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-				maxZoom: 19
-			}).addTo(map);
+		import('@googlemaps/js-api-loader').then(async ({ Loader }) => {
+			const loader = new Loader({ apiKey, version: 'weekly' });
+			const { Map, LatLngBounds, InfoWindow } = await loader.importLibrary('maps');
+			const { Marker } = await loader.importLibrary('marker');
 
-			// Cottage origin marker (gold house)
-			const cottageIcon = L.divIcon({
-				className: 'poi-map-marker',
-				html: `<div class="poi-map-marker__dot" style="background:#b8860b;" title="Marianne Cottage">🏠</div>`,
-				iconSize: [32, 32],
-				iconAnchor: [16, 32]
+			map = new Map(container, {
+				mapTypeControl: false,
+				streetViewControl: false,
+				fullscreenControl: false,
+				gestureHandling: 'cooperative'
+			});
+			const infoWindow = new InfoWindow();
+
+			const cottageMarker = new Marker({
+				position: { lat: COTTAGE_ORIGIN.lat, lng: COTTAGE_ORIGIN.lng },
+				map,
+				title: 'Marianne Cottage',
+				label: { text: '🏠', fontSize: '20px' },
+				icon: {
+					path: 'M 0,0 m -16,-16 a 16,16 0 1,0 32,0 a 16,16 0 1,0 -32,0',
+					fillColor: '#b8860b',
+					fillOpacity: 0.15,
+					strokeColor: '#b8860b',
+					scale: 1
+				}
+			});
+			cottageMarker.addListener('click', () => {
+				infoWindow.setContent('<strong>Marianne Cottage</strong>');
+				infoWindow.open({ map, anchor: cottageMarker });
 			});
 
-			L.marker([COTTAGE_ORIGIN.lat, COTTAGE_ORIGIN.lng], { icon: cottageIcon })
-				.bindPopup('<strong>Marianne Cottage</strong>')
-				.addTo(map);
-
-			// POI marker (category colour)
 			const poiColor = CATEGORY_COLORS[poi.category] ?? '#555';
-			const poiIcon = L.divIcon({
-				className: 'poi-map-marker',
-				html: `<div class="poi-map-marker__dot" style="background:${poiColor};">📍</div>`,
-				iconSize: [32, 32],
-				iconAnchor: [16, 32]
+			const poiMarker = new Marker({
+				position: { lat: poi.lat, lng: poi.lng },
+				map,
+				title: t(messages, poi.titleKey),
+				label: { text: '📍', fontSize: '20px' },
+				icon: {
+					path: 'M 0,0 m -16,-16 a 16,16 0 1,0 32,0 a 16,16 0 1,0 -32,0',
+					fillColor: poiColor,
+					fillOpacity: 0.15,
+					strokeColor: poiColor,
+					scale: 1
+				}
+			});
+			poiMarker.addListener('click', () => {
+				infoWindow.setContent(
+					`<strong>${t(messages, poi.titleKey)}</strong><br>${distanceLabel}`
+				);
+				infoWindow.open({ map, anchor: poiMarker });
 			});
 
-			L.marker([poi.lat, poi.lng], { icon: poiIcon })
-				.bindPopup(`<strong>${t(messages, poi.titleKey)}</strong><br>${distanceLabel}`)
-				.addTo(map);
-
-			// Fit map to show both markers with padding
-			const bounds = L.latLngBounds(
-				[COTTAGE_ORIGIN.lat, COTTAGE_ORIGIN.lng],
-				[poi.lat, poi.lng]
-			);
-			map.fitBounds(bounds, { padding: [40, 40] });
+			const bounds = new LatLngBounds();
+			bounds.extend({ lat: COTTAGE_ORIGIN.lat, lng: COTTAGE_ORIGIN.lng });
+			bounds.extend({ lat: poi.lat, lng: poi.lng });
+			map.fitBounds(bounds, 40);
 		});
-
-		return () => {
-			if (map) map.remove();
-		};
 	});
 
-	// Close on click outside the panel
 	$effect(() => {
 		if (!open) return;
 
@@ -96,7 +111,6 @@
 			}
 		}
 
-		// Defer by one frame so the click that opened the panel doesn't immediately close it
 		const id = setTimeout(() => document.addEventListener('click', handleDocClick), 0);
 
 		return () => {
@@ -108,7 +122,6 @@
 
 {#if open}
 	<div class="poi-map-panel" role="region" aria-label={t(messages, 'poi.actions.view_map')}>
-		<!-- Header -->
 		<div class="poi-map-panel__header">
 			<span class="poi-map-panel__title">{t(messages, poi.titleKey)}</span>
 			<span class="poi-map-panel__distance">{distanceLabel}</span>
@@ -135,19 +148,19 @@
 			</button>
 		</div>
 
-		<!-- Map -->
-		<div bind:this={mapContainer} class="poi-map-panel__map"></div>
+		<div bind:this={mapContainer} class="poi-map-panel__map">
+			{#if missingKey}
+				<div class="poi-map-panel__placeholder">
+					Map unavailable — <code>PUBLIC_GOOGLE_MAPS_API_KEY</code> not set
+				</div>
+			{/if}
+		</div>
 
-		<!-- OSM attribution note -->
-		<p class="poi-map-panel__osm-note" aria-hidden="true">
-			Straight-line distance · Map © OpenStreetMap contributors
+		<p class="poi-map-panel__attribution" aria-hidden="true">
+			Straight-line distance · Map data © Google
 		</p>
 	</div>
 {/if}
-
-<svelte:head>
-	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-</svelte:head>
 
 <style>
 	.poi-map-panel {
@@ -219,24 +232,29 @@
 	.poi-map-panel__map {
 		height: 220px;
 		width: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 	}
 
-	.poi-map-panel__osm-note {
+	.poi-map-panel__placeholder {
+		font-size: 0.75rem;
+		color: var(--color-text-muted, #5f5e5a);
+		text-align: center;
+		padding: 0 1rem;
+	}
+
+	.poi-map-panel__placeholder code {
+		background: var(--color-cream-dark, #ede6d8);
+		padding: 0 0.25rem;
+		border-radius: 0.125rem;
+	}
+
+	.poi-map-panel__attribution {
 		margin: 0;
 		padding: 0.2rem 0.75rem;
 		font-size: 0.65rem;
 		color: var(--color-text-muted, #5f5e5a);
 		text-align: right;
-	}
-
-	:global(.poi-map-marker) {
-		background: none;
-		border: none;
-	}
-
-	:global(.poi-map-marker__dot) {
-		font-size: 22px;
-		line-height: 1;
-		filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.4));
 	}
 </style>

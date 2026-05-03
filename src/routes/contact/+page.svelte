@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { t } from '$lib/i18n';
 	import EnquiryForm from '$lib/components/EnquiryForm.svelte';
-	import LeafletMap from '$lib/components/LeafletMap.svelte';
+	import GoogleMap from '$lib/components/GoogleMap.svelte';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -83,7 +83,7 @@
 	<div class="map-section">
 		<h2 class="map-heading">{t(messages, 'contact.location_map')}</h2>
 		<div class="map-wrapper">
-			<LeafletMap
+			<GoogleMap
 				markers={[
 					{ lat: 49.1728, lng: -0.9887, title: 'Marianne Cottage', description: '1 La Haye, 50680 Couvains, France', type: 'cottage' }
 				]}

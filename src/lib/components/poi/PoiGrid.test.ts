@@ -4,15 +4,21 @@ import PoiGrid from './PoiGrid.svelte';
 import type { Poi } from '$lib/data/poi';
 import * as en from '../../../../messages/en.json';
 
-// Mock Leaflet — required by PoiCard → PoiMap child
-vi.mock('leaflet', () => ({
-	default: {
-		map: vi.fn(() => ({ setView: vi.fn().mockReturnThis(), remove: vi.fn(), fitBounds: vi.fn() })),
-		tileLayer: vi.fn(() => ({ addTo: vi.fn() })),
-		marker: vi.fn(() => ({ addTo: vi.fn().mockReturnThis(), bindPopup: vi.fn().mockReturnThis() })),
-		divIcon: vi.fn(() => ({})),
-		latLngBounds: vi.fn(() => ({ extend: vi.fn().mockReturnThis() }))
+// Mock Google Maps loader — required by PoiCard → PoiMap child
+vi.mock('@googlemaps/js-api-loader', () => {
+	class Map { fitBounds = vi.fn(); }
+	class LatLngBounds { extend = vi.fn().mockReturnThis(); }
+	class InfoWindow { setContent = vi.fn(); open = vi.fn(); close = vi.fn(); }
+	class Marker { addListener = vi.fn(); setMap = vi.fn(); }
+	class Loader {
+		constructor(_: unknown) {}
+		importLibrary = vi.fn().mockResolvedValue({ Map, LatLngBounds, InfoWindow, Marker });
 	}
+	return { Loader };
+});
+
+vi.mock('$env/dynamic/public', () => ({
+	env: { PUBLIC_GOOGLE_MAPS_API_KEY: 'test-key' }
 }));
 
 function makePoi(id: string, overrides: Partial<Poi> = {}): Poi {

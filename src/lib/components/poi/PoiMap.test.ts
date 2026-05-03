@@ -4,32 +4,36 @@ import PoiMap from './PoiMap.svelte';
 import type { Poi } from '$lib/data/poi';
 import * as en from '../../../../messages/en.json';
 
-// Mock Leaflet — it requires a real browser DOM with canvas support
-const mockMapInstance = {
-	setView: vi.fn().mockReturnThis(),
-	remove: vi.fn(),
-	fitBounds: vi.fn(),
-	addLayer: vi.fn()
-};
-
-const mockMarker = {
-	addTo: vi.fn().mockReturnThis(),
-	bindPopup: vi.fn().mockReturnThis()
-};
-
-const mockTileLayer = { addTo: vi.fn() };
-
-vi.mock('leaflet', () => ({
-	default: {
-		map: vi.fn(() => mockMapInstance),
-		tileLayer: vi.fn(() => mockTileLayer),
-		marker: vi.fn(() => mockMarker),
-		divIcon: vi.fn(() => ({})),
-		popup: vi.fn(() => ({ setContent: vi.fn().mockReturnThis() })),
-		latLngBounds: vi.fn(() => ({
-			extend: vi.fn().mockReturnThis()
-		}))
+// Mock Google Maps loader — components use `new Loader(...)` and `new Map(...)`,
+// so the mocks need to be real constructors (classes), not arrow-function impls.
+vi.mock('@googlemaps/js-api-loader', () => {
+	class Map {
+		fitBounds = vi.fn();
+		setCenter = vi.fn();
+		setZoom = vi.fn();
 	}
+	class LatLngBounds {
+		extend = vi.fn().mockReturnThis();
+	}
+	class InfoWindow {
+		setContent = vi.fn();
+		open = vi.fn();
+		close = vi.fn();
+	}
+	class Marker {
+		addListener = vi.fn();
+		setMap = vi.fn();
+	}
+	class Loader {
+		constructor(_: unknown) {}
+		importLibrary = vi.fn().mockResolvedValue({ Map, LatLngBounds, InfoWindow, Marker });
+	}
+	return { Loader };
+});
+
+// Provide an API key in the test env so PoiMap doesn't short-circuit to "missing key"
+vi.mock('$env/dynamic/public', () => ({
+	env: { PUBLIC_GOOGLE_MAPS_API_KEY: 'test-key' }
 }));
 
 const mockPoi: Poi = {

@@ -1,6 +1,6 @@
 # Marianne Cottage
 
-Charming 1800s farmhouse B&B in Normandy with 2 bedrooms. Multi-language site (EN/FR/DE) built with SvelteKit 5, SMUI, and interactive Leaflet maps. Deployed on Netlify.
+Charming 1800s farmhouse B&B in Normandy with 2 bedrooms. Multi-language site (EN/FR/DE) built with SvelteKit 5, SMUI, and interactive Google Maps. Deployed on Netlify.
 
 | | |
 |---|---|
@@ -17,7 +17,7 @@ Charming 1800s farmhouse B&B in Normandy with 2 bedrooms. Multi-language site (E
 |---|---|
 | Frontend | SvelteKit 5, Svelte 5 runes |
 | UI | SMUI v8 (Svelte Material UI) @alpha + scoped CSS |
-| Maps | Leaflet v1.9.4, OpenStreetMap |
+| Maps | Google Maps JavaScript API (`@googlemaps/js-api-loader`) |
 | i18n | Custom JSON-based, cookie-driven (EN/FR/DE) |
 | Backend | Netlify Functions (serverless) |
 | Database | Supabase (PostgreSQL + RLS) |

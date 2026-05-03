@@ -67,7 +67,7 @@ Direction was locked 2026-05-02 — see [`documentation/discussions/booking-paym
 | Build / dev | [Vite 7](https://vitejs.dev/) |
 | UI components | [SMUI v8 alpha](https://sveltematerialui.com/) (Svelte Material UI) — *alpha-pinned, see issue F-01* |
 | Styling | Scoped CSS, SCSS, custom theme tokens |
-| Maps | [Leaflet 1.9](https://leafletjs.com/) + OpenStreetMap tiles |
+| Maps | [Google Maps JavaScript API](https://developers.google.com/maps/documentation/javascript) via [`@googlemaps/js-api-loader`](https://www.npmjs.com/package/@googlemaps/js-api-loader) |
 | i18n | Hand-rolled JSON-driven (EN/FR/DE) — *Paraglide migration planned, issue F-05* |
 | Server | SvelteKit endpoints + Netlify Functions |
 | Database | [Supabase](https://supabase.com/) (PostgreSQL + Row-Level Security) |
@@ -86,8 +86,8 @@ Direction was locked 2026-05-02 — see [`documentation/discussions/booking-paym
 |---|---|---|
 | **Netlify** | Hosting + serverless functions + auto-deploy | Mark (Personal plan) |
 | **Supabase** | Postgres database + auth + RLS | Mark |
-| **OpenStreetMap** | Map tiles for Leaflet | Free, no account |
 | **Booking.com** | OTA channel, iCal feed source | Mark |
+| **Google Maps** | Interactive maps on `/contact` and POI panels in `/explore`. JavaScript API via `@googlemaps/js-api-loader`. | Mark (Google Cloud project — same as Hotel Center / Pub/Sub) |
 
 ### Planned (per build plan)
 
@@ -125,6 +125,7 @@ PUBLIC_SUPABASE_ANON_KEY=<key>
 SUPABASE_SERVICE_ROLE_KEY=<key>
 PUBLIC_SITE_URL=https://mariannecottage.netlify.app
 PUBLIC_DEFAULT_LOCALE=en
+PUBLIC_GOOGLE_MAPS_API_KEY=<google-maps-js-api-key-domain-restricted>
 SYNC_SECRET=<shared-secret-for-booking.com-sync>
 BOOKING_COM_ICAL_URL=<ical-feed-url>
 ```
