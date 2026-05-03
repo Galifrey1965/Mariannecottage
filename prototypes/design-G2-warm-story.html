@@ -1,0 +1,593 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Marianne Cottage — Two centuries of stone, hedgerow and sky</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@400;500;600;700&display=swap" />
+<style>
+  :root {
+    --paper: #F4EFE7;
+    --paper-2: #ECE5D8;
+    --cream: #FBF7F0;
+    --terracotta: #B5654A;
+    --terracotta-deep: #8E4A36;
+    --moss: #5D6E5D;
+    --moss-deep: #3F4E3F;
+    --stone: #C9BFAF;
+    --ink: #2A241E;
+    --ink-soft: #4A4137;
+    --muted: #756B5E;
+    --line: rgba(42,36,30,.12);
+    --container: 1280px;
+    --container-prose: 720px;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    font-size: 17px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  img { max-width: 100%; display: block; }
+  a { color: var(--terracotta-deep); text-decoration: none; }
+  a:hover { color: var(--ink); }
+
+  h1, h2, h3, .serif { font-family: 'Lora', Georgia, serif; font-weight: 500; color: var(--ink); margin: 0; line-height: 1.18; letter-spacing: -0.005em; }
+  h1 { font-size: clamp(2.5rem, 7vw, 5.4rem); font-weight: 500; }
+  h2 { font-size: clamp(2rem, 4.5vw, 3.4rem); font-weight: 500; }
+  h3 { font-size: 1.5rem; font-weight: 500; }
+  p { margin: 0 0 1.2rem; max-width: 64ch; }
+  em { font-style: italic; }
+
+  .container { max-width: var(--container); margin: 0 auto; padding: 0 28px; }
+  .prose { max-width: var(--container-prose); margin: 0 auto; padding: 0 28px; }
+
+  /* Header */
+  .site-header {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 60;
+    transition: background .35s ease, box-shadow .35s ease, color .35s ease;
+    color: #fff;
+  }
+  .site-header.solid {
+    background: rgba(244,239,231,.96);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 1px 0 var(--line);
+    color: var(--ink);
+  }
+  .nav {
+    display: flex; align-items: center; justify-content: space-between;
+    height: 80px;
+  }
+  .brand {
+    font-family: 'Lora', serif; font-weight: 500;
+    font-size: 1.35rem; color: inherit;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .brand-mark {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: var(--terracotta); color: var(--cream);
+    display: inline-flex; align-items: center; justify-content: center;
+    font-family: 'Lora', serif; font-weight: 500; font-size: 1.1rem;
+    font-style: italic;
+    flex-shrink: 0;
+  }
+  .nav-links { display: flex; gap: 28px; }
+  .nav-links a { color: inherit; font-weight: 500; font-size: .95rem; }
+  .nav-links a:hover { color: var(--terracotta); }
+  .nav-right { display: flex; gap: 18px; align-items: center; }
+  .lang-switch { display: flex; gap: 4px; align-items: center; font-size: .85rem; }
+  .lang-btn {
+    background: transparent; border: none; padding: 6px 8px;
+    font: inherit; color: inherit; opacity: .7; cursor: pointer;
+    font-weight: 500;
+  }
+  .lang-btn.active { opacity: 1; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; }
+  .lang-sep { opacity: .4; }
+
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    background: var(--terracotta); color: var(--cream); border: none;
+    padding: 14px 26px; font: inherit; font-weight: 600; font-size: .95rem;
+    border-radius: 999px; cursor: pointer;
+    box-shadow: 0 6px 18px rgba(142,74,54,.25);
+    transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
+  }
+  .btn:hover { transform: translateY(-2px); background: var(--terracotta-deep); box-shadow: 0 10px 24px rgba(142,74,54,.32); color: var(--cream); }
+  .btn-ghost {
+    background: transparent; color: inherit;
+    border: 1.5px solid currentColor; box-shadow: none;
+  }
+  .btn-ghost:hover { background: rgba(255,255,255,.1); transform: translateY(-1px); box-shadow: none; }
+  .btn-large { padding: 18px 32px; font-size: 1rem; }
+  .btn-small { padding: 10px 18px; font-size: .85rem; }
+
+  .burger {
+    display: none; width: 44px; height: 44px;
+    background: transparent; border: none; cursor: pointer;
+    align-items: center; justify-content: center;
+    color: inherit;
+  }
+  .burger span { display: block; width: 22px; height: 2px; background: currentColor; position: relative; }
+  .burger span::before, .burger span::after { content: ''; position: absolute; left: 0; width: 22px; height: 2px; background: currentColor; }
+  .burger span::before { top: -7px; }
+  .burger span::after { top: 7px; }
+
+  /* Hero — full bleed, big */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    background: url('design-assets/images/cottage-hero.jpg') center/cover no-repeat;
+    color: #fff;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 0 0 clamp(60px, 8vw, 100px);
+  }
+  .hero::before {
+    content: ''; position: absolute; inset: 0;
+    background:
+      linear-gradient(180deg, rgba(20,15,10,.45) 0%, rgba(20,15,10,.05) 30%, rgba(20,15,10,.55) 100%);
+  }
+  .hero-content {
+    position: relative; z-index: 2;
+    max-width: var(--container);
+    margin: 0 auto;
+    padding: 0 28px;
+    width: 100%;
+  }
+  .hero-eyebrow {
+    font-family: 'Lora', serif; font-style: italic;
+    font-size: clamp(1rem, 1.5vw, 1.2rem);
+    margin-bottom: 18px;
+    letter-spacing: .02em;
+    opacity: .92;
+  }
+  .hero-eyebrow .ornament { display: inline-block; width: 36px; height: 1px; background: rgba(255,255,255,.6); vertical-align: middle; margin-right: 14px; }
+  .hero h1 {
+    color: #fff; max-width: 14ch;
+    font-weight: 500;
+    text-shadow: 0 2px 18px rgba(0,0,0,.18);
+  }
+  .hero h1 em { color: #F2C8B8; font-style: italic; font-weight: 400; }
+  .hero-sub {
+    font-family: 'Lora', serif; font-style: italic;
+    font-size: clamp(1.15rem, 1.8vw, 1.35rem);
+    max-width: 52ch; margin: 24px 0 36px;
+    color: rgba(255,255,255,.92);
+    line-height: 1.55;
+  }
+  .hero-cta { display: flex; flex-wrap: wrap; gap: 14px; }
+  .scroll-cue {
+    position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%);
+    color: rgba(255,255,255,.7);
+    font-size: .75rem; letter-spacing: .25em; text-transform: uppercase;
+    z-index: 2;
+    animation: bob 3s ease-in-out infinite;
+  }
+  @keyframes bob { 0%,100%{transform:translateX(-50%) translateY(0);} 50%{transform:translateX(-50%) translateY(8px);} }
+
+  /* Sections */
+  section { padding: clamp(80px, 12vw, 160px) 0; position: relative; }
+  .eyebrow {
+    font-family: 'Lora', serif; font-style: italic;
+    color: var(--terracotta);
+    font-size: 1.05rem;
+    margin-bottom: 16px;
+  }
+  .eyebrow::before { content: '— '; opacity: .6; }
+
+  /* Fade-ins */
+  .reveal { opacity: 0; transform: translateY(24px); transition: opacity 1s ease, transform 1.2s cubic-bezier(.2,.7,.2,1); }
+  .reveal.in { opacity: 1; transform: none; }
+
+  /* Intro */
+  .intro {
+    background: var(--paper);
+    text-align: center;
+  }
+  .intro-figure {
+    font-family: 'Lora', serif; font-style: italic;
+    font-size: clamp(1.5rem, 3vw, 2.4rem);
+    line-height: 1.45;
+    color: var(--ink-soft);
+    max-width: 30ch;
+    margin: 0 auto 22px;
+  }
+  .intro-figure::before, .intro-figure::after { color: var(--terracotta); display: block; font-size: 2rem; line-height: 1; }
+  .intro-figure::before { content: '"'; margin-bottom: -10px; }
+  .intro-attr {
+    font-family: 'Inter', sans-serif; font-style: normal;
+    font-size: .8rem; letter-spacing: .26em; text-transform: uppercase;
+    color: var(--muted); font-weight: 500;
+  }
+
+  /* Cottage split */
+  .cottage { background: var(--paper-2); }
+  .split {
+    display: grid; gap: 56px;
+    grid-template-columns: 1fr;
+    align-items: center;
+    max-width: 1200px; margin: 0 auto;
+    padding: 0 28px;
+  }
+  @media (min-width: 900px) {
+    .split { grid-template-columns: 1fr 1.05fr; gap: 80px; }
+  }
+  .split-img {
+    aspect-ratio: 4/5; overflow: hidden;
+    border-radius: 4px;
+    box-shadow: 0 30px 60px -20px rgba(60,45,30,.35), 0 12px 24px -10px rgba(60,45,30,.2);
+  }
+  .split-img img { width: 100%; height: 100%; object-fit: cover; }
+  .split p { font-size: 1.08rem; color: var(--ink-soft); }
+  .drop-cap::first-letter {
+    font-family: 'Lora', serif;
+    font-size: 4.4em;
+    float: left;
+    line-height: .9;
+    margin: 6px 14px -4px 0;
+    color: var(--terracotta);
+    font-weight: 500;
+  }
+
+  /* Full-bleed quote band */
+  .quote-band {
+    background: var(--moss-deep);
+    color: var(--cream);
+    padding: clamp(80px, 10vw, 140px) 0;
+    text-align: center;
+  }
+  .quote-band p {
+    font-family: 'Lora', serif; font-style: italic;
+    font-size: clamp(1.4rem, 2.6vw, 2rem);
+    line-height: 1.5;
+    max-width: 36ch;
+    margin: 0 auto 18px;
+    color: rgba(251,247,240,.95);
+  }
+  .quote-band .attr {
+    font-family: 'Inter', sans-serif; font-style: normal;
+    font-size: .8rem; letter-spacing: .26em; text-transform: uppercase;
+    opacity: .7;
+  }
+
+  /* Gallery — magazine, mixed sizes, full bleed feel */
+  .gallery-wrap { background: var(--paper); }
+  .gallery-head {
+    text-align: center;
+    max-width: 700px; margin: 0 auto clamp(40px, 6vw, 64px);
+    padding: 0 28px;
+  }
+  .gallery {
+    display: grid; gap: 16px;
+    grid-template-columns: 1fr;
+    padding: 0 16px;
+  }
+  @media (min-width: 700px) {
+    .gallery {
+      grid-template-columns: 2fr 1fr;
+      grid-auto-rows: 320px;
+    }
+    .gallery > :nth-child(1) { grid-row: span 2; }
+    .gallery > :nth-child(4) { grid-column: span 2; }
+  }
+  @media (min-width: 1100px) {
+    .gallery {
+      grid-template-columns: 1.5fr 1fr 1fr;
+      grid-auto-rows: 280px;
+    }
+    .gallery > :nth-child(1) { grid-row: span 2; }
+    .gallery > :nth-child(4) { grid-column: span 1; grid-row: span 1; }
+  }
+  .gallery figure { margin: 0; overflow: hidden; border-radius: 3px; background: var(--stone); position: relative; }
+  .gallery img {
+    width: 100%; height: 100%; object-fit: cover;
+    transition: transform 1.2s cubic-bezier(.2,.7,.2,1);
+  }
+  .gallery figure:hover img { transform: scale(1.05); }
+  .gallery figure:not(.has-row) img { aspect-ratio: 4/3; }
+  @media (min-width: 700px) { .gallery figure { height: 100%; } .gallery figure img { height: 100%; aspect-ratio: auto; } }
+
+  /* POI */
+  .nearby { background: var(--paper-2); }
+  .poi-grid {
+    display: grid; gap: 32px;
+    grid-template-columns: 1fr;
+    margin-top: 56px;
+  }
+  @media (min-width: 640px) { .poi-grid { grid-template-columns: 1fr 1fr; gap: 40px; } }
+  @media (min-width: 1024px) { .poi-grid { grid-template-columns: repeat(4, 1fr); gap: 32px; } }
+  .poi { display: flex; flex-direction: column; }
+  .poi-img {
+    aspect-ratio: 5/6; overflow: hidden;
+    border-radius: 3px; margin-bottom: 22px;
+    box-shadow: 0 14px 30px -12px rgba(60,45,30,.28);
+  }
+  .poi-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.4s ease; }
+  .poi:hover .poi-img img { transform: scale(1.05); }
+  .poi-meta { font-size: .82rem; letter-spacing: .14em; text-transform: uppercase; color: var(--terracotta); font-weight: 600; margin-bottom: 6px; }
+  .poi h3 { margin-bottom: 10px; }
+  .poi p { font-size: .98rem; color: var(--muted); margin: 0; max-width: none; line-height: 1.6; }
+
+  /* Booking band — full bleed terracotta */
+  .booking-band {
+    background:
+      linear-gradient(135deg, var(--terracotta) 0%, var(--terracotta-deep) 100%);
+    color: var(--cream);
+    padding: clamp(80px, 10vw, 140px) 28px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .booking-band::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse at top, rgba(255,255,255,.08), transparent 60%);
+    pointer-events: none;
+  }
+  .booking-band > * { position: relative; z-index: 2; }
+  .booking-band h2 { color: var(--cream); margin-bottom: 18px; font-weight: 500; }
+  .booking-band h2 em { font-style: italic; opacity: .85; }
+  .booking-band .lede {
+    font-family: 'Lora', serif; font-style: italic;
+    font-size: 1.25rem;
+    color: rgba(251,247,240,.9);
+    max-width: 50ch; margin: 0 auto 36px;
+    line-height: 1.55;
+  }
+  .booking-band .save {
+    font-size: .78rem; letter-spacing: .3em; text-transform: uppercase;
+    color: rgba(251,247,240,.7);
+    font-weight: 600; margin-bottom: 14px;
+  }
+  .booking-band .btn { background: var(--cream); color: var(--terracotta-deep); }
+  .booking-band .btn:hover { background: #fff; color: var(--terracotta-deep); }
+  .booking-band .phone { display: block; margin-top: 22px; color: rgba(251,247,240,.85); font-style: italic; font-family: 'Lora', serif; }
+  .booking-band .phone a { color: inherit; border-bottom: 1px solid rgba(251,247,240,.4); }
+
+  /* Footer */
+  footer {
+    background: var(--ink);
+    color: rgba(244,239,231,.72);
+    padding: 80px 0 32px;
+  }
+  footer h4 { font-family: 'Lora', serif; color: var(--cream); font-weight: 500; font-size: 1.2rem; margin: 0 0 16px; }
+  .foot-grid {
+    display: grid; gap: 36px;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 800px) { .foot-grid { grid-template-columns: 1.4fr 1fr 1fr; } }
+  footer ul { list-style: none; padding: 0; margin: 0; }
+  footer li { padding: 5px 0; font-size: .95rem; }
+  footer a { color: rgba(244,239,231,.85); }
+  footer a:hover { color: var(--terracotta); }
+  footer .copy {
+    font-size: .82rem;
+    padding-top: 32px; margin-top: 56px;
+    border-top: 1px solid rgba(244,239,231,.12);
+    color: rgba(244,239,231,.5);
+  }
+
+  /* Mobile */
+  @media (max-width: 900px) {
+    .nav-links { display: none; }
+    .nav-right .lang-switch { display: none; }
+    .nav-right .btn { display: none; }
+    .burger { display: inline-flex; }
+    .mobile-menu { display: none; padding: 20px 0 28px; border-top: 1px solid var(--line); background: var(--paper); }
+    .mobile-menu.open { display: block; }
+    .mobile-menu a { display: block; padding: 12px 0; color: var(--ink); font-family: 'Lora', serif; font-size: 1.15rem; }
+    .mobile-menu .lang-switch { display: flex; padding: 10px 0 0; color: var(--ink); }
+    .mobile-menu .btn { margin-top: 14px; }
+  }
+  @media (min-width: 901px) {
+    .mobile-menu { display: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header" id="header">
+  <div class="container nav">
+    <a href="#" class="brand">
+      <span class="brand-mark">M</span>
+      <span>Marianne Cottage</span>
+    </a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#cottage">The cottage</a>
+      <a href="#gallery">Gallery</a>
+      <a href="#nearby">Nearby</a>
+      <a href="#book">Book</a>
+    </nav>
+    <div class="nav-right">
+      <div class="lang-switch" aria-label="Language">
+        <button class="lang-btn active">EN</button>
+        <span class="lang-sep">·</span>
+        <button class="lang-btn">FR</button>
+        <span class="lang-sep">·</span>
+        <button class="lang-btn">DE</button>
+      </div>
+      <a href="#book" class="btn btn-small">Book Direct</a>
+      <button class="burger" id="burger" aria-label="Menu" aria-expanded="false"><span></span></button>
+    </div>
+  </div>
+  <div class="container mobile-menu" id="mobileMenu">
+    <a href="#cottage">The cottage</a>
+    <a href="#gallery">Gallery</a>
+    <a href="#nearby">Nearby</a>
+    <a href="#book">Book direct</a>
+    <div class="lang-switch">
+      <button class="lang-btn active">EN</button>
+      <span class="lang-sep">·</span>
+      <button class="lang-btn">FR</button>
+      <span class="lang-sep">·</span>
+      <button class="lang-btn">DE</button>
+    </div>
+    <a href="#book" class="btn">Book Direct — save 5%</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-content">
+    <p class="hero-eyebrow"><span class="ornament"></span>Couvains · Normandie · 1800s</p>
+    <h1>Two centuries of <em>stone</em>,<br/>hedgerow and sky.</h1>
+    <p class="hero-sub">A two-bedroom B&amp;B in a sympathetically restored longère — between the orchard and the D-Day coast, half a kilometre from a 1032 abbey, and a long way from anywhere in a hurry.</p>
+    <div class="hero-cta">
+      <a href="#book" class="btn btn-large">Book Direct — save 5%</a>
+      <a href="#cottage" class="btn btn-ghost btn-large">Read the story</a>
+    </div>
+  </div>
+  <div class="scroll-cue">Scroll</div>
+</section>
+
+<section class="intro">
+  <div class="prose reveal">
+    <p class="intro-figure">A small farmhouse, kept honest. Restored over the years, not to a deadline. Finished now — and breakfast.</p>
+    <p class="intro-attr">— Mark &amp; Kim, hosts</p>
+  </div>
+</section>
+
+<section class="cottage" id="cottage">
+  <div class="split">
+    <div class="reveal">
+      <p class="eyebrow">The cottage</p>
+      <h2>An 1800s longère, lived in slowly.</h2>
+      <p class="drop-cap">The longère is the long, low farmhouse of rural Normandy — built from local Pierre de Caen, lime-washed, oak beams worked by hand. We have restored ours sympathetically: the original character preserved, the comforts modern, nothing pretending to be older or newer than it is.</p>
+      <p>Inside, two bedrooms — one double, one twin — share a bathroom across a hallway worn smooth by two centuries of footsteps. There is a sitting room with a wood-burner, a breakfast table that catches the morning light, and books we have read more than once.</p>
+      <p>Outside, an orchard of Normandy apple trees, a garden the roe deer cross at dawn, and the church bell at the village ringing the hours. A stay here is unhurried by design. Read on the terrace. Walk the lanes. Eat breakfast we have made for you.</p>
+    </div>
+    <div class="split-img reveal">
+      <img src="design-assets/images/living-dining.jpeg" alt="Living and dining room with original beams and morning light" />
+    </div>
+  </div>
+</section>
+
+<section class="quote-band">
+  <div class="prose reveal">
+    <p>"At dawn, two roe deer cross the bottom of the orchard, the church bell rings six, and the whole valley is still asleep. This is the silence of the dairy country."</p>
+    <p class="attr">A morning in May</p>
+  </div>
+</section>
+
+<section class="gallery-wrap" id="gallery">
+  <div class="gallery-head reveal">
+    <p class="eyebrow">Inside</p>
+    <h2>A few rooms, lived in.</h2>
+  </div>
+  <div class="gallery reveal">
+    <figure><img src="design-assets/images/bedroom-double.jpeg" alt="The double bedroom in morning light" /></figure>
+    <figure><img src="design-assets/images/bathroom.jpeg" alt="The main bathroom" /></figure>
+    <figure><img src="design-assets/images/breakfast.jpeg" alt="Breakfast table set for two" /></figure>
+    <figure><img src="design-assets/images/living-dining.jpeg" alt="The sitting and dining room" /></figure>
+  </div>
+</section>
+
+<section class="nearby" id="nearby">
+  <div class="container reveal">
+    <p class="eyebrow">Within a short drive</p>
+    <h2 style="max-width: 18ch;">An abbey, a cathedral, a coast.</h2>
+    <p style="color: var(--ink-soft); margin-top: 18px; max-width: 60ch;">A masterpiece founded in 1032 sits five minutes up the lane. The American sector of the D-Day beaches is half an hour. Bayeux's medieval cathedral and the markets of Saint-Lô fill the spaces in between.</p>
+    <div class="poi-grid">
+      <article class="poi reveal">
+        <div class="poi-img"><img src="design-assets/images/cerisy-abbey.jpg" alt="Cerisy-la-Forêt Abbey" /></div>
+        <p class="poi-meta">5 min · Cerisy-la-Forêt</p>
+        <h3>The Abbey</h3>
+        <p>A Norman Romanesque masterpiece founded in 1032, half-buried in beech forest.</p>
+      </article>
+      <article class="poi reveal">
+        <div class="poi-img"><img src="design-assets/images/omaha-beach.jpg" alt="Omaha Beach" /></div>
+        <p class="poi-meta">35 min · Colleville-sur-Mer</p>
+        <h3>Omaha Beach</h3>
+        <p>The American sector of the D-Day landings, with the cemetery on the bluff above.</p>
+      </article>
+      <article class="poi reveal">
+        <div class="poi-img"><img src="design-assets/images/bayeux-cathedral.jpg" alt="Bayeux Cathedral" /></div>
+        <p class="poi-meta">25 min · Bayeux</p>
+        <h3>The Cathedral</h3>
+        <p>The 11th-century cathedral above a medieval town that came through the war intact.</p>
+      </article>
+      <article class="poi reveal">
+        <div class="poi-img"><img src="design-assets/images/saint-lo.jpg" alt="Saint-Lô" /></div>
+        <p class="poi-meta">20 min · Saint-Lô</p>
+        <h3>Saint-Lô</h3>
+        <p>Markets on Tuesday and Saturday, the Haras national stud, and the rebuilt ramparts.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id="book" style="padding: 0;">
+  <div class="booking-band">
+    <p class="save reveal">Book direct, save 5%</p>
+    <h2 class="reveal">Stay with us — <em>five percent better</em><br/>than Booking.com.</h2>
+    <p class="lede reveal">Book through us instead of an agency, save 5% on the rate, and talk to Mark or Kim — not a call centre. We confirm every booking within 24 hours.</p>
+    <div class="reveal"><a href="mailto:mariannecottage@gmail.com" class="btn btn-large">Book Direct — save 5%</a></div>
+    <span class="phone reveal">or call <a href="tel:+33780731704">+33 7 80 73 17 04</a></span>
+  </div>
+</section>
+
+<footer>
+  <div class="container foot-grid">
+    <div>
+      <h4>Marianne Cottage</h4>
+      <p style="margin: 0 0 14px; max-width: 38ch;">A two-bedroom B&amp;B in an 1800s longère, in the bocage of the Bessin. Hosts: Mark &amp; Kim.</p>
+      <ul>
+        <li>1 La Haye, 50680 Couvains, France</li>
+        <li><a href="mailto:mariannecottage@gmail.com">mariannecottage@gmail.com</a></li>
+        <li><a href="tel:+33780731704">+33 7 80 73 17 04</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Visit</h4>
+      <ul>
+        <li><a href="#cottage">The cottage</a></li>
+        <li><a href="#gallery">Gallery</a></li>
+        <li><a href="#nearby">Nearby</a></li>
+        <li><a href="#book">Book direct</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Practical</h4>
+      <ul>
+        <li><a href="#">Rates &amp; availability</a></li>
+        <li><a href="#">Getting here</a></li>
+        <li><a href="#">House notes</a></li>
+        <li><a href="#">Privacy</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="container">
+    <p class="copy">© 2026 · Marianne Cottage · Couvains · Normandie</p>
+  </div>
+</footer>
+
+<script>
+  const burger = document.getElementById('burger');
+  const menu = document.getElementById('mobileMenu');
+  burger?.addEventListener('click', () => {
+    const open = menu.classList.toggle('open');
+    burger.setAttribute('aria-expanded', open);
+  });
+  const header = document.getElementById('header');
+  const setSolid = () => header.classList.toggle('solid', window.scrollY > 60);
+  setSolid();
+  window.addEventListener('scroll', setSolid, { passive: true });
+
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+</script>
+
+</body>
+</html>

@@ -49,7 +49,7 @@ Each issue has: a short ID, where it lives in the code (when applicable), what's
 - **Severity:** 🟠 high — privacy risk, GDPR-relevant. Becomes worse once `payment_intent_id` is populated.
 - **Fix:** restrict SELECT to `booking_reference = ?` lookups, or move all reads to the server-side admin client and gate on a token.
 - **Added:** 2026-05-02
-- **Status:** open
+- **Status:** ✅ fixed 2026-05-03 — migrations `2026-05-03-02-tighten-bookings-rls.sql` (drop anon SELECT) and `2026-05-03-04-lock-down-writes.sql` (drop dead anon INSERT — `WITH CHECK` was `NULL`) applied to live DB. `getBooking()` / `getBookingsByEmail()` defensively switched from `anonClient` to `adminClient`. Bookings now reachable only via service-role. PR 1, commits `b84b6d0` + `fc46a36`.
 
 ### B-04 — French taxe de séjour not modelled
 - **Where:** booking pricing in `src/routes/api/book/+server.ts`
@@ -58,7 +58,7 @@ Each issue has: a short ID, where it lives in the code (when applicable), what's
 - **VAT context:** Mark is on *régime micro-BIC* (under VAT threshold) — no VAT collection required. Stripe receipts show booking total + *taxe de séjour* line without VAT breakdown.
 - **Severity:** 🟠 high — compliance + invoicing accuracy
 - **Added:** 2026-05-02
-- **Status:** open
+- **Status:** ✅ fixed 2026-05-03 — migration `2026-05-03-03-tax-settings.sql` creates singleton `tax_settings` table seeded with €0.68/person/night; booking API and `BookingSummary` now compute `num_guests × num_nights × rate` via `getTaxSettings()`. PR 1, commit `b84b6d0`.
 
 ### B-06 — Cancellation & refund flow (no deposits)
 - **Where:** new schema columns on `bookings`, new `cancellation_policies` table, Stripe integration, admin + guest UI flows
@@ -147,7 +147,7 @@ Each issue has: a short ID, where it lives in the code (when applicable), what's
 - **Severity:** 🔴 blocker — must be done before going live with custom domain
 - **Effort:** 1 hour to delete + replace with placeholder; ~0.5 day for the Google reviews component (already covered in Row 10's effort estimate)
 - **Added:** 2026-05-02
-- **Status:** open
+- **Status:** ✅ fixed 2026-05-03 — `TestimonialCarousel.svelte` deleted, home page usage removed, all `home.testimonials.*` keys dropped from EN/FR/DE locale files. Google reviews component still pending (deferred to Phase 3 Row 10). PR 1, commit `b84b6d0`.
 
 ### F-03 — Demo routes are ~70% of the codebase
 - **Where:** `src/routes/(demo)/` — 23 self-contained demos

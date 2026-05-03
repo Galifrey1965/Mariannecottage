@@ -7,7 +7,7 @@ A walk-through of every Google product the cottage's website needs and how Mark 
 **Time:** ~20 minutes for the remaining work (Cloud project + Maps API key); Hotel Center and Pub/Sub later.
 **Cost:** Free under expected traffic. Maps charges past a free tier; estimated cottage traffic is well within it. Details below.
 
-> **Status — 2026-05-03:** Step 1 (Business Profile delegation) is **✅ done** — Rob has full Manager UI confirmed via the "You manage this Business Profile" badge on the listing. The remaining work is Steps 2 and 3 below. Step 1 is kept for reference but skip it.
+> **Status — 2026-05-03:** Steps 1, 2 and 3 are all **✅ done**. Cottage maps now have a live, restricted Maps JavaScript API key wired into Netlify; Google Cloud project `marianne-cottage` is provisioned with billing, IAM, and a hard 5,000/day quota cap on Map loads. Steps 4 (Hotel Center) and 5 (Pub/Sub) remain deferred to Phases 3 and 4 of the build plan. Steps 1–3 are kept below for reference.
 
 ### Listing inventory captured 2026-05-03
 
@@ -117,7 +117,12 @@ That's exactly the right boundary. Mark stays the only person who can hand the l
 
 ---
 
-## Step 2 — Create the Google Cloud project (~10 min)
+## Step 2 — Create the Google Cloud project (~10 min) — ✅ DONE 2026-05-03
+
+> Mark created the project, enabled billing, and granted Rob Editor access on 2026-05-03. **Project ID: `marianne-cottage`** (no auto-suffix — Mark got there first), project number `467911272221`. Billing account "My Billing Account" linked. Rob verified access via the project picker. **Skip to Step 3** unless re-onboarding someone new (e.g. Kim) — the detail below is kept as reference.
+
+> Gotcha worth remembering: when Mark added Rob via IAM, the role picker has dozens of items containing the word "Editor" (Monitoring Editor, Compute Editor, etc.). The right one is plain **Editor** under the **"Basic"** category at the top — that's the project-wide read+write role. The narrow "Foo Editor" roles will fail with "missing serviceusage.services.list" when the user tries to enable APIs.
+
 
 Cloud is where API keys live (Maps), where Pub/Sub topics will live (Phase 4), and where Hotel Center connects (Phase 3). One project covers all of it.
 
@@ -190,7 +195,9 @@ Rob as Editor is the right boundary — full dev capability, but can't accidenta
 
 ---
 
-## Step 3 — Generate the Maps JavaScript API key (~10 min)
+## Step 3 — Generate the Maps JavaScript API key (~10 min) — ✅ DONE 2026-05-03
+
+> Rob enabled the Maps JavaScript API, created the **Maps Platform API Key**, restricted it (5 referrer patterns + Maps JS API only), and stored it in Netlify as `PUBLIC_GOOGLE_MAPS_API_KEY` on 2026-05-03. The site picks the value up via `$env/dynamic/public` at request time — no rebuild needed; the next cold function start serves maps. The detail below is kept as reference.
 
 Unblocks the maps on `/contact` and `/explore` from rendering placeholder text.
 
@@ -261,6 +268,20 @@ For a cottage doing ~5,000 page views a month with maps on `/contact` and `/expl
 
 If the free tier ever overflows, Google emails Mark before charging. He can also set a **billing alert** (Billing → Budgets & alerts → Create budget → set €5 threshold → email Mark + Rob).
 
+### Safety nets in place (live as of 2026-05-03)
+
+Three independent layers guard against runaway charges from a leaked key, malicious traffic, or accidental misuse:
+
+| Layer | What it does | Where it lives |
+|---|---|---|
+| **Referrer restriction** | Rejects any request not coming from one of the 5 allowlisted origins (`mariannecottage.fr`, `mariannecottage.netlify.app`, `*.netlify.app`, `localhost:5173`, `localhost:4173`). Server-side check at Google's gateway — can't be bypassed. | API key page (Application restrictions → Websites) |
+| **Daily quota cap** | Hard limit of **5,000 Map loads/day** + **100 3D Map loads/day**. Once reached, requests return 403 and **no further charges accrue** until midnight Pacific. This is the only true cost cap. | APIs & Services → Maps JavaScript API → Quotas → Map loads per day |
+| **Budget alert** | €5/month tripwire — emails Mark + Rob at 50/90/100% of spend. **Alert only, not a cap** — does not stop service. Useful as early warning since realistic spend is €0. | Billing → Budgets & alerts → "Marianne Cottage budget" |
+
+Important distinction: **the budget alert does not stop spend**. To actually cap costs hard, the daily quota is the load-bearing layer. If charges ever appear despite the quota, the manual kill switch is APIs & Services → Maps JavaScript API → **Disable** (site falls back to placeholder maps).
+
+The `*.netlify.app/*` referrer is the loosest entry — needed because Netlify deploy-preview URLs use random subdomains (`deploy-preview-NN--mariannecottage.netlify.app`). Tighten to specific origins once `mariannecottage.fr` is registered and we trust deploy previews less.
+
 ---
 
 ## Step 4 — Hotel Center (Phase 3 — defer)
@@ -303,13 +324,13 @@ Before sitting down for the ~20 minutes:
 
 ## Post-completion checklist for Rob
 
-After Mark finishes Steps 2 + 3:
-
-- [x] Accepted the Business Profile invite; "You manage this Business Profile" badge visible on the listing *(verified 2026-05-03)*
-- [ ] Logged in to `console.cloud.google.com`; `marianne-cottage` project visible; can navigate to APIs & Services
-- [ ] Pulled latest `develop`; verified maps load on `/contact` and `/explore` against the production URL after Mark's Netlify redeploy
-- [ ] Updated [`documentation/status.md`](../status.md) to reflect Maps API key live, removing the "placeholder until key is provisioned" note
-- [ ] Set up a Cloud billing alert (€5 threshold) so Mark gets a heads-up if traffic ever spikes
+- [x] Accepted the Business Profile invite; "You manage this Business Profile" badge visible on the listing *(2026-05-03)*
+- [x] Logged in to `console.cloud.google.com`; `marianne-cottage` project visible; navigated to APIs & Services as Editor *(2026-05-03)*
+- [x] Maps JavaScript API enabled; key created, restricted (5 referrers + Maps JS API only), and stored in Netlify as `PUBLIC_GOOGLE_MAPS_API_KEY` *(2026-05-03)*
+- [x] €5 monthly budget alert created on the billing account *(2026-05-03)*
+- [x] Daily quota cap set: 5,000 Map loads/day + 100 3D Map loads/day *(2026-05-03)*
+- [x] [`documentation/status.md`](../status.md) updated to reflect Google setup complete *(2026-05-03)*
+- [ ] Verify maps actually render on `/contact` and `/explore` against the production URL — deferred to first natural Netlify deploy (avoids spending a deploy credit just to test)
 
 ---
 

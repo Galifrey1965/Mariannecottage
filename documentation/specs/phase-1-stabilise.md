@@ -46,14 +46,15 @@ Total dev: ~4.5 days + infra ~0.5 day = ~5 days. Matches Phase 1 budget.
 ### B-03 — Tighten RLS on `bookings`
 
 **Files to change:**
-- `supabase-schema.sql` — replace `CREATE POLICY "anyone_can_view_bookings" ON bookings FOR SELECT USING (true);` with a `booking_reference`-keyed policy
-- New migration file: `supabase/migrations/2026-05-XX-tighten-bookings-rls.sql` (or similar — adopt a migration convention if not yet established)
+- Migration files committed under `supabase/migrations/`:
+  - `2026-05-03-01-init-migrations-tracking.sql` — bootstrap `_migrations` table
+  - `2026-05-03-02-tighten-bookings-rls.sql` — drop `anyone_can_view_bookings`
+  - `2026-05-03-03-tax-settings.sql` — see B-04 below
+  - `2026-05-03-04-lock-down-writes.sql` — drop `anyone_can_insert_bookings`, enable RLS on `_migrations` (added during apply pass — anon INSERT was dead code with `WITH CHECK = NULL`)
 
 **Policy approach (locked — Option (b), server-side reads only):**
-- Drop `anyone_can_view_bookings` policy entirely (no SELECT policy = no anon-client reads possible)
-- `getBooking()` in `src/lib/server/supabase.ts` switches from `anonClient` to `adminClient`
-- `/book/confirm/+page.server.ts` (new) — server-side load function that takes `booking_reference` from URL, calls `getBooking()` server-side, passes data to the page component
-- `/book/confirm/+page.svelte` — receives data via `data` prop instead of fetching client-side
+- Drop `anyone_can_view_bookings` AND `anyone_can_insert_bookings` policies entirely (no policies on `bookings` = service-role-only access)
+- `getBooking()` and `getBookingsByEmail()` in `src/lib/server/supabase.ts` switched from `anonClient` to `adminClient` (defensive — both are currently dead code; `/book/confirm` reads from URL params, not the DB)
 
 **Success criteria:**
 - Anonymous client cannot SELECT from `bookings` (verify via Supabase SQL editor as anon role)
@@ -280,7 +281,7 @@ All of the following before Phase 1 is marked complete:
 
 | PR | Status | Date | Commit/PR |
 |---|---|---|---|
-| PR 1 (F-04 + B-03 + B-04) | code complete on branch `phase-1/pr-1-quick-wins` | 2026-05-03 | local commit (not pushed) — awaiting Mark to apply 3 migrations |
+| PR 1 (F-04 + B-03 + B-04) | merged to develop; 4 migrations applied to live DB | 2026-05-03 | `b84b6d0` + `fc46a36` on develop (cherry-picked from `phase-1/pr-1-quick-wins`) — not yet pushed |
 | PR 2 (B-02 Phase 1) | not started | — | — |
 | PR 3 (B-07 Supabase Auth) | not started | — | — |
 | PR 4 (B-01 rate plans) | not started | — | — |
