@@ -6,13 +6,15 @@ const mockEq = vi.fn();
 const mockOrder = vi.fn();
 const mockUpdate = vi.fn();
 const mockSingle = vi.fn();
+const mockMaybeSingle = vi.fn();
 
 const chainable = () => ({
 	select: mockSelect.mockReturnThis(),
 	eq: mockEq.mockReturnThis(),
 	order: mockOrder.mockReturnThis(),
 	update: mockUpdate.mockReturnThis(),
-	single: mockSingle
+	single: mockSingle,
+	maybeSingle: mockMaybeSingle
 });
 
 vi.mock('$lib/server/supabase', () => ({
@@ -78,11 +80,18 @@ describe('PATCH /api/admin/bookings', () => {
 		expect(res.status).toBe(401);
 	});
 
-	it('updates booking status and writes audit log entry', async () => {
+	it('updates booking status (pending → confirmed) and writes audit log entry', async () => {
+		// PATCH now does a pre-flight lookup to validate the transition.
+		const lookupChain = chainable();
+		lookupChain.maybeSingle = vi.fn(() => ({ data: { status: 'pending' }, error: null })) as any;
+
 		const updated = { id: '1', status: 'confirmed' };
-		const chain = chainable();
-		chain.single = vi.fn(() => ({ data: updated, error: null })) as any;
-		vi.mocked(adminClient.from).mockReturnValueOnce(chain as any);
+		const updateChain = chainable();
+		updateChain.single = vi.fn(() => ({ data: updated, error: null })) as any;
+
+		vi.mocked(adminClient.from)
+			.mockReturnValueOnce(lookupChain as any)
+			.mockReturnValueOnce(updateChain as any);
 
 		const res = await PATCH({
 			locals: makeLocals(true),
@@ -104,5 +113,78 @@ describe('PATCH /api/admin/bookings', () => {
 				target_id: '1'
 			})
 		);
+	});
+
+	it('rejects cancelled → confirmed transition with 409', async () => {
+		// State-machine bug discovered 2026-05-03 — admin had been able to
+		// flip cancelled rows back to confirmed by clicking the old free-form
+		// status toggle, bypassing the cancel/refund flow. This test pins the
+		// fix.
+		const lookupChain = chainable();
+		lookupChain.maybeSingle = vi.fn(() => ({ data: { status: 'cancelled' }, error: null })) as any;
+		vi.mocked(adminClient.from).mockReturnValueOnce(lookupChain as any);
+
+		const res = await PATCH({
+			locals: makeLocals(true),
+			request: new Request('http://localhost/api/admin/bookings', {
+				method: 'PATCH',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ id: '1', status: 'confirmed' })
+			})
+		} as any);
+		expect(res.status).toBe(409);
+		const body = await res.json();
+		expect(body.current_status).toBe('cancelled');
+		expect(logAdminEvent).not.toHaveBeenCalled();
+	});
+
+	it('rejects pending_payment → confirmed (webhook-only path)', async () => {
+		const lookupChain = chainable();
+		lookupChain.maybeSingle = vi.fn(() => ({ data: { status: 'pending_payment' }, error: null })) as any;
+		vi.mocked(adminClient.from).mockReturnValueOnce(lookupChain as any);
+
+		const res = await PATCH({
+			locals: makeLocals(true),
+			request: new Request('http://localhost/api/admin/bookings', {
+				method: 'PATCH',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ id: '1', status: 'confirmed' })
+			})
+		} as any);
+		expect(res.status).toBe(409);
+	});
+
+	it('returns 404 when booking does not exist', async () => {
+		const lookupChain = chainable();
+		lookupChain.maybeSingle = vi.fn(() => ({ data: null, error: null })) as any;
+		vi.mocked(adminClient.from).mockReturnValueOnce(lookupChain as any);
+
+		const res = await PATCH({
+			locals: makeLocals(true),
+			request: new Request('http://localhost/api/admin/bookings', {
+				method: 'PATCH',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ id: 'nope', status: 'confirmed' })
+			})
+		} as any);
+		expect(res.status).toBe(404);
+	});
+
+	it('allows notes-only PATCH without transition validation', async () => {
+		// No status field on the request → no pre-flight lookup, just update.
+		const updated = { id: '1', admin_notes: 'note' };
+		const updateChain = chainable();
+		updateChain.single = vi.fn(() => ({ data: updated, error: null })) as any;
+		vi.mocked(adminClient.from).mockReturnValueOnce(updateChain as any);
+
+		const res = await PATCH({
+			locals: makeLocals(true),
+			request: new Request('http://localhost/api/admin/bookings', {
+				method: 'PATCH',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ id: '1', admin_notes: 'note' })
+			})
+		} as any);
+		expect(res.status).toBe(200);
 	});
 });

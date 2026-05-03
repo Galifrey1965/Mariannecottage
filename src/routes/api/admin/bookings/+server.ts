@@ -43,12 +43,50 @@ export const GET: RequestHandler = async ({ locals, url }) => {
 	return json({ bookings: filtered, total: count || 0 });
 };
 
+// PATCH allowed status transitions, by state-machine rule.
+//   pending → confirmed             — admin manual confirm of a non-Stripe booking
+// Everything else is rejected:
+//   - pending_payment → *           — only webhook (→ confirmed) or sweep (→ expired)
+//   - confirmed → cancelled         — must go through /api/admin/bookings/cancel
+//   - cancelled / refunded / refunded_overbooked / expired / payment_failed
+//                                   — terminal; no admin status changes allowed
+// Notes-only PATCH (no status change) is unrestricted.
+const ALLOWED_PATCH_TRANSITIONS: Record<string, ReadonlySet<string>> = {
+	pending: new Set(['confirmed'])
+};
+
 export const PATCH: RequestHandler = async ({ locals, request }) => {
 	if (!locals.user) {
 		return json({ error: 'Unauthorized' }, { status: 401 });
 	}
 
 	const { id, status, admin_notes } = await request.json();
+
+	if (status) {
+		// Need the current status to validate the transition. One indexed lookup.
+		const { data: current, error: fetchErr } = await adminClient
+			.from('bookings')
+			.select('status')
+			.eq('id', id)
+			.maybeSingle();
+		if (fetchErr) {
+			console.error('Failed to load booking for PATCH:', fetchErr);
+			return json({ error: 'Lookup failed' }, { status: 500 });
+		}
+		if (!current) {
+			return json({ error: 'Booking not found' }, { status: 404 });
+		}
+		const allowed = ALLOWED_PATCH_TRANSITIONS[current.status as string];
+		if (!allowed || !allowed.has(status)) {
+			return json(
+				{
+					error: `Status transition '${current.status}' → '${status}' is not allowed via this endpoint. Use the cancel endpoint or wait for the relevant webhook.`,
+					current_status: current.status
+				},
+				{ status: 409 }
+			);
+		}
+	}
 
 	const updates: Record<string, unknown> = { updated_at: new Date().toISOString() };
 	if (status) updates.status = status;

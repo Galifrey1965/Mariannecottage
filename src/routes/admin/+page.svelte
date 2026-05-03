@@ -118,6 +118,31 @@
 	const CANCELLABLE = new Set(['pending', 'pending_payment', 'confirmed']);
 	const canCancel = (b: Booking) => CANCELLABLE.has(b.status);
 
+	// Phase 2 state-machine awareness for the detail panel.
+	const TERMINAL = new Set(['cancelled', 'refunded', 'refunded_overbooked', 'expired', 'payment_failed']);
+	const isTerminalStatus = (s: string) => TERMINAL.has(s);
+	function terminalStatusHint(status: string): string {
+		switch (status) {
+			case 'cancelled': return 'Cancelled — booking is finalised. The Stripe charge.refunded webhook will move this to refunded once the refund clears.';
+			case 'refunded': return 'Refunded — finalised by Stripe webhook.';
+			case 'refunded_overbooked': return 'Refunded (overbooked) — late-success race; refund issued automatically.';
+			case 'expired': return 'Expired by TTL sweep — soft-reserve window elapsed without payment.';
+			case 'payment_failed': return 'Payment failed — admin-set or explicit abandon.';
+			default: return 'Finalised.';
+		}
+	}
+	function statusBadgeClass(status: string): string {
+		switch (status) {
+			case 'pending':
+			case 'pending_payment':
+				return 'pending';
+			case 'confirmed':
+				return 'confirmed';
+			default:
+				return 'cancelled';
+		}
+	}
+
 	async function openCancelDialog(b: Booking) {
 		cancelLoading = true;
 		cancelError = '';
@@ -457,30 +482,29 @@
 
 					<div class="detail-section">
 						<p class="detail-label">Status</p>
-						<div class="status-buttons">
-							<button
-								onclick={() => updateBookingStatus(selectedBooking!.id, 'pending')}
-								disabled={updatingStatus || selectedBooking!.status === 'pending'}
-								class="status-toggle pending"
-								class:active={selectedBooking.status === 'pending' || selectedBooking.status === 'pending_payment'}
-							>pending</button>
-							<button
-								onclick={() => updateBookingStatus(selectedBooking!.id, 'confirmed')}
-								disabled={updatingStatus || selectedBooking!.status === 'confirmed'}
-								class="status-toggle confirmed"
-								class:active={selectedBooking.status === 'confirmed'}
-							>confirmed</button>
-							<button
-								onclick={() => openCancelDialog(selectedBooking!)}
-								disabled={updatingStatus || cancelLoading || !canCancel(selectedBooking!)}
-								class="status-toggle cancelled"
-								class:active={selectedBooking.status === 'cancelled' || selectedBooking.status === 'refunded' || selectedBooking.status === 'refunded_overbooked'}
-							>cancel & refund</button>
+						<div class="status-line">
+							<span class="status-badge {statusBadgeClass(selectedBooking.status)}">{selectedBooking.status.replace(/_/g, ' ')}</span>
 						</div>
-						{#if selectedBooking.status === 'refunded' || selectedBooking.status === 'refunded_overbooked'}
-							<p class="sub-text" style="margin-top: 0.5rem;">Refunded · finalised by Stripe webhook</p>
-						{:else if selectedBooking.status === 'expired'}
-							<p class="sub-text" style="margin-top: 0.5rem;">Expired by TTL sweep</p>
+						{#if isTerminalStatus(selectedBooking.status)}
+							<p class="sub-text" style="margin-top: 0.5rem;">{terminalStatusHint(selectedBooking.status)}</p>
+						{:else}
+							<div class="status-buttons" style="margin-top: 0.5rem;">
+								{#if selectedBooking.status === 'pending'}
+									<button
+										onclick={() => updateBookingStatus(selectedBooking!.id, 'confirmed')}
+										disabled={updatingStatus}
+										class="status-toggle confirmed"
+									>confirm</button>
+								{/if}
+								<button
+									onclick={() => openCancelDialog(selectedBooking!)}
+									disabled={updatingStatus || cancelLoading || !canCancel(selectedBooking!)}
+									class="status-toggle cancelled"
+								>cancel & refund</button>
+							</div>
+							{#if selectedBooking.status === 'pending_payment'}
+								<p class="sub-text" style="margin-top: 0.5rem;">In checkout — confirmation arrives via Stripe webhook; TTL sweep releases stale rows.</p>
+							{/if}
 						{/if}
 					</div>
 
@@ -697,7 +721,8 @@
 	.detail-grid p { margin: 0; }
 	.detail-grid a { color: var(--color-sage); }
 
-	.status-buttons { display: flex; gap: 0.5rem; }
+	.status-line { display: flex; align-items: center; gap: 0.5rem; }
+	.status-buttons { display: flex; gap: 0.5rem; flex-wrap: wrap; }
 	.status-toggle {
 		padding: 0.375rem 0.75rem; font-size: 0.875rem; border-radius: 9999px;
 		text-transform: capitalize; cursor: pointer; transition: all 0.15s ease;
