@@ -47,15 +47,6 @@
 			"saintlo": "Saint-Lô",
 			"cta": "Explore More"
 		},
-		"testimonials": {
-			"heading": "Guest Reviews",
-			"simon": "Warm welcome, lovely room, comfortable bed, modern spacious bathroom, excellent breakfast.",
-			"simon_author": "Simon, UK",
-			"ingrid": "Lacked nothing for 5 days. Immaculate rooms, extensive freshly prepared breakfast, wonderful evening meal option.",
-			"ingrid_author": "Ingrid, Netherlands",
-			"guest3": "Warm welcome, delightful countryside house, peaceful, close to points of interest, made-to-measure breakfast.",
-			"guest3_author": "Guest, France"
-		},
 		"booking": {
 			"heading": "Ready to Book?",
 			"cta": "Check Availability"
@@ -261,7 +252,7 @@
 		"checkout": "Check-out:",
 		"nights": "Nights:",
 		"guests": "Guests:",
-		"tax": "Tax (10%)",
+		"tax": "Tourist tax",
 		"total": "Total",
 		"cancellation": "Cancellation:",
 		"empty": "Select check-in and check-out dates to see pricing"
@@ -325,7 +316,6 @@
 		"next": "Next",
 		"close": "Close",
 		"opens_new_window": "opens in new window",
-		"go_to_testimonial": "Go to testimonial {number}",
 		"booking_steps": "Booking steps",
 		"completed": "completed",
 		"current": "current",

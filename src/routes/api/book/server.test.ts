@@ -4,7 +4,12 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 // Mock supabase before importing the handler
 vi.mock('$lib/server/supabase', () => ({
 	createBooking: vi.fn(),
-	generateBookingReference: vi.fn(() => 'MC-20260323-TEST')
+	generateBookingReference: vi.fn(() => 'MC-20260323-TEST'),
+	getTaxSettings: vi.fn(async () => ({
+		id: 1,
+		taxe_de_sejour_per_person_per_night: 0.68,
+		updated_at: '2026-05-03T00:00:00Z'
+	}))
 }));
 
 import { POST } from './+server';
@@ -78,14 +83,16 @@ describe('POST /api/book', () => {
 		expect(createBooking).toHaveBeenCalledWith(expect.objectContaining({ num_nights: 3 }));
 	});
 
-	it('calculates tax at 10% of subtotal', async () => {
+	it('calculates taxe de séjour as guests × nights × per-person-per-night rate', async () => {
 		vi.mocked(createBooking).mockResolvedValueOnce({ id: '1' } as any);
 		await POST(makeRequest(validBody));
-		// 3 nights × 120 = 360 subtotal, tax = 36
+		// 2 guests × 3 nights × 0.68 = 4.08
+		// subtotal = 3 × 120 = 360
+		// total = 360 + 4.08 = 364.08
 		expect(createBooking).toHaveBeenCalledWith(expect.objectContaining({
 			subtotal: 360,
-			tax: 36,
-			total_cost: 396
+			tax: 4.08,
+			total_cost: 364.08
 		}));
 	});
 

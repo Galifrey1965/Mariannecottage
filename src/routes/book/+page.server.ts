@@ -1,4 +1,4 @@
-import { getAvailability } from '$lib/server/supabase';
+import { getAvailability, getTaxSettings } from '$lib/server/supabase';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async () => {
@@ -9,16 +9,26 @@ export const load: PageServerLoad = async () => {
 	const startStr = today.toISOString().split('T')[0];
 	const endStr = endDate.toISOString().split('T')[0];
 
+	const availabilityMap: Record<string, boolean> = {};
+	let taxRate = 0.68;
+
 	try {
 		const availability = await getAvailability(startStr, endStr);
-		const availabilityMap: Record<string, boolean> = {};
 		if (availability) {
 			for (const row of availability) {
 				availabilityMap[row.date] = row.available;
 			}
 		}
-		return { availability: availabilityMap };
 	} catch {
-		return { availability: {} };
+		// fall through with empty availability map
 	}
+
+	try {
+		const taxSettings = await getTaxSettings();
+		taxRate = taxSettings.taxe_de_sejour_per_person_per_night;
+	} catch {
+		// fall through with sane default
+	}
+
+	return { availability: availabilityMap, taxRate };
 };

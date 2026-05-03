@@ -47,15 +47,6 @@
 			"saintlo": "Saint-Lô",
 			"cta": "Mehr Entdecken"
 		},
-		"testimonials": {
-			"heading": "Gästebewertungen",
-			"simon": "Herzlicher Empfang, schönes Zimmer, komfortables Bett, modernes geräumiges Badezimmer, ausgezeichnetes Frühstück.",
-			"simon_author": "Simon, Großbritannien",
-			"ingrid": "Es fehlte nichts für 5 Tage. Makellose Zimmer, reichhaltiges frisch zubereitetes Frühstück, hervorragende Abendmalzeit.",
-			"ingrid_author": "Ingrid, Niederlande",
-			"guest3": "Herzlicher Empfang, herrliches Landhaus, friedlich, in der Nähe von Sehenswürdigkeiten, maßgeschneidertes Frühstück.",
-			"guest3_author": "Gast, Frankreich"
-		},
 		"booking": {
 			"heading": "Bereit zu Buchen?",
 			"cta": "Verfügbarkeit Prüfen"
@@ -261,7 +252,7 @@
 		"checkout": "Abreise:",
 		"nights": "Nächte:",
 		"guests": "Gäste:",
-		"tax": "Steuer (10%)",
+		"tax": "Kurtaxe",
 		"total": "Gesamtbetrag",
 		"cancellation": "Stornierung:",
 		"empty": "Wählen Sie An- und Abreisedaten um die Preise zu sehen"
@@ -325,7 +316,6 @@
 		"next": "Weiter",
 		"close": "Schließen",
 		"opens_new_window": "öffnet in neuem Fenster",
-		"go_to_testimonial": "Zum Erfahrungsbericht {number}",
 		"booking_steps": "Buchungsschritte",
 		"completed": "abgeschlossen",
 		"current": "aktuell",

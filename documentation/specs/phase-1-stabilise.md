@@ -280,7 +280,7 @@ All of the following before Phase 1 is marked complete:
 
 | PR | Status | Date | Commit/PR |
 |---|---|---|---|
-| PR 1 (F-04 + B-03 + B-04) | not started | — | — |
+| PR 1 (F-04 + B-03 + B-04) | code complete on branch `phase-1/pr-1-quick-wins` | 2026-05-03 | local commit (not pushed) — awaiting Mark to apply 3 migrations |
 | PR 2 (B-02 Phase 1) | not started | — | — |
 | PR 3 (B-07 Supabase Auth) | not started | — | — |
 | PR 4 (B-01 rate plans) | not started | — | — |

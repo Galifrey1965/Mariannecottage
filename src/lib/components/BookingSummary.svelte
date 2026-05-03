@@ -9,10 +9,11 @@
 		checkOutDate?: Date;
 		nightly_rate?: number;
 		guests?: number;
+		taxRate?: number;
 		cancellationPolicy?: string;
 	}
 
-	let { messages, lang, checkInDate, checkOutDate, nightly_rate = 120, guests = 1, cancellationPolicy }: Props = $props();
+	let { messages, lang, checkInDate, checkOutDate, nightly_rate = 120, guests = 1, taxRate = 0.68, cancellationPolicy }: Props = $props();
 
 	const nights = $derived(
 		checkInDate && checkOutDate
@@ -21,7 +22,7 @@
 	);
 
 	const subtotal = $derived(nights * nightly_rate);
-	const tax = $derived(Math.round(subtotal * 0.1 * 100) / 100);
+	const tax = $derived(Math.round(guests * nights * taxRate * 100) / 100);
 	const total = $derived(subtotal + tax);
 
 	const fmtCurrency = (amount: number) => formatCurrency(lang, amount);

@@ -28,6 +28,7 @@
 	let calendarRef: { goToToday: () => void } | undefined = $state();
 
 	const realAvailability: Record<string, boolean> = data.availability || {};
+	const taxRate: number = data.taxRate ?? 0.68;
 
 	const handleDateRangeSelect = (start: Date, end: Date) => {
 		checkInDate = start;
@@ -285,6 +286,7 @@
 				checkOutDate={checkOutDate}
 				nightly_rate={nightly_rate}
 				guests={guests}
+				taxRate={taxRate}
 				cancellationPolicy={cancellationPolicy}
 			/>
 

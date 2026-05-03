@@ -58,15 +58,32 @@ CREATE TABLE rate_plans (
 
 CREATE INDEX rate_plans_date_idx ON rate_plans(valid_from, valid_until);
 
+CREATE TABLE tax_settings (
+  id INT PRIMARY KEY DEFAULT 1,
+  taxe_de_sejour_per_person_per_night DECIMAL(10,4) NOT NULL,
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_by TEXT,
+  CONSTRAINT tax_settings_singleton CHECK (id = 1)
+);
+
+CREATE TABLE _migrations (
+  filename TEXT PRIMARY KEY,
+  applied_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  applied_by TEXT
+);
+
 -- Row Level Security
 ALTER TABLE bookings ENABLE ROW LEVEL SECURITY;
 ALTER TABLE availability ENABLE ROW LEVEL SECURITY;
 ALTER TABLE rate_plans ENABLE ROW LEVEL SECURITY;
+ALTER TABLE tax_settings ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "anyone_can_insert_bookings" ON bookings FOR INSERT WITH CHECK (true);
-CREATE POLICY "anyone_can_view_bookings" ON bookings FOR SELECT USING (true);
+-- B-03 (2026-05-03): SELECT on bookings restricted to service-role client only.
+-- No public SELECT policy. Reads happen server-side via adminClient.
 CREATE POLICY "anyone_can_view_availability" ON availability FOR SELECT USING (true);
 CREATE POLICY "anyone_can_view_rate_plans" ON rate_plans FOR SELECT USING (true);
+CREATE POLICY "anyone_can_view_tax_settings" ON tax_settings FOR SELECT USING (true);
 
 -- Test data
 INSERT INTO availability (date, available, nightly_rate) VALUES
@@ -81,3 +98,5 @@ INSERT INTO rate_plans (name, rate_per_night, valid_from, valid_until, is_active
   ('Low Season', 85, '2026-01-01', '2026-02-28', true),
   ('High Season', 120, '2026-03-01', '2026-05-31', true),
   ('Peak Season', 140, '2026-06-01', '2026-06-08', true);
+
+INSERT INTO tax_settings (id, taxe_de_sejour_per_person_per_night) VALUES (1, 0.68);

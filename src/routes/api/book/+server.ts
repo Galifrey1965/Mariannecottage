@@ -1,6 +1,6 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { createBooking, generateBookingReference } from '$lib/server/supabase';
+import { createBooking, generateBookingReference, getTaxSettings } from '$lib/server/supabase';
 
 export const POST: RequestHandler = async ({ request }) => {
 	const body = await request.json();
@@ -28,7 +28,11 @@ export const POST: RequestHandler = async ({ request }) => {
 	const num_nights = Math.ceil((checkOut.getTime() - checkIn.getTime()) / (1000 * 60 * 60 * 24));
 	const nightly_rate = body.nightly_rate || 120;
 	const subtotal = num_nights * nightly_rate;
-	const tax = Math.round(subtotal * 0.1 * 100) / 100;
+
+	const taxSettings = await getTaxSettings();
+	const taxRate = taxSettings.taxe_de_sejour_per_person_per_night;
+	const tax = Math.round(body.num_guests * num_nights * taxRate * 100) / 100;
+
 	const total_cost = subtotal + tax;
 	const booking_reference = generateBookingReference();
 

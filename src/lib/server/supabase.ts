@@ -62,6 +62,13 @@ export interface RatePlan {
 	is_active: boolean;
 }
 
+export interface TaxSettings {
+	id: number;
+	taxe_de_sejour_per_person_per_night: number;
+	updated_at: string;
+	updated_by?: string;
+}
+
 // Booking operations
 export async function createBooking(booking: Omit<Booking, 'id' | 'created_at' | 'updated_at'>) {
 	const { data, error } = await adminClient
@@ -75,7 +82,7 @@ export async function createBooking(booking: Omit<Booking, 'id' | 'created_at' |
 }
 
 export async function getBooking(bookingId: string) {
-	const { data, error } = await anonClient
+	const { data, error } = await adminClient
 		.from('bookings')
 		.select('*')
 		.eq('id', bookingId)
@@ -86,7 +93,7 @@ export async function getBooking(bookingId: string) {
 }
 
 export async function getBookingsByEmail(email: string) {
-	const { data, error } = await anonClient
+	const { data, error } = await adminClient
 		.from('bookings')
 		.select('*')
 		.eq('guest_email', email)
@@ -153,6 +160,18 @@ export async function getRatePlanForDate(date: string) {
 		.single();
 
 	if (error) return null; // No matching rate plan
+	return data;
+}
+
+// Tax settings (B-04)
+export async function getTaxSettings(): Promise<TaxSettings> {
+	const { data, error } = await anonClient
+		.from('tax_settings')
+		.select('*')
+		.eq('id', 1)
+		.single();
+
+	if (error) throw error;
 	return data;
 }
 

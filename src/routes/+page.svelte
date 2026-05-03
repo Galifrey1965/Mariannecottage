@@ -4,7 +4,6 @@
 	import HighlightStrip from '$lib/components/HighlightStrip.svelte';
 	import RoomCard from '$lib/components/RoomCard.svelte';
 	import AttractionCard from '$lib/components/AttractionCard.svelte';
-	import TestimonialCarousel from '$lib/components/TestimonialCarousel.svelte';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -94,11 +93,6 @@
 	<div class="cta-center">
 		<a href={localePath(lang, '/explore')} class="cta-button">{t(messages, 'home.attractions.cta')}</a>
 	</div>
-</section>
-
-<!-- Testimonials -->
-<section class="section-narrow">
-	<TestimonialCarousel {messages} />
 </section>
 
 <!-- Booking CTA -->

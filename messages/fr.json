@@ -47,15 +47,6 @@
 			"saintlo": "Saint-Lô",
 			"cta": "Découvrir Plus"
 		},
-		"testimonials": {
-			"heading": "Avis des Clients",
-			"simon": "Accueil chaleureux, chambre charmante, lit confortable, salle de bains moderne spacieuse, excellent petit-déjeuner.",
-			"simon_author": "Simon, Royaume-Uni",
-			"ingrid": "Rien ne manquait pour 5 jours. Chambres impeccables, petit-déjeuner copieux et fraîchement préparé, excellente option de repas du soir.",
-			"ingrid_author": "Ingrid, Pays-Bas",
-			"guest3": "Accueil chaleureux, maison de campagne délicieuse, paisible, proche des sites touristiques, petit-déjeuner sur mesure.",
-			"guest3_author": "Client, France"
-		},
 		"booking": {
 			"heading": "Prêt à Réserver?",
 			"cta": "Vérifier la Disponibilité"
@@ -261,7 +252,7 @@
 		"checkout": "Départ :",
 		"nights": "Nuits :",
 		"guests": "Clients :",
-		"tax": "Taxe (10%)",
+		"tax": "Taxe de séjour",
 		"total": "Total",
 		"cancellation": "Annulation :",
 		"empty": "Sélectionnez les dates d'arrivée et de départ pour voir les tarifs"
@@ -325,7 +316,6 @@
 		"next": "Suivant",
 		"close": "Fermer",
 		"opens_new_window": "ouvre dans une nouvelle fenêtre",
-		"go_to_testimonial": "Aller au témoignage {number}",
 		"booking_steps": "Étapes de réservation",
 		"completed": "terminé",
 		"current": "en cours",
