@@ -15,14 +15,26 @@ A friend's holiday-cottage website. Rob (this user) is a collaborator helping ou
 
 Rob has **two GitHub accounts** signed in via `gh`:
 
-- `Galifrey1965` — friend's account, currently embedded as a PAT in the local `origin` remote URL. `git push` from this folder authenticates as Galifrey1965.
-- `MintyMods` — Rob's personal account, granted **collaborator (push) access** to the cottage repo. Confirmed via `gh api repos/Galifrey1965/Mariannecottage`.
+- `MintyMods` — Rob's personal account, granted **collaborator (push) access** to the cottage repo (the repo is public — collaborator access on public repos is free, no GitHub-paid-tier requirement). **This is the active account; pushes go through this.**
+- `Galifrey1965` — Mark's account; still signed in via `gh` but no longer the push identity for this repo.
 
 To switch the active gh CLI account: `gh auth switch --user <name>`.
 
 ## Commit author
 
-Default for this project is to commit as **Rob via Galifrey-collaborator context** — the work is being done on the friend's repo, so consistent attribution helps. Use Rob's noreply form if he's pushing as MintyMods, or set author per-commit if there's a reason to attribute differently.
+**Default (since 2026-05-03):** commits land as Rob, not Mark. Local repo overrides set:
+
+```
+user.name  = Rob Gregory
+user.email = 2349765+MintyMods@users.noreply.github.com   # privacy-preserving GitHub noreply
+origin     = git@github.com:Galifrey1965/Mariannecottage.git   # SSH, auths via gh's SSH key for the active MintyMods account
+```
+
+These are **local to this repo only** (`.git/config`). Rob's global git identity is unaffected — other repos on this machine fall back to it as before.
+
+Result on GitHub: commits display name "Rob Gregory" with avatar/profile linking to [`MintyMods`](https://github.com/MintyMods).
+
+(Earlier commits — through 2026-05-03 — were authored as `Claude Code <mark.faulkner@gmail.com>` while the repo had Mark's PAT-embedded HTTPS URL; not rewriting that history.)
 
 ## Stack
 

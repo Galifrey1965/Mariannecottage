@@ -157,8 +157,6 @@ All design discussion, plans, and reasoning live in [`documentation/`](documenta
 ## Team
 
 - **Owners:** Mark & Kim
-- **Developer:** [MintyMods](https://github.com/MintyMods)
-- **Collaborator:** Rob (commits land via the `Galifrey1965` push context)
-- **AI assistant:** Claude Code
+- **Developer:** Rob Gregory ([MintyMods](https://github.com/MintyMods))
 
 Private project for Marianne Cottage B&B. All rights reserved.
