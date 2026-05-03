@@ -56,8 +56,10 @@
 		"@smui/tab-bar": "^8.0.0-alpha.0",
 		"@smui/textfield": "^8.0.0-alpha.0",
 		"@smui/top-app-bar": "^8.0.0-alpha.0",
+		"@stripe/stripe-js": "^9.4.0",
 		"@supabase/ssr": "^0.10.2",
 		"@supabase/supabase-js": "^2.99.3",
-		"ical.js": "^2.2.1"
+		"ical.js": "^2.2.1",
+		"stripe": "^22.1.0"
 	}
 }

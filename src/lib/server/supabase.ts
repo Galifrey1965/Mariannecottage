@@ -15,6 +15,26 @@ export const anonClient = createClient(
 );
 
 // Types
+
+// B-02 Phase 2 (2026-05-03): payment-lifecycle state machine.
+// 'pending'              — legacy: manual flow, no payment.
+// 'pending_payment'      — soft-reserved during checkout; absorbs payment retries until TTL.
+// 'confirmed'            — payment_intent.succeeded.
+// 'payment_failed'       — reserved for explicit abandon / admin-set; webhook keeps row in pending_payment instead.
+// 'expired'              — TTL sweep released a stale pending_payment.
+// 'cancelled'            — admin or guest cancellation, pre-refund.
+// 'refunded'             — refund issued on a confirmed booking.
+// 'refunded_overbooked'  — late-success race: payment cleared after expiry, auto-refunded.
+export type BookingStatus =
+	| 'pending'
+	| 'pending_payment'
+	| 'confirmed'
+	| 'payment_failed'
+	| 'expired'
+	| 'cancelled'
+	| 'refunded'
+	| 'refunded_overbooked';
+
 export interface Booking {
 	id: string;
 	created_at: string;
@@ -32,11 +52,32 @@ export interface Booking {
 	subtotal: number;
 	tax: number;
 	total_cost: number;
-	status: 'pending' | 'confirmed' | 'cancelled';
+	status: BookingStatus;
 	booking_reference: string;
 	payment_intent_id?: string;
 	paid_at?: string;
+	pending_until?: string;
+	payment_attempts?: number;
+	last_payment_error?: string;
+	cancellation_policy_id?: string;
 	admin_notes?: string;
+}
+
+// B-06 Phase 2 (2026-05-03): cancellation policy catalogue.
+// schedule is walked in descending days_before_check_in to compute refund pct.
+export interface CancellationPolicySchedule {
+	days_before_check_in: number;
+	refund_pct: number;
+}
+
+export interface CancellationPolicy {
+	id: string;
+	name: string;
+	description?: string;
+	schedule: CancellationPolicySchedule[];
+	is_default: boolean;
+	created_at: string;
+	updated_at: string;
 }
 
 export interface Availability {
@@ -125,12 +166,22 @@ export async function createBooking(booking: Omit<Booking, 'id' | 'created_at' |
 	return data;
 }
 
-// B-02 Phase 1: atomic availability-check + insert + availability-mark
+// B-02 Phase 2: atomic availability-check + insert + availability-mark
 // inside a single transaction guarded by an advisory lock.
+// Default status is 'pending_payment' with TTL on pending_until; the function
+// returns pending_until + cancellation_policy_id so the client can drive a
+// countdown timer and surface the snapshot policy.
 // Throws BookingDatesTakenError on date conflict (Postgres SQLSTATE P0001 / message 'DATES_TAKEN').
+export interface AtomicBookingResult {
+	id: string;
+	booking_reference: string;
+	pending_until: string | null;
+	cancellation_policy_id: string | null;
+}
+
 export async function createBookingAtomic(
-	booking: Omit<Booking, 'id' | 'created_at' | 'updated_at'>
-): Promise<{ id: string; booking_reference: string }> {
+	booking: Omit<Booking, 'id' | 'created_at' | 'updated_at'> & { ttl_minutes?: number }
+): Promise<AtomicBookingResult> {
 	const { data, error } = await adminClient.rpc('book_dates_atomic', { p_booking: booking });
 
 	if (error) {
@@ -139,7 +190,7 @@ export async function createBookingAtomic(
 		}
 		throw error;
 	}
-	return data as { id: string; booking_reference: string };
+	return data as AtomicBookingResult;
 }
 
 export async function getBooking(bookingId: string) {
@@ -153,15 +204,20 @@ export async function getBooking(bookingId: string) {
 	return data;
 }
 
-// iCal OUT (Phase 2 row 5): non-cancelled bookings whose check-out is today
-// or in the future. Cancelled rows are excluded so cancellations free up
-// dates on BC's side after the next sync. Past bookings are excluded to
-// keep the feed small and the OTAs from churning over historical data.
+// iCal OUT (Phase 2 row 5): bookings that block inventory and whose check-out
+// is today or in the future.
+//
+// Included: 'pending' (legacy), 'pending_payment' (soft-reserved during
+// checkout — must block BC during the TTL window), 'confirmed' (paid).
+// Excluded: 'expired', 'payment_failed', 'cancelled', 'refunded',
+// 'refunded_overbooked' — these no longer hold inventory, so removing them
+// from the feed releases the dates on BC's side after their next pull.
+// Past bookings are excluded to keep the feed small.
 export async function getBookingsForIcalFeed(today: string) {
 	const { data, error } = await adminClient
 		.from('bookings')
 		.select('booking_reference, check_in_date, check_out_date, updated_at, status')
-		.in('status', ['pending', 'confirmed'])
+		.in('status', ['pending', 'pending_payment', 'confirmed'])
 		.gte('check_out_date', today)
 		.order('check_in_date', { ascending: true });
 
