@@ -153,6 +153,28 @@ export async function getBooking(bookingId: string) {
 	return data;
 }
 
+// iCal OUT (Phase 2 row 5): non-cancelled bookings whose check-out is today
+// or in the future. Cancelled rows are excluded so cancellations free up
+// dates on BC's side after the next sync. Past bookings are excluded to
+// keep the feed small and the OTAs from churning over historical data.
+export async function getBookingsForIcalFeed(today: string) {
+	const { data, error } = await adminClient
+		.from('bookings')
+		.select('booking_reference, check_in_date, check_out_date, updated_at, status')
+		.in('status', ['pending', 'confirmed'])
+		.gte('check_out_date', today)
+		.order('check_in_date', { ascending: true });
+
+	if (error) throw error;
+	return (data ?? []) as Array<{
+		booking_reference: string;
+		check_in_date: string;
+		check_out_date: string;
+		updated_at: string;
+		status: string;
+	}>;
+}
+
 export async function getBookingsByEmail(email: string) {
 	const { data, error } = await adminClient
 		.from('bookings')
