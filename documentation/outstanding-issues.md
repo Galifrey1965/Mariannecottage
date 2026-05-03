@@ -108,7 +108,7 @@ Each issue has: a short ID, where it lives in the code (when applicable), what's
 - **What:** The endpoint exists but nothing triggers it. No Netlify scheduled function declared in `netlify.toml`. Currently has to be invoked manually via curl.
 - **Severity:** 🟠 high — without scheduling, the sync isn't happening in production at all
 - **Added:** 2026-05-02
-- **Status:** ✅ code committed 2026-05-03 — `netlify/functions/sync-bc.ts` is a Netlify Functions v2 scheduled handler (`export const config = { schedule: '@hourly' }`) that POSTs to `/api/sync-booking-com` with `SYNC_SECRET`. **Deploy + Netlify-dashboard verification pending push.** PR 5, commit `bfffbfc`.
+- **Status:** ✅ fixed 2026-05-03 — `netlify/functions/sync-bc.ts` is a Netlify Functions v2 scheduled handler (`export const config = { schedule: '@hourly' }`) that POSTs to `/api/sync-booking-com` with `SYNC_SECRET`. Deployed and verified live: `netlify functions:list` shows it deployed, manual POST returned 200 with correct sync result, 9 currently-blocked Booking.com dates landed in production Supabase, hourly tick will re-run from there. PR 5, commit `bfffbfc`.
 
 ---
 

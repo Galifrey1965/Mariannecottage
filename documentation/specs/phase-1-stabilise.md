@@ -285,5 +285,5 @@ All of the following before Phase 1 is marked complete:
 | PR 2 (B-02 Phase 1) | committed to develop; migration 05 applied | 2026-05-03 | `e4aefad` on develop — not yet pushed |
 | PR 3 (B-07 Supabase Auth) | committed to develop; migration 06 applied; auth invites pending Phase-1-final cutover | 2026-05-03 | `0bf4eaa` + `b6b1354` on develop — not yet pushed |
 | PR 4 (B-01 rate plans) | committed to develop; migration 07 applied | 2026-05-03 | `d281a99` on develop — not yet pushed |
-| PR 5 (S-01 + S-02) | committed to develop; Netlify deploy + cron verification pending push | 2026-05-03 | (this commit) on develop — not yet pushed |
+| PR 5 (S-01 + S-02) | shipped + verified live on Netlify; hourly cron registered, manual POST returned 200, 9 BC blocked dates in production | 2026-05-03 | `bfffbfc` on develop, pushed |
 | Infra (domain + email) | not started | — | — |

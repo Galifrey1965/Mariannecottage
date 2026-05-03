@@ -2,7 +2,7 @@
 
 At-a-glance dashboard. Updated as work shifts. For detail, follow the links.
 
-**Last updated:** 2026-05-03 (post-PR-5)
+**Last updated:** 2026-05-03 (post-PR-5 push + S-02 live)
 
 ---
 
@@ -10,10 +10,10 @@ At-a-glance dashboard. Updated as work shifts. For detail, follow the links.
 
 | | |
 |---|---|
-| **Active branch** | `develop` — 6 commits ahead of `origin/develop`, **NOT pushed** |
-| **In flight** | Phase 1 — all 5 PRs committed locally; awaiting Netlify env-var prep + push to deploy PR 5's hourly scheduled function |
+| **Active branch** | `develop` — pushed to `origin/develop`; Netlify build green |
+| **In flight** | Phase 1 — all 5 PRs deployed; S-02 hourly cron verified live (9 BC blocked dates in production Supabase). Auth invites for Mark/Kim/Rob held for final-onboarding event. |
 | **Spec** | [`specs/phase-1-stabilise.md`](specs/phase-1-stabilise.md) — 5 PRs done, infra (domain + email) outstanding |
-| **Parallel** | Visual-direction discussion (F-02) — uncommitted prototypes + topic 01a draft. Netlify env-var verification handed off to a parallel session. |
+| **Parallel** | Visual-direction discussion (F-02) — uncommitted prototypes + topic 01a draft. |
 | **Awaiting Mark** | Domain (`mariannecottage.fr`) registration at OVH + email forwarding setup — only Phase 1 item still on Mark. Google setup (Steps 1–3) ✅ 2026-05-03. |
 
 ---
@@ -22,7 +22,7 @@ At-a-glance dashboard. Updated as work shifts. For detail, follow the links.
 
 | Item | Where | Notes |
 |---|---|---|
-| **Phase 1 — Stabilise** | [`specs/phase-1-stabilise.md`](specs/phase-1-stabilise.md) | All 5 deliverable PRs landed locally on `develop` (PR 1 → PR 5). Migrations 01–07 applied to live Supabase. Tests fully green: vitest 198/198, Playwright 18/18, build clean. Last-mile remaining: push develop → Netlify deploy → confirm hourly `sync-bc` cron fires. Domain + email infra still Mark-driven. |
+| **Phase 1 — Stabilise** | [`specs/phase-1-stabilise.md`](specs/phase-1-stabilise.md) | All 5 deliverable PRs landed on `develop` and deployed to Netlify (PR 1 → PR 5). Migrations 01–07 applied to live Supabase. Tests fully green: vitest 198/198, Playwright 18/18, build clean. S-02 hourly `sync-bc` cron verified live; 9 BC blocked dates already in production. Last-mile remaining: Mark's domain/email infra + auth invites. |
 | Visual-direction thread | [`discussions/visual-direction/`](discussions/visual-direction/00-overview.md) | Topic 01 (brand & audience) committed `193b3f6`. Topic 01a (page architecture) + 3 prototypes drafted, uncommitted. **Mark 2026-05-03:** leaning towards G2 (Warm Story); confirmation pending. Also corrected: cottage is **two-storey** (a longère is single-storey, hence the cottage isn't one) — see [`cottage-facts.md`](cottage-facts.md). |
 
 ---
@@ -49,7 +49,7 @@ Mirror of [`build-plan.md`](build-plan.md) phase table. Source of truth is the b
 
 | Phase | Status |
 |---|---|
-| 1 — Stabilise | 🟡 in progress — code complete (PR 1–5 ✅); pending push + Netlify cron verify + Mark's domain/email infra |
+| 1 — Stabilise | 🟡 nearly done — code shipped + S-02 cron verified live; pending Mark's domain/email infra + auth invites |
 | 2 — Direct-booking foundations | 🔲 not started |
 | 3 — Discovery & marketing | 🔲 not started |
 | 4 — AI agent layer | 🔲 not started |
@@ -61,7 +61,7 @@ Mirror of [`build-plan.md`](build-plan.md) phase table. Source of truth is the b
 
 | Date | What | Ref |
 |---|---|---|
-| 2026-05-03 | **PR 5 — S-01 + S-02 BC sync hygiene** committed locally. S-01: sync now diffs current feed against existing `synced_from='booking.com'` rows and frees stale blocks (manually-set rows untouched); pure helper `diffBcAvailability()` unit-tested. S-02: `netlify/functions/sync-bc.ts` is a Netlify Functions v2 scheduled handler (`@hourly`) that POSTs to the sync endpoint with `SYNC_SECRET`. Code only — Netlify dashboard verification pending push. | commit `bfffbfc` |
+| 2026-05-03 | **PR 5 — S-01 + S-02 BC sync hygiene** shipped + verified live. S-01: sync now diffs current feed against existing `synced_from='booking.com'` rows and frees stale blocks (manually-set rows untouched); pure helper `diffBcAvailability()` unit-tested. S-02: `netlify/functions/sync-bc.ts` Netlify Functions v2 `@hourly` scheduled handler. Manual trigger returned 200 + correct sync result, 9 BC blocked dates landed in production Supabase, next hourly tick will keep it current. | commit `bfffbfc` |
 | 2026-05-03 | **PR 4 — B-01 rate plans + per-guest tiers** committed locally. Migration 07 adds `rate_2_guests`/`rate_3_guests`/`rate_4_guests` columns; `getRateForBooking()` is server-authoritative on rates (400 + `no_rate_plan` when no plan covers); admin UI at `/admin/rate-plans` with audit logs; booking form derives rate reactively from check-in date + guest count. | commit `d281a99` |
 | 2026-05-03 | **PR 3 — B-07 Supabase Auth** committed locally. Migration 06 adds `user_profiles` + `agent_events` + `handle_new_auth_user` trigger; `hooks.server.ts` uses `@supabase/ssr` + `safeGetSession`; old hardcoded-password admin login deleted; admin shell shows display name, developer role gets "view as" toggle. Auth invites for Mark/Kim/Rob held back for final-onboarding event. | commits `0bf4eaa` + `b6b1354` |
 | 2026-05-03 | **PR 2 — B-02 Phase 1 atomic booking lock** committed locally. Migration 05 defines `book_dates_atomic(jsonb)` SECURITY DEFINER plpgsql function with single-cottage advisory lock; `createBookingAtomic()` calls via RPC; concurrent Playwright spec verifies one wins / one loses with 409 + `error_code='dates_taken'`. | commit `e4aefad` |
