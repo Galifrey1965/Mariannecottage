@@ -2,7 +2,7 @@
 
 At-a-glance dashboard. Updated as work shifts. For detail, follow the links.
 
-**Last updated:** 2026-05-03 (post-PR-5 push + S-02 live)
+**Last updated:** 2026-05-03 (post Phase 2 backend slice + admin Cancel & Refund flow)
 
 ---
 
@@ -11,10 +11,11 @@ At-a-glance dashboard. Updated as work shifts. For detail, follow the links.
 | | |
 |---|---|
 | **Active branch** | `develop` — pushed to `origin/develop`; Netlify build green |
-| **In flight** | Phase 1 — all 5 PRs deployed; S-02 hourly cron verified live (9 BC blocked dates in production Supabase). Auth invites for Mark/Kim/Rob held for final-onboarding event. |
-| **Spec** | [`specs/phase-1-stabilise.md`](specs/phase-1-stabilise.md) — 5 PRs done, infra (domain + email) outstanding |
-| **Parallel** | Visual-direction discussion (F-02) — uncommitted prototypes + topic 01a draft. |
-| **Awaiting Mark** | Domain (`mariannecottage.fr`) registration at OVH + email forwarding setup — only Phase 1 item still on Mark. Google setup (Steps 1–3) ✅ 2026-05-03. |
+| **In flight** | Phase 2 — backend slice + admin Cancel & Refund flow shipped dark; only Stripe-side enablement + Mark/Kim taste decisions are blocking. |
+| **Spec** | [`specs/phase-2-direct-booking.md`](specs/phase-2-direct-booking.md) — PR 1 + PR 2 + PR 4 (admin slice) shipped; PR 3 (booking-flow rebuild) gated on Q4; PR 4 guest magic-link + PR 5 email infra deferred. |
+| **Parallel** | Visual-direction thread — Topic 01 (brand & audience) + 01a (page architecture) committed; Topic 02 closed as moot (F-03 prune); Topic 04 recommendation locked (drop SMUI entirely). G2 leaning per Mark. |
+| **Awaiting Mark** | Stripe France account verification (test keys `STRIPE_SECRET_KEY` + `STRIPE_WEBHOOK_SECRET` + `PUBLIC_STRIPE_PUBLISHABLE_KEY`); OVH domain `mariannecottage.fr`. |
+| **Awaiting Mark + Kim** | Slim Batch 1a in [`discussions/visual-direction/questions-for-mark-and-kim.md`](discussions/visual-direction/questions-for-mark-and-kim.md) — Q1a (Kim's read on G2), Q2a (booking entry point), Q3a (Stripe Element vs Checkout). Original Batch 1 deferred — token-layer / content-layer, not blocking. |
 
 ---
 
@@ -22,8 +23,9 @@ At-a-glance dashboard. Updated as work shifts. For detail, follow the links.
 
 | Item | Where | Notes |
 |---|---|---|
-| **Phase 1 — Stabilise** | [`specs/phase-1-stabilise.md`](specs/phase-1-stabilise.md) | All 5 deliverable PRs landed on `develop` and deployed to Netlify (PR 1 → PR 5). Migrations 01–07 applied to live Supabase. Tests fully green: vitest 198/198, Playwright 18/18, build clean. S-02 hourly `sync-bc` cron verified live; 9 BC blocked dates already in production. Last-mile remaining: Mark's domain/email infra + auth invites. |
-| Visual-direction thread | [`discussions/visual-direction/`](discussions/visual-direction/00-overview.md) | Topic 01 (brand & audience) committed `193b3f6`. Topic 01a (page architecture) + 3 prototypes drafted, uncommitted. **Mark 2026-05-03:** leaning towards G2 (Warm Story); confirmation pending. Also corrected: cottage is **two-storey** (a longère is single-storey, hence the cottage isn't one) — see [`cottage-facts.md`](cottage-facts.md). |
+| **Phase 2 — Direct-booking foundations** | [`specs/phase-2-direct-booking.md`](specs/phase-2-direct-booking.md) | PR 1 (soft-reserve state machine + cancellation_policies) ✅. PR 2 (Stripe webhook + TTL sweep) ✅. PR 4 admin slice (Cancel & Refund flow + dashboard absorbed-fee total) ✅. Migrations 08–12 applied to live Supabase; `SWEEP_SECRET` set on Netlify production. Webhook + sweep deploy dark — return 503 cleanly without Stripe keys. Tests 249/249. UI exercised end-to-end on the no-refund path with seeded test admin + fake booking; auto-refund path waits for Stripe test keys. |
+| **Phase 1 — Stabilise** | [`specs/phase-1-stabilise.md`](specs/phase-1-stabilise.md) | ✅ all 5 PRs deployed; migrations 01–07 applied. Last-mile: Mark's domain/email infra + real-account auth invites (held for final-onboarding event). |
+| Visual-direction thread | [`discussions/visual-direction/`](discussions/visual-direction/00-overview.md) | Topics 01 + 01a + 02 (closed as moot, F-03) + 04 (drop SMUI) committed; Topic 09 closed by F-03. Three prototypes (A, G1, G2) committed and longère-purged. Mark leaning G2; Kim's read pending in slim Batch 1a. Topic 03 (POC concepts comparison), 05 (underlying language), 06 (typography), 07 (photography), 08 (tone) still open. |
 
 ---
 
@@ -50,7 +52,7 @@ Mirror of [`build-plan.md`](build-plan.md) phase table. Source of truth is the b
 | Phase | Status |
 |---|---|
 | 1 — Stabilise | 🟡 nearly done — code shipped + S-02 cron verified live; pending Mark's domain/email infra + auth invites |
-| 2 — Direct-booking foundations | 🔲 not started |
+| 2 — Direct-booking foundations | 🟡 in progress — backend slice (PR 1 + 2) + admin Cancel & Refund flow shipped dark; PR 3 (booking-flow rebuild) gated on Q4; PR 5 (email infra) + guest magic-link cancel deferred |
 | 3 — Discovery & marketing | 🔲 not started |
 | 4 — AI agent layer | 🔲 not started |
 | 5 — Polish | 🔲 not started |
@@ -61,6 +63,17 @@ Mirror of [`build-plan.md`](build-plan.md) phase table. Source of truth is the b
 
 | Date | What | Ref |
 |---|---|---|
+| 2026-05-03 | **Admin booking PATCH state-machine validator** + locked detail panel for terminal states. Discovered while UI-testing the new cancel flow that admins could click "confirmed" on a cancelled row and silently un-cancel via the legacy generic PATCH. Now only `pending → confirmed` is admin-allowed; everything else 409s. Detail panel renders just the status badge + hint for terminal states. Tests +4. | commit `6b48e2d` |
+| 2026-05-03 | **PR 4 admin slice — Cancel & Refund flow.** Pure refund engine (`computeRefund`) with 21 unit tests; admin endpoint with Stripe `refunds.create` (idempotency-keyed); admin UI dialog with refund preview + absorbed-fee estimate; 5th dashboard stat card summing absorbed fees from `agent_events`. Out of scope: guest magic-link cancel, cancellation-policies admin CRUD. | commit `d9fc78c` |
+| 2026-05-03 | **Webhook tests** — 3 missing scenarios (idempotency replay, late-success race / refunded_overbooked, payment_failed retry semantics) added at handler-contract level. Refactored mocks via `vi.hoisted`. | commit `5f2a140` |
+| 2026-05-03 | **Slim Batch 1a questions for Mark + Kim** — only the three asks that block code (Kim's G2 read, booking entry point, Stripe Element vs Checkout). Original Batch 1 marked deferred-not-blocking. | commit `1303619` |
+| 2026-05-03 | **Visual-direction Topics 02 + 04** — 02 closed as moot (F-03 deleted the demos this topic was meant to survey); 04 recommends drop SMUI entirely (4 instances, 14 of 16 packages dead weight). 09 also marked closed. | commit `8751da9` |
+| 2026-05-03 | **Longère copy sweep** across the 3 prototypes — cottage is two-storey, longère is by definition single-storey. Meta-rule docs deliberately untouched. | commit `2d3c199` |
+| 2026-05-03 | **npm audit fix** — 5 of 6 vulns resolved (kit, happy-dom, picomatch, postcss, vite); 4 lows remain on transitive `cookie<0.7.0` with no non-breaking fix. | commit `ac06721` |
+| 2026-05-03 | **Phase 2 backend slice (PR 1 + PR 2)** — soft-reserve state machine, Stripe webhook handler with refunded_overbooked late-success branch, TTL sweep at 5-min cadence, idempotent `handle_stripe_event` SQL function. Migrations 08–12 applied via Supabase MCP; `SWEEP_SECRET` set on Netlify. | commits `8c5ca9f` + `90f3927` |
+| 2026-05-03 | iCal OUT feed at `/api/ical/cottage.ics` | commit `ee93e72` |
+| 2026-05-03 | `BookDirectCta` hover-reveal "Save 5% vs Booking.com" on home | commit `1c90b7f` |
+| 2026-05-03 | Visual-direction Topic 01a (page architecture — hybrid locked) + G2 visual lean + photography plan | commit `133c02c` |
 | 2026-05-03 | **PR 5 — S-01 + S-02 BC sync hygiene** shipped + verified live. S-01: sync now diffs current feed against existing `synced_from='booking.com'` rows and frees stale blocks (manually-set rows untouched); pure helper `diffBcAvailability()` unit-tested. S-02: `netlify/functions/sync-bc.ts` Netlify Functions v2 `@hourly` scheduled handler. Manual trigger returned 200 + correct sync result, 9 BC blocked dates landed in production Supabase, next hourly tick will keep it current. | commit `bfffbfc` |
 | 2026-05-03 | **PR 4 — B-01 rate plans + per-guest tiers** committed locally. Migration 07 adds `rate_2_guests`/`rate_3_guests`/`rate_4_guests` columns; `getRateForBooking()` is server-authoritative on rates (400 + `no_rate_plan` when no plan covers); admin UI at `/admin/rate-plans` with audit logs; booking form derives rate reactively from check-in date + guest count. | commit `d281a99` |
 | 2026-05-03 | **PR 3 — B-07 Supabase Auth** committed locally. Migration 06 adds `user_profiles` + `agent_events` + `handle_new_auth_user` trigger; `hooks.server.ts` uses `@supabase/ssr` + `safeGetSession`; old hardcoded-password admin login deleted; admin shell shows display name, developer role gets "view as" toggle. Auth invites for Mark/Kim/Rob held back for final-onboarding event. | commits `0bf4eaa` + `b6b1354` |
