@@ -267,7 +267,7 @@ If the free tier ever overflows, Google emails Mark before charging. He can also
 
 Skip until Phase 3. When that lands:
 
-- Hotel Center is at [hotelads.google.com](https://hotelads.google.com)
+- Hotel Center is at [hotelcenter.google.com](https://hotelcenter.google.com) (note: the older `hotelads.google.com` domain has been retired)
 - Mark applies; can take 1–2 weeks for approval
 - Adds Rob via the same IAM role as the Cloud project
 - Rob writes the XML feed at `/api/google-hotel-feed.xml`
