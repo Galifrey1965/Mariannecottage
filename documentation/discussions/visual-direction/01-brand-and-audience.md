@@ -16,7 +16,7 @@ The visual-direction thread's first move is locking who the cottage is *for*, so
 | Q6 | No SEO history; no other directories or contacts; clean slate |
 | Cottage location | 1 La Haye, Couvains — equidistant Saint-Lô / Bayeux; between Omaha (US) and Gold (British) D-Day beaches; 5 min from Cerisy-la-Forêt Abbey |
 | Cottage capacity | 2 bedrooms, max 4 guests (per `supabase-schema.sql` CHECK constraint) |
-| Brand pillars | `../../design/landing-page-poc/knowledge.md` — 1800s longère, sympathetic restoration, orchards, Tawny Owls / Kestrels / Roe Deer, church bells, "silence of the dairy country", "Marianne" / French Republic symbolism |
+| Brand pillars | `../../design/landing-page-poc/knowledge.md` — 1800s single-storey Normandy farmhouse, sympathetic restoration, orchards, Tawny Owls / Kestrels / Roe Deer, church bells, "silence of the dairy country", "Marianne" / French Republic symbolism. (Don't say "longère" — see [`../../cottage-facts.md`](../../cottage-facts.md).) |
 | i18n | EN / FR / DE — explicit multilingual posture, all three first-class |
 
 ## Audience hypothesis

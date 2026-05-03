@@ -4,6 +4,10 @@
 **Started:** 2026-05-02
 **Driver issues:** [F-01](../../outstanding-issues.md#f-01--smui-v8-alpha-dependency-risk), [F-02](../../outstanding-issues.md#f-02--visual-direction-undecided), [F-03](../../outstanding-issues.md#f-03--demo-routes-are-70-of-the-codebase) in `outstanding-issues.md`
 
+**Latest input from Mark (2026-05-03):** lean towards prototype **G2 — Warm Story** (`prototypes/design-G2-warm-story.html`). Phrased tentatively ("looks best I think"), so treating as a strong indication, not a final lock — confirmation needed before committing the codebase to G2. G1 (Quiet Luxury) and A (Restyle) remain on the table as fallbacks.
+
+**Also flagged by Mark (2026-05-03):** prototypes and brand docs incorrectly call the cottage a "longère"; it is single-storey and the term doesn't apply. Source docs corrected; copy in prototypes still uses "longère" and will need a sweep before any selected direction goes live. See [`../../cottage-facts.md`](../../cottage-facts.md).
+
 ---
 
 ## The question
@@ -24,7 +28,7 @@ The booking-payment thread closed 2026-05-02 with the cottage's *behavioural* di
 | Artifact | Type | Where |
 |---|---|---|
 | **Material Design 3 Expressive system** | Implementation spec | [`features/material-design.md`](../../features/material-design.md) — design tokens, Dynamic Color, Nav Bar / Rail, tonal elevation. The system the live site runs on today. |
-| **Brand pillars** | Source material | [`design/landing-page-poc/knowledge.md`](../../design/landing-page-poc/knowledge.md) — Marianne symbolism, 1800s longère, sympathetic restoration ethos, Cerisy-la-Forêt Abbey, D-Day positioning, bocage, sensory details |
+| **Brand pillars** | Source material | [`design/landing-page-poc/knowledge.md`](../../design/landing-page-poc/knowledge.md) — Marianne symbolism, 1800s single-storey Normandy farmhouse, sympathetic restoration ethos, Cerisy-la-Forêt Abbey, D-Day positioning, bocage, sensory details. See [`../../cottage-facts.md`](../../cottage-facts.md) for the canonical fact list (don't say "longère"). |
 | **Normandy palette anchors** | Colour system seed | [`design/landing-page-poc/colours_base.md`](../../design/landing-page-poc/colours_base.md) — Cloud Dancer (#F0EEE9), French Sage (#A9B7AC), Normandy Limestone (#D6CCC2). 3 hex anchors, no full system. |
 | **4 POC concepts** | Alternative directions | [`design/landing-page-poc/pages/`](../../design/landing-page-poc/pages/) — Historian Concierge, Living Map, Tactile Story, Nature Distilled |
 | **23 demo routes** | Visual exploration in code | `src/routes/(demo)/` — adaptive, ambient, bento, brutal, calm, dday, expressive, handmade, historian, etc. ~70% of `src/` line count per F-03 |
@@ -67,6 +71,7 @@ Independent of the chosen visual direction, the *system underneath* is also a de
 Each will get its own numbered file as we work through it.
 
 - [ ] **01 — Brand & audience interrogation.** Who actually books this cottage? What aesthetic do they expect? What aesthetic would *delight* vs alienate them? Read of the brand pillars from `knowledge.md` against the 7 visual options
+- [x] **01a — Page architecture (single-page vs multi-route).** Hybrid locked: rich long-scroll home + lean inner routes. See [`01a-page-architecture.md`](01a-page-architecture.md)
 - [ ] **02 — Survey what's actually in the codebase today.** The 23 demos + 30-theme picker — quick visual inventory, what works, what doesn't, what to learn from
 - [ ] **03 — The 4 POC concepts compared.** Strengths, weaknesses, build cost, risk profile, brand fit per concept
 - [ ] **04 — SMUI alpha risk (F-01) handled.** Pin / drop / replace — concrete recommendation

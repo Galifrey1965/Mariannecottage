@@ -23,7 +23,7 @@ At-a-glance dashboard. Updated as work shifts. For detail, follow the links.
 | Item | Where | Notes |
 |---|---|---|
 | **Phase 1 — Stabilise** | [`specs/phase-1-stabilise.md`](specs/phase-1-stabilise.md) | Spec written 2026-05-03. Findings 1–3 resolved (admin auth → B-07, migration convention → option B, RLS → server-side reads). Q3 (per-guest pricing schema) still open. PR 1 next. |
-| Visual-direction thread | [`discussions/visual-direction/`](discussions/visual-direction/00-overview.md) | Topic 01 (brand & audience) committed `193b3f6`. Topic 01a (page architecture) + 3 prototypes drafted, uncommitted. |
+| Visual-direction thread | [`discussions/visual-direction/`](discussions/visual-direction/00-overview.md) | Topic 01 (brand & audience) committed `193b3f6`. Topic 01a (page architecture) + 3 prototypes drafted, uncommitted. **Mark 2026-05-03:** leaning towards G2 (Warm Story); confirmation pending. Also corrected: cottage is single-storey, not a longère — see [`cottage-facts.md`](cottage-facts.md). |
 
 ---
 
@@ -60,6 +60,9 @@ Mirror of [`build-plan.md`](build-plan.md) phase table. Source of truth is the b
 
 | Date | What | Ref |
 |---|---|---|
+| 2026-05-03 | PR 1 committed locally on `phase-1/pr-1-quick-wins` (F-04 + B-03 + B-04); awaiting Mark to apply 3 SQL migrations | commit `fde3fd2` |
+| 2026-05-03 | Phase 1 spec, B-07 admin auth issue, migration convention | commit `647461b` |
+| 2026-05-03 | Repo-root README + status dashboard | commit `df20076` |
 | 2026-05-02 | Build plan locked; modular AI-augmented direction agreed | [`discussions/booking-payment/99-decision.md`](discussions/booking-payment/99-decision.md) |
 | 2026-05-02 | Visual-direction discussion thread opened | commit `6ed25a5` |
 | 2026-05-02 | Reverted 10/5 split → flat 5% direct discount per Mark | commit `6fb8fdc`, GitHub #48 |

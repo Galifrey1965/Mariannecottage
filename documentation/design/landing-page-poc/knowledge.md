@@ -3,7 +3,7 @@ Here is the essential Feature & Knowledge List for Marianne Cottage. You can app
 
     The Symbolism: The name "Marianne" refers to the national personification of the French Republic—representing liberty, equality, and fraternity. The cottage restoration should reflect "Liberty from the modern world."
 
-    The 1800s Foundation: Built as a traditional longère (long farmhouse) typical of the Pays d'Auge and Bessin regions.
+    The 1800s Foundation: A traditional **single-storey** Normandy farmhouse from the Pays d'Auge and Bessin regions. ⚠️ Do NOT describe as a "longère" — Mark has corrected this twice; the building is single-storey and the term doesn't apply. The exact regional architectural label (beyond "farmhouse" / *fermette* / *maison de campagne*) is TBC with Mark. See [`../../cottage-facts.md`](../../cottage-facts.md).
 
     The Restoration Ethos: "Sympathetic restoration"—meaning the use of original lime-wash (Chaux), reclaimed oak beams, and local stone (Pierre de Caen).
 
