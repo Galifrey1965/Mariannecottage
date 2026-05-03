@@ -144,7 +144,7 @@ All design discussion, plans, and reasoning live in [`documentation/`](documenta
 |---|---|
 | [`documentation/README.md`](documentation/Readme.md) | Documentation entry point + reading-order paths by audience |
 | [`documentation/status.md`](documentation/status.md) | **Live dashboard** — current branch, what's in flight, what's next |
-| [`documentation/cottage-facts.md`](documentation/cottage-facts.md) | **Read before writing copy** — canonical facts about the cottage + recurring-mistake log (e.g. don't say "longère") |
+| [`documentation/cottage-facts.md`](documentation/cottage-facts.md) | **Read before writing copy** — canonical facts about the cottage (two-storey 1800s Normandy farmhouse) + recurring-mistake log |
 | [`documentation/build-plan.md`](documentation/build-plan.md) | 5-phase roadmap, deliverables, dependencies |
 | [`documentation/outstanding-issues.md`](documentation/outstanding-issues.md) | Known issues, gaps, tech debt — running list |
 | [`documentation/infrastructure.md`](documentation/infrastructure.md) | Where everything physically runs — hosting, DB, domain, secrets, accounts |

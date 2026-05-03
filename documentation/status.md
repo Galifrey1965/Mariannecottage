@@ -23,7 +23,7 @@ At-a-glance dashboard. Updated as work shifts. For detail, follow the links.
 | Item | Where | Notes |
 |---|---|---|
 | **Phase 1 — Stabilise** | [`specs/phase-1-stabilise.md`](specs/phase-1-stabilise.md) | Spec written 2026-05-03. Findings 1–3 resolved (admin auth → B-07, migration convention → option B, RLS → server-side reads). Q3 (per-guest pricing schema) still open. PR 1 next. |
-| Visual-direction thread | [`discussions/visual-direction/`](discussions/visual-direction/00-overview.md) | Topic 01 (brand & audience) committed `193b3f6`. Topic 01a (page architecture) + 3 prototypes drafted, uncommitted. **Mark 2026-05-03:** leaning towards G2 (Warm Story); confirmation pending. Also corrected: cottage is single-storey, not a longère — see [`cottage-facts.md`](cottage-facts.md). |
+| Visual-direction thread | [`discussions/visual-direction/`](discussions/visual-direction/00-overview.md) | Topic 01 (brand & audience) committed `193b3f6`. Topic 01a (page architecture) + 3 prototypes drafted, uncommitted. **Mark 2026-05-03:** leaning towards G2 (Warm Story); confirmation pending. Also corrected: cottage is **two-storey** (a longère is single-storey, hence the cottage isn't one) — see [`cottage-facts.md`](cottage-facts.md). |
 
 ---
 

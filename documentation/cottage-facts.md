@@ -12,7 +12,7 @@ Plain factual record of the cottage. Anyone writing copy, designing pages, instr
 | Fact | Detail |
 |---|---|
 | Year | 1800s |
-| Storeys | **Single storey** — *not* a longère; do not describe as multi-storey or two-storey |
+| Storeys | **Two storeys** — confirmed by Mark 2026-05-03 |
 | Bedrooms | 2 |
 | Maximum guests | 4 (per `supabase-schema.sql` `num_guests` CHECK constraint) |
 | Bathroom | 1, modern walk-in shower (renovated by Mark + Kim) |
@@ -58,7 +58,8 @@ This section exists because the same errors keep landing in copy and prototypes.
 
 | Mistake | Correct phrasing | Source of correction |
 |---|---|---|
-| Calling the cottage a *longère* | "1800s single-storey Normandy farmhouse" or simply "Normandy farmhouse" — Mark explicitly objects to "longère"; the cottage is single-storey. The exact regional term (if any beyond *fermette* / *maison de campagne*) is TBC with Mark. | Mark, 2026-05-03 |
+| Calling the cottage a *longère* | "1800s two-storey Normandy farmhouse" or simply "Normandy farmhouse". A *longère* is by definition a low, single-storey long farmhouse — this cottage is **two storeys**, so the term is factually wrong. The exact regional term (if any beyond *fermette* / *maison de campagne*) is TBC with Mark. | Mark, 2026-05-03 |
+| Saying the cottage is single-storey | It is **two storeys**. (This entry exists because the previous version of this doc got Mark's correction backwards — Mark was saying *longères* are single-storey, hence the cottage isn't one.) | Mark, 2026-05-03 |
 
 When applying these corrections:
 - **Don't sweep-replace blindly** — read context first; some occurrences may be quoting source material that documents the mistake itself, not perpetuating it

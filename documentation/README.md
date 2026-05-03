@@ -78,7 +78,7 @@ Pick the path that matches what you're trying to do:
 | Path | Contents |
 |---|---|
 | [`status.md`](status.md) | **Live dashboard** — current branch, what's in flight, what's next. Updated as work shifts. |
-| [`cottage-facts.md`](cottage-facts.md) | Canonical facts about the cottage — physical, location, people, brand pillars. Includes a "recurring mistakes" log (e.g. don't say "longère"). Read before writing any copy. |
+| [`cottage-facts.md`](cottage-facts.md) | Canonical facts about the cottage (two-storey 1800s Normandy farmhouse) — physical, location, people, brand pillars. Includes a "recurring mistakes" log. Read before writing any copy. |
 | [`build-plan.md`](build-plan.md) | **The roadmap** — 5 phases, ~22 days, dependencies, deliverables. Read first if starting work. |
 | [`infrastructure.md`](infrastructure.md) | Where everything physically runs — hosting, DB, domain, email, payments, secrets, backups, accounts |
 | [`outstanding-issues.md`](outstanding-issues.md) | Running list of known issues, gaps, tech debt — appended as we find them |

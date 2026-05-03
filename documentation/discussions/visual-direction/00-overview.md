@@ -6,7 +6,7 @@
 
 **Latest input from Mark (2026-05-03):** lean towards prototype **G2 — Warm Story** (`prototypes/design-G2-warm-story.html`). Phrased tentatively ("looks best I think"), so treating as a strong indication, not a final lock — confirmation needed before committing the codebase to G2. G1 (Quiet Luxury) and A (Restyle) remain on the table as fallbacks.
 
-**Also flagged by Mark (2026-05-03):** prototypes and brand docs incorrectly call the cottage a "longère"; it is single-storey and the term doesn't apply. Source docs corrected; copy in prototypes still uses "longère" and will need a sweep before any selected direction goes live. See [`../../cottage-facts.md`](../../cottage-facts.md).
+**Also flagged by Mark (2026-05-03):** prototypes and brand docs incorrectly call the cottage a "longère"; the cottage is **two storeys**, and a longère is by definition single-storey, so the term is factually wrong. Source docs corrected; copy in prototypes still uses "longère" and will need a sweep before any selected direction goes live. See [`../../cottage-facts.md`](../../cottage-facts.md).
 
 ---
 
@@ -28,7 +28,7 @@ The booking-payment thread closed 2026-05-02 with the cottage's *behavioural* di
 | Artifact | Type | Where |
 |---|---|---|
 | **Material Design 3 Expressive system** | Implementation spec | [`features/material-design.md`](../../features/material-design.md) — design tokens, Dynamic Color, Nav Bar / Rail, tonal elevation. The system the live site runs on today. |
-| **Brand pillars** | Source material | [`design/landing-page-poc/knowledge.md`](../../design/landing-page-poc/knowledge.md) — Marianne symbolism, 1800s single-storey Normandy farmhouse, sympathetic restoration ethos, Cerisy-la-Forêt Abbey, D-Day positioning, bocage, sensory details. See [`../../cottage-facts.md`](../../cottage-facts.md) for the canonical fact list (don't say "longère"). |
+| **Brand pillars** | Source material | [`design/landing-page-poc/knowledge.md`](../../design/landing-page-poc/knowledge.md) — Marianne symbolism, 1800s two-storey Normandy farmhouse, sympathetic restoration ethos, Cerisy-la-Forêt Abbey, D-Day positioning, bocage, sensory details. See [`../../cottage-facts.md`](../../cottage-facts.md) for the canonical fact list (don't say "longère"). |
 | **Normandy palette anchors** | Colour system seed | [`design/landing-page-poc/colours_base.md`](../../design/landing-page-poc/colours_base.md) — Cloud Dancer (#F0EEE9), French Sage (#A9B7AC), Normandy Limestone (#D6CCC2). 3 hex anchors, no full system. |
 | **4 POC concepts** | Alternative directions | [`design/landing-page-poc/pages/`](../../design/landing-page-poc/pages/) — Historian Concierge, Living Map, Tactile Story, Nature Distilled |
 | **23 demo routes** | Visual exploration in code | `src/routes/(demo)/` — adaptive, ambient, bento, brutal, calm, dday, expressive, handmade, historian, etc. ~70% of `src/` line count per F-03 |
