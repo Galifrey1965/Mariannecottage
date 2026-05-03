@@ -84,6 +84,7 @@ Pick the path that matches what you're trying to do:
 | [`outstanding-issues.md`](outstanding-issues.md) | Running list of known issues, gaps, tech debt — appended as we find them |
 | [`discussions/`](discussions/) | Design discussions with their reasoning preserved. Booking-payment thread resolved 2026-05-02. |
 | [`setup/supabase.md`](setup/supabase.md) | Supabase project + schema setup |
+| [`setup/google-business.md`](setup/google-business.md) | Google Business Profile + Cloud project + Maps API key — walkthrough for Mark, with delegation steps so Rob has his own login |
 | [`features/booking-system.md`](features/booking-system.md) | Booking flow, API, admin dashboard, pricing |
 | [`features/booking-com-sync.md`](features/booking-com-sync.md) | iCal sync from Booking.com → availability table |
 | [`features/explore-poi.md`](features/explore-poi.md) | Explore page POI design |

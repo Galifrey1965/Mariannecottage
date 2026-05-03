@@ -15,6 +15,7 @@ At-a-glance dashboard. Updated as work shifts. For detail, follow the links.
 | **Spec** | [`specs/phase-1-stabilise.md`](specs/phase-1-stabilise.md) — 5 PRs, ~5 days, 7 deliverables |
 | **Parallel** | Visual-direction discussion (F-02) — uncommitted prototypes + topic 01a draft |
 | **Open question** | Per-guest pricing structure (columns vs table) — only blocks PR 4; recommend columns when we get there |
+| **Awaiting Mark** | (a) apply 3 SQL migrations on PR 1 branch; (b) walk [`setup/google-business.md`](setup/google-business.md) to add Rob as Manager + create Cloud project + provision Maps API key |
 
 ---
 
@@ -31,12 +32,13 @@ At-a-glance dashboard. Updated as work shifts. For detail, follow the links.
 
 | PR | Deliverables | Effort | Status |
 |---|---|---|---|
-| PR 1 | F-04 + B-03 + B-04 | ~1 day | next |
+| PR 1 | F-04 + B-03 + B-04 | ~1 day | committed on `phase-1/pr-1-quick-wins` (commit `fde3fd2`); awaiting Mark to apply 3 SQL migrations |
 | PR 2 | B-02 Phase 1 (atomic locking) | ~0.5 day | blocked by PR 1 |
 | PR 3 | B-07 (Supabase Auth) | ~1 day | blocked by PR 2 |
 | PR 4 | B-01 (rate plans + admin UI) | ~1.5 days | blocked by PR 3 |
 | PR 5 | S-01 + S-02 (BC sync) | ~0.5 day | independent |
 | Infra | Domain + email forwarding | ~0.5 day | Mark-driven, independent |
+| Infra | **Google Cloud + Business Profile delegation** | ~45 min Mark + ~15 min Rob | Mark-driven; doc at [`setup/google-business.md`](setup/google-business.md) — unblocks the Google Maps swap from rendering placeholders |
 
 Per-PR detail: [`specs/phase-1-stabilise.md`](specs/phase-1-stabilise.md). Per-deliverable progress tracked in that spec's progress log.
 
@@ -60,6 +62,10 @@ Mirror of [`build-plan.md`](build-plan.md) phase table. Source of truth is the b
 
 | Date | What | Ref |
 |---|---|---|
+| 2026-05-03 | Google Business + Cloud setup doc for Mark | commit (this) |
+| 2026-05-03 | Maps swap: Leaflet/OpenStreetMap → Google Maps (consolidates onto Mark's Google Cloud) | commit `4ad2ecc` |
+| 2026-05-03 | Demo routes purged (F-03 fixed) — 20,601 lines deleted | commit `9cafc42` |
+| 2026-05-03 | Local commit/push identity switched to Rob/MintyMods | commit `8f656fb` |
 | 2026-05-03 | PR 1 committed locally on `phase-1/pr-1-quick-wins` (F-04 + B-03 + B-04); awaiting Mark to apply 3 SQL migrations | commit `fde3fd2` |
 | 2026-05-03 | Phase 1 spec, B-07 admin auth issue, migration convention | commit `647461b` |
 | 2026-05-03 | Repo-root README + status dashboard | commit `df20076` |
