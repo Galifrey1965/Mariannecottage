@@ -7,6 +7,8 @@ A walk-through of every Google product the cottage's website needs and how Mark 
 **Time:** ~45 minutes for the immediate work; Hotel Center and Pub/Sub later.
 **Cost:** Free under expected traffic. Maps charges past a free tier; estimated cottage traffic is well within it. Details below.
 
+**Last verified against Google's current UI:** 2026-05-03 — UI paths in this doc match Google's published support docs as of that date. Google reorganises these surfaces a few times a year; if a step here points to a menu item that no longer exists, **the search bar at the top of Google Cloud Console** (and the in-page search in Business Profile settings) finds any feature by name. That's the reliable fallback when the documented click-path drifts.
+
 ---
 
 ## What we need and why
@@ -51,20 +53,32 @@ The cottage listing already exists. We want Rob to be able to edit it.
 
 ### Mark's steps
 
-1. Go to [business.google.com](https://business.google.com) and sign in with the account that owns the cottage listing
+1. Go to [business.google.com](https://business.google.com) and sign in with the account that owns the cottage listing.
+   - **Alternative:** Google now also lets you manage the listing directly inside Google Search — sign in to Google, search for "marianne cottage", and the management toolbar shows up at the top of the result. Either route reaches the same panel.
 2. Top of the dashboard: select **Marianne Cottage** if there's more than one listing
-3. Find **Users** in the left sidebar. *In the new UI:* click the three-dot menu (⋮) → **Business Profile settings** → **Managers**
-4. Click **Add users**
-5. Type Rob's chosen email
-6. Set role = **Manager**
-7. Click **Invite**
+3. Click the three-dot menu (⋮) — labelled **More**
+4. Select **Business Profile settings**
+5. Select **People and access**
+6. At the top left, click the user-with-a-plus icon labelled **Add**
+7. Type Rob's chosen email
+8. Under **Access**, select **Manager**
+9. Click **Invite**
 
 ### Rob's steps after the invite
 
 1. Open the invitation email (subject: "You've been invited…") and click **Accept invitation**
 2. Sign in with the matching Google account
-3. The cottage now appears in Rob's `business.google.com` dashboard
+3. The cottage now appears in Rob's Business Profile when signed in (via `business.google.com` or via Google Search while signed in)
 4. Confirm by editing something trivial (e.g. add a description tweak) and reverting it — proves write access
+
+### Important — 7-day cooldown
+
+After Rob accepts the invitation, Google enforces a **7-day waiting period** before he can:
+- Remove other users from the profile
+- Be promoted to Primary Owner / transfer ownership
+- Delete the profile
+
+Read/edit access on photos, hours, posts, reviews, etc. works **immediately** — only the destructive / ownership-bearing actions are gated. Plan around this if there's any urgency to swap who owns the listing; otherwise it's invisible.
 
 ### Possible questions Mark might be asked
 
@@ -91,25 +105,25 @@ Cloud is where API keys live (Maps), where Pub/Sub topics will live (Phase 4), a
 
 1. Go to [console.cloud.google.com](https://console.cloud.google.com)
 2. If this is the first visit: accept the Cloud Terms of Service. There may be a prompt to enable a free trial — **skip / decline if asked for free credits**; we don't need them and they expire confusingly. Plain account is fine.
-3. Top bar: click the project dropdown (currently showing "Select a project")
-4. Click **New Project**
+3. Open the **Manage resources** page — easiest route: paste [console.cloud.google.com/cloud-resource-manager](https://console.cloud.google.com/cloud-resource-manager) into the address bar. (It's also reachable via the hamburger menu ☰ at top-left → **IAM & Admin** → **Manage Resources**, or just by typing "manage resources" into the Cloud Console search bar at the top.)
+4. At the top of that page, click **Create Project**
 5. Fill in:
 
    | Field | Value |
    |---|---|
-   | **Project name** | `marianne-cottage` |
-   | **Project ID** | leave the auto-generated value (e.g. `marianne-cottage-12345`) — can't be changed later, doesn't matter as long as it's unique |
-   | **Organisation** | leave as "No organisation" — this is a personal project |
-   | **Location** | leave as "No organisation" |
+   | **Project name** | `marianne-cottage` (4–30 characters, letters/numbers/hyphens/spaces) |
+   | **Project ID** | leave the auto-generated value (e.g. `marianne-cottage-12345`) — **permanent**, can't be changed later |
+   | **Billing account** | leave blank for now if no billing account exists yet — we link it in the next sub-step |
+   | **Location** / **Parent organisation** | for a personal Google account this row may be hidden or pre-set to "No organisation" — leave it as-is |
 
 6. Click **Create**. Wait ~30 seconds for the project to provision.
-7. Top bar again: click the project dropdown and switch to `marianne-cottage` so the rest of the steps target it.
+7. Top bar: click the project dropdown (currently showing the previous project or "Select a project") and switch to `marianne-cottage` so the rest of the steps target it.
 
 ### Set up billing
 
 Maps API requires billing enabled even though our use stays in the free tier. Mark adds a card; nothing is charged unless we exceed the free tier.
 
-1. Left sidebar (or hamburger menu ☰) → **Billing**
+1. Hamburger menu ☰ at top-left → **Billing**, or type "billing" into the Cloud Console search bar
 2. Click **Manage billing accounts** → **Create account**
 3. Fill in:
 
@@ -127,7 +141,7 @@ Maps API requires billing enabled even though our use stays in the free tier. Ma
 
 ### Add Rob as a Project Editor
 
-1. Left sidebar → **IAM & Admin** → **IAM**
+1. Hamburger menu ☰ → **IAM & Admin** → **IAM** (or search "iam" in the Cloud Console search bar)
 2. Top of the IAM page: **Grant access**
 3. Fill in:
 
@@ -162,16 +176,16 @@ Unblocks the maps on `/contact` and `/explore` from rendering placeholder text.
 
 ### Enable the Maps JavaScript API
 
-1. Left sidebar → **APIs & Services** → **Library**
-2. Search for `Maps JavaScript API`
+1. Hamburger menu ☰ → **APIs & Services** → **Library** (or search "api library" in the Cloud Console search bar)
+2. Search the API Library for `Maps JavaScript API`
 3. Click the result, then **Enable**. Wait ~10 seconds.
 
 ### Generate the key
 
-1. **APIs & Services** → **Credentials**
-2. Top: **+ Create Credentials** → **API key**
-3. A modal shows the new key. **Don't close the modal yet** — we restrict it before the world sees it
-4. Click **Edit API key** in the modal (or close and reopen via the credentials list)
+1. Hamburger menu ☰ → **APIs & Services** → **Credentials** (or search "credentials")
+2. Top of page: **+ Create Credentials** → **API key**
+3. A modal shows the new key. **Don't close the modal until we restrict it** — an unrestricted key in the wild can rack up charges if scraped.
+4. In the modal, click **Edit API key** (or close it and click the new key's name in the credentials list to open it)
 
 ### Restrict the key (critical — do not skip)
 
@@ -199,6 +213,8 @@ On the **API key** page:
 
 3. **API restrictions** → **Restrict key** → tick `Maps JavaScript API` (and only that one)
 4. **Save** at the bottom
+
+> **Note on referrer behaviour:** modern browsers redact the `Referer` header on cross-origin requests for privacy, often stripping it down to just the origin. Google's referrer-restriction check accounts for this — the patterns above (using `/*`) cover both full URLs and origin-only headers. If the maps still report `RefererNotAllowedMapError` after a deploy, the most likely cause is that the env var was set but Netlify didn't redeploy yet (next sub-step).
 
 ### Hand off to Rob
 
