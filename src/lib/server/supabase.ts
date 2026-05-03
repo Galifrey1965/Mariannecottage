@@ -369,6 +369,34 @@ export async function archiveRatePlan(id: string): Promise<RatePlan> {
 	return updateRatePlan(id, { is_active: false });
 }
 
+// PR 4 / B-06 (admin slice): cancellation policy helpers.
+
+export async function getCancellationPolicyById(id: string): Promise<CancellationPolicy | null> {
+	const { data, error } = await adminClient
+		.from('cancellation_policies')
+		.select('*')
+		.eq('id', id)
+		.maybeSingle();
+	if (error) {
+		console.error('getCancellationPolicyById failed:', error);
+		return null;
+	}
+	return (data as CancellationPolicy | null) ?? null;
+}
+
+export async function getDefaultCancellationPolicy(): Promise<CancellationPolicy | null> {
+	const { data, error } = await adminClient
+		.from('cancellation_policies')
+		.select('*')
+		.eq('is_default', true)
+		.maybeSingle();
+	if (error) {
+		console.error('getDefaultCancellationPolicy failed:', error);
+		return null;
+	}
+	return (data as CancellationPolicy | null) ?? null;
+}
+
 // Tax settings (B-04)
 export async function getTaxSettings(): Promise<TaxSettings> {
 	const { data, error } = await anonClient

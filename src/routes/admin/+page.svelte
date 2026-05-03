@@ -1,5 +1,8 @@
 <script lang="ts">
-	import type { Booking } from '$lib/server/supabase';
+	import type { Booking, CancellationPolicySchedule } from '$lib/server/supabase';
+	import type { PageData } from './$types';
+
+	let { data }: { data: PageData } = $props();
 
 	let bookings = $state<Booking[]>([]);
 	let totalBookings = $state(0);
@@ -12,6 +15,38 @@
 	let editingNotes = $state(false);
 	let notesValue = $state('');
 	let updatingStatus = $state(false);
+
+	// PR 4 admin slice — cancel & refund flow
+	interface CancelPreview {
+		booking: {
+			id: string;
+			booking_reference: string;
+			guest_name: string;
+			check_in_date: string;
+			check_out_date: string;
+			total_cost: number;
+			status: string;
+			payment_intent_id?: string;
+		};
+		quote: {
+			days_before_check_in: number;
+			refund_pct: number;
+			refund_amount: number;
+			absorbed_fee_estimate: number;
+			policy_name: string;
+			matched_window: CancellationPolicySchedule | null;
+		};
+		policy: { id: string; name: string; description?: string; schedule: CancellationPolicySchedule[] };
+		can_refund: boolean;
+	}
+	let cancelPreview = $state<CancelPreview | null>(null);
+	let cancelLoading = $state(false);
+	let cancelExecuting = $state(false);
+	let cancelReason = $state('');
+	let cancelChoice = $state<'auto' | 'none'>('auto');
+	let cancelError = $state('');
+	let absorbedFeeTotal = $state(data.absorbedFeeTotal ?? 0);
+	let absorbedFeeRefundCount = $state(data.absorbedFeeRefundCount ?? 0);
 
 	async function fetchBookings() {
 		loading = true;
@@ -80,6 +115,86 @@
 		editingNotes = false;
 	}
 
+	const CANCELLABLE = new Set(['pending', 'pending_payment', 'confirmed']);
+	const canCancel = (b: Booking) => CANCELLABLE.has(b.status);
+
+	async function openCancelDialog(b: Booking) {
+		cancelLoading = true;
+		cancelError = '';
+		cancelReason = '';
+		cancelChoice = 'auto';
+		try {
+			const res = await fetch(`/api/admin/bookings/cancel?id=${encodeURIComponent(b.id)}`);
+			if (!res.ok) {
+				cancelError = `Could not load preview (${res.status})`;
+				cancelPreview = null;
+				return;
+			}
+			cancelPreview = await res.json();
+			// Default the radio to whichever option is actually available.
+			if (cancelPreview && !cancelPreview.can_refund) cancelChoice = 'none';
+		} finally {
+			cancelLoading = false;
+		}
+	}
+
+	function closeCancelDialog() {
+		cancelPreview = null;
+		cancelError = '';
+		cancelExecuting = false;
+	}
+
+	async function executeCancel() {
+		if (!cancelPreview) return;
+		cancelExecuting = true;
+		cancelError = '';
+		try {
+			const res = await fetch('/api/admin/bookings/cancel', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					id: cancelPreview.booking.id,
+					refund: cancelChoice,
+					reason: cancelReason.trim() || undefined
+				})
+			});
+			const payload = await res.json();
+			if (!res.ok) {
+				cancelError = payload.error || `Failed (${res.status})`;
+				return;
+			}
+			// Refresh list + the dashboard absorbed-fee total.
+			await Promise.all([fetchBookings(), refreshAbsorbedFeeTotal()]);
+			if (selectedBooking?.id === cancelPreview.booking.id && payload.booking) {
+				selectedBooking = payload.booking;
+			}
+			closeCancelDialog();
+		} catch (err) {
+			cancelError = err instanceof Error ? err.message : 'unknown error';
+		} finally {
+			cancelExecuting = false;
+		}
+	}
+
+	async function refreshAbsorbedFeeTotal() {
+		// invalidateAll would re-run the server load; cheaper to recompute via the
+		// admin agent_events feed, but for simplicity we re-fetch via SvelteKit.
+		try {
+			const res = await fetch('/admin/__data.json');
+			if (res.ok) {
+				// The page-data endpoint returns wrapped shape; just trigger a soft
+				// reload of the section that needs it. Pragmatic fallback: bump
+				// from the in-memory total by the just-issued absorbed fee.
+				if (cancelPreview && cancelChoice === 'auto') {
+					absorbedFeeTotal = Math.round((absorbedFeeTotal + cancelPreview.quote.absorbed_fee_estimate) * 100) / 100;
+					absorbedFeeRefundCount += 1;
+				}
+			}
+		} catch {
+			// Non-fatal — list refresh below still happens.
+		}
+	}
+
 	$effect(() => { fetchBookings(); });
 	$effect(() => { statusFilter; fetchBookings(); });
 
@@ -140,6 +255,11 @@
 			<div class="stat-card">
 				<p class="stat-label">Upcoming</p>
 				<p class="stat-value" style="color: var(--color-info-text);">{upcomingBookings.length}</p>
+			</div>
+			<div class="stat-card">
+				<p class="stat-label">Refund fees absorbed</p>
+				<p class="stat-value" style="color: var(--color-error-text);">{formatCurrency(absorbedFeeTotal)}</p>
+				<p class="sub-text">{absorbedFeeRefundCount} refund{absorbedFeeRefundCount === 1 ? '' : 's'} · ~1.5% + €0.25 est.</p>
 			</div>
 		</div>
 
@@ -217,6 +337,111 @@
 		</div>
 	</div>
 
+	{#if cancelPreview}
+		<div class="overlay cancel-overlay">
+			<button onclick={closeCancelDialog} class="overlay-backdrop" aria-label="Close"></button>
+			<div class="cancel-dialog">
+				<div class="detail-content">
+					<div class="detail-header">
+						<div>
+							<p class="mono sub-text" style="color: var(--color-sage);">{cancelPreview.booking.booking_reference}</p>
+							<h3 class="detail-title">Cancel & Refund</h3>
+						</div>
+						<button onclick={closeCancelDialog} class="close-btn" disabled={cancelExecuting}>✕</button>
+					</div>
+
+					<div class="detail-section">
+						<p>{cancelPreview.booking.guest_name} · {formatDate(cancelPreview.booking.check_in_date)} → {formatDate(cancelPreview.booking.check_out_date)}</p>
+						<p class="sub-text">{cancelPreview.quote.days_before_check_in} days before check-in · policy: {cancelPreview.quote.policy_name}</p>
+					</div>
+
+					<hr />
+
+					<div class="detail-section">
+						<h4 class="section-title">Refund preview</h4>
+						<div class="pricing-rows">
+							<div class="pricing-row">
+								<span>Booking total</span>
+								<span>{formatCurrency(cancelPreview.booking.total_cost)}</span>
+							</div>
+							<div class="pricing-row">
+								<span>Refund ({cancelPreview.quote.refund_pct}%)</span>
+								<span style="color: var(--color-success-text); font-weight: 600;">{formatCurrency(cancelPreview.quote.refund_amount)}</span>
+							</div>
+							<div class="pricing-row">
+								<span>Stripe fee absorbed (est.)</span>
+								<span style="color: var(--color-error-text);">~{formatCurrency(cancelPreview.quote.absorbed_fee_estimate)}</span>
+							</div>
+						</div>
+
+						{#if !cancelPreview.can_refund}
+							<p class="note-box" style="margin-top: 0.75rem;">
+								{#if !cancelPreview.booking.payment_intent_id}
+									No payment_intent_id on this booking — likely a manual / legacy entry. Only "cancel without refund" is available.
+								{:else if cancelPreview.booking.status !== 'confirmed'}
+									Booking is in <strong>{cancelPreview.booking.status}</strong>; refund flow only applies to confirmed bookings. Stripe-side payment_failed / pending rows are released by the TTL sweep.
+								{:else if cancelPreview.quote.refund_amount === 0}
+									Refund window has closed — refund is €0 per the {cancelPreview.quote.policy_name} policy.
+								{/if}
+							</p>
+						{/if}
+					</div>
+
+					<div class="detail-section">
+						<h4 class="section-title">Action</h4>
+						<label class="cancel-radio">
+							<input
+								type="radio"
+								name="cancel-choice"
+								value="auto"
+								bind:group={cancelChoice}
+								disabled={!cancelPreview.can_refund || cancelExecuting}
+							/>
+							<span>Issue Stripe refund of <strong>{formatCurrency(cancelPreview.quote.refund_amount)}</strong> + cancel</span>
+						</label>
+						<label class="cancel-radio">
+							<input
+								type="radio"
+								name="cancel-choice"
+								value="none"
+								bind:group={cancelChoice}
+								disabled={cancelExecuting}
+							/>
+							<span>Cancel without refund</span>
+						</label>
+					</div>
+
+					<div class="detail-section">
+						<label for="cancel-reason" class="detail-label">Reason (admin notes)</label>
+						<textarea
+							id="cancel-reason"
+							bind:value={cancelReason}
+							class="form-input"
+							rows="2"
+							placeholder="Optional — why this booking is being cancelled"
+							disabled={cancelExecuting}
+						></textarea>
+					</div>
+
+					{#if cancelError}
+						<p class="cancel-error">{cancelError}</p>
+					{/if}
+
+					<div class="cancel-actions">
+						<button onclick={closeCancelDialog} class="btn-outline" disabled={cancelExecuting}>Cancel</button>
+						<button
+							onclick={executeCancel}
+							class="btn-primary"
+							disabled={cancelExecuting || (cancelChoice === 'auto' && !cancelPreview.can_refund)}
+						>
+							{cancelExecuting ? 'Processing…' : (cancelChoice === 'auto' ? `Refund ${formatCurrency(cancelPreview.quote.refund_amount)} & cancel` : 'Cancel without refund')}
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	{/if}
+
 	{#if selectedBooking}
 		<div class="overlay">
 			<button onclick={closeDetail} class="overlay-backdrop" aria-label="Close"></button>
@@ -233,15 +458,30 @@
 					<div class="detail-section">
 						<p class="detail-label">Status</p>
 						<div class="status-buttons">
-							{#each ['pending', 'confirmed', 'cancelled'] as s}
-								<button
-									onclick={() => updateBookingStatus(selectedBooking!.id, s)}
-									disabled={updatingStatus || selectedBooking!.status === s}
-									class="status-toggle {s}"
-									class:active={selectedBooking.status === s}
-								>{s}</button>
-							{/each}
+							<button
+								onclick={() => updateBookingStatus(selectedBooking!.id, 'pending')}
+								disabled={updatingStatus || selectedBooking!.status === 'pending'}
+								class="status-toggle pending"
+								class:active={selectedBooking.status === 'pending' || selectedBooking.status === 'pending_payment'}
+							>pending</button>
+							<button
+								onclick={() => updateBookingStatus(selectedBooking!.id, 'confirmed')}
+								disabled={updatingStatus || selectedBooking!.status === 'confirmed'}
+								class="status-toggle confirmed"
+								class:active={selectedBooking.status === 'confirmed'}
+							>confirmed</button>
+							<button
+								onclick={() => openCancelDialog(selectedBooking!)}
+								disabled={updatingStatus || cancelLoading || !canCancel(selectedBooking!)}
+								class="status-toggle cancelled"
+								class:active={selectedBooking.status === 'cancelled' || selectedBooking.status === 'refunded' || selectedBooking.status === 'refunded_overbooked'}
+							>cancel & refund</button>
 						</div>
+						{#if selectedBooking.status === 'refunded' || selectedBooking.status === 'refunded_overbooked'}
+							<p class="sub-text" style="margin-top: 0.5rem;">Refunded · finalised by Stripe webhook</p>
+						{:else if selectedBooking.status === 'expired'}
+							<p class="sub-text" style="margin-top: 0.5rem;">Expired by TTL sweep</p>
+						{/if}
 					</div>
 
 					<hr />
@@ -475,4 +715,13 @@
 	.note-box { font-size: 0.875rem; color: var(--color-text-muted); background: var(--color-cream); padding: 0.75rem; border-radius: 8px; margin: 0; }
 	.notes-header { display: flex; justify-content: space-between; align-items: center; }
 	.notes-actions { display: flex; gap: 0.5rem; margin-top: 0.5rem; }
+
+	/* Cancel & Refund dialog (PR 4 admin slice) */
+	.cancel-overlay { z-index: 60; align-items: center; justify-content: center; }
+	.cancel-dialog { position: relative; width: min(32rem, 100%); max-height: 90vh; overflow-y: auto; background: var(--color-bg); border-radius: 16px; box-shadow: 0 12px 40px rgba(0,0,0,0.2); margin: 1rem; }
+	.cancel-radio { display: flex; gap: 0.5rem; align-items: flex-start; padding: 0.5rem 0; cursor: pointer; font-size: 0.875rem; }
+	.cancel-radio input[type="radio"] { margin-top: 0.2rem; cursor: pointer; }
+	.cancel-radio input[type="radio"]:disabled { cursor: not-allowed; }
+	.cancel-error { color: var(--color-error-text); background: var(--color-error-bg); padding: 0.625rem 0.75rem; border-radius: 8px; font-size: 0.875rem; margin: 0; }
+	.cancel-actions { display: flex; justify-content: flex-end; gap: 0.5rem; }
 </style>
