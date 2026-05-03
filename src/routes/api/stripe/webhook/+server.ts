@@ -101,13 +101,18 @@ async function handlePaymentIntentSucceeded(
 	// Late-success race: row was swept to 'expired' before this event fired,
 	// or has already been confirmed by an earlier (idempotent) replay.
 	if (booking.status === 'expired') {
-		// Refund first, then mark refunded_overbooked. If the Stripe refund call
-		// fails we throw → Stripe retries the webhook → next attempt re-runs.
-		await stripe.refunds.create({
-			payment_intent: pi.id,
-			reason: 'requested_by_customer',
-			metadata: { reason: 'overbooked', booking_id: booking.id }
-		});
+		// Refund first, then mark refunded_overbooked. The event.id idempotency
+		// key prevents Stripe from issuing a second refund if the SQL call below
+		// throws and the webhook is retried — Stripe stores the response for 24h
+		// and replays it on retry instead of re-charging the operation.
+		await stripe.refunds.create(
+			{
+				payment_intent: pi.id,
+				reason: 'requested_by_customer',
+				metadata: { reason: 'overbooked', booking_id: booking.id }
+			},
+			{ idempotencyKey: event.id }
+		);
 		const result = await callHandleStripeEvent(
 			event.id,
 			event.type,
@@ -254,9 +259,11 @@ async function handleChargeRefunded(
 }
 
 async function findBookingForPaymentIntent(pi: Stripe.PaymentIntent) {
-	// Prefer lookup by payment_intent_id; fall back to metadata.booking_id
-	// (set when the PaymentIntent was created — useful before the row's
-	// payment_intent_id column has been populated).
+	// Prefer lookup by payment_intent_id; fall back to metadata.booking_id.
+	// PR 3 contract: when /api/stripe/payment-intent (or checkout-session)
+	// creates the PaymentIntent it MUST set metadata.booking_id — otherwise
+	// the brief window before the booking row's payment_intent_id column is
+	// populated has no way to associate the event with the booking.
 	const { data: byPi, error: piErr } = await adminClient
 		.from('bookings')
 		.select('id, status, check_in_date, check_out_date')

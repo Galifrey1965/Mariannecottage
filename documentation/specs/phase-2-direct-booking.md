@@ -442,4 +442,4 @@ PR 1 + PR 2 land together as one Netlify deploy alongside the 5 already-pushed c
 1. Netlify function logs show `sweep-pending` running every 5 min and finding 0 expired bookings (clean).
 2. Posting to `/api/stripe/webhook` without a valid signature returns 400.
 3. Posting without Stripe keys configured returns 503 (not 500).
-4. Existing `/api/book` flow still creates rows successfully, now with `status='pending_payment'` and `pending_until` set.
+4. Existing `/api/book` flow still creates rows successfully — `/api/book/+server.ts:72` explicitly passes `status='pending'`, which the new function preserves verbatim, so guest-facing behaviour is unchanged. The new `pending_payment` default is reserved for PR 3's payment-creation endpoint, which omits the explicit status.
