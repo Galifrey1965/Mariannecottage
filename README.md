@@ -34,7 +34,7 @@ Direction was locked 2026-05-02 — see [`documentation/discussions/booking-paym
 | `/` | Landing — hero, intro, gallery teaser, testimonials *(BC-sourced testimonials due for removal — see issue F-04)* |
 | `/rooms` | The two bedrooms — descriptions, photos, amenities |
 | `/gallery` | Cottage + grounds photography |
-| `/explore` | Things to do nearby — Leaflet map with POIs (D-Day beaches, Bayeux, Mont-Saint-Michel, etc.) |
+| `/explore` | Things to do nearby — interactive map with POIs (D-Day beaches, Bayeux, Mont-Saint-Michel, etc.) |
 | `/book` | Date picker + booking form |
 | `/book/confirm` | Post-submit confirmation page |
 | `/contact` | Enquiry form |
@@ -56,11 +56,6 @@ Direction was locked 2026-05-02 — see [`documentation/discussions/booking-paym
 | `/api/sync-booking-com` | Pull Booking.com iCal feed → `availability` table *(scheduled trigger pending — issue S-02)* |
 | `/api/admin/login` | Admin auth |
 | `/api/admin/bookings` | Admin booking management |
-| `/api/historian-chat` | Demo: cottage-history conversational agent |
-
-### Demos
-
-`src/routes/(demo)/` contains 23 self-contained UI/animation demos (adaptive, ambient, bento, brutal, calm, dday, expressive, handmade, historian, iridescent, kinetic, liquid, living, micro, morph, nature, retro, scroll-anim, spatial, story, etc.). These are exploration / portfolio work and account for ~70% of the source by line count — see issue F-03 for disposition decision.
 
 ---
 

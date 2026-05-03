@@ -154,7 +154,7 @@ Each issue has: a short ID, where it lives in the code (when applicable), what's
 - **What:** Roughly 70% of the lines in `src/` are demos (adaptive, ambient, bento, brutal, calm, dday, expressive, handmade, historian, etc.) — exploration / portfolio work, not B&B functionality. Not bad code, but worth deciding whether to (a) keep them publicly accessible, (b) gate them, or (c) prune.
 - **Severity:** 🟢 low — harmless; bloats the build but doesn't break anything
 - **Added:** 2026-05-02
-- **Status:** open
+- **Status:** ✅ fixed 2026-05-03 — `src/routes/(demo)/` and the demo-only `/api/historian-chat` deleted entirely. Decision (c) prune. Pre-cleanup before Phase 1 visual-direction work.
 
 ---
 
