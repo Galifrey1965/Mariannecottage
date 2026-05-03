@@ -23,7 +23,6 @@
 		{#if showShell}
 			<nav class="admin-nav">
 				<a href="/admin" class="nav-link">Bookings</a>
-				<a href="/admin/availability" class="nav-link">Availability</a>
 				<a href="/admin/rate-plans" class="nav-link">Rate plans</a>
 
 				{#if isDeveloper && data.allProfiles && data.allProfiles.length > 0}
