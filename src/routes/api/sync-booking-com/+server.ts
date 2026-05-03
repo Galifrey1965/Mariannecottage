@@ -1,6 +1,7 @@
 import { json } from '@sveltejs/kit';
 import { parseIcal, getBlockedDates } from '$lib/server/ical';
 import { adminClient } from '$lib/server/supabase';
+import { diffBcAvailability, todayISO } from '$lib/server/bc-sync';
 import { env } from '$env/dynamic/private';
 import type { RequestHandler } from './$types';
 
@@ -25,8 +26,26 @@ export const POST: RequestHandler = async ({ request }) => {
 		const events = parseIcal(icsText);
 		const blockedDates = getBlockedDates(events);
 
-		if (blockedDates.length > 0) {
-			const rows = blockedDates.map(date => ({
+		const today = todayISO();
+
+		// S-01: load existing BC-sourced rows from today onwards so we can
+		// free dates that have dropped out of the feed (cancelled BC reservations).
+		const { data: existingRows, error: fetchErr } = await adminClient
+			.from('availability')
+			.select('date, available')
+			.eq('synced_from', 'booking.com')
+			.gte('date', today);
+
+		if (fetchErr) throw fetchErr;
+
+		const { toBlock, toFree } = diffBcAvailability(
+			blockedDates,
+			(existingRows ?? []) as Array<{ date: string; available: boolean }>,
+			today
+		);
+
+		if (toBlock.length > 0) {
+			const rows = toBlock.map((date) => ({
 				date,
 				available: false,
 				synced_from: 'booking.com',
@@ -40,7 +59,22 @@ export const POST: RequestHandler = async ({ request }) => {
 			if (error) throw error;
 		}
 
-		return json({ synced: blockedDates.length });
+		if (toFree.length > 0) {
+			// Only touch rows that are currently synced_from='booking.com' —
+			// manually-set rows must never be cleared by sync.
+			const { error } = await adminClient
+				.from('availability')
+				.update({
+					available: true,
+					synced_at: new Date().toISOString()
+				})
+				.in('date', toFree)
+				.eq('synced_from', 'booking.com');
+
+			if (error) throw error;
+		}
+
+		return json({ synced: toBlock.length, freed: toFree.length });
 	} catch (err) {
 		const message = err instanceof Error ? err.message : 'Unknown error';
 		return json({ error: message }, { status: 500 });

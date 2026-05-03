@@ -10,13 +10,28 @@ vi.mock('$env/dynamic/private', () => ({
 }));
 
 // Mock supabase adminClient
-vi.mock('$lib/server/supabase', () => ({
-	adminClient: {
+// Must support both:
+//   from('availability').select(...).eq(...).gte(...)  → fetch existing BC rows (S-01)
+//   from('availability').upsert(...)                    → block new dates
+//   from('availability').update(...).in(...).eq(...)   → free stale BC rows (S-01)
+vi.mock('$lib/server/supabase', () => {
+	const selectQuery: any = {
+		eq: vi.fn().mockReturnThis(),
+		gte: vi.fn().mockResolvedValue({ data: [], error: null })
+	};
+	const updateQuery: any = {
+		in: vi.fn().mockReturnThis(),
+		eq: vi.fn().mockResolvedValue({ error: null })
+	};
+	const adminClient = {
 		from: vi.fn(() => ({
-			upsert: vi.fn().mockResolvedValue({ error: null })
+			select: vi.fn(() => selectQuery),
+			upsert: vi.fn().mockResolvedValue({ error: null }),
+			update: vi.fn(() => updateQuery)
 		}))
-	}
-}));
+	};
+	return { adminClient };
+});
 
 const SAMPLE_ICAL = `BEGIN:VCALENDAR
 VERSION:2.0
