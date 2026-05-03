@@ -1,13 +1,5 @@
 <script lang="ts">
-	import type { PageData } from './$types';
 	import type { Booking } from '$lib/server/supabase';
-
-	let { data }: { data: PageData } = $props();
-
-	let authed = $state(data.authed);
-	let password = $state('');
-	let loginError = $state('');
-	let loggingIn = $state(false);
 
 	let bookings = $state<Booking[]>([]);
 	let totalBookings = $state(0);
@@ -20,35 +12,6 @@
 	let editingNotes = $state(false);
 	let notesValue = $state('');
 	let updatingStatus = $state(false);
-
-	async function login() {
-		loggingIn = true;
-		loginError = '';
-		try {
-			const res = await fetch('/api/admin/login', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ password })
-			});
-			const result = await res.json();
-			if (result.success) {
-				authed = true;
-				fetchBookings();
-			} else {
-				loginError = result.error || 'Login failed';
-			}
-		} catch {
-			loginError = 'Network error';
-		} finally {
-			loggingIn = false;
-		}
-	}
-
-	async function logout() {
-		await fetch('/api/admin/login', { method: 'DELETE' });
-		authed = false;
-		password = '';
-	}
 
 	async function fetchBookings() {
 		loading = true;
@@ -117,8 +80,8 @@
 		editingNotes = false;
 	}
 
-	$effect(() => { if (authed) fetchBookings(); });
-	$effect(() => { if (authed) { statusFilter; fetchBookings(); } });
+	$effect(() => { fetchBookings(); });
+	$effect(() => { statusFilter; fetchBookings(); });
 
 	const countryFlags: Record<string, string> = {
 		GB: '🇬🇧', FR: '🇫🇷', DE: '🇩🇪', NL: '🇳🇱', BE: '🇧🇪', US: '🇺🇸', CA: '🇨🇦', AU: '🇦🇺'
@@ -142,31 +105,13 @@
 	const upcomingBookings = $derived(bookings.filter(b => new Date(b.check_in_date) > new Date() && b.status !== 'cancelled'));
 </script>
 
-{#if !authed}
-	<div class="login-wrapper">
-		<div class="login-card">
-			<h2 class="login-title">Admin Login</h2>
-			<form onsubmit={(e) => { e.preventDefault(); login(); }}>
-				<label for="password" class="form-label">Password</label>
-				<input id="password" type="password" bind:value={password} class="form-input" placeholder="Enter admin password" autofocus />
-				{#if loginError}
-					<p class="error-text">{loginError}</p>
-				{/if}
-				<button type="submit" disabled={loggingIn || !password} class="btn-primary full-width">
-					{loggingIn ? 'Signing in...' : 'Sign In'}
-				</button>
-			</form>
+<div class="dashboard">
+	<div class="dashboard-header">
+		<div>
+			<h2 class="page-title">Bookings</h2>
+			<p class="page-subtitle">{totalBookings} total bookings</p>
 		</div>
 	</div>
-{:else}
-	<div class="dashboard">
-		<div class="dashboard-header">
-			<div>
-				<h2 class="page-title">Bookings</h2>
-				<p class="page-subtitle">{totalBookings} total bookings</p>
-			</div>
-			<button onclick={logout} class="btn-outline">Sign Out</button>
-		</div>
 
 		<div class="filters">
 			<div class="search-wrapper">
@@ -406,15 +351,8 @@
 			</div>
 		</div>
 	{/if}
-{/if}
 
 <style>
-	/* Login */
-	.login-wrapper { display: flex; align-items: center; justify-content: center; min-height: 70vh; }
-	.login-card { width: 100%; max-width: 24rem; background: var(--color-bg); border-radius: 16px; padding: 2rem; box-shadow: 0 4px 24px rgba(0,0,0,0.1); }
-	.login-title { font-family: 'Lora', serif; text-align: center; margin: 0 0 1.5rem; }
-	.error-text { font-size: 0.875rem; color: var(--color-error-text); margin-bottom: 1rem; }
-
 	/* Form elements */
 	.form-label { display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.5rem; }
 	.form-input {

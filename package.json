@@ -39,6 +39,7 @@
 		"vitest": "^4.1.0"
 	},
 	"dependencies": {
+		"@googlemaps/js-api-loader": "^1.16.8",
 		"@smui/button": "^8.0.0-alpha.0",
 		"@smui/card": "^8.0.0-alpha.0",
 		"@smui/chips": "^8.0.0-alpha.0",
@@ -55,7 +56,7 @@
 		"@smui/tab-bar": "^8.0.0-alpha.0",
 		"@smui/textfield": "^8.0.0-alpha.0",
 		"@smui/top-app-bar": "^8.0.0-alpha.0",
-		"@googlemaps/js-api-loader": "^1.16.8",
+		"@supabase/ssr": "^0.10.2",
 		"@supabase/supabase-js": "^2.99.3",
 		"ical.js": "^2.2.1"
 	}

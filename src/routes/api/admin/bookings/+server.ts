@@ -1,9 +1,9 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { adminClient } from '$lib/server/supabase';
+import { adminClient, logAdminEvent } from '$lib/server/supabase';
 
-export const GET: RequestHandler = async ({ cookies, url }) => {
-	if (cookies.get('admin_session') !== 'authenticated') {
+export const GET: RequestHandler = async ({ locals, url }) => {
+	if (!locals.user) {
 		return json({ error: 'Unauthorized' }, { status: 401 });
 	}
 
@@ -36,7 +36,6 @@ export const GET: RequestHandler = async ({ cookies, url }) => {
 		);
 	}
 
-	// Get total count (unfiltered)
 	const { count } = await adminClient
 		.from('bookings')
 		.select('*', { count: 'exact', head: true });
@@ -44,8 +43,8 @@ export const GET: RequestHandler = async ({ cookies, url }) => {
 	return json({ bookings: filtered, total: count || 0 });
 };
 
-export const PATCH: RequestHandler = async ({ cookies, request }) => {
-	if (cookies.get('admin_session') !== 'authenticated') {
+export const PATCH: RequestHandler = async ({ locals, request }) => {
+	if (!locals.user) {
 		return json({ error: 'Unauthorized' }, { status: 401 });
 	}
 
@@ -66,6 +65,17 @@ export const PATCH: RequestHandler = async ({ cookies, request }) => {
 		console.error('Failed to update booking:', error);
 		return json({ error: 'Update failed' }, { status: 500 });
 	}
+
+	await logAdminEvent({
+		user_id: locals.user.id,
+		action: 'booking.update',
+		target_type: 'booking',
+		target_id: id,
+		metadata: {
+			fields: Object.keys(updates).filter((k) => k !== 'updated_at'),
+			status: status ?? null
+		}
+	});
 
 	return json({ success: true, booking: data });
 };

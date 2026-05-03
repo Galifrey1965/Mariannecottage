@@ -8,29 +8,7 @@
 
 import { test, expect } from '@playwright/test';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
-import { readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
-
-function loadDotenvIfMissing(keys: string[]): void {
-	if (keys.every((k) => process.env[k])) return;
-	try {
-		const envPath = resolve(process.cwd(), '.env');
-		const raw = readFileSync(envPath, 'utf8');
-		for (const line of raw.split(/\r?\n/)) {
-			const m = line.match(/^\s*([A-Z_][A-Z0-9_]*)\s*=\s*(.*)\s*$/);
-			if (!m) continue;
-			const [, key, rawVal] = m;
-			if (process.env[key]) continue;
-			let val = rawVal;
-			if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
-				val = val.slice(1, -1);
-			}
-			process.env[key] = val;
-		}
-	} catch {
-		// no .env — env vars must be set externally or the test will skip
-	}
-}
+import { loadDotenvIfMissing } from './helpers/env';
 
 loadDotenvIfMissing(['PUBLIC_SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY']);
 

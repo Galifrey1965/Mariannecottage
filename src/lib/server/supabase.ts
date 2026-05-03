@@ -69,6 +69,23 @@ export interface TaxSettings {
 	updated_by?: string;
 }
 
+export type AdminRole = 'owner' | 'developer';
+
+export interface UserProfile {
+	user_id: string;
+	display_name: string;
+	role: AdminRole;
+	created_at: string;
+}
+
+export interface AgentEventInput {
+	user_id: string | null;
+	action: string;
+	target_type?: string | null;
+	target_id?: string | null;
+	metadata?: Record<string, unknown> | null;
+}
+
 // Booking operations
 
 // B-02 Phase 1: error thrown when book_dates_atomic detects a conflict.
@@ -202,6 +219,35 @@ export async function getTaxSettings(): Promise<TaxSettings> {
 
 	if (error) throw error;
 	return data;
+}
+
+// B-07 / PR 3: Admin user profile + audit-log helpers.
+
+export async function getProfileByUserId(userId: string): Promise<UserProfile | null> {
+	const { data, error } = await adminClient
+		.from('user_profiles')
+		.select('user_id, display_name, role, created_at')
+		.eq('user_id', userId)
+		.maybeSingle();
+
+	if (error) {
+		console.error('getProfileByUserId failed:', error);
+		return null;
+	}
+	return (data as UserProfile | null) ?? null;
+}
+
+export async function logAdminEvent(input: AgentEventInput): Promise<void> {
+	const { error } = await adminClient.from('agent_events').insert({
+		user_id: input.user_id,
+		action: input.action,
+		target_type: input.target_type ?? null,
+		target_id: input.target_id ?? null,
+		metadata: input.metadata ?? null
+	});
+	if (error) {
+		console.error('logAdminEvent failed:', error);
+	}
 }
 
 // Utility: Generate booking reference

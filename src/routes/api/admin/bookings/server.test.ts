@@ -1,7 +1,6 @@
 // @vitest-environment node
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-// Build a chainable mock for adminClient.from('bookings')
 const mockSelect = vi.fn();
 const mockEq = vi.fn();
 const mockOrder = vi.fn();
@@ -19,18 +18,17 @@ const chainable = () => ({
 vi.mock('$lib/server/supabase', () => ({
 	adminClient: {
 		from: vi.fn(() => chainable())
-	}
+	},
+	logAdminEvent: vi.fn(async () => undefined)
 }));
 
 import { GET, PATCH } from './+server';
-import { adminClient } from '$lib/server/supabase';
+import { adminClient, logAdminEvent } from '$lib/server/supabase';
 
-function makeCookies(authenticated = true) {
-	return {
-		get: vi.fn((key: string) => authenticated && key === 'admin_session' ? 'authenticated' : undefined),
-		set: vi.fn(),
-		delete: vi.fn()
-	};
+function makeLocals(authed = true) {
+	return authed
+		? { user: { id: 'user-123', email: 'admin@test.invalid' }, profile: null, supabase: {}, safeGetSession: vi.fn() }
+		: { user: null, profile: null, supabase: {}, safeGetSession: vi.fn() };
 }
 
 beforeEach(() => {
@@ -38,9 +36,9 @@ beforeEach(() => {
 });
 
 describe('GET /api/admin/bookings', () => {
-	it('401 without admin_session', async () => {
+	it('401 without authenticated user', async () => {
 		const res = await GET({
-			cookies: makeCookies(false),
+			locals: makeLocals(false),
 			url: new URL('http://localhost/api/admin/bookings')
 		} as any);
 		expect(res.status).toBe(401);
@@ -48,10 +46,8 @@ describe('GET /api/admin/bookings', () => {
 
 	it('returns bookings when authenticated', async () => {
 		const bookings = [{ id: '1', guest_name: 'Test' }];
-		// First query (list) resolves with bookings
 		const chain1 = chainable();
 		chain1.order = vi.fn(() => ({ data: bookings, error: null })) as any;
-		// Second query (count) resolves
 		const chain2 = chainable();
 		chain2.select = vi.fn(() => ({ count: 1 })) as any;
 
@@ -60,7 +56,7 @@ describe('GET /api/admin/bookings', () => {
 			.mockReturnValueOnce(chain2 as any);
 
 		const res = await GET({
-			cookies: makeCookies(true),
+			locals: makeLocals(true),
 			url: new URL('http://localhost/api/admin/bookings')
 		} as any);
 		expect(res.status).toBe(200);
@@ -70,9 +66,9 @@ describe('GET /api/admin/bookings', () => {
 });
 
 describe('PATCH /api/admin/bookings', () => {
-	it('401 without admin_session', async () => {
+	it('401 without authenticated user', async () => {
 		const res = await PATCH({
-			cookies: makeCookies(false),
+			locals: makeLocals(false),
 			request: new Request('http://localhost/api/admin/bookings', {
 				method: 'PATCH',
 				headers: { 'Content-Type': 'application/json' },
@@ -82,14 +78,14 @@ describe('PATCH /api/admin/bookings', () => {
 		expect(res.status).toBe(401);
 	});
 
-	it('updates booking status', async () => {
+	it('updates booking status and writes audit log entry', async () => {
 		const updated = { id: '1', status: 'confirmed' };
 		const chain = chainable();
 		chain.single = vi.fn(() => ({ data: updated, error: null })) as any;
 		vi.mocked(adminClient.from).mockReturnValueOnce(chain as any);
 
 		const res = await PATCH({
-			cookies: makeCookies(true),
+			locals: makeLocals(true),
 			request: new Request('http://localhost/api/admin/bookings', {
 				method: 'PATCH',
 				headers: { 'Content-Type': 'application/json' },
@@ -99,5 +95,14 @@ describe('PATCH /api/admin/bookings', () => {
 		expect(res.status).toBe(200);
 		const data = await res.json();
 		expect(data.success).toBe(true);
+
+		expect(logAdminEvent).toHaveBeenCalledWith(
+			expect.objectContaining({
+				user_id: 'user-123',
+				action: 'booking.update',
+				target_type: 'booking',
+				target_id: '1'
+			})
+		);
 	});
 });
