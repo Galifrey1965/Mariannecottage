@@ -72,14 +72,14 @@ Each will get its own numbered file as we work through it.
 
 - [ ] **01 — Brand & audience interrogation.** Who actually books this cottage? What aesthetic do they expect? What aesthetic would *delight* vs alienate them? Read of the brand pillars from `knowledge.md` against the 7 visual options
 - [x] **01a — Page architecture (single-page vs multi-route).** Hybrid locked: rich long-scroll home + lean inner routes. See [`01a-page-architecture.md`](01a-page-architecture.md)
-- [ ] **02 — Survey what's actually in the codebase today.** The 23 demos + 30-theme picker — quick visual inventory, what works, what doesn't, what to learn from
+- [x] **02 — Survey what's actually in the codebase today.** Closed as moot 2026-05-03 — F-03 prune (`f0a2ff3`) deleted the 23-demo surface this topic was meant to survey. See [`02-codebase-visual-inventory.md`](02-codebase-visual-inventory.md) for the catalogue of what survives.
 - [ ] **03 — The 4 POC concepts compared.** Strengths, weaknesses, build cost, risk profile, brand fit per concept
-- [ ] **04 — SMUI alpha risk (F-01) handled.** Pin / drop / replace — concrete recommendation
+- [x] **04 — SMUI alpha risk (F-01) handled.** Recommendation locked 2026-05-03 — drop SMUI entirely (only 4 form-element instances use it; 14 of 16 packages dead weight). See [`04-smui-alpha-risk.md`](04-smui-alpha-risk.md). Implementation a small PR after Topic 05.
 - [ ] **05 — Underlying language locked.** M3 + SMUI / M3 + custom / bespoke / Tailwind / etc.
 - [ ] **06 — Typography + spacing system.** Type scale, font choices (web-safe vs Google Fonts vs self-hosted), spacing rhythm, component tokens
 - [ ] **07 — Photography & imagery strategy.** Ties to issue #30; what's needed before any visual direction can ship
 - [ ] **08 — Tone of voice + copy.** Does the chosen direction imply a copy register? Multilingual implications (EN voice ≠ FR voice ≠ DE voice — by design or accident?)
-- [ ] **09 — Demo routes (F-03).** Keep, gate, or prune the 23 demo route group?
+- [x] **09 — Demo routes (F-03).** Closed 2026-05-03 — decision (c) prune; F-03 marked fixed in `outstanding-issues.md`. Demo routes deleted entirely in `f0a2ff3`.
 - [ ] **questions-for-mark-and-kim.md** — emerges as Mark/Kim input is required (their taste is the final filter)
 - [ ] **`99-decision.md`** — the consolidated landing point
 
