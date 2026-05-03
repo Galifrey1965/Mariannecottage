@@ -7,7 +7,23 @@ A walk-through of every Google product the cottage's website needs and how Mark 
 **Time:** ~20 minutes for the remaining work (Cloud project + Maps API key); Hotel Center and Pub/Sub later.
 **Cost:** Free under expected traffic. Maps charges past a free tier; estimated cottage traffic is well within it. Details below.
 
-> **Status — 2026-05-03:** Step 1 (Business Profile delegation) is **✅ done** — Mark has added Rob, edit access verified. The remaining work is Steps 2 and 3 below. Step 1 is kept for reference but skip it.
+> **Status — 2026-05-03:** Step 1 (Business Profile delegation) is **✅ done** — Rob has full Manager UI confirmed via the "You manage this Business Profile" badge on the listing. The remaining work is Steps 2 and 3 below. Step 1 is kept for reference but skip it.
+
+### Listing inventory captured 2026-05-03
+
+What the public listing currently shows + open questions for Mark:
+
+| Field | Current value | Action |
+|---|---|---|
+| Name | Marianne Cottage Bed and Breakfast | OK |
+| Category | Hotel | Consider adding sub-category "Bed & Breakfast" — more accurate, helps ranking |
+| Rating / reviews | 5.0 ★ / 2 Google reviews | Grows organically; once ≥ 3 reviews exist we surface on the home page (replacement for the BC-sourced testimonials we removed) |
+| Website | `www.booking.com` ⚠️ | **Change to `https://mariannecottage.fr` once domain is registered** — currently sending Google traffic straight to the OTA |
+| Phone | `07842 874692` (looks UK) | **Mismatch with website's `+33 (0)7 80 73 17 04` (French).** Decide which is canonical for the cottage and align both surfaces. Likely answer: French number = primary for guests; UK number stays available for Mark/Kim's personal use only |
+| Profile strength | Red dial — "Complete info" prompt visible | Mark to fill out missing fields (description, services, amenities, hours, more photos) — quick win for ranking once Phase 3 (Discovery) lands |
+| Photos | A few shots present (exterior + bedroom) | Issue #30 pending — cottage photo set ready when Mark uploads |
+
+These don't block Steps 2 + 3; they're cleanup items for the Phase 1 domain-launch + Phase 3 marketing prep.
 
 **Last verified against Google's current UI:** 2026-05-03 — UI paths in this doc match Google's published support docs as of that date. Google reorganises these surfaces a few times a year; if a step here points to a menu item that no longer exists, **the search bar at the top of Google Cloud Console** (and the in-page search in Business Profile settings) finds any feature by name. That's the reliable fallback when the documented click-path drifts.
 
@@ -289,7 +305,7 @@ Before sitting down for the ~20 minutes:
 
 After Mark finishes Steps 2 + 3:
 
-- [x] Accepted the Business Profile invite; cottage appears in `business.google.com` *(done 2026-05-03)*
+- [x] Accepted the Business Profile invite; "You manage this Business Profile" badge visible on the listing *(verified 2026-05-03)*
 - [ ] Logged in to `console.cloud.google.com`; `marianne-cottage` project visible; can navigate to APIs & Services
 - [ ] Pulled latest `develop`; verified maps load on `/contact` and `/explore` against the production URL after Mark's Netlify redeploy
 - [ ] Updated [`documentation/status.md`](../status.md) to reflect Maps API key live, removing the "placeholder until key is provisioned" note
