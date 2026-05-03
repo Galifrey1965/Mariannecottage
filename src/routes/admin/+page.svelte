@@ -48,6 +48,11 @@
 	let absorbedFeeTotal = $state(data.absorbedFeeTotal ?? 0);
 	let absorbedFeeRefundCount = $state(data.absorbedFeeRefundCount ?? 0);
 
+	// PR 4: guest magic-link helper for the admin to copy/share until email infra ships.
+	let cancelLinkUrl = $state<string | null>(null);
+	let cancelLinkLoading = $state(false);
+	let cancelLinkCopied = $state(false);
+
 	async function fetchBookings() {
 		loading = true;
 		try {
@@ -199,6 +204,38 @@
 		} finally {
 			cancelExecuting = false;
 		}
+	}
+
+	async function fetchGuestCancelLink(b: Booking) {
+		cancelLinkLoading = true;
+		cancelLinkCopied = false;
+		try {
+			const res = await fetch(`/api/admin/bookings/cancel-link?id=${encodeURIComponent(b.id)}`);
+			if (!res.ok) {
+				cancelLinkUrl = null;
+				return;
+			}
+			const payload = await res.json();
+			cancelLinkUrl = payload.url ?? null;
+		} finally {
+			cancelLinkLoading = false;
+		}
+	}
+
+	async function copyCancelLink() {
+		if (!cancelLinkUrl) return;
+		try {
+			await navigator.clipboard.writeText(cancelLinkUrl);
+			cancelLinkCopied = true;
+			setTimeout(() => (cancelLinkCopied = false), 2000);
+		} catch {
+			// Clipboard API failed — leave the URL visible so the admin can select-and-copy manually.
+		}
+	}
+
+	function closeCancelLinkDialog() {
+		cancelLinkUrl = null;
+		cancelLinkCopied = false;
 	}
 
 	async function refreshAbsorbedFeeTotal() {
@@ -362,6 +399,30 @@
 		</div>
 	</div>
 
+	{#if cancelLinkUrl}
+		<div class="overlay cancel-overlay">
+			<button onclick={closeCancelLinkDialog} class="overlay-backdrop" aria-label="Close"></button>
+			<div class="cancel-dialog">
+				<div class="detail-content">
+					<div class="detail-header">
+						<div>
+							<h3 class="detail-title">Guest cancel link</h3>
+							<p class="sub-text">Send to the guest by email until transactional email is wired up.</p>
+						</div>
+						<button onclick={closeCancelLinkDialog} class="close-btn">✕</button>
+					</div>
+					<div class="detail-section">
+						<input type="text" readonly value={cancelLinkUrl} class="form-input" onclick={(e) => (e.currentTarget as HTMLInputElement).select()} />
+					</div>
+					<div class="cancel-actions">
+						<button onclick={closeCancelLinkDialog} class="btn-outline">Done</button>
+						<button onclick={copyCancelLink} class="btn-primary">{cancelLinkCopied ? 'Copied!' : 'Copy to clipboard'}</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	{/if}
+
 	{#if cancelPreview}
 		<div class="overlay cancel-overlay">
 			<button onclick={closeCancelDialog} class="overlay-backdrop" aria-label="Close"></button>
@@ -501,6 +562,12 @@
 									disabled={updatingStatus || cancelLoading || !canCancel(selectedBooking!)}
 									class="status-toggle cancelled"
 								>cancel & refund</button>
+								<button
+									onclick={() => fetchGuestCancelLink(selectedBooking!)}
+									disabled={cancelLinkLoading || !canCancel(selectedBooking!)}
+									class="status-toggle"
+									title="Mint a magic-link the guest can use to self-cancel"
+								>{cancelLinkLoading ? '…' : 'guest cancel link'}</button>
 							</div>
 							{#if selectedBooking.status === 'pending_payment'}
 								<p class="sub-text" style="margin-top: 0.5rem;">In checkout — confirmation arrives via Stripe webhook; TTL sweep releases stale rows.</p>

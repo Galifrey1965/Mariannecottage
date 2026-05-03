@@ -61,6 +61,7 @@ export interface Booking {
 	last_payment_error?: string;
 	cancellation_policy_id?: string;
 	admin_notes?: string;
+	cancellation_token_used_at?: string;
 }
 
 // B-06 Phase 2 (2026-05-03): cancellation policy catalogue.
