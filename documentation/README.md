@@ -77,6 +77,7 @@ Pick the path that matches what you're trying to do:
 
 | Path | Contents |
 |---|---|
+| [`status.md`](status.md) | **Live dashboard** — current branch, what's in flight, what's next. Updated as work shifts. |
 | [`build-plan.md`](build-plan.md) | **The roadmap** — 5 phases, ~22 days, dependencies, deliverables. Read first if starting work. |
 | [`infrastructure.md`](infrastructure.md) | Where everything physically runs — hosting, DB, domain, email, payments, secrets, backups, accounts |
 | [`outstanding-issues.md`](outstanding-issues.md) | Running list of known issues, gaps, tech debt — appended as we find them |
