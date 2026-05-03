@@ -208,7 +208,8 @@
 		"error_booking_failed": "Buchung fehlgeschlagen. Bitte versuchen Sie es erneut.",
 		"error_network": "Netzwerkfehler. Bitte versuchen Sie es erneut.",
 		"error_dates_taken": "Diese Daten wurden soeben gebucht. Bitte wählen Sie andere Daten.",
-		"error_no_rate_plan": "Für diese Daten gibt es keinen Tarif. Bitte wählen Sie andere Daten oder kontaktieren Sie uns."
+		"error_no_rate_plan": "Für diese Daten gibt es keinen Tarif. Bitte wählen Sie andere Daten oder kontaktieren Sie uns.",
+		"savings_hint": "5% sparen gegenüber Booking.com"
 	},
 	"booking_confirm": {
 		"title": "Buchung Bestätigt",

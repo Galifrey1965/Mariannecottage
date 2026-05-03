@@ -208,7 +208,8 @@
 		"error_booking_failed": "Échec de la réservation. Veuillez réessayer.",
 		"error_network": "Erreur réseau. Veuillez réessayer.",
 		"error_dates_taken": "Ces dates viennent d'être réservées. Veuillez choisir d'autres dates.",
-		"error_no_rate_plan": "Aucun tarif ne couvre ces dates. Veuillez choisir d'autres dates ou nous contacter."
+		"error_no_rate_plan": "Aucun tarif ne couvre ces dates. Veuillez choisir d'autres dates ou nous contacter.",
+		"savings_hint": "Économisez 5% vs Booking.com"
 	},
 	"booking_confirm": {
 		"title": "Réservation Confirmée",

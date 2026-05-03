@@ -4,6 +4,7 @@
 	import HighlightStrip from '$lib/components/HighlightStrip.svelte';
 	import RoomCard from '$lib/components/RoomCard.svelte';
 	import AttractionCard from '$lib/components/AttractionCard.svelte';
+	import BookDirectCta from '$lib/components/BookDirectCta.svelte';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -99,7 +100,12 @@
 <section class="section-narrow cta-section">
 	<h2 class="section-heading center">{t(messages, 'home.booking.heading')}</h2>
 	<p class="cta-description">{t(messages, 'home.about.p1')}</p>
-	<a href={localePath(lang, '/book')} class="cta-button large">{t(messages, 'home.booking.cta')}</a>
+	<BookDirectCta
+		href={localePath(lang, '/book')}
+		label={t(messages, 'home.booking.cta')}
+		savingsHint={t(messages, 'book.savings_hint')}
+		size="large"
+	/>
 </section>
 
 <style>
