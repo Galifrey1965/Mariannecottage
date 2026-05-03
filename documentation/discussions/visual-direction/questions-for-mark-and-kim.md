@@ -12,11 +12,75 @@ Questions accumulate as we walk topics 01–09 of [`00-overview.md`](00-overview
 
 ---
 
-## Batch 1 — visual-direction grounding
+## Batch 1a — minimum unblock (fire first)
+
+**Drafted:** 2026-05-03
+**Sent:** _pending_
+**Status:** 🟡 awaiting answers
+**Why this batch exists:** Batch 1 below has four meaty questions across audience, visual direction, photography, and booking flow. Most of those decisions can be tokenised in CSS variables and swapped later — they don't actually block code. The three questions in *this* batch are the ones that **do** block code: they change layout and architecture in ways that aren't cheap to revisit. Answering this batch tonight unblocks ~3 days of build work; Batch 1 below can wait until the dust settles.
+
+### Q1a — Kim, your read on G2 (30 seconds) 🟡
+
+Mark, you said on 2026-05-03 that G2 (Warm Story) "looks best I think". Kim — before we start building styling work that assumes G2's terracotta-and-moss world, can you give a quick directional read? Just one of:
+
+- **"G2 is fine by me"** → we proceed on G2 provisional and build the token system around it
+- **"I prefer G1"** (or A) → we'd want a chat before locking
+- **"I haven't really looked yet"** → please look at the three prototypes (`design-A-restyle.html`, `design-G1-quiet-luxury.html`, `design-G2-warm-story.html`) when you can — even five minutes of reaction is enough
+
+Not a final lock — that's still Q2 in the proper batch below. Just a directional check so we don't tokenise a palette you'll wince at.
+
+**Why we're asking now:** if you both broadly agree on G2 we can ship CSS variables for palette + type + spacing now and *the visual layer is reversible* — we can re-tokenise to G1 in a couple of hours. But if you actively dislike G2, we'd rather know before doing the work.
+
+**Answer:** _awaiting (Mark's lean: G2 — 2026-05-03; Kim — TBC)_
+
+---
+
+### Q2a — Booking entry point on the home page 🟡
+
+The page architecture is locked: rich long-scroll home + lean inner routes (see `01a-page-architecture.md`). The booking flow lives at `/book`. The remaining structural choice is **how guests get from the home page into the booking flow**:
+
+| Option | What it is | Vibe |
+|---|---|---|
+| **(i) "Book Direct" button → `/book` page** | Home page seduces with photography + story; the calendar/dates/payment all live on `/book`. Cleanest separation. | Editorial / boutique-hotel — Sawday's-style |
+| **(ii) Inline mini-calendar on the home page** | Small "Available dates" calendar embedded on `/`. Guests pick dates *on the home page*, then the rest of the booking flow happens on `/book`. | Modern / app-like — Airbnb-style |
+| **(iii) Both** | Mini-calendar widget on the home page for a quick availability glance + the "Book Direct" button for the proper flow. | Most work; arguably best of both |
+
+**Question:** which feels right for the cottage to you?
+
+**Why we're asking now:** this changes what we build on `/` — option (ii) and (iii) require the calendar component to render in two contexts (home + `/book`), which affects how we structure it. Cheap to decide upfront; expensive to reverse after the build.
+
+**Default if you can't decide:** (i) — most aligned with G2's editorial register and lowest build cost.
+
+**Answer:** _awaiting_
+
+---
+
+### Q3a — Payment surface (in-page or redirect) 🟡
+
+This is the only properly architectural question. When a guest reaches the "pay now" step:
+
+| Option | What it is | Trade-off |
+|---|---|---|
+| **(i) Stripe Payment Element — embedded** | Card form lives on the cottage's site. Guest never leaves `mariannecottage.fr`. We control the styling end-to-end. | More dev work (~+0.5 day in PR 3); fits G2's editorial feel; we own the full experience |
+| **(ii) Stripe Checkout — hosted redirect** | Guest is sent off to a Stripe-hosted payment page, then bounced back to the cottage when done. | Faster to ship; brand control is essentially logo + accent colour; slight "you're leaving our site" wobble |
+
+**Both are equally secure.** Stripe runs both. The choice is purely UX / brand-control.
+
+**Question:** which do you want?
+
+**Why we're asking now:** this is the question that *can't* be deferred — the two options call different Stripe APIs and have different return URLs. We can't build this Q4-agnostic; we'd just be doing the work twice. (For everything else — palette, type, calendar style, photography — we can build with placeholders / variables and swap later. Not this.)
+
+**Default if you can't decide:** (i) Payment Element. Better long-term, fits the editorial register, and the dev cost is small in absolute terms.
+
+**Answer:** _awaiting_
+
+---
+
+## Batch 1 — visual-direction grounding (deferred — not blocking)
 
 **Started accumulating:** 2026-05-02
 **Sent:** _pending_
-**Status:** 🟡 still gathering questions across topics 01–09 of the thread
+**Status:** 🟡 deferred — not on the critical path; can be answered after Batch 1a lands. The decisions here (audience confirm, full visual lock, photography plan, booking-flow taste at fine grain) can mostly be parameterised or layered in after the structural calls. Specifically: Q1 (audience) shapes copy + photography priorities — content-layer; Q2 (visual lock) is reducible to CSS variables — token-layer; Q3 (photography) is a content track that doesn't block code; Q4's fine-grain sub-questions (calendar style, pricing visibility, pre-booking surface) are styling / content decisions that build on top of Batch 1a's structural calls.
 
 ### Q1 — Audience match (topic 01) 🟡
 
