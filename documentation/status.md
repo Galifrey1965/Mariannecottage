@@ -15,7 +15,7 @@ At-a-glance dashboard. Updated as work shifts. For detail, follow the links.
 | **Spec** | [`specs/phase-1-stabilise.md`](specs/phase-1-stabilise.md) — 5 PRs, ~5 days, 7 deliverables |
 | **Parallel** | Visual-direction discussion (F-02) — uncommitted prototypes + topic 01a draft |
 | **Open question** | Per-guest pricing structure (columns vs table) — only blocks PR 4; recommend columns when we get there |
-| **Awaiting Mark** | (a) apply 3 SQL migrations on PR 1 branch; (b) walk [`setup/google-business.md`](setup/google-business.md) to add Rob as Manager + create Cloud project + provision Maps API key |
+| **Awaiting Mark** | (a) apply 3 SQL migrations on PR 1 branch; (b) walk Steps 2+3 of [`setup/google-business.md`](setup/google-business.md) — create Cloud project + provision Maps API key. Step 1 (Business Profile delegation) ✅ done 2026-05-03 |
 
 ---
 

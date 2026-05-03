@@ -4,8 +4,10 @@ A walk-through of every Google product the cottage's website needs and how Mark 
 
 **Audience:** Mark.
 **Walked by:** Rob (sits next to Mark or screenshares).
-**Time:** ~45 minutes for the immediate work; Hotel Center and Pub/Sub later.
+**Time:** ~20 minutes for the remaining work (Cloud project + Maps API key); Hotel Center and Pub/Sub later.
 **Cost:** Free under expected traffic. Maps charges past a free tier; estimated cottage traffic is well within it. Details below.
+
+> **Status — 2026-05-03:** Step 1 (Business Profile delegation) is **✅ done** — Mark has added Rob, edit access verified. The remaining work is Steps 2 and 3 below. Step 1 is kept for reference but skip it.
 
 **Last verified against Google's current UI:** 2026-05-03 — UI paths in this doc match Google's published support docs as of that date. Google reorganises these surfaces a few times a year; if a step here points to a menu item that no longer exists, **the search bar at the top of Google Cloud Console** (and the in-page search in Business Profile settings) finds any feature by name. That's the reliable fallback when the documented click-path drifts.
 
@@ -15,7 +17,7 @@ A walk-through of every Google product the cottage's website needs and how Mark 
 
 | Google product | What it does for the cottage | Phase | Status |
 |---|---|---|---|
-| **Google Business Profile** | The "Marianne Cottage" listing in Google Maps + Google Search. Mark already created this. We need Rob added as Manager so he can edit photos / hours / posts during dev. | Already exists | Mark adds Rob — ~5 min |
+| **Google Business Profile** | The "Marianne Cottage" listing in Google Maps + Google Search. Mark already created this. We need Rob added as Manager so he can edit photos / hours / posts during dev. | Already exists | ✅ done 2026-05-03 |
 | **Google Cloud project** | Container that holds API keys, billing, and access for everything else below. | Phase 1 (maps), Phase 3 (Hotel Center), Phase 4 (Pub/Sub) | Create now — ~10 min |
 | **Maps JavaScript API key** | Renders the cottage location map on `/contact` and the POI panel maps on `/explore`. | Phase 1 (now) | Generate after Cloud project — ~10 min |
 | **Hotel Center** | Lists the cottage in Google's "Where to stay" panel. Free organic listings; we feed it availability + pricing. | Phase 3 | Apply for access later |
@@ -47,7 +49,9 @@ Pick one before Mark starts. The invite goes to that address.
 
 ---
 
-## Step 1 — Add Rob to Google Business Profile (~5 min, do first)
+## Step 1 — Add Rob to Google Business Profile (~5 min, do first) — ✅ DONE 2026-05-03
+
+> Mark added Rob as a Manager on 2026-05-03; Rob has confirmed edit access. **Skip to Step 2.** The detail below is kept as reference for if/when Kim needs the same access, or if access ever needs re-granting.
 
 The cottage listing already exists. We want Rob to be able to edit it.
 
@@ -273,10 +277,9 @@ Rob already has Editor role on the project, so he can do this without bothering 
 
 ## Pre-flight checklist for Mark
 
-Before sitting down for the ~45 minutes:
+Before sitting down for the ~20 minutes:
 
-- [ ] Decide which Google account owns the cottage Business Profile (probably already done — it's whichever one Mark used to claim the listing)
-- [ ] Confirm Rob's chosen email (personal Gmail recommended; can be his work email)
+- [ ] Sign in to the same Google account that owns the cottage Business Profile (Steps 2 + 3 should ideally use the same account so everything's under one umbrella; can be a different account but adds management overhead)
 - [ ] Have a payment card ready for Cloud billing (a normal personal credit/debit card; will not be charged in normal cottage operation)
 - [ ] Quiet half-hour with no interruptions — the GCP UI is fiddly
 
@@ -284,9 +287,9 @@ Before sitting down for the ~45 minutes:
 
 ## Post-completion checklist for Rob
 
-After Mark finishes Steps 1–3:
+After Mark finishes Steps 2 + 3:
 
-- [ ] Accepted the Business Profile invite; cottage appears in `business.google.com`
+- [x] Accepted the Business Profile invite; cottage appears in `business.google.com` *(done 2026-05-03)*
 - [ ] Logged in to `console.cloud.google.com`; `marianne-cottage` project visible; can navigate to APIs & Services
 - [ ] Pulled latest `develop`; verified maps load on `/contact` and `/explore` against the production URL after Mark's Netlify redeploy
 - [ ] Updated [`documentation/status.md`](../status.md) to reflect Maps API key live, removing the "placeholder until key is provisioned" note
