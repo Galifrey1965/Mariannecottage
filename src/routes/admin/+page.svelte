@@ -385,6 +385,28 @@
 	const pendingBookings = $derived(visibleBookings.filter(b => b.status === 'pending'));
 	const totalRevenue = $derived(confirmedBookings.reduce((sum, b) => sum + b.total_cost, 0));
 	const upcomingBookings = $derived(visibleBookings.filter(b => new Date(b.check_in_date) > new Date() && b.status !== 'cancelled'));
+	const bcBookings = $derived(visibleBookings.filter(b => b.source === 'booking_com' && b.status !== 'cancelled'));
+	// BC iCal dates that haven't been promoted to a booking row yet (between
+	// deploy and the next cron tick, or when the legacy synced rows pre-date
+	// the iCal-uid sync rewrite). One synthetic-id per date — collapse into
+	// distinct contiguous runs to count "pending reservations".
+	const bcPendingPromotionRuns = $derived.by(() => {
+		const realDates = new Set<string>();
+		for (const b of bcBookings) {
+			const d = new Date(b.check_in_date + 'T00:00:00Z');
+			const end = new Date(b.check_out_date + 'T00:00:00Z');
+			while (d < end) {
+				realDates.add(d.toISOString().slice(0, 10));
+				d.setUTCDate(d.getUTCDate() + 1);
+			}
+		}
+		const sorted = blockedAvailability.map((r) => r.date).filter((d) => !realDates.has(d)).sort();
+		let runs = 0;
+		for (let i = 0; i < sorted.length; i++) {
+			if (i === 0 || !isNextDay(sorted[i - 1], sorted[i])) runs++;
+		}
+		return runs;
+	});
 
 	function sourceChipLabel(source?: string): string | null {
 		if (!source || source === 'web') return null;
@@ -579,18 +601,6 @@
 					<button onclick={() => statusFilter = s} class="filter-btn" class:active={statusFilter === s}>{s}</button>
 				{/each}
 			</div>
-			<div class="bc-sync-wrapper" title="Cron polls Booking.com hourly. Click to pull the latest iCal feed now.">
-				<button onclick={triggerBcSync} disabled={bcSyncing} class="bc-sync-btn">
-					<span class="bc-logo">B.</span>
-					{bcSyncing ? 'Syncing…' : 'Sync Booking.com'}
-				</button>
-				<span class="bc-sync-meta">
-					Last synced {formatRelativeTime(lastBcSyncAt)}
-				</span>
-			</div>
-			{#if bcSyncMessage}
-				<span class="bc-sync-msg">{bcSyncMessage}</span>
-			{/if}
 		</div>
 
 		<div class="stats-grid">
@@ -614,6 +624,27 @@
 				<p class="stat-label">Refund fees absorbed</p>
 				<p class="stat-value" style="color: var(--color-error-text);">{formatCurrency(absorbedFeeTotal)}</p>
 				<p class="sub-text">{absorbedFeeRefundCount} refund{absorbedFeeRefundCount === 1 ? '' : 's'} · ~1.5% + €0.25 est.</p>
+			</div>
+			<div class="stat-card stat-card--bc">
+				<p class="stat-label"><span class="bc-logo">B.</span> Booking.com</p>
+				<p class="stat-value" style="color: #003580;">
+					{bcBookings.length}{#if bcPendingPromotionRuns > 0}<span class="bc-pending-badge">+{bcPendingPromotionRuns}</span>{/if}
+				</p>
+				<p class="sub-text">
+					{bcBookings.length === 1 ? '1 active reservation' : `${bcBookings.length} active reservations`}{#if bcPendingPromotionRuns > 0} · {bcPendingPromotionRuns} pending sync{/if}
+					· cron polls hourly
+				</p>
+				<div class="bc-sync-actions">
+					<button onclick={triggerBcSync} disabled={bcSyncing} class="bc-sync-btn" title="Pull the latest Booking.com iCal feed now">
+						{bcSyncing ? 'Syncing…' : 'Sync now'}
+					</button>
+					<span class="bc-sync-meta">
+						Last synced {formatRelativeTime(lastBcSyncAt)}
+					</span>
+				</div>
+				{#if bcSyncMessage}
+					<p class="bc-sync-msg">{bcSyncMessage}</p>
+				{/if}
 			</div>
 		</div>
 
@@ -1205,23 +1236,32 @@
 	.source-chip.admin { background: #e0ecff; color: #1d4ed8; border: 1px solid #93b8f0; }
 	.source-chip.booking_com { background: #003580; color: white; border: 1px solid #003580; }
 
-	.bc-sync-wrapper { display: flex; flex-direction: column; gap: 0.15rem; align-items: flex-start; }
+	/* Booking.com stat card */
+	.stat-card--bc { display: flex; flex-direction: column; gap: 0.4rem; }
+	.stat-card--bc .stat-label { display: inline-flex; align-items: center; gap: 0.4rem; }
+	.bc-logo {
+		display: inline-flex; align-items: center; justify-content: center;
+		width: 1.1rem; height: 1.1rem; border-radius: 50%;
+		background: #003580; color: white; font-weight: 800; font-size: 0.65rem;
+		font-family: 'Lora', serif;
+	}
+	.bc-sync-actions { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; margin-top: 0.25rem; }
 	.bc-sync-btn {
 		display: inline-flex; align-items: center; gap: 0.4rem;
-		padding: 0.4rem 0.8rem; border-radius: 6px; border: none; cursor: pointer;
-		background: #003580; color: white; font-weight: 600; font-size: 0.875rem;
+		padding: 0.35rem 0.75rem; border-radius: 6px; border: none; cursor: pointer;
+		background: #003580; color: white; font-weight: 600; font-size: 0.8rem;
 		transition: background 0.15s ease;
 	}
 	.bc-sync-btn:hover:not(:disabled) { background: #002e6b; }
 	.bc-sync-btn:disabled { opacity: 0.6; cursor: not-allowed; }
-	.bc-logo {
-		display: inline-flex; align-items: center; justify-content: center;
-		width: 1.1rem; height: 1.1rem; border-radius: 50%;
-		background: white; color: #003580; font-weight: 800; font-size: 0.7rem;
-		font-family: 'Lora', serif;
+	.bc-sync-meta { font-size: 0.7rem; color: var(--color-text-muted); }
+	.bc-pending-badge {
+		display: inline-block; margin-left: 0.4rem;
+		font-size: 0.7rem; font-weight: 700; vertical-align: middle;
+		padding: 0.1rem 0.45rem; border-radius: 9999px;
+		background: #fff4d6; color: #8a5a00; border: 1px solid #f5b942;
 	}
-	.bc-sync-meta { font-size: 0.7rem; color: var(--color-text-muted); padding-left: 0.2rem; }
-	.bc-sync-msg { font-size: 0.8rem; color: var(--color-text-muted); }
+	.bc-sync-msg { font-size: 0.75rem; color: var(--color-text-muted); margin: 0; }
 
 	.form-fields-grid {
 		display: grid;
