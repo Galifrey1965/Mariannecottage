@@ -53,6 +53,7 @@
 	let calendarRef: { goToToday: () => void } | undefined = $state();
 
 	const realAvailability: Record<string, boolean> = data.availability || {};
+	const testBlockedDates: string[] = data.testBlockedDates || [];
 	const taxRate: number = data.taxRate ?? 0.68;
 
 	const handleDateRangeSelect = (start: Date, end: Date) => {
@@ -179,6 +180,7 @@
 						{messages}
 						{lang}
 						availability={realAvailability}
+						{testBlockedDates}
 						onDateRangeSelect={handleDateRangeSelect}
 						minDate={new Date()}
 					/>
@@ -380,7 +382,7 @@
 	/* Layout */
 	.layout { display: grid; grid-template-columns: 1fr; gap: 2rem; margin-bottom: 3rem; }
 	@media (min-width: 960px) { .layout { grid-template-columns: 2fr 1fr; } }
-	.main-col { display: flex; flex-direction: column; gap: 1.5rem; position: relative; z-index: 1; }
+	.main-col { display: flex; flex-direction: column; gap: 1.5rem; position: relative; z-index: 1; min-width: 0; }
 	.sidebar { display: flex; flex-direction: column; gap: 1.5rem; }
 	@media (min-width: 960px) { .sidebar { position: sticky; top: 5rem; align-self: start; max-height: calc(100vh - 5.5rem); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; } }
 

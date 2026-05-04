@@ -245,6 +245,7 @@
 		"sat": "Sam",
 		"available": "Disponible",
 		"unavailable": "Indisponible",
+		"test_blocked": "Réservation test",
 		"past_date": "Date passée",
 		"selected": "Sélectionné",
 		"select_checkout": "Sélectionnez votre date de départ"

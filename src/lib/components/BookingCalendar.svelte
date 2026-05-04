@@ -6,12 +6,16 @@
 		messages: Messages;
 		lang: Locale;
 		availability?: Record<string, boolean>;
+		testBlockedDates?: string[];
 		onDateRangeSelect?: (checkIn: Date, checkOut: Date) => void;
 		minDate?: Date;
 		maxDate?: Date;
 	}
 
-	let { messages, lang, availability = {}, onDateRangeSelect, minDate = new Date(), maxDate }: Props = $props();
+	let { messages, lang, availability = {}, testBlockedDates = [], onDateRangeSelect, minDate = new Date(), maxDate }: Props = $props();
+
+	const testBlockedSet = $derived(new Set(testBlockedDates));
+	const isTestBlocked = (date: Date) => testBlockedSet.has(toISODate(date));
 
 	const mondayStart = $derived(lang === 'fr' || lang === 'de');
 
@@ -114,7 +118,7 @@
 
 	function dayClass(date: Date): string {
 		if (isPast(date)) return 'day past';
-		if (!isAvailable(date)) return 'day unavailable';
+		if (!isAvailable(date)) return isTestBlocked(date) ? 'day test-blocked' : 'day unavailable';
 		if (isStart(date) || isEnd(date)) return 'day selected-endpoint';
 		if (isInRange(date) && !previewValid) return 'day preview-invalid';
 		if (isInRange(date) && isHoverPreview) return 'day hover-range';
@@ -170,6 +174,9 @@
 		<div class="legend-item"><div class="legend-swatch available"></div><span>{t(messages, 'calendar.available')}</span></div>
 		<div class="legend-item"><div class="legend-swatch unavailable"></div><span>{t(messages, 'calendar.unavailable')}</span></div>
 		<div class="legend-item"><div class="legend-swatch past"></div><span>{t(messages, 'calendar.past_date')}</span></div>
+		{#if testBlockedDates.length > 0}
+			<div class="legend-item"><div class="legend-swatch test-blocked"></div><span>{t(messages, 'calendar.test_blocked')}</span></div>
+		{/if}
 	</div>
 
 	{#if selectedStart && displayEnd && previewNights > 0}
@@ -183,7 +190,7 @@
 </div>
 
 <style>
-	.calendar { width: 100%; background: var(--color-cream); border-radius: var(--md-shape-corner-medium); padding: 1.5rem; box-shadow: var(--md-elevation-shadow-1); font-family: 'Source Sans 3', sans-serif; }
+	.calendar { width: 100%; min-width: 0; max-width: 100%; box-sizing: border-box; background: var(--color-cream); border-radius: var(--md-shape-corner-medium); padding: 1.5rem; box-shadow: var(--md-elevation-shadow-1); font-family: 'Source Sans 3', sans-serif; }
 	.cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; padding-bottom: 0.5rem; }
 	.nav-btn { display: inline-flex; align-items: center; justify-content: center; width: 2.75rem; height: 2.75rem; padding: 0; border-radius: 50%; border: none; background: transparent; cursor: pointer; color: var(--color-brown); transition: background 0.2s ease; }
 	.nav-btn:hover { background: var(--color-cream-dark); }
@@ -204,18 +211,24 @@
 	.day.available { background: var(--md-sys-color-surface-container-lowest); color: var(--color-text); }
 	.day.available:hover { background: var(--color-cream-dark); }
 	.day.unavailable { background: var(--md-sys-color-error); color: var(--md-sys-color-on-error); cursor: not-allowed; }
+	.day.test-blocked {
+		background: repeating-linear-gradient(45deg, #f5b942, #f5b942 4px, #e89c1c 4px, #e89c1c 8px);
+		color: #4a3300;
+		cursor: not-allowed;
+	}
 	.day.past { color: var(--color-text-muted); opacity: 0.3; cursor: not-allowed; background: transparent; }
 	.day.selected-endpoint { background: var(--color-sage); color: var(--md-sys-color-on-primary); font-weight: 700; box-shadow: 0 2px 8px color-mix(in srgb, var(--color-sage) 40%, transparent); }
 	.day.selected-range { background: color-mix(in srgb, var(--color-sage) 25%, transparent); color: var(--color-text); }
 	.day.hover-range { background: color-mix(in srgb, var(--color-sage) 12%, transparent); color: var(--color-text); }
 	.day.preview-invalid { background: color-mix(in srgb, var(--md-sys-color-error) 10%, transparent); color: var(--color-text-muted); }
 
-	.legend { margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--color-cream-dark); display: flex; flex-direction: row; flex-wrap: wrap; gap: 0.75rem 1.5rem; font-size: 0.75rem; }
+	.legend { margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--color-cream-dark); display: flex; flex-direction: row; flex-wrap: wrap; gap: 0.75rem 1.5rem; font-size: 0.75rem; overflow-wrap: anywhere; }
 	.legend-item { display: flex; align-items: center; gap: 0.5rem; }
 	.legend-swatch { width: 1rem; height: 1rem; border-radius: 4px; }
 	.legend-swatch.available { background: var(--md-sys-color-surface-container-lowest); border: 1px solid var(--color-cream-dark); }
 	.legend-swatch.unavailable { background: var(--md-sys-color-error); }
 	.legend-swatch.past { background: var(--color-disabled); opacity: 0.3; }
+	.legend-swatch.test-blocked { background: repeating-linear-gradient(45deg, #f5b942, #f5b942 3px, #e89c1c 3px, #e89c1c 6px); }
 
 	.selection-info {
 		margin-top: 1.5rem; padding: 0.75rem 1rem; background: color-mix(in srgb, var(--color-sage) 15%, transparent);

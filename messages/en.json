@@ -245,6 +245,7 @@
 		"sat": "Sat",
 		"available": "Available",
 		"unavailable": "Unavailable",
+		"test_blocked": "Test booking",
 		"past_date": "Past Date",
 		"selected": "Selected",
 		"select_checkout": "Select your check-out date"

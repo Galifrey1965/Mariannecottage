@@ -9,6 +9,7 @@
 	let loading = $state(false);
 	let statusFilter = $state('all');
 	let searchQuery = $state('');
+	let showTest = $state(false);
 	let searchTimeout: ReturnType<typeof setTimeout>;
 
 	let selectedBooking = $state<Booking | null>(null);
@@ -52,6 +53,7 @@
 	let cancelLinkUrl = $state<string | null>(null);
 	let cancelLinkLoading = $state(false);
 	let cancelLinkCopied = $state(false);
+	let cancelLinkError = $state<string | null>(null);
 
 	async function fetchBookings() {
 		loading = true;
@@ -209,14 +211,22 @@
 	async function fetchGuestCancelLink(b: Booking) {
 		cancelLinkLoading = true;
 		cancelLinkCopied = false;
+		cancelLinkError = null;
+		cancelLinkUrl = null;
 		try {
 			const res = await fetch(`/api/admin/bookings/cancel-link?id=${encodeURIComponent(b.id)}`);
+			const payload = await res.json().catch(() => ({}));
 			if (!res.ok) {
-				cancelLinkUrl = null;
+				cancelLinkError = payload.error || `Failed (${res.status})`;
 				return;
 			}
-			const payload = await res.json();
-			cancelLinkUrl = payload.url ?? null;
+			if (!payload.url) {
+				cancelLinkError = 'Server did not return a URL.';
+				return;
+			}
+			cancelLinkUrl = payload.url;
+		} catch (err) {
+			cancelLinkError = err instanceof Error ? err.message : 'Unknown error';
 		} finally {
 			cancelLinkLoading = false;
 		}
@@ -236,6 +246,7 @@
 	function closeCancelLinkDialog() {
 		cancelLinkUrl = null;
 		cancelLinkCopied = false;
+		cancelLinkError = null;
 	}
 
 	async function refreshAbsorbedFeeTotal() {
@@ -276,10 +287,20 @@
 		return `in ${days}d`;
 	};
 
-	const confirmedBookings = $derived(bookings.filter(b => b.status === 'confirmed'));
-	const pendingBookings = $derived(bookings.filter(b => b.status === 'pending'));
+	const visibleBookings = $derived(showTest ? bookings : bookings.filter(b => b.source !== 'test'));
+	const confirmedBookings = $derived(visibleBookings.filter(b => b.status === 'confirmed'));
+	const pendingBookings = $derived(visibleBookings.filter(b => b.status === 'pending'));
 	const totalRevenue = $derived(confirmedBookings.reduce((sum, b) => sum + b.total_cost, 0));
-	const upcomingBookings = $derived(bookings.filter(b => new Date(b.check_in_date) > new Date() && b.status !== 'cancelled'));
+	const upcomingBookings = $derived(visibleBookings.filter(b => new Date(b.check_in_date) > new Date() && b.status !== 'cancelled'));
+	const testBookingCount = $derived(bookings.filter(b => b.source === 'test').length);
+
+	function sourceChipLabel(source?: string): string | null {
+		if (!source || source === 'web') return null;
+		if (source === 'test') return 'TEST';
+		if (source === 'admin') return 'ADMIN';
+		if (source === 'imported') return 'OTA';
+		return source.toUpperCase();
+	}
 </script>
 
 <div class="dashboard">
@@ -299,6 +320,12 @@
 					<button onclick={() => statusFilter = s} class="filter-btn" class:active={statusFilter === s}>{s}</button>
 				{/each}
 			</div>
+			{#if testBookingCount > 0}
+				<label class="show-test-toggle" title="Include source='test' rows in this view">
+					<input type="checkbox" bind:checked={showTest} />
+					<span>Show test ({testBookingCount})</span>
+				</label>
+			{/if}
 		</div>
 
 		<div class="stats-grid">
@@ -328,7 +355,7 @@
 		<div class="table-container">
 			{#if loading}
 				<div class="empty-state">Loading...</div>
-			{:else if bookings.length === 0}
+			{:else if visibleBookings.length === 0}
 				<div class="empty-state">No bookings found</div>
 			{:else}
 				<div class="desktop-table">
@@ -346,9 +373,14 @@
 							</tr>
 						</thead>
 						<tbody>
-							{#each bookings as booking}
+							{#each visibleBookings as booking}
 								<tr onclick={() => selectBooking(booking)}>
-									<td class="mono">{booking.booking_reference}</td>
+									<td class="mono">
+										{booking.booking_reference}
+										{#if sourceChipLabel(booking.source)}
+											<span class="source-chip {booking.source}">{sourceChipLabel(booking.source)}</span>
+										{/if}
+									</td>
 									<td>
 										<div class="guest-cell">
 											{#if booking.guest_country && countryFlags[booking.guest_country]}
@@ -376,7 +408,7 @@
 				</div>
 
 				<div class="mobile-cards">
-					{#each bookings as booking}
+					{#each visibleBookings as booking}
 						<button onclick={() => selectBooking(booking)} class="mobile-card">
 							<div class="mobile-card-top">
 								<div>
@@ -384,7 +416,12 @@
 										{#if booking.guest_country && countryFlags[booking.guest_country]}{countryFlags[booking.guest_country]}{/if}
 										{booking.guest_name}
 									</p>
-									<p class="mono sub-text">{booking.booking_reference}</p>
+									<p class="mono sub-text">
+										{booking.booking_reference}
+										{#if sourceChipLabel(booking.source)}
+											<span class="source-chip {booking.source}">{sourceChipLabel(booking.source)}</span>
+										{/if}
+									</p>
 								</div>
 								<span class="status-badge {booking.status}">{booking.status}</span>
 							</div>
@@ -399,7 +436,7 @@
 		</div>
 	</div>
 
-	{#if cancelLinkUrl}
+	{#if cancelLinkUrl || cancelLinkError}
 		<div class="overlay cancel-overlay">
 			<button onclick={closeCancelLinkDialog} class="overlay-backdrop" aria-label="Close"></button>
 			<div class="cancel-dialog">
@@ -411,12 +448,18 @@
 						</div>
 						<button onclick={closeCancelLinkDialog} class="close-btn">✕</button>
 					</div>
-					<div class="detail-section">
-						<input type="text" readonly value={cancelLinkUrl} class="form-input" onclick={(e) => (e.currentTarget as HTMLInputElement).select()} />
-					</div>
+					{#if cancelLinkError}
+						<p class="cancel-error">{cancelLinkError}</p>
+					{:else if cancelLinkUrl}
+						<div class="detail-section">
+							<input type="text" readonly value={cancelLinkUrl} class="form-input" onclick={(e) => (e.currentTarget as HTMLInputElement).select()} />
+						</div>
+					{/if}
 					<div class="cancel-actions">
 						<button onclick={closeCancelLinkDialog} class="btn-outline">Done</button>
-						<button onclick={copyCancelLink} class="btn-primary">{cancelLinkCopied ? 'Copied!' : 'Copy to clipboard'}</button>
+						{#if cancelLinkUrl}
+							<button onclick={copyCancelLink} class="btn-primary">{cancelLinkCopied ? 'Copied!' : 'Copy to clipboard'}</button>
+						{/if}
 					</div>
 				</div>
 			</div>
@@ -535,7 +578,12 @@
 				<div class="detail-content">
 					<div class="detail-header">
 						<div>
-							<p class="mono sub-text" style="color: var(--color-sage);">{selectedBooking.booking_reference}</p>
+							<p class="mono sub-text" style="color: var(--color-sage);">
+								{selectedBooking.booking_reference}
+								{#if sourceChipLabel(selectedBooking.source)}
+									<span class="source-chip {selectedBooking.source}">{sourceChipLabel(selectedBooking.source)}</span>
+								{/if}
+							</p>
 							<h3 class="detail-title">{selectedBooking.guest_name}</h3>
 						</div>
 						<button onclick={closeDetail} class="close-btn">✕</button>
@@ -761,6 +809,28 @@
 	.status-badge.pending { background: var(--color-warning-bg); color: var(--color-warning-text); }
 	.status-badge.confirmed { background: var(--color-success-bg); color: var(--color-success-text); }
 	.status-badge.cancelled { background: var(--color-error-bg); color: var(--color-error-text); }
+
+	/* Source chip — distinguishes test/admin/imported bookings from default 'web' */
+	.source-chip {
+		display: inline-block;
+		margin-left: 0.4rem;
+		padding: 0.05rem 0.45rem;
+		border-radius: 4px;
+		font-size: 0.625rem;
+		font-weight: 700;
+		letter-spacing: 0.04em;
+		vertical-align: middle;
+	}
+	.source-chip.test { background: #fff4d6; color: #8a5a00; border: 1px solid #f5b942; }
+	.source-chip.admin { background: #e0ecff; color: #1d4ed8; border: 1px solid #93b8f0; }
+	.source-chip.imported { background: #ececec; color: #4a4a4a; border: 1px solid #c0c0c0; }
+
+	.show-test-toggle {
+		display: flex; align-items: center; gap: 0.4rem;
+		font-size: 0.8rem; color: var(--color-text-muted); cursor: pointer;
+		padding: 0.25rem 0.5rem;
+	}
+	.show-test-toggle input { cursor: pointer; }
 
 	/* Mobile cards */
 	.mobile-cards { display: block; }

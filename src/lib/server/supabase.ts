@@ -245,6 +245,31 @@ export async function getBookingsByEmail(email: string) {
 	return data;
 }
 
+// Returns ISO date strings for every night currently held by a source='test'
+// booking that still holds inventory. Used by the public booking calendar to
+// render test-blocked dates with a distinct colour so admins/devs can see at
+// a glance which "unavailable" cells are seeded test data, not real bookings.
+export async function getTestBlockedDates(today: string): Promise<string[]> {
+	const { data, error } = await adminClient
+		.from('bookings')
+		.select('check_in_date, check_out_date')
+		.eq('source', 'test')
+		.in('status', ['pending', 'pending_payment', 'confirmed'])
+		.gte('check_out_date', today);
+
+	if (error) throw error;
+	const out = new Set<string>();
+	for (const row of (data ?? []) as Array<{ check_in_date: string; check_out_date: string }>) {
+		const d = new Date(row.check_in_date + 'T00:00:00Z');
+		const end = new Date(row.check_out_date + 'T00:00:00Z');
+		while (d < end) {
+			out.add(d.toISOString().slice(0, 10));
+			d.setUTCDate(d.getUTCDate() + 1);
+		}
+	}
+	return [...out];
+}
+
 // Availability operations
 export async function getAvailability(startDate: string, endDate: string) {
 	const { data, error } = await anonClient

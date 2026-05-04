@@ -1,4 +1,4 @@
-import { getAvailability, getTaxSettings, getRatePlans } from '$lib/server/supabase';
+import { getAvailability, getTaxSettings, getRatePlans, getTestBlockedDates } from '$lib/server/supabase';
 import type { PageServerLoad } from './$types';
 import type { RatePlan } from '$lib/server/supabase';
 
@@ -38,5 +38,12 @@ export const load: PageServerLoad = async () => {
 		ratePlans = [];
 	}
 
-	return { availability: availabilityMap, taxRate, ratePlans };
+	let testBlockedDates: string[] = [];
+	try {
+		testBlockedDates = await getTestBlockedDates(startStr);
+	} catch {
+		// non-fatal — calendar just won't distinguish test rows
+	}
+
+	return { availability: availabilityMap, taxRate, ratePlans, testBlockedDates };
 };

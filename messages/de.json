@@ -245,6 +245,7 @@
 		"sat": "Sa",
 		"available": "Verfügbar",
 		"unavailable": "Nicht verfügbar",
+		"test_blocked": "Testbuchung",
 		"past_date": "Vergangen",
 		"selected": "Ausgewählt",
 		"select_checkout": "Wählen Sie Ihr Abreisedatum"
