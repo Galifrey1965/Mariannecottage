@@ -77,14 +77,11 @@
 			const { Marker } = await loader.importLibrary('marker');
 
 			// If we'll fit-bounds, compute the framing center+zoom up front so
-			// the map can mount directly at the right view (avoids any "stuck
-			// zoomed in on cottage" race with the panel transition).
+			// the map mounts directly at the right view rather than at the
+			// default cottage zoom 10 (which leaves distant POIs off-screen).
 			let initialCenter = { lat: center[0], lng: center[1] };
 			let initialZoom = zoom;
-			let bounds: InstanceType<typeof LatLngBounds> | undefined;
 			if (fitBounds && markers.length > 1) {
-				bounds = new LatLngBounds();
-				for (const m of markers) bounds.extend({ lat: m.lat, lng: m.lng });
 				const lats = markers.map((m) => m.lat);
 				const lngs = markers.map((m) => m.lng);
 				initialCenter = {
@@ -126,17 +123,6 @@
 				});
 			}
 
-			// fitBounds again once the map signals 'idle' — by then the container
-			// is fully laid out, so this nudges the framing to the precise fit
-			// even if the up-front zoom estimate was slightly off.
-			if (bounds) {
-				const finalBounds = bounds;
-				const listener = map.addListener('idle', () => {
-					map!.fitBounds(finalBounds, 40);
-					listener.remove();
-				});
-			}
-
 			if (routeLine && markers.length >= 2) {
 				try {
 					new Polyline({
@@ -162,6 +148,17 @@
 				} catch (e) {
 					console.warn('GoogleMap: route polyline failed to render', e);
 				}
+			}
+
+			// Precision pass — once the panel transition has settled, re-fit
+			// the bounds with the actual container size. Wrapped in try/catch
+			// so a stale map reference can't crash the rest of the page.
+			if (fitBounds && markers.length > 1) {
+				const bounds = new LatLngBounds();
+				for (const m of markers) bounds.extend({ lat: m.lat, lng: m.lng });
+				setTimeout(() => {
+					try { map?.fitBounds(bounds, 40); } catch (e) { console.warn('fitBounds failed', e); }
+				}, 120);
 			}
 		});
 
