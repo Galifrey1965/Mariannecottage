@@ -25,6 +25,10 @@
 		bookingByDate?: Record<string, BookingDayInfo>;
 		onDayClick?: (bookingId: string | null, date: Date) => void;
 		showLegend?: boolean;
+		// When true, prev-month navigation is disabled once the visible month
+		// reaches minDate's month — the public booking calendar uses this so
+		// guests can't navigate into months that are entirely in the past.
+		disablePastMonths?: boolean;
 	}
 
 	let {
@@ -37,7 +41,8 @@
 		maxDate,
 		bookingByDate = {},
 		onDayClick,
-		showLegend = true
+		showLegend = true,
+		disablePastMonths = false
 	}: Props = $props();
 
 	const isClickMode = $derived(onDayClick !== undefined);
@@ -136,13 +141,39 @@
 	export const goToToday = () => { currentMonth = new Date(); };
 
 	const days = $derived.by(() => {
-		const result: (Date | null)[] = [];
+		const result: Date[] = [];
 		let firstDay = getFirstDayOfMonth(currentMonth);
 		if (mondayStart) firstDay = (firstDay + 6) % 7;
 		const daysCount = daysInMonth(currentMonth);
-		for (let i = 0; i < firstDay; i++) result.push(null);
-		for (let i = 1; i <= daysCount; i++) result.push(new Date(currentMonth.getFullYear(), currentMonth.getMonth(), i));
+
+		// Tail of previous month — fills the leading offset
+		for (let i = firstDay; i > 0; i--) {
+			result.push(new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1 - i));
+		}
+		// Current month
+		for (let i = 1; i <= daysCount; i++) {
+			result.push(new Date(currentMonth.getFullYear(), currentMonth.getMonth(), i));
+		}
+		// Head of next month — pad to a full week so booking ranges spanning
+		// month boundaries stay visually connected
+		const remainder = result.length % 7;
+		if (remainder > 0) {
+			const need = 7 - remainder;
+			for (let i = 1; i <= need; i++) {
+				result.push(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, i));
+			}
+		}
 		return result;
+	});
+
+	const isOutsideMonth = (date: Date) =>
+		date.getMonth() !== currentMonth.getMonth() || date.getFullYear() !== currentMonth.getFullYear();
+
+	const canGoPrev = $derived.by(() => {
+		if (!disablePastMonths) return true;
+		const minMonthStart = new Date(minDate.getFullYear(), minDate.getMonth(), 1);
+		const currentMonthStart = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
+		return currentMonthStart > minMonthStart;
 	});
 
 	const monthName = $derived(formatDate(lang, currentMonth, { month: 'long', year: 'numeric' }));
@@ -159,7 +190,8 @@
 	);
 
 	function dayClass(date: Date): string {
-		if (isPast(date)) return 'day past';
+		const outside = isOutsideMonth(date) ? ' outside' : '';
+		if (isPast(date)) return 'day past' + outside;
 		if (isClickMode) {
 			const info = bookingByDate[toISODate(date)];
 			if (info) {
@@ -171,22 +203,22 @@
 				else if (info.status === 'pending' || info.status === 'pending_payment') cls = 'booked-pending';
 				else if (info.status === 'confirmed') cls = 'booked-confirmed';
 				else cls = 'booked-other';
-				return `day ${cls} pos-${pos}`;
+				return `day ${cls} pos-${pos}${outside}`;
 			}
-			return 'day available';
+			return 'day available' + outside;
 		}
-		if (!isAvailable(date)) return isTestBlocked(date) ? 'day test-blocked' : 'day unavailable';
-		if (isStart(date) || isEnd(date)) return 'day selected-endpoint';
-		if (isInRange(date) && !previewValid) return 'day preview-invalid';
-		if (isInRange(date) && isHoverPreview) return 'day hover-range';
-		if (isInRange(date)) return 'day selected-range';
-		return 'day available';
+		if (!isAvailable(date)) return (isTestBlocked(date) ? 'day test-blocked' : 'day unavailable') + outside;
+		if (isStart(date) || isEnd(date)) return 'day selected-endpoint' + outside;
+		if (isInRange(date) && !previewValid) return 'day preview-invalid' + outside;
+		if (isInRange(date) && isHoverPreview) return 'day hover-range' + outside;
+		if (isInRange(date)) return 'day selected-range' + outside;
+		return 'day available' + outside;
 	}
 </script>
 
 <div class="calendar" onmouseleave={() => hoveredDate = null}>
 	<div class="cal-header">
-		<button onclick={prevMonth} class="nav-btn" aria-label={t(messages, 'calendar.prev_month')}>
+		<button onclick={prevMonth} class="nav-btn" aria-label={t(messages, 'calendar.prev_month')} disabled={!canGoPrev}>
 			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
 		</button>
 		<h2 class="month-title">{monthName}</h2>
@@ -210,20 +242,16 @@
 
 	<div class="days-grid">
 		{#each days as date}
-			{#if date === null}
-				<div></div>
-			{:else}
-				<button
-					onclick={() => selectDate(date)}
-					onmouseenter={() => hoveredDate = date}
-					disabled={isPast(date) || (!isClickMode && !isAvailable(date))}
-					class={dayClass(date)}
-					aria-label={date.toLocaleDateString(lang, { weekday: 'long', month: 'long', day: 'numeric' })}
-					aria-selected={isInRange(date)}
-				>
-					{date.getDate()}
-				</button>
-			{/if}
+			<button
+				onclick={() => selectDate(date)}
+				onmouseenter={() => hoveredDate = date}
+				disabled={isPast(date) || isOutsideMonth(date) || (!isClickMode && !isAvailable(date))}
+				class={dayClass(date)}
+				aria-label={date.toLocaleDateString(lang, { weekday: 'long', month: 'long', day: 'numeric' })}
+				aria-selected={isInRange(date)}
+			>
+				{date.getDate()}
+			</button>
 		{/each}
 	</div>
 
@@ -254,6 +282,8 @@
 	.nav-btn { display: inline-flex; align-items: center; justify-content: center; width: 2.75rem; height: 2.75rem; padding: 0; border-radius: 50%; border: none; background: transparent; cursor: pointer; color: var(--color-brown); transition: background 0.2s ease; }
 	.nav-btn:hover { background: var(--color-cream-dark); }
 	.nav-btn:active { background: color-mix(in srgb, var(--color-sage) 20%, transparent); }
+	.nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+	.nav-btn:disabled:hover { background: transparent; }
 	.month-title { font-family: 'Lora', serif; font-size: 1.375rem; font-weight: 600; margin: 0; }
 
 	.hint { text-align: center; font-size: 0.8rem; color: var(--color-sage); font-weight: 500; margin-bottom: 0.75rem; animation: fadeIn 0.2s ease; }
@@ -276,6 +306,10 @@
 		cursor: not-allowed;
 	}
 	.day.past { color: var(--color-text-muted); opacity: 0.3; cursor: not-allowed; background: transparent; }
+	/* Outside-month days — preview from prev/next month for visual continuity
+	   on bookings spanning month boundaries. Display-only, never clickable. */
+	.day.outside { opacity: 0.35; cursor: default; pointer-events: none; }
+	.day.outside.available { color: var(--color-text-muted); background: transparent; }
 	.day.selected-endpoint { background: var(--color-sage); color: var(--md-sys-color-on-primary); font-weight: 700; box-shadow: 0 2px 8px color-mix(in srgb, var(--color-sage) 40%, transparent); }
 	.day.selected-range { background: color-mix(in srgb, var(--color-sage) 25%, transparent); color: var(--color-text); }
 	.day.hover-range { background: color-mix(in srgb, var(--color-sage) 12%, transparent); color: var(--color-text); }

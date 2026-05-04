@@ -183,6 +183,7 @@
 						{testBlockedDates}
 						onDateRangeSelect={handleDateRangeSelect}
 						minDate={new Date()}
+						disablePastMonths
 					/>
 				</div>
 			{/if}
