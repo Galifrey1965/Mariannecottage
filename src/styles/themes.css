@@ -1,0 +1,68 @@
+/*
+ * Warm-rustic palette themes — switch via <html data-theme="...">.
+ * Tokens are semantic: components reference these, not raw hex.
+ * Legacy --color-* tokens in app.css alias to these for backwards-compat.
+ */
+
+/* --- Shared shape / typography / motion (palette-agnostic) -------------- */
+:root {
+	--theme-font-display: 'Lora', 'Iowan Old Style', Georgia, serif;
+	--theme-font-body: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
+	--theme-radius-sm: 0.25rem;
+	--theme-radius-md: 0.5rem;
+	--theme-radius-lg: 1rem;
+	--theme-radius-pill: 999px;
+	--theme-shadow-sm: 0 1px 2px rgba(60, 40, 20, 0.08);
+	--theme-shadow-md: 0 4px 14px rgba(60, 40, 20, 0.12);
+	--theme-shadow-lg: 0 12px 30px rgba(60, 40, 20, 0.18);
+	--theme-border-thin: 1px solid var(--theme-border);
+}
+
+/* --- Stone & Sage (default) --------------------------------------------- */
+:root,
+:root[data-theme='stone-sage'] {
+	--theme-bg: #f5f1ea;
+	--theme-surface: #ebe4d6;
+	--theme-surface-2: #ddd3c0;
+	--theme-text: #2c2a26;
+	--theme-text-muted: #5f5e5a;
+	--theme-accent: #7a8b6f;
+	--theme-accent-hover: #5a6b51;
+	--theme-accent-soft: #c8d0bc;
+	--theme-warm: #8b6f47;
+	--theme-warm-soft: #b59874;
+	--theme-gold: #b89968;
+	--theme-border: #c9bfae;
+}
+
+/* --- Terracotta & Cream ------------------------------------------------- */
+:root[data-theme='terracotta'] {
+	--theme-bg: #f7efe2;
+	--theme-surface: #f1e4cf;
+	--theme-surface-2: #e7d4b6;
+	--theme-text: #3a2418;
+	--theme-text-muted: #6b4f3e;
+	--theme-accent: #b85a3a;
+	--theme-accent-hover: #93432a;
+	--theme-accent-soft: #e8b9a4;
+	--theme-warm: #8a4a2a;
+	--theme-warm-soft: #c08a6a;
+	--theme-gold: #c89860;
+	--theme-border: #d6bfa3;
+}
+
+/* --- Linen & Ochre ------------------------------------------------------ */
+:root[data-theme='linen-ochre'] {
+	--theme-bg: #f4ecdc;
+	--theme-surface: #ebe0c9;
+	--theme-surface-2: #ddd0b2;
+	--theme-text: #2a1f12;
+	--theme-text-muted: #5e4f3a;
+	--theme-accent: #c79a3a;
+	--theme-accent-hover: #9a7426;
+	--theme-accent-soft: #e8d59a;
+	--theme-warm: #7a4a1f;
+	--theme-warm-soft: #a87a45;
+	--theme-gold: #d4a84a;
+	--theme-border: #c8b88f;
+}

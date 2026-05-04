@@ -5,6 +5,9 @@
 @import './styles/tokens/light-theme.css';
 @import './styles/tokens/shape-and-motion.css';
 
+/* Warm-rustic palette themes (stone-sage default; switchable via [data-theme]) */
+@import './styles/themes.css';
+
 /* M3 Animations */
 @import './styles/animations.css';
 
@@ -13,27 +16,25 @@
 
 
 :root {
-	/* Backgrounds */
-	--color-bg: #fdfbf7;
-	--color-cream: #f5f0e8;
-	--color-cream-dark: #ede6d8;
+	/* Legacy tokens — now aliased to active theme. Components keep using these. */
+	--color-bg: var(--theme-bg);
+	--color-cream: var(--theme-surface);
+	--color-cream-dark: var(--theme-surface-2);
 
-	/* Accents */
-	--color-sage: #6b8f71;
-	--color-sage-hover: #4a6e50;
-	--color-brown: #8b6f47;
-	--color-brown-light: #a8915f;
+	--color-sage: var(--theme-accent);
+	--color-sage-hover: var(--theme-accent-hover);
+	--color-brown: var(--theme-warm);
+	--color-brown-light: var(--theme-warm-soft);
 
-	/* Text */
-	--color-text: #2c2c2a;
-	--color-text-muted: #5f5e5a;
+	--color-text: var(--theme-text);
+	--color-text-muted: var(--theme-text-muted);
 
 	/* Calendar & Status */
 	--color-avail: #7ba96b;
 	--color-unavail: var(--md-sys-color-error);
 
 	/* Accent */
-	--color-gold: #c4a265;
+	--color-gold: var(--theme-gold);
 
 	/* Footer */
 	--color-footer-bg: #5d3a1a;

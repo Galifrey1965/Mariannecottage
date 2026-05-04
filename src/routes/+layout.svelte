@@ -7,6 +7,7 @@
 	import NavigationRail from '$lib/components/NavigationRail.svelte';
 	import NavigationBar from '$lib/components/NavigationBar.svelte';
 	import SEOHead from '$lib/components/SEOHead.svelte';
+	import ThemeSwitcher from '$lib/components/dev/ThemeSwitcher.svelte';
 	import { LOCALES, localePath, t } from '$lib/i18n';
 	import type { LayoutData } from './$types';
 
@@ -66,6 +67,8 @@
 	<NavigationBar items={navItems} label={t(messages, "a11y.mobile_navigation")} />
 	<Footer {lang} {messages} />
 </div>
+
+<ThemeSwitcher />
 
 <style>
 	:global(html) {

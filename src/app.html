@@ -1,8 +1,15 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="stone-sage">
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<!-- Apply persisted palette before paint to avoid theme flash. -->
+		<script>
+			try {
+				var t = localStorage.getItem('mc-theme');
+				if (t) document.documentElement.setAttribute('data-theme', t);
+			} catch (e) {}
+		</script>
 		<!-- SMUI light theme — site is light-mode-only -->
 		<link rel="stylesheet" href="/smui.css" />
 		%sveltekit.head%
