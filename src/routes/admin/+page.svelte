@@ -1,6 +1,8 @@
 <script lang="ts">
 	import type { Booking, CancellationPolicySchedule } from '$lib/server/supabase';
 	import type { PageData } from './$types';
+	import BookingCalendar, { type BookingDayInfo } from '$lib/components/BookingCalendar.svelte';
+	import enMessages from '../../../messages/en.json';
 
 	let { data }: { data: PageData } = $props();
 
@@ -10,6 +12,7 @@
 	let statusFilter = $state('all');
 	let searchQuery = $state('');
 	let showTest = $state(false);
+	let viewMode = $state<'list' | 'calendar'>('list');
 	let searchTimeout: ReturnType<typeof setTimeout>;
 
 	let selectedBooking = $state<Booking | null>(null);
@@ -301,6 +304,41 @@
 		if (source === 'imported') return 'OTA';
 		return source.toUpperCase();
 	}
+
+	// Calendar mode — flatten visible bookings into a date → BookingDayInfo map
+	// so the BookingCalendar can colour cells by status and route clicks back
+	// through selectBooking() to open the existing detail panel.
+	const adminBookingByDate = $derived.by(() => {
+		const out: Record<string, BookingDayInfo> = {};
+		for (const b of visibleBookings) {
+			const start = new Date(b.check_in_date + 'T00:00:00Z');
+			const end = new Date(b.check_out_date + 'T00:00:00Z');
+			const d = new Date(start);
+			while (d < end) {
+				const iso = d.toISOString().slice(0, 10);
+				const existing = out[iso];
+				// confirmed > pending > anything else when two bookings collide on the same date
+				if (!existing || rankStatus(b.status) > rankStatus(existing.status)) {
+					out[iso] = { id: b.id, status: b.status, source: b.source };
+				}
+				d.setUTCDate(d.getUTCDate() + 1);
+			}
+		}
+		return out;
+	});
+
+	function rankStatus(s: string): number {
+		if (s === 'confirmed') return 3;
+		if (s === 'pending' || s === 'pending_payment') return 2;
+		if (s === 'cancelled' || s === 'expired' || s === 'refunded' || s === 'refunded_overbooked' || s === 'payment_failed') return 0;
+		return 1;
+	}
+
+	function handleAdminDayClick(bookingId: string | null) {
+		if (!bookingId) return;
+		const b = bookings.find(x => x.id === bookingId);
+		if (b) selectBooking(b);
+	}
 </script>
 
 <div class="dashboard">
@@ -319,6 +357,10 @@
 				{#each ['all', 'pending', 'confirmed', 'cancelled'] as s}
 					<button onclick={() => statusFilter = s} class="filter-btn" class:active={statusFilter === s}>{s}</button>
 				{/each}
+			</div>
+			<div class="view-toggle" role="tablist" aria-label="View mode">
+				<button onclick={() => viewMode = 'list'} class="filter-btn" class:active={viewMode === 'list'} role="tab" aria-selected={viewMode === 'list'}>List</button>
+				<button onclick={() => viewMode = 'calendar'} class="filter-btn" class:active={viewMode === 'calendar'} role="tab" aria-selected={viewMode === 'calendar'}>Calendar</button>
 			</div>
 			{#if testBookingCount > 0}
 				<label class="show-test-toggle" title="Include source='test' rows in this view">
@@ -352,6 +394,25 @@
 			</div>
 		</div>
 
+		{#if viewMode === 'calendar'}
+			<div class="calendar-container">
+				<BookingCalendar
+					messages={enMessages as never}
+					lang="en"
+					bookingByDate={adminBookingByDate}
+					onDayClick={handleAdminDayClick}
+					minDate={new Date('1970-01-01')}
+					showLegend={false}
+				/>
+				<div class="admin-cal-legend">
+					<span class="lk confirmed"></span><span>Confirmed</span>
+					<span class="lk pending"></span><span>Pending</span>
+					<span class="lk test"></span><span>Test</span>
+					<span class="lk cancelled"></span><span>Cancelled / past</span>
+					<span class="hint">Click any coloured day to open the booking.</span>
+				</div>
+			</div>
+		{:else}
 		<div class="table-container">
 			{#if loading}
 				<div class="empty-state">Loading...</div>
@@ -434,6 +495,7 @@
 				</div>
 			{/if}
 		</div>
+		{/if}
 	</div>
 
 	{#if cancelLinkUrl || cancelLinkError}
@@ -831,6 +893,22 @@
 		padding: 0.25rem 0.5rem;
 	}
 	.show-test-toggle input { cursor: pointer; }
+
+	/* Calendar view */
+	.view-toggle { display: flex; gap: 0.25rem; background: var(--color-bg); border-radius: 8px; border: 1px solid var(--color-cream-dark); padding: 0.25rem; }
+	.calendar-container { display: flex; flex-direction: column; gap: 0.75rem; }
+	.admin-cal-legend {
+		display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem 1rem;
+		padding: 0.75rem 1rem; background: var(--color-bg);
+		border: 1px solid var(--color-cream-dark); border-radius: 12px;
+		font-size: 0.75rem; color: var(--color-text-muted);
+	}
+	.admin-cal-legend .lk { width: 0.9rem; height: 0.9rem; border-radius: 4px; display: inline-block; }
+	.admin-cal-legend .lk.confirmed { background: var(--color-sage); }
+	.admin-cal-legend .lk.pending { background: #fff4d6; border: 2px dashed #f5b942; box-sizing: border-box; }
+	.admin-cal-legend .lk.test { background: repeating-linear-gradient(45deg, #f5b942, #f5b942 3px, #e89c1c 3px, #e89c1c 6px); }
+	.admin-cal-legend .lk.cancelled { background: var(--color-cream-dark); opacity: 0.6; }
+	.admin-cal-legend .hint { margin-left: auto; font-style: italic; }
 
 	/* Mobile cards */
 	.mobile-cards { display: block; }

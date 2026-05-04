@@ -2,6 +2,12 @@
 	import { t, formatDate } from '$lib/i18n';
 	import type { Messages, Locale } from '$lib/i18n';
 
+	export interface BookingDayInfo {
+		id: string;
+		status: string;
+		source?: string;
+	}
+
 	interface Props {
 		messages: Messages;
 		lang: Locale;
@@ -10,9 +16,27 @@
 		onDateRangeSelect?: (checkIn: Date, checkOut: Date) => void;
 		minDate?: Date;
 		maxDate?: Date;
+		// Admin "navigate" mode — clicking a day fires onDayClick(bookingId, date)
+		// instead of starting a range selection. Day cells render with status colours.
+		bookingByDate?: Record<string, BookingDayInfo>;
+		onDayClick?: (bookingId: string | null, date: Date) => void;
+		showLegend?: boolean;
 	}
 
-	let { messages, lang, availability = {}, testBlockedDates = [], onDateRangeSelect, minDate = new Date(), maxDate }: Props = $props();
+	let {
+		messages,
+		lang,
+		availability = {},
+		testBlockedDates = [],
+		onDateRangeSelect,
+		minDate = new Date(),
+		maxDate,
+		bookingByDate = {},
+		onDayClick,
+		showLegend = true
+	}: Props = $props();
+
+	const isClickMode = $derived(onDayClick !== undefined);
 
 	const testBlockedSet = $derived(new Set(testBlockedDates));
 	const isTestBlocked = (date: Date) => testBlockedSet.has(toISODate(date));
@@ -61,6 +85,12 @@
 	const isHoverPreview = $derived(!selectedEnd && selectedStart && hoveredDate);
 
 	const selectDate = (date: Date) => {
+		if (onDayClick) {
+			if (isPast(date)) return;
+			const info = bookingByDate[toISODate(date)];
+			onDayClick(info?.id ?? null, date);
+			return;
+		}
 		if (isPast(date) || !isAvailable(date)) return;
 
 		// No start yet — set it
@@ -118,6 +148,17 @@
 
 	function dayClass(date: Date): string {
 		if (isPast(date)) return 'day past';
+		if (isClickMode) {
+			const info = bookingByDate[toISODate(date)];
+			if (info) {
+				if (info.source === 'test') return 'day booked-test';
+				if (info.status === 'cancelled' || info.status === 'expired' || info.status === 'refunded' || info.status === 'refunded_overbooked' || info.status === 'payment_failed') return 'day booked-cancelled';
+				if (info.status === 'pending' || info.status === 'pending_payment') return 'day booked-pending';
+				if (info.status === 'confirmed') return 'day booked-confirmed';
+				return 'day booked-other';
+			}
+			return 'day available';
+		}
 		if (!isAvailable(date)) return isTestBlocked(date) ? 'day test-blocked' : 'day unavailable';
 		if (isStart(date) || isEnd(date)) return 'day selected-endpoint';
 		if (isInRange(date) && !previewValid) return 'day preview-invalid';
@@ -159,7 +200,7 @@
 				<button
 					onclick={() => selectDate(date)}
 					onmouseenter={() => hoveredDate = date}
-					disabled={isPast(date) || !isAvailable(date)}
+					disabled={isPast(date) || (!isClickMode && !isAvailable(date))}
 					class={dayClass(date)}
 					aria-label={date.toLocaleDateString(lang, { weekday: 'long', month: 'long', day: 'numeric' })}
 					aria-selected={isInRange(date)}
@@ -170,14 +211,16 @@
 		{/each}
 	</div>
 
-	<div class="legend">
-		<div class="legend-item"><div class="legend-swatch available"></div><span>{t(messages, 'calendar.available')}</span></div>
-		<div class="legend-item"><div class="legend-swatch unavailable"></div><span>{t(messages, 'calendar.unavailable')}</span></div>
-		<div class="legend-item"><div class="legend-swatch past"></div><span>{t(messages, 'calendar.past_date')}</span></div>
-		{#if testBlockedDates.length > 0}
-			<div class="legend-item"><div class="legend-swatch test-blocked"></div><span>{t(messages, 'calendar.test_blocked')}</span></div>
-		{/if}
-	</div>
+	{#if showLegend}
+		<div class="legend">
+			<div class="legend-item"><div class="legend-swatch available"></div><span>{t(messages, 'calendar.available')}</span></div>
+			<div class="legend-item"><div class="legend-swatch unavailable"></div><span>{t(messages, 'calendar.unavailable')}</span></div>
+			<div class="legend-item"><div class="legend-swatch past"></div><span>{t(messages, 'calendar.past_date')}</span></div>
+			{#if testBlockedDates.length > 0}
+				<div class="legend-item"><div class="legend-swatch test-blocked"></div><span>{t(messages, 'calendar.test_blocked')}</span></div>
+			{/if}
+		</div>
+	{/if}
 
 	{#if selectedStart && displayEnd && previewNights > 0}
 		<div class="selection-info" class:preview={isHoverPreview} class:invalid={!previewValid} role="status" aria-live="polite">
@@ -221,6 +264,20 @@
 	.day.selected-range { background: color-mix(in srgb, var(--color-sage) 25%, transparent); color: var(--color-text); }
 	.day.hover-range { background: color-mix(in srgb, var(--color-sage) 12%, transparent); color: var(--color-text); }
 	.day.preview-invalid { background: color-mix(in srgb, var(--md-sys-color-error) 10%, transparent); color: var(--color-text-muted); }
+
+	/* Admin click-mode statuses */
+	.day.booked-confirmed { background: var(--color-sage); color: white; cursor: pointer; font-weight: 600; }
+	.day.booked-confirmed:hover { filter: brightness(1.1); }
+	.day.booked-pending { background: #fff4d6; color: #8a5a00; cursor: pointer; border: 2px dashed #f5b942; box-sizing: border-box; }
+	.day.booked-pending:hover { filter: brightness(0.97); }
+	.day.booked-cancelled { background: var(--color-cream-dark); color: var(--color-text-muted); cursor: pointer; opacity: 0.6; text-decoration: line-through; }
+	.day.booked-cancelled:hover { opacity: 0.85; }
+	.day.booked-test {
+		background: repeating-linear-gradient(45deg, #f5b942, #f5b942 4px, #e89c1c 4px, #e89c1c 8px);
+		color: #4a3300; cursor: pointer; font-weight: 600;
+	}
+	.day.booked-test:hover { filter: brightness(1.05); }
+	.day.booked-other { background: var(--color-cream-dark); color: var(--color-text); cursor: pointer; }
 
 	.legend { margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--color-cream-dark); display: flex; flex-direction: row; flex-wrap: wrap; gap: 0.75rem 1.5rem; font-size: 0.75rem; overflow-wrap: anywhere; }
 	.legend-item { display: flex; align-items: center; gap: 0.5rem; }
