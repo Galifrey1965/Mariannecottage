@@ -70,7 +70,7 @@
 			input$autocomplete="name"
 		>
 			<TextfieldIcon slot="leadingIcon">
-				<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+				<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
 			</TextfieldIcon>
 		</Textfield>
 	</div>
@@ -87,7 +87,7 @@
 			input$autocomplete="email"
 		>
 			<TextfieldIcon slot="leadingIcon">
-				<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"/></svg>
+				<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
 			</TextfieldIcon>
 		</Textfield>
 	</div>
@@ -142,23 +142,28 @@
 
 	.submit-btn {
 		width: 100%;
-		padding: 0.75rem 1.5rem;
-		background-color: var(--color-sage);
-		color: white;
+		padding: 0.95rem 1.5rem;
+		background: var(--theme-accent);
+		color: var(--theme-bg);
+		font-family: var(--theme-font-body);
 		font-weight: 600;
-		font-size: 1rem;
-		border: none;
-		border-radius: var(--md-shape-corner-small);
+		font-size: 0.9rem;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		border: 1px solid var(--theme-accent);
+		border-radius: var(--theme-radius-pill);
 		cursor: pointer;
-		transition: background-color 0.2s ease;
+		transition: background 0.25s ease, border-color 0.25s ease;
 	}
 
 	.submit-btn:hover {
-		background-color: var(--color-sage-hover);
+		background: var(--theme-accent-hover);
+		border-color: var(--theme-accent-hover);
 	}
 
 	.submit-btn:disabled {
-		background-color: var(--color-disabled);
+		background: var(--color-disabled);
+		border-color: var(--color-disabled);
 		cursor: not-allowed;
 	}
 </style>

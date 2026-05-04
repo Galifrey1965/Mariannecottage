@@ -4,6 +4,17 @@
 
 	let { data }: { data: PageData } = $props();
 	const { lang, messages } = data;
+
+	const amenityIcons: Record<string, string> = {
+		comfortable_beds: '<path d="M2 20v-8a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v8"/><path d="M2 17h20"/><path d="M6 10V7a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/><path d="M12 10V7a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/>',
+		shower: '<path d="M4 4 2.5 2.5"/><path d="M13.5 6.5a4.95 4.95 0 0 0-7 7"/><path d="M15 5 5 15"/><path d="M14 17v.01"/><path d="M10 16v.01"/><path d="M13 13v.01"/><path d="M16 10v.01"/><path d="M11 20v.01"/><path d="M17 14v.01"/><path d="M20 11v.01"/>',
+		towels: '<path d="M21 11V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v4"/><path d="M3 11h18v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M7 11V7"/><path d="M17 11V7"/>',
+		kettle: '<path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4z"/><line x1="6" x2="6" y1="2" y2="4"/><line x1="10" x2="10" y1="2" y2="4"/><line x1="14" x2="14" y1="2" y2="4"/>',
+		garden_views: '<path d="M8 19h8a4 4 0 0 0 3.8-2.8 4 4 0 0 0-1.6-4.5c1-1.1 1-2.7.4-4-.7-1.2-2.2-2-3.6-1.7a3 3 0 0 0-3-3 3 3 0 0 0-3 3c-1.5-.2-2.9.5-3.6 1.7-.7 1.3-.5 2.9.4 4a4 4 0 0 0-1.6 4.5A4 4 0 0 0 8 19Z"/><path d="M12 19v3"/>',
+		wifi: '<path d="M5 13a10 10 0 0 1 14 0"/><path d="M8.5 16.5a5 5 0 0 1 7 0"/><path d="M2 8.82a15 15 0 0 1 20 0"/><line x1="12" x2="12.01" y1="20" y2="20"/>',
+		parking: '<rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 17V7h4a3 3 0 0 1 0 6H9"/>',
+		nonsmoke: '<circle cx="12" cy="12" r="10"/><line x1="4.93" x2="19.07" y1="4.93" y2="19.07"/>'
+	};
 </script>
 
 <svelte:head>
@@ -41,7 +52,19 @@
 				'nonsmoke'
 			] as amenity}
 				<div class="amenity-item">
-					<span class="amenity-check">✓</span>
+					<svg
+						class="amenity-icon"
+						xmlns="http://www.w3.org/2000/svg"
+						width="20"
+						height="20"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="1.5"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						aria-hidden="true"
+					>{@html amenityIcons[amenity]}</svg>
 					<span class="amenity-text">{t(messages, `rooms.amenities.${amenity}`)}</span>
 				</div>
 			{/each}
@@ -95,7 +118,7 @@
 		border: var(--theme-border-thin);
 		border-radius: var(--theme-radius-sm);
 	}
-	.amenity-check { font-size: 1.1rem; color: var(--theme-accent); font-weight: 700; line-height: 1.3; }
+	.amenity-icon { color: var(--theme-accent); flex-shrink: 0; margin-top: 0.1rem; }
 	.amenity-text { color: var(--theme-text-muted); }
 	.highlight-box {
 		padding: 2.25rem;
