@@ -66,6 +66,28 @@
 	/* AI brand icon tints — light versions for dark footer background */
 	--color-chatgpt: #5ddbb4;
 	--color-claude-ai: #f0a07a;
+
+	/* Warm-rustic overrides for Material shape & elevation tokens.
+	   These override values from styles/tokens/* so every component using
+	   --md-shape-corner-* / --md-elevation-shadow-* picks up softer,
+	   less-Material chrome without per-component edits. */
+	--md-shape-corner-extra-small: 2px;
+	--md-shape-corner-small: 3px;
+	--md-shape-corner-medium: 6px;
+	--md-shape-corner-large: 10px;
+	--md-shape-corner-extra-large: 14px;
+
+	--md-elevation-shadow-1: 0 1px 2px rgba(60, 40, 20, 0.07);
+	--md-elevation-shadow-2: 0 2px 6px rgba(60, 40, 20, 0.10);
+	--md-elevation-shadow-3: 0 4px 12px rgba(60, 40, 20, 0.12);
+	--md-elevation-shadow-4: 0 8px 18px rgba(60, 40, 20, 0.14);
+	--md-elevation-shadow-5: 0 14px 28px rgba(60, 40, 20, 0.16);
+}
+
+/* Override SMUI/MDC's Roboto with the site typography stack.
+   [class*='mdc-'] catches all Material Components Web internal classes. */
+[class*='mdc-'] {
+	font-family: var(--theme-font-body);
 }
 
 /* Site is light-mode only — no prefers-color-scheme overrides, no

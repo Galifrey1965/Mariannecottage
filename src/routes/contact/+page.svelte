@@ -96,45 +96,70 @@
 </section>
 
 <style>
-	.page-section { max-width: 56rem; margin: 0 auto; padding: 4rem 1rem; }
-	@media (min-width: 600px) { .page-section { padding: 4rem 1.5rem; } }
-	.page-title { font-family: 'Lora', serif; font-size: 2.5rem; font-weight: 700; color: var(--color-brown); margin: 0 0 3rem; }
+	.page-section { max-width: 56rem; margin: 0 auto; padding: 5rem 1rem; }
+	@media (min-width: 600px) { .page-section { padding: 6rem 1.5rem; } }
+	.page-title {
+		font-family: var(--theme-font-display);
+		font-size: clamp(2rem, 4vw, 2.75rem);
+		font-weight: 500;
+		color: var(--theme-warm);
+		letter-spacing: -0.01em;
+		margin: 0 0 3rem;
+	}
 	.two-col { display: grid; grid-template-columns: 1fr; gap: 3rem; margin-bottom: 3rem; }
 	@media (min-width: 840px) { .two-col { grid-template-columns: 1fr 1fr; } }
-	.info-col { display: flex; flex-direction: column; gap: 1.5rem; }
+	.info-col { display: flex; flex-direction: column; gap: 1.75rem; }
 	.info-block {}
-	.info-heading { font-size: 1.125rem; font-weight: 600; color: var(--color-brown); margin: 0 0 0.5rem; }
-	.info-text { color: var(--color-text-muted); margin: 0; }
-	.info-link { color: var(--color-sage); text-decoration: none; }
+	.info-heading {
+		font-family: var(--theme-font-display);
+		font-size: 1rem; font-weight: 500;
+		color: var(--theme-warm); margin: 0 0 0.4rem;
+		letter-spacing: 0.04em; text-transform: uppercase;
+	}
+	.info-text { color: var(--theme-text-muted); margin: 0; }
+	.info-link { color: var(--theme-accent); text-decoration: none; }
 	.info-link:hover { text-decoration: underline; }
-	.directions-box { padding: 1rem; background: var(--color-cream); border-left: 4px solid var(--color-sage); border-radius: 4px; }
-	.directions-heading { font-weight: 600; color: var(--color-brown); margin: 0 0 0.5rem; }
-	.directions-text { font-size: 0.875rem; color: var(--color-text-muted); margin: 0; }
-	.social-links { display: flex; flex-wrap: nowrap; gap: 0.75rem; align-items: center; }
+	.directions-box {
+		padding: 1.25rem;
+		background: var(--theme-surface);
+		border-left: 2px solid var(--theme-accent);
+		border-radius: 0;
+	}
+	.directions-heading { font-weight: 600; color: var(--theme-warm); margin: 0 0 0.5rem; }
+	.directions-text { font-size: 0.875rem; color: var(--theme-text-muted); margin: 0; }
+	.social-links { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; }
 	.fab-link {
 		display: inline-flex;
 		align-items: center;
 		gap: 0.5rem;
-		height: 3rem;
-		padding: 0 1.25rem;
-		border-radius: var(--md-shape-corner-large);
-		background: var(--color-cream);
-		color: var(--color-brown);
-		font-weight: 600;
+		height: 2.75rem;
+		padding: 0 1.1rem;
+		border-radius: var(--theme-radius-pill);
+		background: transparent;
+		color: var(--theme-warm);
+		border: 1px solid var(--theme-border);
+		font-weight: 500;
 		font-size: 0.875rem;
 		text-decoration: none;
 		white-space: nowrap;
-		box-shadow: var(--md-elevation-shadow-1);
-		transition: box-shadow 0.2s, transform 0.2s;
+		transition: background 0.2s, border-color 0.2s, color 0.2s;
 	}
 	.fab-link:hover {
-		box-shadow: var(--md-elevation-shadow-2);
-		transform: scale(1.05);
+		background: var(--theme-surface);
+		border-color: var(--theme-accent);
+		color: var(--theme-accent);
 	}
-	.fab-link:active { transform: scale(0.95); }
 	.fab-link svg { flex-shrink: 0; }
-	.form-heading { font-family: 'Lora', serif; font-size: 1.25rem; font-weight: 600; color: var(--color-brown); margin: 0 0 1.5rem; }
-	.map-section { margin-top: 3rem; }
-	.map-heading { font-family: 'Lora', serif; font-size: 1.5rem; font-weight: 600; color: var(--color-brown); margin: 0 0 1.5rem; }
-	.map-wrapper { border-radius: var(--md-shape-corner-medium); overflow: hidden; box-shadow: var(--md-elevation-shadow-2); }
+	.form-heading {
+		font-family: var(--theme-font-display);
+		font-size: 1.25rem; font-weight: 500;
+		color: var(--theme-warm); margin: 0 0 1.5rem;
+	}
+	.map-section { margin-top: 4rem; }
+	.map-heading {
+		font-family: var(--theme-font-display);
+		font-size: 1.5rem; font-weight: 500;
+		color: var(--theme-warm); margin: 0 0 1.5rem;
+	}
+	.map-wrapper { border-radius: var(--theme-radius-md); overflow: hidden; border: var(--theme-border-thin); }
 </style>

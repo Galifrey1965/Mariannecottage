@@ -41,35 +41,37 @@
 	.page-section {
 		max-width: 1440px;
 		margin: 0 auto;
-		padding: 4rem 1rem;
+		padding: 5rem 1rem;
 	}
 
 	@media (min-width: 600px) {
 		.page-section {
-			padding: 4rem 1.5rem;
+			padding: 6rem 1.5rem;
 		}
 	}
 
 	.page-title {
-		font-family: 'Lora', serif;
-		font-size: 2.5rem;
-		font-weight: 700;
-		color: var(--color-brown);
+		font-family: var(--theme-font-display);
+		font-size: clamp(2rem, 4vw, 2.75rem);
+		font-weight: 500;
+		color: var(--theme-warm);
+		letter-spacing: -0.01em;
 		margin: 0 0 1rem;
 	}
 
 	.page-description {
-		color: var(--color-text-muted);
-		font-size: 1.125rem;
-		margin: 0 0 2rem;
-		line-height: 1.6;
+		color: var(--theme-text-muted);
+		font-size: 1.1rem;
+		margin: 0 0 2.5rem;
+		line-height: 1.7;
+		max-width: 50rem;
 	}
 
 	.filter-bar-wrapper {
-		margin-bottom: 1.5rem;
-		padding: 0.75rem 1rem;
-		background: var(--color-cream, #f5f0e8);
-		border-radius: var(--md-shape-corner-medium, 12px);
-		border: 1px solid var(--color-cream-dark, #ede6d8);
+		margin-bottom: 2rem;
+		padding: 0.85rem 1.1rem;
+		background: var(--theme-surface);
+		border-radius: var(--theme-radius-sm);
+		border: var(--theme-border-thin);
 	}
 </style>

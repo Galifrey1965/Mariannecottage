@@ -32,10 +32,29 @@
 </section>
 
 <style>
-	.page-section { max-width: 56rem; margin: 0 auto; padding: 4rem 1rem; }
-	.page-title { font-family: 'Lora', serif; font-size: 2.5rem; font-weight: 700; color: var(--color-brown); margin: 0 0 2rem; }
-	.legal-content { background: var(--color-cream); border-radius: var(--md-shape-corner-medium); padding: 2rem; color: var(--color-text-muted); }
+	.page-section { max-width: 56rem; margin: 0 auto; padding: 5rem 1rem; }
+	@media (min-width: 600px) { .page-section { padding: 6rem 1.5rem; } }
+	.page-title {
+		font-family: var(--theme-font-display);
+		font-size: clamp(2rem, 4vw, 2.75rem);
+		font-weight: 500;
+		color: var(--theme-warm);
+		letter-spacing: -0.01em;
+		margin: 0 0 2rem;
+	}
+	.legal-content {
+		background: var(--theme-surface);
+		border: var(--theme-border-thin);
+		border-radius: var(--theme-radius-md);
+		padding: 2rem;
+		color: var(--theme-text-muted);
+		line-height: 1.7;
+	}
 	.todo-list { margin-top: 2rem; }
-	.todo-list h2 { font-size: 1.25rem; font-weight: 600; color: var(--color-brown); margin: 0 0 1rem; }
-	.todo-list ul { list-style: disc; padding-left: 1.5rem; display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.875rem; }
+	.todo-list h2 {
+		font-family: var(--theme-font-display);
+		font-size: 1.2rem; font-weight: 500;
+		color: var(--theme-warm); margin: 0 0 1rem;
+	}
+	.todo-list ul { list-style: disc; padding-left: 1.5rem; display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.9rem; }
 </style>

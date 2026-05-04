@@ -153,9 +153,19 @@
 
 	.cta-center { text-align: center; }
 	.cta-button {
-		display: inline-block; padding: 0.75rem 2rem;
-		background: var(--color-sage); color: var(--md-sys-color-on-primary); font-weight: 600;
-		border-radius: var(--md-shape-corner-small); text-decoration: none; transition: opacity 0.2s;
+		display: inline-block;
+		padding: 0.85rem 2.25rem;
+		background: transparent;
+		color: var(--theme-accent);
+		font-family: var(--theme-font-body);
+		font-weight: 600;
+		font-size: 0.9rem;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		border: 1px solid var(--theme-accent);
+		border-radius: var(--theme-radius-pill);
+		text-decoration: none;
+		transition: background 0.25s ease, color 0.25s ease;
 	}
-	.cta-button:hover { opacity: 0.9; }
+	.cta-button:hover { background: var(--theme-accent); color: var(--theme-bg); }
 </style>

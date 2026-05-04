@@ -354,8 +354,14 @@
 <style>
 	.page-section { max-width: 1440px; margin: 0 auto; padding: 4rem 1rem; }
 	@media (min-width: 600px) { .page-section { padding: 4rem 1.5rem; } }
-	.page-title { font-family: 'Lora', serif; font-size: 2.5rem; font-weight: 700; color: var(--color-text); margin: 0 0 0.5rem; }
-	@media (max-width: 599px) { .page-title { font-size: 1.75rem; } }
+	.page-title {
+		font-family: var(--theme-font-display);
+		font-size: clamp(1.85rem, 4vw, 2.75rem);
+		font-weight: 500;
+		color: var(--theme-warm);
+		letter-spacing: -0.01em;
+		margin: 0 0 0.5rem;
+	}
 
 	/* Steps */
 	.steps { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 2rem; }
