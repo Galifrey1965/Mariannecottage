@@ -3,7 +3,6 @@
 /* Material Design 3 Token System */
 @import './styles/tokens/reference-tokens.css';
 @import './styles/tokens/light-theme.css';
-@import './styles/tokens/dark-theme.css';
 @import './styles/tokens/shape-and-motion.css';
 
 /* M3 Animations */
@@ -68,121 +67,8 @@
 	--color-claude-ai: #f0a07a;
 }
 
-@media (prefers-color-scheme: dark) {
-	:root {
-		/* Backgrounds */
-		--color-bg: #121212;
-		--color-cream: #262524;
-		--color-cream-dark: #31302f;
-
-		/* Accents */
-		--color-sage: #7bc9a0;
-		--color-sage-hover: #5db88a;
-		--color-brown: #d4c5a9;
-		--color-brown-light: #c4b077;
-
-		/* Text */
-		--color-text: #e8e3df;
-		--color-text-muted: #ccc8c3;
-
-		/* Calendar & Status */
-		--color-avail: #87ce9e;
-		--color-unavail: var(--md-sys-color-error);
-
-		/* Accent */
-		--color-gold: #dcc9a0;
-
-		/* Footer */
-		--color-footer-bg: #1f1e1d;
-		--color-footer-text: #e8e3df;
-		--color-footer-accent: #d4c5a9;
-		--color-footer-border: #3c3b39;
-
-		/* Alerts */
-		--color-success-bg: rgba(123, 201, 160, 0.15);
-		--color-success-border: rgba(123, 201, 160, 0.3);
-		--color-success-text: #87ce9e;
-		--color-error-bg: rgba(255, 139, 129, 0.15);
-		--color-error-border: rgba(255, 139, 129, 0.3);
-		--color-error-text: #ff8b81;
-
-		/* Warning */
-		--color-warning-bg: rgba(251, 191, 36, 0.15);
-		--color-warning-border: rgba(251, 191, 36, 0.3);
-		--color-warning-text: #fbbf24;
-
-		/* Info */
-		--color-info-bg: rgba(96, 165, 250, 0.15);
-		--color-info-border: rgba(96, 165, 250, 0.3);
-		--color-info-text: #60a5fa;
-
-		/* Disabled */
-		--color-disabled: #555453;
-	}
-}
-
-/* Explicit theme overrides — higher specificity than :root inside @media */
-html[data-theme="light"] {
-	--color-bg: #fdfbf7;
-	--color-cream: #f5f0e8;
-	--color-cream-dark: #ede6d8;
-	--color-sage: #6b8f71;
-	--color-sage-hover: #4a6e50;
-	--color-brown: #8b6f47;
-	--color-brown-light: #a8915f;
-	--color-text: #2c2c2a;
-	--color-text-muted: #5f5e5a;
-	--color-avail: #7ba96b;
-	--color-gold: #c4a265;
-	--color-footer-bg: #5d3a1a;
-	--color-footer-text: #fef3c7;
-	--color-footer-accent: #fde68a;
-	--color-footer-border: #7c4a23;
-	--color-success-bg: #f0fdf4;
-	--color-success-border: #bbf7d0;
-	--color-success-text: #166534;
-	--color-error-bg: #fef2f2;
-	--color-error-border: #fecaca;
-	--color-error-text: #991b1b;
-	--color-warning-bg: #fffbeb;
-	--color-warning-border: #fde68a;
-	--color-warning-text: #92400e;
-	--color-info-bg: #eff6ff;
-	--color-info-border: #bfdbfe;
-	--color-info-text: #1d4ed8;
-	--color-disabled: #9ca3af;
-}
-
-html[data-theme="dark"] {
-	--color-bg: #121212;
-	--color-cream: #262524;
-	--color-cream-dark: #31302f;
-	--color-sage: #7bc9a0;
-	--color-sage-hover: #5db88a;
-	--color-brown: #d4c5a9;
-	--color-brown-light: #c4b077;
-	--color-text: #e8e3df;
-	--color-text-muted: #ccc8c3;
-	--color-avail: #87ce9e;
-	--color-gold: #dcc9a0;
-	--color-footer-bg: #1f1e1d;
-	--color-footer-text: #e8e3df;
-	--color-footer-accent: #d4c5a9;
-	--color-footer-border: #3c3b39;
-	--color-success-bg: rgba(123, 201, 160, 0.15);
-	--color-success-border: rgba(123, 201, 160, 0.3);
-	--color-success-text: #87ce9e;
-	--color-error-bg: rgba(255, 139, 129, 0.15);
-	--color-error-border: rgba(255, 139, 129, 0.3);
-	--color-error-text: #ff8b81;
-	--color-warning-bg: rgba(251, 191, 36, 0.15);
-	--color-warning-border: rgba(251, 191, 36, 0.3);
-	--color-warning-text: #fbbf24;
-	--color-info-bg: rgba(96, 165, 250, 0.15);
-	--color-info-border: rgba(96, 165, 250, 0.3);
-	--color-info-text: #60a5fa;
-	--color-disabled: #555453;
-}
+/* Site is light-mode only — no prefers-color-scheme overrides, no
+   data-theme attribute branching. All tokens above are the source of truth. */
 
 html {
 	font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;

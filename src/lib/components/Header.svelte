@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import LanguageSwitcher from './LanguageSwitcher.svelte';
-	import ThemeToggle from './ThemeToggle.svelte';
 	import { localePath, t } from '$lib/i18n';
 	import type { Messages, Locale } from '$lib/i18n';
 
@@ -83,7 +82,6 @@
 		</nav>
 
 		<div class="header-actions">
-			<ThemeToggle />
 			<LanguageSwitcher {lang} />
 			<button
 				bind:this={toggleBtnEl}
