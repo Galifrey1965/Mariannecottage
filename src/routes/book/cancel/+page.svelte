@@ -74,78 +74,106 @@
 
 <style>
 	.cancel-wrapper {
-		max-width: 36rem;
-		margin: 3rem auto;
+		max-width: 38rem;
+		margin: 5rem auto;
 		padding: 0 1.5rem;
 	}
 	.cancel-card {
-		background: var(--color-bg, #fff);
-		border-radius: 16px;
-		padding: 2rem;
-		box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+		background: var(--theme-surface);
+		border: var(--theme-border-thin);
+		border-radius: var(--theme-radius-md);
+		padding: 2.5rem;
 	}
-	h1 { font-family: 'Lora', serif; margin: 0 0 1rem; font-size: 1.75rem; }
-	h2 { font-family: 'Lora', serif; margin: 0 0 0.75rem; font-size: 1.25rem; }
-	.ref { font-family: monospace; color: var(--color-sage, #6b8f71); margin-bottom: 1.5rem; }
+	h1 {
+		font-family: var(--theme-font-display);
+		font-weight: 500;
+		font-size: clamp(1.75rem, 3vw, 2.25rem);
+		color: var(--theme-warm);
+		letter-spacing: -0.01em;
+		margin: 0 0 1.25rem;
+	}
+	h2 {
+		font-family: var(--theme-font-display);
+		font-weight: 500;
+		font-size: 1.25rem;
+		color: var(--theme-warm);
+		margin: 0 0 0.75rem;
+	}
+	.ref { font-family: monospace; color: var(--theme-accent); margin-bottom: 1.5rem; }
 	.refund-summary {
-		background: var(--color-cream, #f7f3ec);
-		border-radius: 12px;
-		padding: 1rem 1.25rem;
-		margin: 1.5rem 0;
+		background: var(--theme-bg);
+		border: var(--theme-border-thin);
+		border-radius: var(--theme-radius-sm);
+		padding: 1.25rem 1.5rem;
+		margin: 1.75rem 0;
 	}
 	.row {
 		display: flex;
 		justify-content: space-between;
-		padding: 0.25rem 0;
-		font-size: 0.9375rem;
+		padding: 0.3rem 0;
+		font-size: 0.95rem;
+		color: var(--theme-text);
 	}
 	.row.total {
 		font-weight: 600;
 		font-size: 1rem;
-		padding-top: 0.5rem;
-		border-top: 1px solid rgba(0, 0, 0, 0.1);
-		margin-top: 0.25rem;
+		padding-top: 0.6rem;
+		border-top: 1px solid var(--theme-border);
+		margin-top: 0.3rem;
+		color: var(--theme-warm);
 	}
-	.muted { color: #6b6b6b; font-size: 0.875rem; }
+	.muted { color: var(--theme-text-muted); font-size: 0.875rem; }
 	.error {
-		color: #b3261e;
-		background: #fdedec;
+		color: var(--color-error-text);
+		background: var(--color-error-bg);
+		border: 1px solid var(--color-error-border);
 		padding: 0.75rem 1rem;
-		border-radius: 8px;
+		border-radius: var(--theme-radius-sm);
 		margin: 1rem 0;
 	}
-	.form-label { display: block; font-size: 0.875rem; font-weight: 500; margin: 1rem 0 0.5rem; }
+	.form-label { display: block; font-size: 0.875rem; font-weight: 500; margin: 1.25rem 0 0.5rem; color: var(--theme-text-muted); letter-spacing: 0.04em; text-transform: uppercase; }
 	.form-input {
 		width: 100%;
 		box-sizing: border-box;
-		padding: 0.625rem 1rem;
-		border: 1px solid var(--color-cream-dark, #e0d9cb);
-		border-radius: 8px;
-		font-family: inherit;
-		font-size: 0.9375rem;
-		background: var(--color-bg, #fff);
+		padding: 0.7rem 1rem;
+		border: 1px solid var(--theme-border);
+		border-radius: var(--theme-radius-sm);
+		font-family: var(--theme-font-body);
+		font-size: 0.95rem;
+		background: var(--theme-bg);
+		color: var(--theme-text);
 		outline: none;
+		transition: border-color 0.2s, box-shadow 0.2s;
+	}
+	.form-input:focus {
+		border-color: var(--theme-accent);
+		box-shadow: 0 0 0 2px color-mix(in srgb, var(--theme-accent) 25%, transparent);
 	}
 	.btn-primary {
 		display: inline-block;
-		margin-top: 1.25rem;
-		padding: 0.75rem 1.5rem;
-		background: var(--color-sage, #6b8f71);
-		color: white;
+		margin-top: 1.5rem;
+		padding: 0.85rem 2rem;
+		background: var(--theme-accent);
+		color: var(--theme-bg);
+		font-family: var(--theme-font-body);
 		font-weight: 600;
-		border: none;
-		border-radius: 8px;
+		font-size: 0.9rem;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		border: 1px solid var(--theme-accent);
+		border-radius: var(--theme-radius-pill);
 		cursor: pointer;
-		font-size: 0.9375rem;
+		transition: background 0.25s ease, color 0.25s ease;
 	}
-	.btn-primary:hover { background: var(--color-sage-hover, #5a7a60); }
+	.btn-primary:hover { background: var(--theme-accent-hover); border-color: var(--theme-accent-hover); }
 	.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
 	.btn-link {
 		display: inline-block;
-		margin-top: 1.25rem;
+		margin-top: 1.5rem;
 		margin-left: 1rem;
-		color: var(--color-text-muted, #6b6b6b);
+		color: var(--theme-text-muted);
 		text-decoration: none;
+		font-size: 0.9rem;
 	}
-	.btn-link:hover { text-decoration: underline; }
+	.btn-link:hover { text-decoration: underline; color: var(--theme-accent); }
 </style>

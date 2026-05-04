@@ -21,22 +21,39 @@
 </main>
 
 <style>
-	.done-wrapper { max-width: 32rem; margin: 4rem auto; padding: 0 1.5rem; }
+	.done-wrapper { max-width: 34rem; margin: 5rem auto; padding: 0 1.5rem; }
 	.done-card {
-		background: var(--color-bg, #fff);
-		border-radius: 16px;
-		padding: 2rem;
-		box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+		background: var(--theme-surface);
+		border: var(--theme-border-thin);
+		border-radius: var(--theme-radius-md);
+		padding: 2.5rem;
 		text-align: center;
+		color: var(--theme-text);
 	}
-	h1 { font-family: 'Lora', serif; font-size: 1.75rem; margin: 0 0 1rem; }
-	.ref { font-family: monospace; color: var(--color-sage, #6b8f71); margin-bottom: 1.5rem; }
-	.muted { color: #6b6b6b; font-size: 0.875rem; margin-top: 1.5rem; }
+	h1 {
+		font-family: var(--theme-font-display);
+		font-weight: 500;
+		font-size: clamp(1.75rem, 3vw, 2.25rem);
+		color: var(--theme-warm);
+		letter-spacing: -0.01em;
+		margin: 0 0 1.25rem;
+	}
+	.ref { font-family: monospace; color: var(--theme-accent); margin-bottom: 1.5rem; }
+	.muted { color: var(--theme-text-muted); font-size: 0.875rem; margin-top: 1.75rem; }
 	.btn-link {
 		display: inline-block;
-		margin-top: 1.25rem;
-		color: var(--color-sage, #6b8f71);
+		margin-top: 1.5rem;
+		padding: 0.7rem 1.75rem;
+		color: var(--theme-accent);
+		border: 1px solid var(--theme-accent);
+		border-radius: var(--theme-radius-pill);
+		font-family: var(--theme-font-body);
+		font-weight: 600;
+		font-size: 0.85rem;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
 		text-decoration: none;
+		transition: background 0.25s ease, color 0.25s ease;
 	}
-	.btn-link:hover { text-decoration: underline; }
+	.btn-link:hover { background: var(--theme-accent); color: var(--theme-bg); text-decoration: none; }
 </style>
