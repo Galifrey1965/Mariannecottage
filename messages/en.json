@@ -57,10 +57,6 @@
 			"heading": "Ready to Book?",
 			"cta": "Check Availability"
 		},
-		"ai": {
-			"ask_chatgpt": "Ask ChatGPT",
-			"ask_claude": "Ask Claude"
-		},
 		"rooms_data": {
 			"bedroom1": "Bedroom 1",
 			"bedroom1_desc": "Comfortable bedroom with garden views",
@@ -314,7 +310,6 @@
 		"contact": "Contact",
 		"social": "Follow Us",
 		"copyright": "© 2024 Marianne Cottage. All rights reserved.",
-		"report_issue": "Report a website issue",
 		"version": "Version"
 	},
 	"a11y": {

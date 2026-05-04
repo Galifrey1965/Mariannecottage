@@ -63,10 +63,6 @@
 	/* Disabled */
 	--color-disabled: #9ca3af;
 
-	/* AI brand icon tints — light versions for dark footer background */
-	--color-chatgpt: #5ddbb4;
-	--color-claude-ai: #f0a07a;
-
 	/* Warm-rustic overrides for Material shape & elevation tokens.
 	   These override values from styles/tokens/* so every component using
 	   --md-shape-corner-* / --md-elevation-shadow-* picks up softer,
