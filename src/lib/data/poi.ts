@@ -223,7 +223,18 @@ export const POIS: Poi[] = [
 		accessibilityLevel: 'Good',
 		website: 'https://www.overlordmuseum.com',
 		wikipedia: 'https://en.wikipedia.org/wiki/Overlord_Museum',
-		images: [],
+		images: [
+			{ src: '/images/poi/overlord-museum/1.jpg', alt: '3974 Frankreichtour 2016 Normandie Colleville sur Mer Overlord Museum', attribution: 'uwebrodrecht / Wikimedia Commons / CC BY-SA 2.0' },
+			{ src: '/images/poi/overlord-museum/2.jpg', alt: '3973 Frankreichtour 2016 Normandie Colleville sur Mer Overlord Museum', attribution: 'uwebrodrecht / Wikimedia Commons / CC BY-SA 2.0' },
+			{ src: '/images/poi/overlord-museum/3.jpg', alt: '3976 Frankreichtour 2016 Normandie Colleville sur Mer Overlord Museum', attribution: 'uwebrodrecht / Wikimedia Commons / CC BY-SA 2.0' },
+			{ src: '/images/poi/overlord-museum/4.jpg', alt: '3977 Frankreichtour 2016 Normandie Colleville sur Mer Overlord Museum', attribution: 'uwebrodrecht / Wikimedia Commons / CC BY-SA 2.0' },
+			{ src: '/images/poi/overlord-museum/5.jpg', alt: '3984 Frankreichtour 2016 Normandie Colleville sur Mer Overlord Museum', attribution: 'uwebrodrecht / Wikimedia Commons / CC BY-SA 2.0' },
+			{ src: '/images/poi/overlord-museum/6.jpg', alt: '3987 Frankreichtour 2016 Normandie Colleville sur Mer Overlord Museum', attribution: 'uwebrodrecht / Wikimedia Commons / CC BY-SA 2.0' },
+			{ src: '/images/poi/overlord-museum/7.jpg', alt: '3988 Frankreichtour 2016 Normandie Colleville sur Mer Overlord Museum', attribution: 'uwebrodrecht / Wikimedia Commons / CC BY-SA 2.0' },
+			{ src: '/images/poi/overlord-museum/8.jpg', alt: '3990 Frankreichtour 2016 Normandie Colleville sur Mer Overlord Museum', attribution: 'uwebrodrecht / Wikimedia Commons / CC BY-SA 2.0' },
+			{ src: '/images/poi/overlord-museum/9.jpg', alt: '3989 Frankreichtour 2016 Normandie Colleville sur Mer Overlord Museum', attribution: 'uwebrodrecht / Wikimedia Commons / CC BY-SA 2.0' },
+			{ src: '/images/poi/overlord-museum/10.jpg', alt: '3991 Frankreichtour 2016 Normandie Colleville sur Mer Overlord Museum', attribution: 'uwebrodrecht / Wikimedia Commons / CC BY-SA 2.0' }
+		],
 		titleKey: 'poi.overlord_museum.title',
 		subtitleKey: 'poi.overlord_museum.subtitle',
 		summaryKey: 'poi.overlord_museum.summary'
@@ -238,7 +249,18 @@ export const POIS: Poi[] = [
 		accessibilityLevel: 'Moderate',
 		website: null,
 		wikipedia: 'https://en.wikipedia.org/wiki/Cerisy_Abbey',
-		images: [],
+		images: [
+			{ src: '/images/poi/cerisy-abbey/1.jpg', alt: 'Cerisy la Forêt (50) Abbatiale Saint Vigor Intérieur Stalles 02', attribution: 'GO69 / Wikimedia Commons / CC BY 4.0' },
+			{ src: '/images/poi/cerisy-abbey/2.jpg', alt: 'Cerisy la Forêt (50) Abbatiale Saint Vigor Intérieur 02', attribution: 'GO69 / Wikimedia Commons / CC BY 4.0' },
+			{ src: '/images/poi/cerisy-abbey/3.jpg', alt: 'Cerisy la Forêt (50) Abbatiale Saint Vigor Intérieur 09', attribution: 'GO69 / Wikimedia Commons / CC BY 4.0' },
+			{ src: '/images/poi/cerisy-abbey/4.jpg', alt: 'Cerisy la Forêt (50) Abbatiale Saint Vigor Intérieur 08', attribution: 'GO69 / Wikimedia Commons / CC BY 4.0' },
+			{ src: '/images/poi/cerisy-abbey/5.jpg', alt: 'Cerisy la Forêt (50) Abbatiale Saint Vigor Intérieur 11', attribution: 'GO69 / Wikimedia Commons / CC BY 4.0' },
+			{ src: '/images/poi/cerisy-abbey/6.jpg', alt: 'Cerisy la Forêt (50) Abbatiale Saint Vigor Intérieur 10', attribution: 'GO69 / Wikimedia Commons / CC BY 4.0' },
+			{ src: '/images/poi/cerisy-abbey/7.jpg', alt: 'Cerisy la Forêt (50) Abbatiale Saint Vigor Intérieur 12', attribution: 'GO69 / Wikimedia Commons / CC BY 4.0' },
+			{ src: '/images/poi/cerisy-abbey/8.jpg', alt: 'Cerisy la Forêt (50) Abbatiale Saint Vigor Extérieur 02', attribution: 'GO69 / Wikimedia Commons / CC BY 4.0' },
+			{ src: '/images/poi/cerisy-abbey/9.jpg', alt: 'Cerisy la Forêt (50) Abbatiale Saint Vigor Extérieur 04', attribution: 'GO69 / Wikimedia Commons / CC BY 4.0' },
+			{ src: '/images/poi/cerisy-abbey/10.jpg', alt: 'Cerisy la Forêt (50) Abbatiale Saint Vigor Extérieur 06', attribution: 'GO69 / Wikimedia Commons / CC BY 4.0' }
+		],
 		titleKey: 'poi.cerisy_abbey.title',
 		subtitleKey: 'poi.cerisy_abbey.subtitle',
 		summaryKey: 'poi.cerisy_abbey.summary'
@@ -272,7 +294,13 @@ export const POIS: Poi[] = [
 		accessibilityLevel: 'Good',
 		website: 'https://www.haras-nationaux.fr',
 		wikipedia: 'https://en.wikipedia.org/wiki/Haras_national_de_Saint-L%C3%B4',
-		images: [],
+		images: [
+			{ src: '/images/poi/haras-national/1.jpg', alt: 'Haras de Saint Lô', attribution: 'Xfigpower / Wikimedia Commons / CC BY-SA 3.0' },
+			{ src: '/images/poi/haras-national/2.jpg', alt: 'Haras de Saint Lô', attribution: 'Xfigpower / Wikimedia Commons / CC BY-SA 3.0' },
+			{ src: '/images/poi/haras-national/3.jpg', alt: 'Haras de Saint Lô', attribution: 'Xfigpower / Wikimedia Commons / CC BY-SA 3.0' },
+			{ src: '/images/poi/haras-national/4.jpg', alt: 'Haras de Saint Lô', attribution: 'Crochet.david / Wikimedia Commons / CC BY-SA 3.0' },
+			{ src: '/images/poi/haras-national/5.jpg', alt: 'Haras de Saint Lô', attribution: 'Crochet.david / Wikimedia Commons / CC BY-SA 3.0' }
+		],
 		titleKey: 'poi.haras_national.title',
 		subtitleKey: 'poi.haras_national.subtitle',
 		summaryKey: 'poi.haras_national.summary'
@@ -287,7 +315,18 @@ export const POIS: Poi[] = [
 		accessibilityLevel: 'Moderate',
 		website: 'https://www.chateau-balleroy.fr',
 		wikipedia: 'https://en.wikipedia.org/wiki/Ch%C3%A2teau_de_Balleroy',
-		images: [],
+		images: [
+			{ src: '/images/poi/chateau-balleroy/1.jpg', alt: 'Château de Balleroy from the gardens', attribution: 'Jean-Christophe BENOIST / Wikimedia Commons / CC BY 2.5' },
+			{ src: '/images/poi/chateau-balleroy/2.jpg', alt: 'Château de Balleroy', attribution: 'Chatsam / Wikimedia Commons / CC BY-SA 4.0' },
+			{ src: '/images/poi/chateau-balleroy/3.jpg', alt: 'Château de Balleroy', attribution: 'Chatsam / Wikimedia Commons / CC BY-SA 4.0' },
+			{ src: '/images/poi/chateau-balleroy/4.jpg', alt: 'Château de Balleroy', attribution: 'Chatsam / Wikimedia Commons / CC BY-SA 4.0' },
+			{ src: '/images/poi/chateau-balleroy/5.jpg', alt: 'Château de Balleroy', attribution: 'Chatsam / Wikimedia Commons / CC BY-SA 4.0' },
+			{ src: '/images/poi/chateau-balleroy/6.jpg', alt: 'Château de Balleroy', attribution: 'Chatsam / Wikimedia Commons / CC BY-SA 4.0' },
+			{ src: '/images/poi/chateau-balleroy/7.jpg', alt: 'Château de Balleroy', attribution: 'Chatsam / Wikimedia Commons / CC BY-SA 4.0' },
+			{ src: '/images/poi/chateau-balleroy/8.jpg', alt: 'Château de Balleroy', attribution: 'Chatsam / Wikimedia Commons / CC BY-SA 4.0' },
+			{ src: '/images/poi/chateau-balleroy/9.jpg', alt: 'Château de Balleroy', attribution: 'Chatsam / Wikimedia Commons / CC BY-SA 4.0' },
+			{ src: '/images/poi/chateau-balleroy/10.jpg', alt: 'Château de Balleroy', attribution: 'Chatsam / Wikimedia Commons / CC BY-SA 4.0' }
+		],
 		titleKey: 'poi.chateau_balleroy.title',
 		subtitleKey: 'poi.chateau_balleroy.subtitle',
 		summaryKey: 'poi.chateau_balleroy.summary'
@@ -377,7 +416,18 @@ export const POIS: Poi[] = [
 		accessibilityLevel: 'Good',
 		website: null,
 		wikipedia: 'https://en.wikipedia.org/wiki/Lessay_Abbey',
-		images: [],
+		images: [
+			{ src: '/images/poi/lessay-abbey/1.jpg', alt: 'Abbaye de Lessay exterior', attribution: 'Patrick / Wikimedia Commons / CC BY-SA 2.0' },
+			{ src: '/images/poi/lessay-abbey/2.jpg', alt: 'Abbaye de Lessay exterior', attribution: 'Patrick / Wikimedia Commons / CC BY-SA 2.0' },
+			{ src: '/images/poi/lessay-abbey/3.jpg', alt: 'Abbaye de Lessay nave', attribution: 'Patrick / Wikimedia Commons / CC BY-SA 2.0' },
+			{ src: '/images/poi/lessay-abbey/4.jpg', alt: 'Abbaye de Lessay interior', attribution: 'Patrick / Wikimedia Commons / CC BY-SA 2.0' },
+			{ src: '/images/poi/lessay-abbey/5.jpg', alt: 'Abbaye de Lessay interior', attribution: 'Patrick / Wikimedia Commons / CC BY-SA 2.0' },
+			{ src: '/images/poi/lessay-abbey/6.jpg', alt: 'Abbaye de Lessay interior', attribution: 'Patrick / Wikimedia Commons / CC BY-SA 2.0' },
+			{ src: '/images/poi/lessay-abbey/7.jpg', alt: 'Abbaye de Lessay interior', attribution: 'Patrick / Wikimedia Commons / CC BY-SA 2.0' },
+			{ src: '/images/poi/lessay-abbey/8.jpg', alt: 'Abbaye de Lessay interior', attribution: 'Patrick / Wikimedia Commons / CC BY-SA 2.0' },
+			{ src: '/images/poi/lessay-abbey/9.jpg', alt: 'Abbaye de Lessay apse stained glass', attribution: 'Patrick / Wikimedia Commons / CC BY-SA 2.0' },
+			{ src: '/images/poi/lessay-abbey/10.jpg', alt: 'Abbaye de Lessay apse stained glass', attribution: 'Patrick / Wikimedia Commons / CC BY-SA 2.0' }
+		],
 		titleKey: 'poi.lessay_abbey.title',
 		subtitleKey: 'poi.lessay_abbey.subtitle',
 		summaryKey: 'poi.lessay_abbey.summary'
@@ -392,7 +442,15 @@ export const POIS: Poi[] = [
 		accessibilityLevel: 'Good',
 		website: 'https://www.vire-normandie.fr',
 		wikipedia: 'https://en.wikipedia.org/wiki/Vire',
-		images: [],
+		images: [
+			{ src: '/images/poi/vire/1.jpg', alt: 'Place du Castel, Vire, Normandy', attribution: 'Suzelfe / Wikimedia Commons / CC BY-SA 3.0' },
+			{ src: '/images/poi/vire/2.jpg', alt: "Hôtel-Dieu Sainte-Anne / Hospice Saint-Louis, Vire, Normandy", attribution: 'Ikmo-ned / Wikimedia Commons / CC BY-SA 3.0' },
+			{ src: '/images/poi/vire/6.jpg', alt: 'Musée de Vire Normandie', attribution: 'Pradigue / Wikimedia Commons / CC BY-SA 4.0' },
+			{ src: '/images/poi/vire/7.jpg', alt: "Porte-Horloge gate, Vire, Normandy", attribution: 'Suzelfe / Wikimedia Commons / CC BY 4.0' },
+			{ src: '/images/poi/vire/8.jpg', alt: 'Cinéma-théâtre, Vire, Normandy', attribution: 'Suzelfe / Wikimedia Commons / CC BY 4.0' },
+			{ src: '/images/poi/vire/9.jpg', alt: 'Vaux de Vire, Normandy', attribution: 'Suzelfe / Wikimedia Commons / CC BY 4.0' },
+			{ src: '/images/poi/vire/10.jpg', alt: 'Notre-Dame church, Vire, Normandy', attribution: 'Suzelfe / Wikimedia Commons / CC BY 4.0' }
+		],
 		titleKey: 'poi.vire.title',
 		subtitleKey: 'poi.vire.subtitle',
 		summaryKey: 'poi.vire.summary'
