@@ -61,6 +61,7 @@ export interface Booking {
 	last_payment_error?: string;
 	cancellation_policy_id?: string;
 	admin_notes?: string;
+	source?: 'web' | 'admin' | 'imported' | 'test';
 	cancellation_token_used_at?: string;
 }
 
@@ -219,6 +220,7 @@ export async function getBookingsForIcalFeed(today: string) {
 		.from('bookings')
 		.select('booking_reference, check_in_date, check_out_date, updated_at, status')
 		.in('status', ['pending', 'pending_payment', 'confirmed'])
+		.neq('source', 'test')
 		.gte('check_out_date', today)
 		.order('check_in_date', { ascending: true });
 

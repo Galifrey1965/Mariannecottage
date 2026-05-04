@@ -70,7 +70,8 @@ export const POST: RequestHandler = async ({ request }) => {
 			tax,
 			total_cost,
 			status: 'pending',
-			booking_reference
+			booking_reference,
+			source: 'web'
 		});
 
 		return json({ success: true, booking });
