@@ -62,6 +62,9 @@ export interface Booking {
 	cancellation_policy_id?: string;
 	admin_notes?: string;
 	source?: 'web' | 'admin' | 'booking_com' | 'test';
+	ical_uid?: string;
+	ical_summary?: string;
+	external_ref?: string;
 	cancellation_token_used_at?: string;
 }
 

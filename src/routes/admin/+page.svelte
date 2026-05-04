@@ -11,8 +11,13 @@
 	let loading = $state(false);
 	let statusFilter = $state('all');
 	let searchQuery = $state('');
-	let showTest = $state(false);
 	let viewMode = $state<'list' | 'calendar'>('list');
+
+	// Edit form for Booking.com imports — Mark fills in details from BC's
+	// reservation email (BC's iCal feed never contains guest PII).
+	let importEdits = $state<Partial<Booking>>({});
+	let importSaving = $state(false);
+	let importSaveError = $state('');
 
 	type BlockedRow = { date: string; synced_from: string | null; synced_at: string | null };
 	const blockedAvailability: BlockedRow[] = (data.blockedAvailability ?? []) as BlockedRow[];
@@ -146,6 +151,10 @@
 
 	function onSearchInput() {
 		clearTimeout(searchTimeout);
+		// Don't fire a request for a single character — too noisy and rarely useful.
+		// Empty string is allowed (clears the filter).
+		const q = searchQuery.trim();
+		if (q.length === 1) return;
 		searchTimeout = setTimeout(() => fetchBookings(), 300);
 	}
 
@@ -153,6 +162,50 @@
 		selectedBooking = b;
 		editingNotes = false;
 		notesValue = b.admin_notes || '';
+		// Pre-populate the import edit form when opening a BC reservation panel.
+		importEdits = b.source === 'booking_com'
+			? {
+				guest_name: b.guest_name === 'Booking.com guest' ? '' : b.guest_name,
+				guest_email: b.guest_email ?? '',
+				guest_phone: b.guest_phone ?? '',
+				num_guests: b.num_guests ?? 2,
+				total_cost: b.total_cost ?? 0,
+				external_ref: b.external_ref ?? ''
+			}
+			: {};
+		importSaveError = '';
+	}
+
+	async function saveImportEdits() {
+		if (!selectedBooking) return;
+		importSaving = true;
+		importSaveError = '';
+		try {
+			const payload: Record<string, unknown> = { id: selectedBooking.id };
+			for (const [k, v] of Object.entries(importEdits)) {
+				if (v === '' && (k === 'guest_email' || k === 'guest_phone' || k === 'external_ref')) {
+					payload[k] = null;
+				} else {
+					payload[k] = v;
+				}
+			}
+			const res = await fetch('/api/admin/bookings', {
+				method: 'PATCH',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(payload)
+			});
+			const result = await res.json();
+			if (!res.ok || !result.success) {
+				importSaveError = result.error || `Save failed (${res.status})`;
+				return;
+			}
+			selectedBooking = result.booking;
+			await fetchBookings();
+		} catch (err) {
+			importSaveError = err instanceof Error ? err.message : 'Unknown error';
+		} finally {
+			importSaving = false;
+		}
 	}
 
 	function closeDetail() {
@@ -325,12 +378,13 @@
 		return `in ${days}d`;
 	};
 
-	const visibleBookings = $derived(showTest ? bookings : bookings.filter(b => b.source !== 'test'));
+	// Test seeds are always visible — distinguished by the TEST chip + amber stripes
+	// in the calendar. The previous "show test" hide-by-default toggle was removed.
+	const visibleBookings = $derived(bookings);
 	const confirmedBookings = $derived(visibleBookings.filter(b => b.status === 'confirmed'));
 	const pendingBookings = $derived(visibleBookings.filter(b => b.status === 'pending'));
 	const totalRevenue = $derived(confirmedBookings.reduce((sum, b) => sum + b.total_cost, 0));
 	const upcomingBookings = $derived(visibleBookings.filter(b => new Date(b.check_in_date) > new Date() && b.status !== 'cancelled'));
-	const testBookingCount = $derived(bookings.filter(b => b.source === 'test').length);
 
 	function sourceChipLabel(source?: string): string | null {
 		if (!source || source === 'web') return null;
@@ -396,6 +450,35 @@
 		const b = bookings.find(x => x.id === bookingId);
 		if (b) selectBooking(b);
 	}
+
+	const isPendingSyncBooking = (b: Booking | null) =>
+		Boolean(b && typeof b.id === 'string' && b.id.startsWith('imported:'));
+
+	let bcSyncing = $state(false);
+	let bcSyncMessage = $state('');
+	async function triggerBcSync() {
+		bcSyncing = true;
+		bcSyncMessage = '';
+		try {
+			const res = await fetch('/api/admin/sync-bc', { method: 'POST' });
+			const result = await res.json();
+			if (!res.ok) {
+				bcSyncMessage = result.error || `Failed (${res.status})`;
+				return;
+			}
+			bcSyncMessage = `Synced ${result.inserted ?? 0} new, ${result.updated ?? 0} updated, ${result.cancelled ?? 0} cancelled.`;
+			await fetchBookings();
+		} catch (err) {
+			bcSyncMessage = err instanceof Error ? err.message : 'Unknown error';
+		} finally {
+			bcSyncing = false;
+			setTimeout(() => { bcSyncMessage = ''; }, 6000);
+		}
+	}
+
+	function setStatusShortcut(s: string) {
+		statusFilter = statusFilter === s ? 'all' : s;
+	}
 </script>
 
 <div class="dashboard">
@@ -407,35 +490,35 @@
 	</div>
 
 		<div class="filters">
+			<div class="view-toggle" role="tablist" aria-label="View mode">
+				<button onclick={() => viewMode = 'list'} class="filter-btn" class:active={viewMode === 'list'} role="tab" aria-selected={viewMode === 'list'}>List</button>
+				<button onclick={() => viewMode = 'calendar'} class="filter-btn" class:active={viewMode === 'calendar'} role="tab" aria-selected={viewMode === 'calendar'}>Calendar</button>
+			</div>
 			<div class="search-wrapper">
-				<input type="text" bind:value={searchQuery} oninput={onSearchInput} placeholder="Search by name, email, or reference..." class="form-input" />
+				<input type="text" bind:value={searchQuery} oninput={onSearchInput} placeholder="Search by name, email, or reference (≥2 chars)..." class="form-input" />
 			</div>
 			<div class="status-filters">
 				{#each ['all', 'pending', 'confirmed', 'cancelled'] as s}
 					<button onclick={() => statusFilter = s} class="filter-btn" class:active={statusFilter === s}>{s}</button>
 				{/each}
 			</div>
-			<div class="view-toggle" role="tablist" aria-label="View mode">
-				<button onclick={() => viewMode = 'list'} class="filter-btn" class:active={viewMode === 'list'} role="tab" aria-selected={viewMode === 'list'}>List</button>
-				<button onclick={() => viewMode = 'calendar'} class="filter-btn" class:active={viewMode === 'calendar'} role="tab" aria-selected={viewMode === 'calendar'}>Calendar</button>
-			</div>
-			{#if testBookingCount > 0}
-				<label class="show-test-toggle" title="Include source='test' rows in this view">
-					<input type="checkbox" bind:checked={showTest} />
-					<span>Show test ({testBookingCount})</span>
-				</label>
+			<button onclick={triggerBcSync} disabled={bcSyncing} class="filter-btn bc-sync-btn" title="Pull the latest Booking.com iCal feed">
+				{bcSyncing ? 'Syncing…' : 'Sync BC'}
+			</button>
+			{#if bcSyncMessage}
+				<span class="bc-sync-msg">{bcSyncMessage}</span>
 			{/if}
 		</div>
 
 		<div class="stats-grid">
-			<div class="stat-card">
+			<button class="stat-card stat-card--clickable" class:active={statusFilter === 'confirmed'} onclick={() => setStatusShortcut('confirmed')} title="Filter to confirmed">
 				<p class="stat-label">Confirmed</p>
 				<p class="stat-value" style="color: var(--color-success-text);">{confirmedBookings.length}</p>
-			</div>
-			<div class="stat-card">
+			</button>
+			<button class="stat-card stat-card--clickable" class:active={statusFilter === 'pending'} onclick={() => setStatusShortcut('pending')} title="Filter to pending">
 				<p class="stat-label">Pending</p>
 				<p class="stat-value" style="color: var(--color-warning-text);">{pendingBookings.length}</p>
-			</div>
+			</button>
 			<div class="stat-card">
 				<p class="stat-label">Revenue</p>
 				<p class="stat-value" style="color: var(--color-sage);">{formatCurrency(totalRevenue)}</p>
@@ -786,34 +869,102 @@
 					{/if}
 
 					<div class="detail-section">
-						<h4 class="section-title">{isImportedBooking(selectedBooking) ? 'Block details' : 'Stay Details'}</h4>
+						<h4 class="section-title">Stay Details</h4>
 						<div class="detail-grid">
 							<div>
-								<p class="detail-label">{isImportedBooking(selectedBooking) ? 'Date' : 'Check-in'}</p>
+								<p class="detail-label">Check-in</p>
 								<p>{formatDate(selectedBooking.check_in_date)}</p>
 								<p class="sub-text">{formatRelative(selectedBooking.check_in_date)}</p>
 							</div>
-							{#if !isImportedBooking(selectedBooking)}
-								<div>
-									<p class="detail-label">Check-out</p>
-									<p>{formatDate(selectedBooking.check_out_date)}</p>
-								</div>
-								<div>
-									<p class="detail-label">Duration</p>
-									<p>{selectedBooking.num_nights} nights</p>
-								</div>
-								<div>
-									<p class="detail-label">Booked</p>
-									<p>{formatDate(selectedBooking.created_at)}</p>
-								</div>
-							{:else}
+							<div>
+								<p class="detail-label">Check-out</p>
+								<p>{formatDate(selectedBooking.check_out_date)}</p>
+							</div>
+							<div>
+								<p class="detail-label">Duration</p>
+								<p>{selectedBooking.num_nights} nights</p>
+							</div>
+							{#if isImportedBooking(selectedBooking)}
 								<div>
 									<p class="detail-label">Last synced</p>
 									<p>{formatDate(selectedBooking.updated_at)}</p>
 								</div>
+							{:else}
+								<div>
+									<p class="detail-label">Booked</p>
+									<p>{formatDate(selectedBooking.created_at)}</p>
+								</div>
 							{/if}
 						</div>
 					</div>
+
+					{#if isImportedBooking(selectedBooking) && (selectedBooking.ical_uid || selectedBooking.ical_summary)}
+						<hr />
+						<div class="detail-section">
+							<h4 class="section-title">iCal metadata</h4>
+							<div class="detail-grid">
+								{#if selectedBooking.ical_uid}
+									<div style="grid-column: 1 / -1;">
+										<p class="detail-label">UID</p>
+										<p class="mono" style="word-break: break-all; font-size: 0.75rem;">{selectedBooking.ical_uid}</p>
+									</div>
+								{/if}
+								{#if selectedBooking.ical_summary}
+									<div style="grid-column: 1 / -1;">
+										<p class="detail-label">Summary</p>
+										<p style="font-size: 0.875rem;">{selectedBooking.ical_summary}</p>
+									</div>
+								{/if}
+							</div>
+						</div>
+					{/if}
+
+					{#if isImportedBooking(selectedBooking)}
+						<hr />
+						<div class="detail-section">
+							<h4 class="section-title">Reservation details (from BC email)</h4>
+							{#if isPendingSyncBooking(selectedBooking)}
+								<p class="note-box" style="background: var(--color-warning-bg); color: var(--color-warning-text);">
+									iCal sync hasn't promoted this date to a full reservation yet —
+									press <strong>Sync BC</strong> at the top, then re-open the booking to enrich it.
+								</p>
+							{/if}
+							<div class="form-fields-grid">
+								<div>
+									<label class="detail-label" for="bc-guest-name">Guest name</label>
+									<input id="bc-guest-name" type="text" bind:value={importEdits.guest_name} class="form-input" placeholder="From BC reservation email" disabled={isPendingSyncBooking(selectedBooking)} />
+								</div>
+								<div>
+									<label class="detail-label" for="bc-external-ref">BC reservation #</label>
+									<input id="bc-external-ref" type="text" bind:value={importEdits.external_ref} class="form-input" placeholder="e.g. 4321567890" disabled={isPendingSyncBooking(selectedBooking)} />
+								</div>
+								<div>
+									<label class="detail-label" for="bc-guest-email">Guest email</label>
+									<input id="bc-guest-email" type="email" bind:value={importEdits.guest_email} class="form-input" placeholder="proxy@guest.booking.com (or real)" disabled={isPendingSyncBooking(selectedBooking)} />
+								</div>
+								<div>
+									<label class="detail-label" for="bc-guest-phone">Guest phone</label>
+									<input id="bc-guest-phone" type="tel" bind:value={importEdits.guest_phone} class="form-input" disabled={isPendingSyncBooking(selectedBooking)} />
+								</div>
+								<div>
+									<label class="detail-label" for="bc-num-guests">Guests</label>
+									<input id="bc-num-guests" type="number" min="1" max="4" bind:value={importEdits.num_guests} class="form-input" disabled={isPendingSyncBooking(selectedBooking)} />
+								</div>
+								<div>
+									<label class="detail-label" for="bc-total">Total (EUR)</label>
+									<input id="bc-total" type="number" min="0" step="0.01" bind:value={importEdits.total_cost} class="form-input" disabled={isPendingSyncBooking(selectedBooking)} />
+								</div>
+							</div>
+							{#if importSaveError}
+								<p class="cancel-error">{importSaveError}</p>
+							{/if}
+							<div class="notes-actions">
+								<button onclick={saveImportEdits} disabled={importSaving || isPendingSyncBooking(selectedBooking)} class="btn-primary btn-sm">
+									{importSaving ? 'Saving…' : 'Save details'}
+								</button>
+							</div>
+						</div>
+					{/if}
 
 					{#if !isImportedBooking(selectedBooking)}
 					<hr />
@@ -842,13 +993,14 @@
 							<p class="note-box">{selectedBooking.special_requests}</p>
 						</div>
 					{/if}
+					{/if}
 
 					<hr />
 
 					<div class="detail-section">
 						<div class="notes-header">
 							<h4 class="section-title">Admin Notes</h4>
-							{#if !editingNotes}
+							{#if !editingNotes && !isPendingSyncBooking(selectedBooking)}
 								<button onclick={() => { editingNotes = true; notesValue = selectedBooking?.admin_notes || ''; }} class="link-btn">
 									{selectedBooking.admin_notes ? 'Edit' : 'Add note'}
 								</button>
@@ -866,7 +1018,6 @@
 							<p class="sub-text" style="font-style: italic;">No notes</p>
 						{/if}
 					</div>
-					{/if}
 				</div>
 			</div>
 		</div>
@@ -966,12 +1117,22 @@
 	.source-chip.admin { background: #e0ecff; color: #1d4ed8; border: 1px solid #93b8f0; }
 	.source-chip.booking_com { background: #003580; color: white; border: 1px solid #003580; }
 
-	.show-test-toggle {
-		display: flex; align-items: center; gap: 0.4rem;
-		font-size: 0.8rem; color: var(--color-text-muted); cursor: pointer;
-		padding: 0.25rem 0.5rem;
+	.bc-sync-btn { font-weight: 500; }
+	.bc-sync-msg { font-size: 0.8rem; color: var(--color-text-muted); }
+
+	.form-fields-grid {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		gap: 0.75rem;
 	}
-	.show-test-toggle input { cursor: pointer; }
+	@media (max-width: 599px) { .form-fields-grid { grid-template-columns: 1fr; } }
+	.form-fields-grid .form-input { margin-bottom: 0; }
+
+	/* Clickable stat cards (status filter shortcut) */
+	button.stat-card { font: inherit; text-align: left; cursor: pointer; }
+	.stat-card--clickable { transition: background 0.15s ease, border-color 0.15s ease; }
+	.stat-card--clickable:hover { background: var(--color-cream); }
+	.stat-card--clickable.active { border-color: var(--color-sage); box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-sage) 20%, transparent); }
 
 	/* Calendar view */
 	.view-toggle { display: flex; gap: 0.25rem; background: var(--color-bg); border-radius: 8px; border: 1px solid var(--color-cream-dark); padding: 0.25rem; }

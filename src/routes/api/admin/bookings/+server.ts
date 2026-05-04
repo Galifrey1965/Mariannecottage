@@ -60,7 +60,24 @@ export const PATCH: RequestHandler = async ({ locals, request }) => {
 		return json({ error: 'Unauthorized' }, { status: 401 });
 	}
 
-	const { id, status, admin_notes } = await request.json();
+	const body = await request.json();
+	const { id, status, admin_notes } = body;
+	// Enrichment fields — used primarily for Booking.com imports where the
+	// iCal feed gives us only dates + UID and Mark fills in the rest from
+	// the BC reservation email. Web/admin bookings can also be edited here.
+	const ENRICHABLE = [
+		'guest_name',
+		'guest_email',
+		'guest_phone',
+		'guest_country',
+		'num_guests',
+		'special_requests',
+		'nightly_rate',
+		'subtotal',
+		'tax',
+		'total_cost',
+		'external_ref'
+	] as const;
 
 	if (status) {
 		// Need the current status to validate the transition. One indexed lookup.
@@ -91,6 +108,9 @@ export const PATCH: RequestHandler = async ({ locals, request }) => {
 	const updates: Record<string, unknown> = { updated_at: new Date().toISOString() };
 	if (status) updates.status = status;
 	if (admin_notes !== undefined) updates.admin_notes = admin_notes;
+	for (const f of ENRICHABLE) {
+		if (body[f] !== undefined) updates[f] = body[f];
+	}
 
 	const { data, error } = await adminClient
 		.from('bookings')

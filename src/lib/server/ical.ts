@@ -1,10 +1,12 @@
 export interface IcalEvent {
-	start: string; // YYYY-MM-DD
-	end: string;   // YYYY-MM-DD (exclusive)
+	start: string;        // YYYY-MM-DD
+	end: string;          // YYYY-MM-DD (exclusive)
+	uid?: string;         // iCal UID — stable per reservation; used to dedupe sync upserts
+	summary?: string;     // SUMMARY field (BC: typically "CLOSED - Not available")
 }
 
 /**
- * Parse an iCal (.ics) string and return VEVENT date ranges.
+ * Parse an iCal (.ics) string and return VEVENT date ranges + UID/SUMMARY.
  * Supports both DATE and DATE-TIME DTSTART/DTEND formats.
  */
 export function parseIcal(icsContent: string): IcalEvent[] {
@@ -14,6 +16,8 @@ export function parseIcal(icsContent: string): IcalEvent[] {
 	let inEvent = false;
 	let start = '';
 	let end = '';
+	let uid = '';
+	let summary = '';
 
 	for (const line of lines) {
 		const trimmed = line.trim();
@@ -22,9 +26,11 @@ export function parseIcal(icsContent: string): IcalEvent[] {
 			inEvent = true;
 			start = '';
 			end = '';
+			uid = '';
+			summary = '';
 		} else if (trimmed === 'END:VEVENT') {
 			if (inEvent && start && end) {
-				events.push({ start, end });
+				events.push({ start, end, uid: uid || undefined, summary: summary || undefined });
 			}
 			inEvent = false;
 		} else if (inEvent) {
@@ -32,6 +38,10 @@ export function parseIcal(icsContent: string): IcalEvent[] {
 				start = extractDate(trimmed);
 			} else if (trimmed.startsWith('DTEND')) {
 				end = extractDate(trimmed);
+			} else if (trimmed.startsWith('UID:')) {
+				uid = trimmed.slice(4).trim();
+			} else if (trimmed.startsWith('SUMMARY:')) {
+				summary = trimmed.slice(8).trim();
 			}
 		}
 	}

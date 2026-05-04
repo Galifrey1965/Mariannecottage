@@ -4,12 +4,8 @@
 
 	let { children, data }: { children: any; data: LayoutData } = $props();
 
-	const isDeveloper = $derived(data.profile?.role === 'developer');
 	const showShell = $derived(Boolean(data.user));
-	const displayName = $derived(data.displayProfile?.display_name ?? data.profile?.display_name ?? '');
-	const viewingAsOther = $derived(
-		data.displayProfile && data.profile && data.displayProfile.user_id !== data.profile.user_id
-	);
+	const displayName = $derived(data.profile?.display_name ?? '');
 </script>
 
 <div class="admin-shell">
@@ -25,34 +21,7 @@
 				<a href="/admin" class="nav-link">Bookings</a>
 				<a href="/admin/rate-plans" class="nav-link">Rate plans</a>
 
-				{#if isDeveloper && data.allProfiles && data.allProfiles.length > 0}
-					<form method="POST" action="/admin/view-as" class="view-as-form">
-						<label for="view-as-select" class="view-as-label">View as</label>
-						<select
-							id="view-as-select"
-							name="target_user_id"
-							class="view-as-select"
-							onchange={(e) => (e.currentTarget.form as HTMLFormElement).requestSubmit()}
-						>
-							<option value="">Yourself</option>
-							{#each data.allProfiles as p}
-								{#if data.profile && p.user_id !== data.profile.user_id}
-									<option
-										value={p.user_id}
-										selected={data.displayProfile?.user_id === p.user_id}
-									>
-										{p.display_name}
-									</option>
-								{/if}
-							{/each}
-						</select>
-					</form>
-				{/if}
-
-				<span class="user-pill" class:viewing-as={viewingAsOther}>
-					{displayName}
-					{#if viewingAsOther}<span class="viewing-as-badge">viewing</span>{/if}
-				</span>
+				<span class="user-pill">{displayName}</span>
 
 				<form method="POST" action="/admin/logout" class="logout-form">
 					<button type="submit" class="logout-btn">Sign out</button>
