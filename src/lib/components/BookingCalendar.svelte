@@ -50,7 +50,15 @@
 
 	const daysInMonth = (date: Date) => new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
 	const getFirstDayOfMonth = (date: Date) => new Date(date.getFullYear(), date.getMonth(), 1).getDay();
-	const toISODate = (date: Date) => date.toISOString().split('T')[0];
+	const toISODate = (date: Date) => {
+		// Local-time components — using toISOString() shifts the date by a day
+		// for any non-UTC viewer (e.g. BST in summer), which broke availability
+		// and booking lookups when the cell's local-midnight Date crosses UTC.
+		const y = date.getFullYear();
+		const m = String(date.getMonth() + 1).padStart(2, '0');
+		const d = String(date.getDate()).padStart(2, '0');
+		return `${y}-${m}-${d}`;
+	};
 	const isAvailable = (date: Date) => availability[toISODate(date)] !== false;
 	const isPast = (date: Date) => date < minDate;
 
