@@ -7,7 +7,7 @@ import * as en from '../../../../messages/en.json';
 
 // Mock Google Maps loader — required by PoiMap child component
 vi.mock('@googlemaps/js-api-loader', () => {
-	class Map { fitBounds = vi.fn(); setCenter = vi.fn(); setZoom = vi.fn(); }
+	class Map { fitBounds = vi.fn(); setCenter = vi.fn(); setZoom = vi.fn(); addListener = vi.fn().mockReturnValue({ remove: vi.fn() }); }
 	class LatLngBounds { extend = vi.fn().mockReturnThis(); }
 	class InfoWindow { setContent = vi.fn(); open = vi.fn(); close = vi.fn(); }
 	class Marker { addListener = vi.fn(); setMap = vi.fn(); }

@@ -11,6 +11,7 @@ vi.mock('@googlemaps/js-api-loader', () => {
 		fitBounds = vi.fn();
 		setCenter = vi.fn();
 		setZoom = vi.fn();
+		addListener = vi.fn().mockReturnValue({ remove: vi.fn() });
 	}
 	class LatLngBounds {
 		extend = vi.fn().mockReturnThis();

@@ -40,6 +40,27 @@
 		museums: '🏛️'
 	};
 
+	// Estimate a Web Mercator zoom level that fits the marker bounds in the
+	// container, with margin. Used as the initial zoom so the map starts at
+	// the right view rather than relying solely on a deferred fitBounds call.
+	function computeFitZoom(ms: Marker[], container: HTMLDivElement): number {
+		if (ms.length < 2 || !container) return 10;
+		const lats = ms.map((m) => m.lat);
+		const lngs = ms.map((m) => m.lng);
+		const latSpan = Math.max(...lats) - Math.min(...lats);
+		const lngSpan = Math.max(...lngs) - Math.min(...lngs);
+		const w = Math.max(container.offsetWidth, 200) - 80;
+		const h = Math.max(container.offsetHeight, 200) - 80;
+		const TILE = 256;
+		const lngFraction = lngSpan / 360;
+		const cosLat = Math.cos((Math.max(...lats) * Math.PI) / 180);
+		const latFraction = latSpan / 360 / Math.max(cosLat, 0.1);
+		const lngZoom = Math.log2(w / TILE / lngFraction);
+		const latZoom = Math.log2(h / TILE / latFraction);
+		const zoom = Math.floor(Math.min(lngZoom, latZoom));
+		return Math.max(2, Math.min(14, zoom));
+	}
+
 	onMount(() => {
 		const apiKey = env.PUBLIC_GOOGLE_MAPS_API_KEY;
 		if (!apiKey) {
@@ -55,9 +76,27 @@
 			const { Map, InfoWindow, LatLngBounds, Polyline } = await loader.importLibrary('maps');
 			const { Marker } = await loader.importLibrary('marker');
 
+			// If we'll fit-bounds, compute the framing center+zoom up front so
+			// the map can mount directly at the right view (avoids any "stuck
+			// zoomed in on cottage" race with the panel transition).
+			let initialCenter = { lat: center[0], lng: center[1] };
+			let initialZoom = zoom;
+			let bounds: InstanceType<typeof LatLngBounds> | undefined;
+			if (fitBounds && markers.length > 1) {
+				bounds = new LatLngBounds();
+				for (const m of markers) bounds.extend({ lat: m.lat, lng: m.lng });
+				const lats = markers.map((m) => m.lat);
+				const lngs = markers.map((m) => m.lng);
+				initialCenter = {
+					lat: (Math.min(...lats) + Math.max(...lats)) / 2,
+					lng: (Math.min(...lngs) + Math.max(...lngs)) / 2
+				};
+				initialZoom = computeFitZoom(markers, mapContainer);
+			}
+
 			map = new Map(mapContainer, {
-				center: { lat: center[0], lng: center[1] },
-				zoom,
+				center: initialCenter,
+				zoom: initialZoom,
 				maxZoom: fitBounds ? 14 : undefined,
 				mapTypeControl: false,
 				streetViewControl: false,
@@ -87,36 +126,42 @@
 				});
 			}
 
-			if (routeLine && markers.length >= 2) {
-				new Polyline({
-					path: markers.slice(0, 2).map((m) => ({ lat: m.lat, lng: m.lng })),
-					geodesic: true,
-					strokeColor: 'transparent',
-					strokeOpacity: 0,
-					icons: [
-						{
-							icon: {
-								path: 'M 0,-1 0,1',
-								strokeColor: '#7a4a2a',
-								strokeOpacity: 0.85,
-								strokeWeight: 2.5,
-								scale: 3
-							},
-							offset: '0',
-							repeat: '12px'
-						}
-					],
-					map
+			// fitBounds again once the map signals 'idle' — by then the container
+			// is fully laid out, so this nudges the framing to the precise fit
+			// even if the up-front zoom estimate was slightly off.
+			if (bounds) {
+				const finalBounds = bounds;
+				const listener = map.addListener('idle', () => {
+					map!.fitBounds(finalBounds, 40);
+					listener.remove();
 				});
 			}
 
-			if (fitBounds && markers.length > 1) {
-				const bounds = new LatLngBounds();
-				for (const m of markers) bounds.extend({ lat: m.lat, lng: m.lng });
-				// Defer until the container has its final laid-out size; otherwise
-				// fitBounds can compute against a 0×0 box during a parent transition
-				// and leave the map zoomed all the way in on the cottage.
-				requestAnimationFrame(() => map!.fitBounds(bounds, 40));
+			if (routeLine && markers.length >= 2) {
+				try {
+					new Polyline({
+						path: markers.slice(0, 2).map((m) => ({ lat: m.lat, lng: m.lng })),
+						geodesic: true,
+						strokeColor: 'transparent',
+						strokeOpacity: 0,
+						icons: [
+							{
+								icon: {
+									path: 'M 0,-1 0,1',
+									strokeColor: '#7a4a2a',
+									strokeOpacity: 0.85,
+									strokeWeight: 2.5,
+									scale: 3
+								},
+								offset: '0',
+								repeat: '12px'
+							}
+						],
+						map
+					});
+				} catch (e) {
+					console.warn('GoogleMap: route polyline failed to render', e);
+				}
 			}
 		});
 
