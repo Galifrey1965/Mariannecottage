@@ -7,7 +7,7 @@
 		lng: number;
 		title: string;
 		description: string;
-		type: 'cottage' | 'ww2' | 'nature' | 'towns';
+		type: 'cottage' | 'ww2' | 'nature' | 'towns' | 'heritage' | 'museums';
 	}
 
 	interface Props {
@@ -15,9 +15,16 @@
 		center?: [number, number];
 		zoom?: number;
 		height?: string;
+		fitBounds?: boolean;
 	}
 
-	let { markers, center = [49.172937, -0.988765], zoom = 10, height = '500px' }: Props = $props();
+	let {
+		markers,
+		center = [49.172937, -0.988765],
+		zoom = 10,
+		height = '500px',
+		fitBounds = false
+	}: Props = $props();
 
 	let mapContainer: HTMLDivElement;
 	let missingKey = $state(false);
@@ -26,7 +33,9 @@
 		cottage: '🏠',
 		ww2: '⚔️',
 		nature: '🌿',
-		towns: '🏛️'
+		towns: '🏘️',
+		heritage: '🏛️',
+		museums: '🏛️'
 	};
 
 	onMount(() => {
@@ -41,7 +50,7 @@
 
 		import('@googlemaps/js-api-loader').then(async ({ Loader }) => {
 			const loader = new Loader({ apiKey, version: 'weekly' });
-			const { Map, InfoWindow } = await loader.importLibrary('maps');
+			const { Map, InfoWindow, LatLngBounds } = await loader.importLibrary('maps');
 			const { Marker } = await loader.importLibrary('marker');
 
 			map = new Map(mapContainer, {
@@ -73,6 +82,12 @@
 					);
 					infoWindow!.open({ map, anchor: marker });
 				});
+			}
+
+			if (fitBounds && markers.length > 1) {
+				const bounds = new LatLngBounds();
+				for (const m of markers) bounds.extend({ lat: m.lat, lng: m.lng });
+				map.fitBounds(bounds, 60);
 			}
 		});
 
