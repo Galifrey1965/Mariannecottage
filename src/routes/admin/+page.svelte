@@ -454,6 +454,31 @@
 	const isPendingSyncBooking = (b: Booking | null) =>
 		Boolean(b && typeof b.id === 'string' && b.id.startsWith('imported:'));
 
+	let cancellingBcBlock = $state(false);
+	async function cancelBcBlock(b: Booking) {
+		if (!confirm('Cancel this Booking.com block locally?\n\n' +
+			'• The dates will be freed on our calendar (and our outbound iCal feed).\n' +
+			'• The reservation on Booking.com is NOT cancelled — you must do that in the BC extranet separately if needed.\n' +
+			'• Future iCal syncs will leave this booking alone (sticky cancellation).')) return;
+		cancellingBcBlock = true;
+		try {
+			const res = await fetch('/api/admin/bookings', {
+				method: 'PATCH',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ id: b.id, status: 'cancelled' })
+			});
+			const result = await res.json();
+			if (!res.ok || !result.success) {
+				alert(result.error || `Cancel failed (${res.status})`);
+				return;
+			}
+			selectedBooking = result.booking;
+			await fetchBookings();
+		} finally {
+			cancellingBcBlock = false;
+		}
+	}
+
 	let bcSyncing = $state(false);
 	let bcSyncMessage = $state('');
 	async function triggerBcSync() {
@@ -962,6 +987,11 @@
 								<button onclick={saveImportEdits} disabled={importSaving || isPendingSyncBooking(selectedBooking)} class="btn-primary btn-sm">
 									{importSaving ? 'Saving…' : 'Save details'}
 								</button>
+								{#if selectedBooking.status !== 'cancelled' && !isPendingSyncBooking(selectedBooking)}
+									<button onclick={() => cancelBcBlock(selectedBooking!)} disabled={cancellingBcBlock} class="btn-outline btn-sm" style="color: var(--color-error-text); border-color: var(--color-error-text);">
+										{cancellingBcBlock ? 'Cancelling…' : 'Cancel block locally'}
+									</button>
+								{/if}
 							</div>
 						</div>
 					{/if}

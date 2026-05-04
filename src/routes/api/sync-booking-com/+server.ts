@@ -73,12 +73,16 @@ export const POST: RequestHandler = async ({ request }) => {
 			const eventDates = expandRange(e.start, e.end);
 
 			if (existing) {
+				// Sticky local cancellation: once admin cancels a BC import via the
+				// admin panel, sync stops touching it. Dates stay free; status stays
+				// cancelled. To bring it back, admin must explicitly un-cancel
+				// (no UI for that yet — manual SQL or a future button).
+				if (existing.status === 'cancelled') continue;
+
 				const datesChanged = existing.check_in_date !== e.start || existing.check_out_date !== e.end;
-				const reactivated = existing.status === 'cancelled';
 				const summaryChanged = (existing.ical_summary ?? '') !== (e.summary ?? '');
-				if (datesChanged || reactivated || summaryChanged) {
-					if (datesChanged || reactivated) {
-						// release the old date range — re-block below if reactivated/changed
+				if (datesChanged || summaryChanged) {
+					if (datesChanged) {
 						for (const d of expandRange(existing.check_in_date, existing.check_out_date)) datesToFree.add(d);
 						for (const d of eventDates) datesToBlock.add(d);
 					}
@@ -90,7 +94,6 @@ export const POST: RequestHandler = async ({ request }) => {
 							check_out_date: e.end,
 							num_nights: numNights,
 							ical_summary: e.summary ?? null,
-							status: 'confirmed',
 							updated_at: nowIso
 						})
 						.eq('id', existing.id);
