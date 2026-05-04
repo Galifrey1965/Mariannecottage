@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import LanguageSwitcher from './LanguageSwitcher.svelte';
 	import { localePath, t } from '$lib/i18n';
 	import type { Messages, Locale } from '$lib/i18n';
@@ -24,7 +24,7 @@
 	let wasMenuOpen = false;
 
 	const isActive = (href: string) => {
-		return $page.url.pathname === href || $page.url.pathname.startsWith(href + '/');
+		return page.url.pathname === href || page.url.pathname.startsWith(href + '/');
 	};
 
 	const closeMenu = () => { menuOpen = false; };

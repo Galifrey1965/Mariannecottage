@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 
 	interface NavItem {
 		label: string;
@@ -15,7 +15,7 @@
 	let { items, label }: Props = $props();
 
 	const isActive = (href: string) => {
-		return $page.url.pathname === href || $page.url.pathname.startsWith(href + '/');
+		return page.url.pathname === href || page.url.pathname.startsWith(href + '/');
 	};
 </script>
 
