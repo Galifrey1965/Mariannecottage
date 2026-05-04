@@ -58,6 +58,7 @@
 			map = new Map(mapContainer, {
 				center: { lat: center[0], lng: center[1] },
 				zoom,
+				maxZoom: fitBounds ? 14 : undefined,
 				mapTypeControl: false,
 				streetViewControl: false,
 				fullscreenControl: false
@@ -112,7 +113,10 @@
 			if (fitBounds && markers.length > 1) {
 				const bounds = new LatLngBounds();
 				for (const m of markers) bounds.extend({ lat: m.lat, lng: m.lng });
-				map.fitBounds(bounds, 60);
+				// Defer until the container has its final laid-out size; otherwise
+				// fitBounds can compute against a 0×0 box during a parent transition
+				// and leave the map zoomed all the way in on the cottage.
+				requestAnimationFrame(() => map!.fitBounds(bounds, 40));
 			}
 		});
 
