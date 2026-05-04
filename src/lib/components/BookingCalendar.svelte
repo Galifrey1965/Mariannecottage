@@ -159,6 +159,7 @@
 		if (isClickMode) {
 			const info = bookingByDate[toISODate(date)];
 			if (info) {
+				if (info.source === 'imported') return 'day booked-imported';
 				if (info.source === 'test') return 'day booked-test';
 				if (info.status === 'cancelled' || info.status === 'expired' || info.status === 'refunded' || info.status === 'refunded_overbooked' || info.status === 'payment_failed') return 'day booked-cancelled';
 				if (info.status === 'pending' || info.status === 'pending_payment') return 'day booked-pending';
@@ -285,6 +286,11 @@
 		color: #4a3300; cursor: pointer; font-weight: 600;
 	}
 	.day.booked-test:hover { filter: brightness(1.05); }
+	.day.booked-imported {
+		background: repeating-linear-gradient(45deg, #4a90c2, #4a90c2 4px, #2e5d80 4px, #2e5d80 8px);
+		color: white; cursor: pointer; font-weight: 600;
+	}
+	.day.booked-imported:hover { filter: brightness(1.1); }
 	.day.booked-other { background: var(--color-cream-dark); color: var(--color-text); cursor: pointer; }
 
 	.legend { margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--color-cream-dark); display: flex; flex-direction: row; flex-wrap: wrap; gap: 0.75rem 1.5rem; font-size: 0.75rem; overflow-wrap: anywhere; }

@@ -245,6 +245,23 @@ export async function getBookingsByEmail(email: string) {
 	return data;
 }
 
+// Returns every availability row currently blocked (available=false) from
+// today onwards, including the synced_from + synced_at metadata. Used by the
+// admin calendar to overlay OTA-imported blocks (e.g. Booking.com) that don't
+// have a corresponding row in `bookings` — so admins see the same blocked
+// dates the public site does.
+export async function getBlockedAvailability(today: string) {
+	const { data, error } = await adminClient
+		.from('availability')
+		.select('date, synced_from, synced_at')
+		.eq('available', false)
+		.gte('date', today)
+		.order('date', { ascending: true });
+
+	if (error) throw error;
+	return (data ?? []) as Array<{ date: string; synced_from: string | null; synced_at: string | null }>;
+}
+
 // Returns ISO date strings for every night currently held by a source='test'
 // booking that still holds inventory. Used by the public booking calendar to
 // render test-blocked dates with a distinct colour so admins/devs can see at

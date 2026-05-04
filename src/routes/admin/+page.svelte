@@ -13,6 +13,11 @@
 	let searchQuery = $state('');
 	let showTest = $state(false);
 	let viewMode = $state<'list' | 'calendar'>('list');
+
+	type BlockedRow = { date: string; synced_from: string | null; synced_at: string | null };
+	const blockedAvailability: BlockedRow[] = (data.blockedAvailability ?? []) as BlockedRow[];
+
+	let importedDetail = $state<BlockedRow | null>(null);
 	let searchTimeout: ReturnType<typeof setTimeout>;
 
 	let selectedBooking = $state<Booking | null>(null);
@@ -305,6 +310,15 @@
 		return source.toUpperCase();
 	}
 
+	function sourceFullLabel(source?: string): string {
+		if (!source) return 'Unknown';
+		if (source === 'web') return 'Direct (website)';
+		if (source === 'admin') return 'Admin-created';
+		if (source === 'imported') return 'Imported (Booking.com)';
+		if (source === 'test') return 'Developer test fixture';
+		return source;
+	}
+
 	// Calendar mode — flatten visible bookings into a date → BookingDayInfo map
 	// so the BookingCalendar can colour cells by status and route clicks back
 	// through selectBooking() to open the existing detail panel.
@@ -324,6 +338,13 @@
 				d.setUTCDate(d.getUTCDate() + 1);
 			}
 		}
+		// Overlay OTA-imported availability blocks. A real booking on the same
+		// date wins (richer data), so we only add entries for unmatched dates.
+		for (const row of blockedAvailability) {
+			if (!out[row.date]) {
+				out[row.date] = { id: `imported:${row.date}`, status: 'imported', source: 'imported' };
+			}
+		}
 		return out;
 	});
 
@@ -336,8 +357,17 @@
 
 	function handleAdminDayClick(bookingId: string | null) {
 		if (!bookingId) return;
+		if (bookingId.startsWith('imported:')) {
+			const date = bookingId.slice('imported:'.length);
+			importedDetail = blockedAvailability.find(r => r.date === date) ?? { date, synced_from: null, synced_at: null };
+			return;
+		}
 		const b = bookings.find(x => x.id === bookingId);
 		if (b) selectBooking(b);
+	}
+
+	function closeImportedDetail() {
+		importedDetail = null;
 	}
 </script>
 
@@ -407,6 +437,7 @@
 				<div class="admin-cal-legend">
 					<span class="lk confirmed"></span><span>Confirmed</span>
 					<span class="lk pending"></span><span>Pending</span>
+					<span class="lk imported"></span><span>Imported (Booking.com)</span>
 					<span class="lk test"></span><span>Test</span>
 					<span class="lk cancelled"></span><span>Cancelled / past</span>
 					<span class="hint">Click any coloured day to open the booking.</span>
@@ -497,6 +528,49 @@
 		</div>
 		{/if}
 	</div>
+
+	{#if importedDetail}
+		<div class="overlay cancel-overlay">
+			<button onclick={closeImportedDetail} class="overlay-backdrop" aria-label="Close"></button>
+			<div class="cancel-dialog">
+				<div class="detail-content">
+					<div class="detail-header">
+						<div>
+							<p class="mono sub-text" style="color: var(--color-sage);">
+								Imported block
+								<span class="source-chip imported">OTA</span>
+							</p>
+							<h3 class="detail-title">{importedDetail.date}</h3>
+						</div>
+						<button onclick={closeImportedDetail} class="close-btn">✕</button>
+					</div>
+
+					<div class="detail-section">
+						<p class="detail-label">Source</p>
+						<p>Imported from {importedDetail.synced_from ?? 'external calendar'}</p>
+					</div>
+
+					{#if importedDetail.synced_at}
+						<div class="detail-section">
+							<p class="detail-label">Last synced</p>
+							<p>{formatDate(importedDetail.synced_at)}</p>
+						</div>
+					{/if}
+
+					<p class="note-box">
+						This date is blocked because Booking.com's iCal feed reported it as
+						unavailable. Guest details aren't transmitted in the iCal feed — to
+						see the reservation, log in to the Booking.com extranet. The block
+						will clear automatically when the date drops off their feed.
+					</p>
+
+					<div class="cancel-actions">
+						<button onclick={closeImportedDetail} class="btn-primary">Done</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	{/if}
 
 	{#if cancelLinkUrl || cancelLinkError}
 		<div class="overlay cancel-overlay">
@@ -649,6 +723,16 @@
 							<h3 class="detail-title">{selectedBooking.guest_name}</h3>
 						</div>
 						<button onclick={closeDetail} class="close-btn">✕</button>
+					</div>
+
+					<div class="detail-section">
+						<p class="detail-label">Source</p>
+						<p>
+							{sourceFullLabel(selectedBooking.source)}
+							{#if sourceChipLabel(selectedBooking.source)}
+								<span class="source-chip {selectedBooking.source}">{sourceChipLabel(selectedBooking.source)}</span>
+							{/if}
+						</p>
 					</div>
 
 					<div class="detail-section">
@@ -906,6 +990,7 @@
 	.admin-cal-legend .lk { width: 0.9rem; height: 0.9rem; border-radius: 4px; display: inline-block; }
 	.admin-cal-legend .lk.confirmed { background: var(--color-sage); }
 	.admin-cal-legend .lk.pending { background: #fff4d6; border: 2px dashed #f5b942; box-sizing: border-box; }
+	.admin-cal-legend .lk.imported { background: repeating-linear-gradient(45deg, #4a90c2, #4a90c2 3px, #2e5d80 3px, #2e5d80 6px); }
 	.admin-cal-legend .lk.test { background: repeating-linear-gradient(45deg, #f5b942, #f5b942 3px, #e89c1c 3px, #e89c1c 6px); }
 	.admin-cal-legend .lk.cancelled { background: var(--color-cream-dark); opacity: 0.6; }
 	.admin-cal-legend .hint { margin-left: auto; font-style: italic; }
