@@ -1,5 +1,5 @@
 import type { PageServerLoad } from './$types';
-import { adminClient, getBlockedAvailability } from '$lib/server/supabase';
+import { adminClient, getBlockedAvailability, getLastBcSyncAt } from '$lib/server/supabase';
 
 // PR 4 (admin slice): cumulative absorbed-Stripe-fee total for the dashboard
 // stat card. Sums metadata->absorbed_fee_estimate across every admin cancel
@@ -8,7 +8,7 @@ import { adminClient, getBlockedAvailability } from '$lib/server/supabase';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	if (!locals.user) {
-		return { absorbedFeeTotal: 0, absorbedFeeRefundCount: 0, blockedAvailability: [] };
+		return { absorbedFeeTotal: 0, absorbedFeeRefundCount: 0, blockedAvailability: [], lastBcSyncAt: null };
 	}
 
 	const today = new Date().toISOString().slice(0, 10);
@@ -18,6 +18,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 	} catch (err) {
 		console.error('[admin/+page.server] blocked availability fetch failed:', err);
 	}
+	const lastBcSyncAt = await getLastBcSyncAt();
 
 	const { data, error } = await adminClient
 		.from('agent_events')
@@ -26,7 +27,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 
 	if (error) {
 		console.error('[admin/+page.server] absorbed-fee query failed:', error);
-		return { absorbedFeeTotal: 0, absorbedFeeRefundCount: 0, blockedAvailability };
+		return { absorbedFeeTotal: 0, absorbedFeeRefundCount: 0, blockedAvailability, lastBcSyncAt };
 	}
 
 	let total = 0;
@@ -43,6 +44,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 	return {
 		absorbedFeeTotal: Math.round(total * 100) / 100,
 		absorbedFeeRefundCount: count,
-		blockedAvailability
+		blockedAvailability,
+		lastBcSyncAt
 	};
 };

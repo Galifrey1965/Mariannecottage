@@ -6,6 +6,10 @@
 		id: string;
 		status: string;
 		source?: string;
+		// Position of this date within its booking's date range — used by the
+		// admin calendar to visually group multi-night stays (rounded outer
+		// edges, square inner edges) so the cells read as one reservation.
+		position?: 'single' | 'first' | 'middle' | 'last';
 	}
 
 	interface Props {
@@ -159,12 +163,15 @@
 		if (isClickMode) {
 			const info = bookingByDate[toISODate(date)];
 			if (info) {
-				if (info.source === 'booking_com') return 'day booked-imported';
-				if (info.source === 'test') return 'day booked-test';
-				if (info.status === 'cancelled' || info.status === 'expired' || info.status === 'refunded' || info.status === 'refunded_overbooked' || info.status === 'payment_failed') return 'day booked-cancelled';
-				if (info.status === 'pending' || info.status === 'pending_payment') return 'day booked-pending';
-				if (info.status === 'confirmed') return 'day booked-confirmed';
-				return 'day booked-other';
+				const pos = info.position ?? 'single';
+				let cls: string;
+				if (info.source === 'booking_com') cls = 'booked-imported';
+				else if (info.source === 'test') cls = 'booked-test';
+				else if (info.status === 'cancelled' || info.status === 'expired' || info.status === 'refunded' || info.status === 'refunded_overbooked' || info.status === 'payment_failed') cls = 'booked-cancelled';
+				else if (info.status === 'pending' || info.status === 'pending_payment') cls = 'booked-pending';
+				else if (info.status === 'confirmed') cls = 'booked-confirmed';
+				else cls = 'booked-other';
+				return `day ${cls} pos-${pos}`;
 			}
 			return 'day available';
 		}
@@ -292,6 +299,14 @@
 	}
 	.day.booked-imported:hover { filter: brightness(1.1); }
 	.day.booked-other { background: var(--color-cream-dark); color: var(--color-text); cursor: pointer; }
+
+	/* Multi-night grouping — rounded outer edges, square inner edges, so a
+	   contiguous range reads as one reservation rather than three loose dots.
+	   pos-single keeps the default circle. */
+	.day.pos-first  { border-radius: 50% 0 0 50%; }
+	.day.pos-middle { border-radius: 0; }
+	.day.pos-last   { border-radius: 0 50% 50% 0; }
+	.day.pos-single { border-radius: 50%; }
 
 	.legend { margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--color-cream-dark); display: flex; flex-direction: row; flex-wrap: wrap; gap: 0.75rem 1.5rem; font-size: 0.75rem; overflow-wrap: anywhere; }
 	.legend-item { display: flex; align-items: center; gap: 0.5rem; }

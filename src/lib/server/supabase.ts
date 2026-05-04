@@ -248,6 +248,25 @@ export async function getBookingsByEmail(email: string) {
 	return data;
 }
 
+// Returns the most recent timestamp the Booking.com inbound sync touched
+// (any availability row with synced_from='booking.com'). The admin uses this
+// to decide whether they need to hit the manual "Sync now" button — if the
+// cron ran 5 minutes ago they'll skip it; if it's an hour stale they'll click.
+export async function getLastBcSyncAt(): Promise<string | null> {
+	const { data, error } = await adminClient
+		.from('availability')
+		.select('synced_at')
+		.eq('synced_from', 'booking.com')
+		.order('synced_at', { ascending: false })
+		.limit(1)
+		.maybeSingle();
+	if (error) {
+		console.error('[getLastBcSyncAt] failed:', error);
+		return null;
+	}
+	return (data?.synced_at as string) ?? null;
+}
+
 // Returns every availability row currently blocked (available=false) from
 // today onwards, including the synced_from + synced_at metadata. Used by the
 // admin calendar to overlay OTA-imported blocks (e.g. Booking.com) that don't

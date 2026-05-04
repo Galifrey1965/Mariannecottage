@@ -411,26 +411,58 @@
 		for (const b of visibleBookings) {
 			const start = new Date(b.check_in_date + 'T00:00:00Z');
 			const end = new Date(b.check_out_date + 'T00:00:00Z');
+			const totalNights = Math.max(1, Math.round((end.getTime() - start.getTime()) / 86_400_000));
 			const d = new Date(start);
+			let i = 0;
 			while (d < end) {
 				const iso = d.toISOString().slice(0, 10);
 				const existing = out[iso];
+				const position: BookingDayInfo['position'] =
+					totalNights === 1 ? 'single' :
+					i === 0 ? 'first' :
+					i === totalNights - 1 ? 'last' : 'middle';
 				// confirmed > pending > anything else when two bookings collide on the same date
 				if (!existing || rankStatus(b.status) > rankStatus(existing.status)) {
-					out[iso] = { id: b.id, status: b.status, source: b.source };
+					out[iso] = { id: b.id, status: b.status, source: b.source, position };
 				}
 				d.setUTCDate(d.getUTCDate() + 1);
+				i++;
 			}
 		}
-		// Overlay OTA-imported availability blocks. A real booking on the same
-		// date wins (richer data), so we only add entries for unmatched dates.
-		for (const row of blockedAvailability) {
-			if (!out[row.date]) {
-				out[row.date] = { id: `imported:${row.date}`, status: 'confirmed', source: 'booking_com' };
+		// Overlay OTA-imported availability blocks for dates not yet promoted to
+		// a real bookings row. Detect contiguous runs so single-night vs multi-
+		// night blocks render with the right grouping.
+		const sorted = blockedAvailability
+			.map((r) => r.date)
+			.filter((d) => !out[d])
+			.sort();
+		let runStart = -1;
+		for (let i = 0; i <= sorted.length; i++) {
+			const d = sorted[i];
+			const prev = sorted[i - 1];
+			const isBreak = i === sorted.length || (prev && !isNextDay(prev, d));
+			if (isBreak && runStart >= 0) {
+				const runLen = i - runStart;
+				for (let j = 0; j < runLen; j++) {
+					const date = sorted[runStart + j];
+					const position: BookingDayInfo['position'] =
+						runLen === 1 ? 'single' :
+						j === 0 ? 'first' :
+						j === runLen - 1 ? 'last' : 'middle';
+					out[date] = { id: `imported:${date}`, status: 'confirmed', source: 'booking_com', position };
+				}
+				runStart = -1;
 			}
+			if (i < sorted.length && runStart < 0) runStart = i;
 		}
 		return out;
 	});
+
+	function isNextDay(a: string, b: string): boolean {
+		const da = new Date(a + 'T00:00:00Z');
+		da.setUTCDate(da.getUTCDate() + 1);
+		return da.toISOString().slice(0, 10) === b;
+	}
 
 	function rankStatus(s: string): number {
 		if (s === 'confirmed') return 3;
@@ -481,6 +513,25 @@
 
 	let bcSyncing = $state(false);
 	let bcSyncMessage = $state('');
+	// Cron pulls the BC iCal hourly. We surface the last-sync timestamp so
+	// the admin can decide whether to bother clicking — 5 min ago = skip;
+	// 50 min ago and you're about to leave the page = click. Reactive via
+	// $state so the manual sync updates it without a full reload.
+	let lastBcSyncAt = $state<string | null>(data.lastBcSyncAt ?? null);
+
+	function formatRelativeTime(iso: string | null): string {
+		if (!iso) return 'never';
+		const ms = Date.now() - new Date(iso).getTime();
+		if (ms < 0) return 'just now';
+		const min = Math.round(ms / 60_000);
+		if (min < 1) return 'just now';
+		if (min < 60) return `${min} min ago`;
+		const hr = Math.round(min / 60);
+		if (hr < 24) return `${hr}h ago`;
+		const day = Math.round(hr / 24);
+		return `${day}d ago`;
+	}
+
 	async function triggerBcSync() {
 		bcSyncing = true;
 		bcSyncMessage = '';
@@ -492,6 +543,7 @@
 				return;
 			}
 			bcSyncMessage = `Synced ${result.inserted ?? 0} new, ${result.updated ?? 0} updated, ${result.cancelled ?? 0} cancelled.`;
+			lastBcSyncAt = new Date().toISOString();
 			await fetchBookings();
 		} catch (err) {
 			bcSyncMessage = err instanceof Error ? err.message : 'Unknown error';
@@ -527,9 +579,15 @@
 					<button onclick={() => statusFilter = s} class="filter-btn" class:active={statusFilter === s}>{s}</button>
 				{/each}
 			</div>
-			<button onclick={triggerBcSync} disabled={bcSyncing} class="filter-btn bc-sync-btn" title="Pull the latest Booking.com iCal feed">
-				{bcSyncing ? 'Syncing…' : 'Sync BC'}
-			</button>
+			<div class="bc-sync-wrapper" title="Cron polls Booking.com hourly. Click to pull the latest iCal feed now.">
+				<button onclick={triggerBcSync} disabled={bcSyncing} class="bc-sync-btn">
+					<span class="bc-logo">B.</span>
+					{bcSyncing ? 'Syncing…' : 'Sync Booking.com'}
+				</button>
+				<span class="bc-sync-meta">
+					Last synced {formatRelativeTime(lastBcSyncAt)}
+				</span>
+			</div>
 			{#if bcSyncMessage}
 				<span class="bc-sync-msg">{bcSyncMessage}</span>
 			{/if}
@@ -1147,7 +1205,22 @@
 	.source-chip.admin { background: #e0ecff; color: #1d4ed8; border: 1px solid #93b8f0; }
 	.source-chip.booking_com { background: #003580; color: white; border: 1px solid #003580; }
 
-	.bc-sync-btn { font-weight: 500; }
+	.bc-sync-wrapper { display: flex; flex-direction: column; gap: 0.15rem; align-items: flex-start; }
+	.bc-sync-btn {
+		display: inline-flex; align-items: center; gap: 0.4rem;
+		padding: 0.4rem 0.8rem; border-radius: 6px; border: none; cursor: pointer;
+		background: #003580; color: white; font-weight: 600; font-size: 0.875rem;
+		transition: background 0.15s ease;
+	}
+	.bc-sync-btn:hover:not(:disabled) { background: #002e6b; }
+	.bc-sync-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+	.bc-logo {
+		display: inline-flex; align-items: center; justify-content: center;
+		width: 1.1rem; height: 1.1rem; border-radius: 50%;
+		background: white; color: #003580; font-weight: 800; font-size: 0.7rem;
+		font-family: 'Lora', serif;
+	}
+	.bc-sync-meta { font-size: 0.7rem; color: var(--color-text-muted); padding-left: 0.2rem; }
 	.bc-sync-msg { font-size: 0.8rem; color: var(--color-text-muted); }
 
 	.form-fields-grid {
