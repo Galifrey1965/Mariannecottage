@@ -61,7 +61,7 @@ export interface Booking {
 	last_payment_error?: string;
 	cancellation_policy_id?: string;
 	admin_notes?: string;
-	source?: 'web' | 'admin' | 'imported' | 'test';
+	source?: 'web' | 'admin' | 'booking_com' | 'test';
 	cancellation_token_used_at?: string;
 }
 

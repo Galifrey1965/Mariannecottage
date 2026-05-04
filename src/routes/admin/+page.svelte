@@ -17,7 +17,37 @@
 	type BlockedRow = { date: string; synced_from: string | null; synced_at: string | null };
 	const blockedAvailability: BlockedRow[] = (data.blockedAvailability ?? []) as BlockedRow[];
 
-	let importedDetail = $state<BlockedRow | null>(null);
+	const isImportedBooking = (b: Booking | null) => Boolean(b && b.source === 'booking_com');
+
+	function nextDayISO(iso: string): string {
+		const d = new Date(iso + 'T00:00:00Z');
+		d.setUTCDate(d.getUTCDate() + 1);
+		return d.toISOString().slice(0, 10);
+	}
+
+	function syntheticImportedBooking(row: BlockedRow): Booking {
+		return {
+			id: `imported:${row.date}`,
+			created_at: row.synced_at ?? new Date().toISOString(),
+			updated_at: row.synced_at ?? new Date().toISOString(),
+			guest_name: 'Booking.com guest',
+			guest_email: '',
+			guest_phone: undefined,
+			guest_country: undefined,
+			num_guests: 0,
+			check_in_date: row.date,
+			check_out_date: nextDayISO(row.date),
+			num_nights: 1,
+			special_requests: undefined,
+			nightly_rate: 0,
+			subtotal: 0,
+			tax: 0,
+			total_cost: 0,
+			status: 'confirmed',
+			booking_reference: `BC-${row.date}`,
+			source: 'booking_com'
+		} as Booking;
+	}
 	let searchTimeout: ReturnType<typeof setTimeout>;
 
 	let selectedBooking = $state<Booking | null>(null);
@@ -306,7 +336,7 @@
 		if (!source || source === 'web') return null;
 		if (source === 'test') return 'TEST';
 		if (source === 'admin') return 'ADMIN';
-		if (source === 'imported') return 'OTA';
+		if (source === 'booking_com') return 'BOOKING.COM';
 		return source.toUpperCase();
 	}
 
@@ -314,7 +344,7 @@
 		if (!source) return 'Unknown';
 		if (source === 'web') return 'Direct (website)';
 		if (source === 'admin') return 'Admin-created';
-		if (source === 'imported') return 'Imported (Booking.com)';
+		if (source === 'booking_com') return 'Booking.com';
 		if (source === 'test') return 'Developer test fixture';
 		return source;
 	}
@@ -342,7 +372,7 @@
 		// date wins (richer data), so we only add entries for unmatched dates.
 		for (const row of blockedAvailability) {
 			if (!out[row.date]) {
-				out[row.date] = { id: `imported:${row.date}`, status: 'imported', source: 'imported' };
+				out[row.date] = { id: `imported:${row.date}`, status: 'confirmed', source: 'booking_com' };
 			}
 		}
 		return out;
@@ -359,15 +389,12 @@
 		if (!bookingId) return;
 		if (bookingId.startsWith('imported:')) {
 			const date = bookingId.slice('imported:'.length);
-			importedDetail = blockedAvailability.find(r => r.date === date) ?? { date, synced_from: null, synced_at: null };
+			const row = blockedAvailability.find(r => r.date === date) ?? { date, synced_from: null, synced_at: null };
+			selectBooking(syntheticImportedBooking(row));
 			return;
 		}
 		const b = bookings.find(x => x.id === bookingId);
 		if (b) selectBooking(b);
-	}
-
-	function closeImportedDetail() {
-		importedDetail = null;
 	}
 </script>
 
@@ -437,7 +464,7 @@
 				<div class="admin-cal-legend">
 					<span class="lk confirmed"></span><span>Confirmed</span>
 					<span class="lk pending"></span><span>Pending</span>
-					<span class="lk imported"></span><span>Imported (Booking.com)</span>
+					<span class="lk imported"></span><span>Booking.com</span>
 					<span class="lk test"></span><span>Test</span>
 					<span class="lk cancelled"></span><span>Cancelled / past</span>
 					<span class="hint">Click any coloured day to open the booking.</span>
@@ -528,49 +555,6 @@
 		</div>
 		{/if}
 	</div>
-
-	{#if importedDetail}
-		<div class="overlay cancel-overlay">
-			<button onclick={closeImportedDetail} class="overlay-backdrop" aria-label="Close"></button>
-			<div class="cancel-dialog">
-				<div class="detail-content">
-					<div class="detail-header">
-						<div>
-							<p class="mono sub-text" style="color: var(--color-sage);">
-								Imported block
-								<span class="source-chip imported">OTA</span>
-							</p>
-							<h3 class="detail-title">{importedDetail.date}</h3>
-						</div>
-						<button onclick={closeImportedDetail} class="close-btn">✕</button>
-					</div>
-
-					<div class="detail-section">
-						<p class="detail-label">Source</p>
-						<p>Imported from {importedDetail.synced_from ?? 'external calendar'}</p>
-					</div>
-
-					{#if importedDetail.synced_at}
-						<div class="detail-section">
-							<p class="detail-label">Last synced</p>
-							<p>{formatDate(importedDetail.synced_at)}</p>
-						</div>
-					{/if}
-
-					<p class="note-box">
-						This date is blocked because Booking.com's iCal feed reported it as
-						unavailable. Guest details aren't transmitted in the iCal feed — to
-						see the reservation, log in to the Booking.com extranet. The block
-						will clear automatically when the date drops off their feed.
-					</p>
-
-					<div class="cancel-actions">
-						<button onclick={closeImportedDetail} class="btn-primary">Done</button>
-					</div>
-				</div>
-			</div>
-		</div>
-	{/if}
 
 	{#if cancelLinkUrl || cancelLinkError}
 		<div class="overlay cancel-overlay">
@@ -742,7 +726,7 @@
 						</div>
 						{#if isTerminalStatus(selectedBooking.status)}
 							<p class="sub-text" style="margin-top: 0.5rem;">{terminalStatusHint(selectedBooking.status)}</p>
-						{:else}
+						{:else if !isImportedBooking(selectedBooking)}
 							<div class="status-buttons" style="margin-top: 0.5rem;">
 								{#if selectedBooking.status === 'pending'}
 									<button
@@ -771,6 +755,7 @@
 
 					<hr />
 
+					{#if !isImportedBooking(selectedBooking)}
 					<div class="detail-section">
 						<h4 class="section-title">Guest Details</h4>
 						<div class="detail-grid">
@@ -798,30 +783,39 @@
 					</div>
 
 					<hr />
+					{/if}
 
 					<div class="detail-section">
-						<h4 class="section-title">Stay Details</h4>
+						<h4 class="section-title">{isImportedBooking(selectedBooking) ? 'Block details' : 'Stay Details'}</h4>
 						<div class="detail-grid">
 							<div>
-								<p class="detail-label">Check-in</p>
+								<p class="detail-label">{isImportedBooking(selectedBooking) ? 'Date' : 'Check-in'}</p>
 								<p>{formatDate(selectedBooking.check_in_date)}</p>
 								<p class="sub-text">{formatRelative(selectedBooking.check_in_date)}</p>
 							</div>
-							<div>
-								<p class="detail-label">Check-out</p>
-								<p>{formatDate(selectedBooking.check_out_date)}</p>
-							</div>
-							<div>
-								<p class="detail-label">Duration</p>
-								<p>{selectedBooking.num_nights} nights</p>
-							</div>
-							<div>
-								<p class="detail-label">Booked</p>
-								<p>{formatDate(selectedBooking.created_at)}</p>
-							</div>
+							{#if !isImportedBooking(selectedBooking)}
+								<div>
+									<p class="detail-label">Check-out</p>
+									<p>{formatDate(selectedBooking.check_out_date)}</p>
+								</div>
+								<div>
+									<p class="detail-label">Duration</p>
+									<p>{selectedBooking.num_nights} nights</p>
+								</div>
+								<div>
+									<p class="detail-label">Booked</p>
+									<p>{formatDate(selectedBooking.created_at)}</p>
+								</div>
+							{:else}
+								<div>
+									<p class="detail-label">Last synced</p>
+									<p>{formatDate(selectedBooking.updated_at)}</p>
+								</div>
+							{/if}
 						</div>
 					</div>
 
+					{#if !isImportedBooking(selectedBooking)}
 					<hr />
 
 					<div class="detail-section">
@@ -872,6 +866,7 @@
 							<p class="sub-text" style="font-style: italic;">No notes</p>
 						{/if}
 					</div>
+					{/if}
 				</div>
 			</div>
 		</div>
@@ -969,7 +964,7 @@
 	}
 	.source-chip.test { background: #fff4d6; color: #8a5a00; border: 1px solid #f5b942; }
 	.source-chip.admin { background: #e0ecff; color: #1d4ed8; border: 1px solid #93b8f0; }
-	.source-chip.imported { background: #ececec; color: #4a4a4a; border: 1px solid #c0c0c0; }
+	.source-chip.booking_com { background: #003580; color: white; border: 1px solid #003580; }
 
 	.show-test-toggle {
 		display: flex; align-items: center; gap: 0.4rem;

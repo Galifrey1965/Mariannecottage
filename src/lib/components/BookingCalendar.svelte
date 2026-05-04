@@ -159,7 +159,7 @@
 		if (isClickMode) {
 			const info = bookingByDate[toISODate(date)];
 			if (info) {
-				if (info.source === 'imported') return 'day booked-imported';
+				if (info.source === 'booking_com') return 'day booked-imported';
 				if (info.source === 'test') return 'day booked-test';
 				if (info.status === 'cancelled' || info.status === 'expired' || info.status === 'refunded' || info.status === 'refunded_overbooked' || info.status === 'payment_failed') return 'day booked-cancelled';
 				if (info.status === 'pending' || info.status === 'pending_payment') return 'day booked-pending';
