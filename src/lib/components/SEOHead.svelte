@@ -18,8 +18,8 @@
 		lang,
 		title = t(messages, 'meta.title'),
 		description = t(messages, 'meta.description'),
-		image = 'https://mariannecottage.netlify.app/images/2024-08-15.jpg',
-		url = 'https://mariannecottage.netlify.app',
+		image = 'https://mariannecottage.fr/images/2024-08-15.jpg',
+		url = 'https://mariannecottage.fr',
 		alternates = [],
 		type = 'website'
 	}: Props = $props();
@@ -81,7 +81,7 @@
 	{#each alternates as alt}
 		<link rel="alternate" hreflang={alt.lang} href={alt.url} />
 	{/each}
-	<link rel="alternate" hreflang="x-default" href={alternates[0]?.url || 'https://mariannecottage.netlify.app'} />
+	<link rel="alternate" hreflang="x-default" href={alternates[0]?.url || 'https://mariannecottage.fr'} />
 
 	<!-- JSON-LD structured data -->
 	<script type="application/ld+json">

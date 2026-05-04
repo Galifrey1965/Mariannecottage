@@ -82,7 +82,7 @@
 		</nav>
 
 		<div class="header-actions">
-			<LanguageSwitcher {lang} />
+			<LanguageSwitcher {lang} {messages} />
 			<button
 				bind:this={toggleBtnEl}
 				class="menu-toggle"

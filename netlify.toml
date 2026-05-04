@@ -7,6 +7,13 @@ functions = "netlify/functions"
 command = "npm run dev"
 port = 3000
 
+# Redirect netlify.app subdomain to the canonical .fr domain (preserves path)
+[[redirects]]
+from = "https://mariannecottage.netlify.app/*"
+to = "https://mariannecottage.fr/:splat"
+status = 301
+force = true
+
 # Headers for security
 [[headers]]
 for = "/*"

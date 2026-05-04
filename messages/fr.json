@@ -15,7 +15,13 @@
 	"lang": {
 		"en": "English",
 		"fr": "Français",
-		"de": "Deutsch"
+		"de": "Deutsch",
+		"switch_to_en": "Switch to English",
+		"switch_to_fr": "Passer en français",
+		"switch_to_de": "Auf Deutsch wechseln"
+	},
+	"banner": {
+		"construction": "Ce site est en cours de construction. Les réservations ne sont pas encore disponibles — merci de revenir bientôt."
 	},
 	"home": {
 		"hero": {

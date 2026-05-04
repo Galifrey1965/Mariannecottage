@@ -51,65 +51,98 @@ Updated as services are added or changed.
 
 | Field | Value |
 |---|---|
-| **Current URL** | https://mariannecottage.netlify.app |
-| **Custom domain (chosen)** | **`mariannecottage.fr`** — confirmed by Mark 2026-05-02 |
-| **Registrar (chosen)** | **OVH** — French registrar, AFNIC-accredited, decades established. 10-year prepay, no annual renewal hassle for a decade. |
-| **Planned action** | Mark registers `mariannecottage.fr` at OVH for 10 years (~€78). Point nameservers at Netlify DNS so the registrar is purely a billing intermediary. Add DKIM/SPF/DMARC records (later, when Resend goes live in Phase 2). |
-| **Email sending domain** | `mariannecottage.fr` — same domain |
-| **Account owner** | Mark |
-| **Cost** | **~€78 / £66 once**, valid for 10 years. Then ~€8/yr renewal. |
-| **Why not the cheaper alternatives** | Regery (~€57) is Ukraine-based — geopolitical + mixed-support risk for a 10-year horizon. Cloudflare (~£70-80 over 10yr) only sells 1-year terms. Infomaniak (~€72) is Swiss and viable, but OVH is the home-turf registrar for .fr and Mark can deal with them in French if anything ever needs sorting. |
-| **Why not `.com` defensively** | Decided against initial registration. Cottage's name has no global commercial value yet; squatter risk on a low-profile French rural cottage is minimal. Can be added later (potentially via Netlify's own registrar, which supports `.com`) for ~$10/yr if commercial reach justifies it. |
+| **Public URL** | https://mariannecottage.fr (live since 2026-05-04) |
+| **Apex** | `mariannecottage.fr` → A record `75.2.60.5` (Netlify load balancer) |
+| **www** | `www.mariannecottage.fr` → CNAME `mariannecottage.netlify.app.` → 301 to apex |
+| **Fallback URL** | https://mariannecottage.netlify.app (Netlify default subdomain — still works) |
+| **Registrar** | **OVH** (ovhcloud.com) — French registrar, AFNIC-accredited |
+| **DNS provider** | **OVH** — DNS managed at OVH (NS: `dns109.ovh.net`, `ns109.ovh.net`). Netlify DNS not used; records added directly in OVH's DNS-zone editor. |
+| **Registration term** | **3 years** (registered 2026-05-04, renews ~2029-05) — note: not the 10-year prepay originally planned; Mark chose 3yr at point of purchase |
+| **Cost** | ~€18.70 for 3 years (~£5/yr equivalent) |
+| **TLS** | Let's Encrypt via Netlify auto-provisioning. Force-HTTPS enabled. HSTS header served. |
+| **Account owner** | Mark (login = his personal Gmail) |
+| **OVH account ID** | `pb638742-ovh` |
 
-### Pre-purchase verification checklist
+### DNS zone (OVH, mariannecottage.fr)
 
-Things to confirm in the OVH ordering flow / account dashboard **before** Mark commits the €78 prepay. The build assumptions downstream (single-Gmail inbox, branded outbound, Resend on the same domain) all depend on items 1–4 being available. If any of those are missing from the cheapest `.fr` package, either upgrade the package or switch to the Cloudflare Email Routing fallback (note item 13).
+Live records as of 2026-05-04 (TTL: OVH default = 3600s):
 
-**Must-verify (build-blocking):**
+| Subdomain | Type | Target / Value | Purpose |
+|---|---|---|---|
+| `@` | NS | `dns109.ovh.net.` | OVH authoritative |
+| `@` | NS | `ns109.ovh.net.` | OVH authoritative |
+| `@` | A | `75.2.60.5` | Netlify load balancer (apex) |
+| `www` | CNAME | `mariannecottage.netlify.app.` | Netlify default subdomain |
+| `@` | MX 10 | `mx1.improvmx.com.` | ImprovMX inbound |
+| `@` | MX 20 | `mx2.improvmx.com.` | ImprovMX inbound |
+| `@` | TXT | `v=spf1 include:spf.improvmx.com include:spf.brevo.com ~all` | SPF (covers ImprovMX inbound + Brevo outbound) |
+| `@` | TXT | `brevo-code:0ea6a17187f26d6632e40352af5e5af1` | Brevo domain ownership verification |
+| `brevo1._domainkey` | CNAME | `b1.mariannecottage-fr.dkim.brevo.com.` | Brevo DKIM key 1 |
+| `brevo2._domainkey` | CNAME | `b2.mariannecottage-fr.dkim.brevo.com.` | Brevo DKIM key 2 |
+| `_dmarc` | TXT | `v=DMARC1; p=none; rua=mailto:rua@dmarc.brevo.com` | DMARC (monitoring only — `p=none`; reports to Brevo) |
 
-| # | Item | Why it matters |
+### Setup history
+
+- **2026-05-04** — Domain registered at OVH (3yr term). DNS configured, Netlify custom domain wired (`mariannecottage.fr` + alias `www.mariannecottage.fr`), Let's Encrypt cert provisioned, force-HTTPS + www→apex redirects active.
+- **2026-05-04** — OVH Zimbra Starter (free 10yr trial offered at signup) terminated — would have required paid renewal. Replaced by ImprovMX + Brevo (see Email sections below).
+- **2026-05-04** — `netlify.toml` 301 redirect added: `https://mariannecottage.netlify.app/*` → `https://mariannecottage.fr/:splat`. Canonical / OG / hreflang URLs in `src/routes/+layout.svelte` and `src/lib/components/SEOHead.svelte` updated from `netlify.app` to `mariannecottage.fr`.
+
+### To-verify / hardening backlog
+
+Still worth confirming on the OVH account dashboard (not blocking, but good hygiene):
+
+| # | Item | Notes |
 |---|---|---|
-| 1 | **Free email forwarding (MX Plan / aliases / redirections) bundled with the `.fr` registration** — unlimited aliases pointing to `mariannecottage@gmail.com` | The "single Gmail inbox" design (Row 3 of `99-decision.md` Table A) depends on this. Aliases needed: `bookings@`, `hello@`, `mark@`, `kim@`, `postmaster@`, `abuse@`, `dmarc-reports@` |
-| 2 | **Outbound SMTP credentials available** for Gmail "Send mail as" — server hostname (`smtp.mail.ovh.net` or similar), port 465/587, auth method | Lets Mark reply from `bookings@mariannecottage.fr` while staying in his Gmail inbox. Without this we'd need to host a real mailbox somewhere |
-| 3 | **Full DNS delegation supported** — we can point nameservers at Netlify DNS, OR manage all records (A, MX, TXT, CNAME) at OVH if we keep DNS there | Need this for Netlify deployment + Resend DKIM + future records. Either model works; the registrar must allow at least one |
-| 4 | **`.fr` AFNIC eligibility** confirmed for Mark — resident of France with valid French address (1 La Haye, 50680 Couvains ✓) | `.fr` requires EU/France connection; ordering form must accept Mark's details. If rejected, the whole domain choice changes |
+| 1 | **Auto-renew status** | Confirm whether 3yr registration auto-renews in 2029 or expires; align with billing expectations |
+| 2 | **WHOIS privacy / GDPR redaction** | OVH defaults vary; check public WHOIS doesn't leak Mark's home address |
+| 3 | **DNSSEC** | OVH supports it for `.fr`; toggle in domain dashboard. Adds resilience against DNS spoofing — low effort, worth enabling |
+| 4 | **Two-factor auth on OVH account** | Standard hygiene; the account ultimately controls the cottage's online identity |
+| 5 | **Tighten DMARC** | Currently `p=none` (monitor mode, Brevo's default). After confirming legitimate mail flows correctly, raise to `p=quarantine` then `p=reject` |
+| 6 | **DMARC reports destination** | Currently `rua@dmarc.brevo.com` (Brevo aggregates). Could redirect to `dmarc-reports@mariannecottage.fr` → cottage Gmail if Mark wants visibility into report stream |
 
-**Should-verify (operational):**
+---
 
-| # | Item | Why it matters |
-|---|---|---|
-| 5 | **Auto-renew can be disabled** in the account dashboard | 10-year prepay covers us until 2036; we don't want a card on file silently re-charging in 2027 if Mark forgets it's prepaid |
-| 6 | **VAT-inclusive invoice** issued to Mark's name + cottage address | Needed for *micro-BIC* accounting; confirm OVH provides a proper invoice (not just a receipt) |
-| 7 | **Free WHOIS privacy / GDPR-redacted public WHOIS** included | Hides Mark's home address from public WHOIS lookups — for a personal cottage, this matters. Most EU registrars now include it free post-GDPR; confirm OVH does |
-| 8 | **DNSSEC supported** | Worth enabling once DNS is delegated; OVH supports DNSSEC for `.fr` but the toggle is in the domain dashboard |
-| 9 | **Transfer-out terms** — auth code / EPP code can be obtained on demand; no transfer lock beyond the standard 60-day post-registration window | Insurance against ever wanting to leave OVH. Should be free; if OVH charges for the auth code, that's a yellow flag |
-| 10 | **Total cost confirmed at checkout** matches the ~€78 / £66 / 10-year figure quoted in the table above (incl. VAT, no hidden setup fees) | If the actual checkout total exceeds €90, pause and re-check pricing |
+## Email — inbound (forwarding)
 
-**Nice-to-have:**
+| Field | Value |
+|---|---|
+| **Provider** | **ImprovMX** (improvmx.com) |
+| **Plan** | Free — unlimited aliases on 1 domain, 25 MB attachment limit, 10 forwards/day per alias |
+| **Configuration** | **Catch-all** alias `*@mariannecottage.fr` → `mariannecottage@gmail.com` (cottage's dedicated Gmail account) |
+| **MX records** | `mx1.improvmx.com.` (priority 10), `mx2.improvmx.com.` (priority 20) — added to OVH zone 2026-05-04 |
+| **SPF authorization** | `include:spf.improvmx.com` in the merged SPF TXT record at apex |
+| **Account owner** | Mark (signed up under his personal Gmail) |
+| **Cost** | £0/month |
+| **What this gives us** | Any address `<anything>@mariannecottage.fr` → lands in cottage Gmail. No separate inbox to manage. Replaces the originally planned 7-alias OVH email forwarding bundle. |
+| **Limitations** | Inbound only — does not include outbound SMTP (that's the Premium tier at $9/mo). Outbound is handled by Brevo (next section). |
+| **Alternatives if we ever need to move** | Cloudflare Email Routing (free, requires moving DNS to Cloudflare); ForwardEmail.net (free, similar feature set); ImprovMX Premium ($9/mo) for outbound bundled |
 
-| # | Item | Why it matters |
-|---|---|---|
-| 11 | **French-language interface and support available** | Mark can deal with OVH in French if anything ever needs sorting — one of the reasons OVH was chosen over Cloudflare/Regery |
-| 12 | **Two-factor auth available** on the OVH account | Standard hygiene for the account that ultimately controls the cottage's online identity |
-| 13 | **Cloudflare Email Routing as a documented fallback** if item 1 turns out to not be free | Free email forwarding service from Cloudflare; would require pointing MX records at Cloudflare (DNS still elsewhere). Adds one external dependency but unblocks the single-inbox design if OVH has trimmed MX from its cheapest `.fr` package |
+**Notes:** Catch-all chosen over named aliases because (a) free tier supports it, (b) avoids needing to predict every address Mark might want (`bookings@`, `info@`, `hello@`, etc. all resolve), (c) still routes spam-prone names like `postmaster@`, `abuse@` correctly. If catch-all attracts spam later, can switch to explicit aliases.
 
-### Post-purchase setup steps (Phase 1)
+---
 
-In order, before any Phase 2 work touches Stripe or Resend:
+## Email — outbound SMTP relay
 
-1. Register `mariannecottage.fr` at OVH for 10 years against Mark's account
-2. Configure DNS — either delegate nameservers to Netlify (preferred) or manage records at OVH
-3. Verify HTTPS at https://mariannecottage.fr (Netlify auto-provisions Let's Encrypt cert)
-4. Set up the 7 forwarding aliases in OVH's email dashboard (all → `mariannecottage@gmail.com`)
-5. In Mark's Gmail: add `bookings@mariannecottage.fr` as a "Send mail as" address with OVH's outbound SMTP credentials. Send a test email; verify it arrives with the cottage's domain in the "From" header
-6. Add SPF (`v=spf1 include:_spf.ovh.com include:resend.com -all`) and DMARC (`v=DMARC1; p=quarantine; rua=mailto:dmarc-reports@mariannecottage.fr`) TXT records — Resend's DKIM record is added later in Phase 2 when Resend goes live
-7. Send test emails from gmail's send-as → confirm DKIM passes / DMARC report arrives at `dmarc-reports@mariannecottage.fr`
+| Field | Value |
+|---|---|
+| **Provider** | **Brevo** (brevo.com, formerly Sendinblue) |
+| **Plan** | Free — 300 emails/day, 9,000/month |
+| **SMTP endpoint** | `smtp-relay.brevo.com` port `587` (STARTTLS) |
+| **SMTP login** | `aa2b7c001@smtp-brevo.com` |
+| **SMTP key** | Generated 2026-05-04, stored locally — **NOT in this file**. Regenerate at Brevo dashboard → SMTP & API → SMTP if lost |
+| **Domain authentication** | DKIM (CNAMEs `brevo1._domainkey`, `brevo2._domainkey`), DMARC (`_dmarc`), domain-ownership TXT (`brevo-code:...`) — all live in OVH zone |
+| **SPF authorization** | `include:spf.brevo.com` in the merged SPF TXT record at apex |
+| **Account owner** | Mark (signed up with `mariannecottage@gmail.com`) |
+| **Cost** | £0/month at cottage volume |
+| **Primary verified sender** | `booking@mariannecottage.fr` (display name: "Marianne Cottage") — confirmed by Mark 2026-05-04. Additional senders (`mark@`, `kim@`, etc.) can be added in Brevo at any time; domain auth covers them all automatically. |
+| **What this gives us** | Outbound SMTP credentials for Gmail "Send mail as" — lets Mark/Kim reply from `booking@mariannecottage.fr` while staying in cottage Gmail's UI. Also usable for transactional sending from the SvelteKit app (could replace the planned Resend dependency — see _Email — transactional_ below) |
+| **Alternatives if we ever need to move** | ImprovMX Premium ($9/mo) for inbound + outbound combined; Resend (3k/mo free) for transactional only; Mailjet, Postmark, or AWS SES for higher volumes |
 
 ---
 
 ## Email — transactional
 
-_Not yet provisioned. Planned: **Resend** free tier (3,000 emails/month — cottage uses ~50/month). Sending domain depends on the custom-domain decision above. SPF/DKIM/DMARC records configured at registrar._
+_Originally planned: **Resend** free tier (3,000/month). Now likely **redundant** — Brevo (above) covers transactional sending too at higher daily limits (300/day = 9k/month vs Resend's 3k/month free), and is already configured with DKIM/SPF/DMARC. Decision deferred to Phase 2 when transactional emails are first wired into the SvelteKit app. If we go with Brevo, the only change is the SDK / API endpoint in the app code; DNS already supports it._
 
 ---
 
@@ -158,9 +191,12 @@ All third-party service accounts (Supabase, Netlify, etc.) are owned by **Mark**
 | Supabase anon key | `.env` (local) + Netlify env vars | Mark |
 | Booking.com iCal feed URL | Netlify env (`BOOKING_COM_ICAL_URL`) | Mark — confirmed 2026-05-02: `https://ical.booking.com/v1/export?t=a56d3a57-c26c-42b0-8324-40de8b58b090` (to be set in Netlify env when scheduler is wired) |
 | Sync secret | Netlify env (`SYNC_SECRET`) | Mark |
+| OVH account login | Mark's password manager (account `pb638742-ovh`) | Mark |
+| ImprovMX account login | Mark's password manager (signed up under his personal Gmail) | Mark |
+| Brevo account login | Mark's password manager (signed up as `mariannecottage@gmail.com`) | Mark |
+| Brevo SMTP key | Local note / password manager (login `aa2b7c001@smtp-brevo.com`, server `smtp-relay.brevo.com:587`) — used in cottage Gmail's "Send mail as" SMTP config. Regeneratable at any time from Brevo dashboard. | Mark |
 | Future: Stripe keys | Netlify env | Mark |
-| Future: Resend API key | Netlify env | Mark |
-| Future: domain registrar login | TBC — see Q7 in [`discussions/booking-payment/questions-for-mark.md`](discussions/booking-payment/questions-for-mark.md) | Mark |
+| Future: Brevo API key (if used for app-side transactional) | Netlify env | Mark |
 
 **Owner separation principle:** Mark owns the cottage's accounts and pays for them; Rob has access for development but is not a single point of failure for billing or recovery.
 

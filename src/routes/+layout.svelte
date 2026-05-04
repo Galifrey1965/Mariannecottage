@@ -14,7 +14,7 @@
 
 	const { lang, messages } = data;
 
-	const baseUrl = 'https://mariannecottage.netlify.app';
+	const baseUrl = 'https://mariannecottage.fr';
 	const currentPath = $page.url.pathname;
 	const alternates = LOCALES.map(l => ({ lang: l, url: `${baseUrl}${currentPath}` }));
 
@@ -43,6 +43,16 @@
 
 <div class="app-shell">
 	<a href="#main-content" class="skip-link">{t(messages, 'a11y.skip_to_content')}</a>
+
+	<div class="construction-banner" role="status" aria-live="polite">
+		<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+			<path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+			<line x1="12" y1="9" x2="12" y2="13"/>
+			<line x1="12" y1="17" x2="12.01" y2="17"/>
+		</svg>
+		<span>{t(messages, 'banner.construction')}</span>
+	</div>
+
 	<Header {lang} {messages} {navItems} />
 
 	<div class="app-body">
@@ -73,6 +83,32 @@
 		min-height: 100vh;
 		background-color: var(--color-bg);
 		color: var(--color-text);
+	}
+
+	.construction-banner {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.5rem;
+		padding: 0.55rem 1rem;
+		background: #fff4d6;
+		color: #6b4a00;
+		border-bottom: 1px solid #e8c97a;
+		font-size: 0.85rem;
+		font-weight: 500;
+		text-align: center;
+		line-height: 1.35;
+	}
+
+	.construction-banner svg {
+		flex-shrink: 0;
+	}
+
+	@media (max-width: 600px) {
+		.construction-banner {
+			font-size: 0.78rem;
+			padding: 0.45rem 0.75rem;
+		}
 	}
 
 	.app-body {

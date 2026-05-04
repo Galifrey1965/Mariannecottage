@@ -15,7 +15,13 @@
 	"lang": {
 		"en": "English",
 		"fr": "Français",
-		"de": "Deutsch"
+		"de": "Deutsch",
+		"switch_to_en": "Switch to English",
+		"switch_to_fr": "Passer en français",
+		"switch_to_de": "Auf Deutsch wechseln"
+	},
+	"banner": {
+		"construction": "Diese Website befindet sich im Aufbau. Buchungen sind noch nicht verfügbar — bitte schauen Sie bald wieder vorbei."
 	},
 	"home": {
 		"hero": {
