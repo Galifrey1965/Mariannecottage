@@ -67,18 +67,29 @@
 		</button>
 	</div>
 
-	<label class="poi-filter-bar__sort-label" for="poi-sort-{lang}">
-		{t(messages, 'poi.filter.sort')}
-	</label>
-	<select
-		id="poi-sort-{lang}"
-		class="poi-filter-bar__sort"
-		bind:value={sortBy}
-		aria-label={t(messages, 'poi.filter.sort')}
-	>
-		<option value="distance">{t(messages, 'poi.filter.sort_distance')}</option>
-		<option value="popularity">{t(messages, 'poi.filter.sort_popularity')}</option>
-	</select>
+	<span class="poi-filter-bar__sort-label">{t(messages, 'poi.filter.sort')}</span>
+	<div class="poi-filter-bar__sort" role="radiogroup" aria-label={t(messages, 'poi.filter.sort')}>
+		<button
+			type="button"
+			role="radio"
+			aria-checked={sortBy === 'distance'}
+			class="poi-filter-bar__sort-btn"
+			class:poi-filter-bar__sort-btn--active={sortBy === 'distance'}
+			onclick={() => (sortBy = 'distance')}
+		>
+			{t(messages, 'poi.filter.sort_distance')}
+		</button>
+		<button
+			type="button"
+			role="radio"
+			aria-checked={sortBy === 'popularity'}
+			class="poi-filter-bar__sort-btn"
+			class:poi-filter-bar__sort-btn--active={sortBy === 'popularity'}
+			onclick={() => (sortBy = 'popularity')}
+		>
+			{t(messages, 'poi.filter.sort_popularity')}
+		</button>
+	</div>
 </div>
 
 <style>
@@ -161,30 +172,55 @@
 	}
 
 	.poi-filter-bar__sort-label {
-		font-size: 0.8rem;
+		font-size: 0.7rem;
+		font-weight: 600;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
 		color: var(--theme-text-muted);
 		white-space: nowrap;
 	}
 
 	.poi-filter-bar__sort {
-		padding: 0.4rem 0.7rem;
+		display: inline-flex;
 		border: 1px solid var(--theme-border);
-		border-radius: var(--theme-radius-sm);
+		border-radius: var(--theme-radius-pill);
+		overflow: hidden;
+		padding: 2px;
+		gap: 2px;
 		background: var(--theme-bg);
-		color: var(--theme-text);
+	}
+
+	.poi-filter-bar__sort-btn {
+		appearance: none;
+		border: none;
+		background: transparent;
+		color: var(--theme-text-muted);
 		font-family: var(--theme-font-body);
-		font-size: 0.85rem;
+		font-size: 0.78rem;
+		font-weight: 600;
+		letter-spacing: 0.05em;
+		text-transform: uppercase;
+		padding: 0.35rem 0.95rem;
+		border-radius: var(--theme-radius-pill);
 		cursor: pointer;
-		transition: border-color 0.2s;
+		transition: background 0.2s, color 0.2s;
+		white-space: nowrap;
 	}
 
-	.poi-filter-bar__sort:hover,
-	.poi-filter-bar__sort:focus-visible {
-		border-color: var(--theme-accent);
-		outline: none;
+	.poi-filter-bar__sort-btn:hover {
+		color: var(--theme-warm);
 	}
 
-	.poi-filter-bar__sort:focus-visible {
+	.poi-filter-bar__sort-btn--active {
+		background: var(--theme-accent);
+		color: var(--theme-bg);
+	}
+	.poi-filter-bar__sort-btn--active:hover {
+		background: var(--theme-accent-hover);
+		color: var(--theme-bg);
+	}
+
+	.poi-filter-bar__sort-btn:focus-visible {
 		outline: 2px solid var(--theme-accent);
 		outline-offset: 2px;
 	}

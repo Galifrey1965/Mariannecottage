@@ -19,8 +19,9 @@ describe('PoiFilterBar', () => {
 		});
 
 		it('renders all 5 category chips', () => {
-			const { getAllByRole } = render(PoiFilterBar, { props: defaultProps });
-			expect(getAllByRole('radio')).toHaveLength(5);
+			const { getByRole } = render(PoiFilterBar, { props: defaultProps });
+			const group = getByRole('radiogroup', { name: 'Category' });
+			expect(group.querySelectorAll('[role="radio"]')).toHaveLength(5);
 		});
 
 		it('renders chip labels from i18n', () => {
@@ -32,18 +33,23 @@ describe('PoiFilterBar', () => {
 			expect(getByRole('radio', { name: 'Museums' })).toBeInTheDocument();
 		});
 
-		it('renders sort dropdown with Distance and Popularity options', () => {
+		it('renders Distance and Popularity sort buttons', () => {
 			const { getByRole } = render(PoiFilterBar, { props: defaultProps });
-			const select = getByRole('combobox') as HTMLSelectElement;
-			const options = Array.from(select.options).map((o) => o.text);
-			expect(options).toContain('Distance');
-			expect(options).toContain('Popularity');
+			const sortGroup = getByRole('radiogroup', { name: 'Sort by' });
+			expect(sortGroup).toContainElement(
+				getByRole('radio', { name: 'Distance' }) as HTMLElement
+			);
+			expect(sortGroup).toContainElement(
+				getByRole('radio', { name: 'Popularity' }) as HTMLElement
+			);
 		});
 
-		it('sort dropdown defaults to distance', () => {
+		it('sort defaults to Distance', () => {
 			const { getByRole } = render(PoiFilterBar, { props: defaultProps });
-			const select = getByRole('combobox') as HTMLSelectElement;
-			expect(select.value).toBe('distance');
+			expect(getByRole('radio', { name: 'Distance' })).toHaveAttribute(
+				'aria-checked',
+				'true'
+			);
 		});
 	});
 
@@ -60,20 +66,27 @@ describe('PoiFilterBar', () => {
 			expect(getByRole('radio', { name: 'All' })).toHaveAttribute('aria-checked', 'false');
 		});
 
-		it('only one chip active at a time', async () => {
-			const { getAllByRole } = render(PoiFilterBar, { props: defaultProps });
-			await fireEvent.click(getAllByRole('radio').find((b) => b.textContent?.trim() === 'Towns')!);
-			const checked = getAllByRole('radio').filter((b) => b.getAttribute('aria-checked') === 'true');
+		it('only one category chip active at a time', async () => {
+			const { getByRole } = render(PoiFilterBar, { props: defaultProps });
+			await fireEvent.click(getByRole('radio', { name: 'Towns' }));
+			const group = getByRole('radiogroup', { name: 'Category' });
+			const checked = group.querySelectorAll('[role="radio"][aria-checked="true"]');
 			expect(checked).toHaveLength(1);
 		});
 	});
 
 	describe('sort selection', () => {
-		it('changing sort select updates the value', async () => {
+		it('clicking Popularity flips aria-checked to that button', async () => {
 			const { getByRole } = render(PoiFilterBar, { props: defaultProps });
-			const select = getByRole('combobox') as HTMLSelectElement;
-			await fireEvent.change(select, { target: { value: 'popularity' } });
-			expect(select.value).toBe('popularity');
+			await fireEvent.click(getByRole('radio', { name: 'Popularity' }));
+			expect(getByRole('radio', { name: 'Popularity' })).toHaveAttribute(
+				'aria-checked',
+				'true'
+			);
+			expect(getByRole('radio', { name: 'Distance' })).toHaveAttribute(
+				'aria-checked',
+				'false'
+			);
 		});
 	});
 
@@ -90,8 +103,10 @@ describe('PoiFilterBar', () => {
 			const { getByRole } = render(PoiFilterBar, {
 				props: { ...defaultProps, sortBy: 'popularity' as const }
 			});
-			const select = getByRole('combobox') as HTMLSelectElement;
-			expect(select.value).toBe('popularity');
+			expect(getByRole('radio', { name: 'Popularity' })).toHaveAttribute(
+				'aria-checked',
+				'true'
+			);
 		});
 	});
 
@@ -101,9 +116,9 @@ describe('PoiFilterBar', () => {
 			expect(getByRole('radiogroup', { name: 'Category' })).toBeInTheDocument();
 		});
 
-		it('sort select has accessible label', () => {
-			const { getByLabelText } = render(PoiFilterBar, { props: defaultProps });
-			expect(getByLabelText('Sort by')).toBeInTheDocument();
+		it('sort group has accessible label', () => {
+			const { getByRole } = render(PoiFilterBar, { props: defaultProps });
+			expect(getByRole('radiogroup', { name: 'Sort by' })).toBeInTheDocument();
 		});
 	});
 });

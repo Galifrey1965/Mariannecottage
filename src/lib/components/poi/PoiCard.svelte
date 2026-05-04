@@ -68,11 +68,18 @@
 					width="14"
 					height="14"
 					viewBox="0 0 24 24"
-					fill="currentColor"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="1.75"
+					stroke-linecap="round"
+					stroke-linejoin="round"
 					aria-hidden="true"
 				>
-					<circle cx="12" cy="4" r="2" />
-					<path d="M19 13v-2c-1.54.02-3.09-.75-4.07-1.83l-1.29-1.43c-.17-.19-.38-.34-.61-.45-.01 0-.01-.01-.02-.01H13c-.35-.2-.75-.3-1.19-.26C10.76 7.11 10 8.04 10 9.09V15c0 1.1.9 2 2 2h5v5h2v-5.5c0-1.1-.9-2-2-2h-3v-3.45c1.29 1.07 3.25 1.94 5 1.95zm-9 7c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z" />
+					<circle cx="16" cy="4" r="1" />
+					<path d="m18 19 1-7-6 1" />
+					<path d="m5 8 3-3 5.5 3-2.36 3.5" />
+					<path d="M4.24 14.5a5 5 0 0 0 6.88 6" />
+					<path d="M13.76 17.5a5 5 0 0 0-6.88-6" />
 				</svg>
 				<span class="poi-card__a11y-text">{accessibilityLabel}</span>
 			</span>
