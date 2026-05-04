@@ -106,9 +106,10 @@
 	}
 
 	.footer-brand {
-		font-family: 'Lora', serif;
-		font-size: 1.25rem;
-		font-weight: 600;
+		font-family: var(--theme-font-display);
+		font-size: 1.35rem;
+		font-weight: 500;
+		letter-spacing: -0.01em;
 		margin: 0 0 0.5rem;
 		color: var(--color-footer-text);
 	}
@@ -127,7 +128,10 @@
 	}
 
 	.footer-heading {
-		font-weight: 600;
+		font-family: var(--theme-font-display);
+		font-weight: 500;
+		font-size: 1.05rem;
+		letter-spacing: 0.02em;
 		margin: 0 0 1rem;
 		color: var(--color-footer-text);
 	}

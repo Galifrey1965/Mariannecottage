@@ -132,9 +132,9 @@
 		position: sticky;
 		top: 0;
 		z-index: 40;
-		background-color: var(--color-bg);
-		border-bottom: 1px solid var(--color-cream-dark);
-		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+		background-color: var(--theme-bg);
+		border-bottom: var(--theme-border-thin);
+		box-shadow: none;
 	}
 
 	.header-inner {
@@ -160,18 +160,19 @@
 	}
 
 	.logo-name {
-		font-size: 1.25rem;
-		font-family: 'Lora', serif;
-		font-weight: 600;
-		color: var(--color-sage);
+		font-size: 1.35rem;
+		font-family: var(--theme-font-display);
+		font-weight: 500;
+		letter-spacing: -0.01em;
+		color: var(--theme-warm);
 	}
 
 	.logo-subtitle {
-		font-size: 0.75rem;
-		font-weight: 700;
+		font-size: 0.7rem;
+		font-weight: 600;
 		text-transform: uppercase;
-		letter-spacing: 0.1em;
-		color: var(--color-text-muted);
+		letter-spacing: 0.18em;
+		color: var(--theme-text-muted);
 	}
 
 	/* Desktop nav */
@@ -189,23 +190,45 @@
 		display: inline-flex;
 		align-items: center;
 		gap: 6px;
-		padding: 0.5rem 0.75rem;
-		border-radius: 12px;
-		transition: all 0.2s ease;
+		padding: 0.5rem 0.85rem;
+		border-radius: 0;
+		position: relative;
+		transition: color 0.2s ease;
 		font-size: 0.875rem;
 		font-weight: 500;
-		color: var(--color-text);
+		color: var(--theme-text-muted);
 		text-decoration: none;
 		white-space: nowrap;
 	}
 
+	.nav-link::after {
+		content: '';
+		position: absolute;
+		left: 0.85rem;
+		right: 0.85rem;
+		bottom: 0.25rem;
+		height: 1px;
+		background: var(--theme-accent);
+		transform: scaleX(0);
+		transform-origin: center;
+		transition: transform 0.25s ease;
+	}
+
 	.nav-link:hover {
-		background-color: var(--color-cream);
+		color: var(--theme-text);
+	}
+
+	.nav-link:hover::after {
+		transform: scaleX(0.5);
 	}
 
 	.nav-link.active {
-		background-color: var(--color-sage);
-		color: var(--md-sys-color-on-primary);
+		color: var(--theme-accent);
+		background: transparent;
+	}
+
+	.nav-link.active::after {
+		transform: scaleX(1);
 	}
 
 	/* Header actions */
@@ -269,18 +292,20 @@
 		padding: 0.875rem 1.25rem;
 		font-size: 1rem;
 		font-weight: 500;
-		color: var(--color-text);
+		color: var(--theme-text);
 		text-decoration: none;
-		transition: background 0.15s;
+		border-left: 2px solid transparent;
+		transition: background 0.15s, border-color 0.15s, color 0.15s;
 	}
 
 	.drawer-link:hover {
-		background: var(--color-cream);
+		background: var(--theme-surface);
 	}
 
 	.drawer-link.active {
-		background: color-mix(in srgb, var(--color-sage) 15%, transparent);
-		color: var(--color-sage);
+		background: var(--theme-surface);
+		border-left-color: var(--theme-accent);
+		color: var(--theme-accent);
 		font-weight: 600;
 	}
 

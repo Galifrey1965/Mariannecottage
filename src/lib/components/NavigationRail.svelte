@@ -57,8 +57,8 @@
 		top: 56px;
 		bottom: 0;
 		width: 72px;
-		background-color: var(--color-bg);
-		border-right: 1px solid var(--color-cream-dark);
+		background-color: var(--theme-bg);
+		border-right: var(--theme-border-thin);
 		z-index: 30;
 		padding: 0.5rem 0;
 		gap: 0.25rem;
@@ -84,22 +84,22 @@
 		gap: 4px;
 		height: 56px;
 		width: 60px;
-		border-radius: 12px;
+		border-radius: var(--theme-radius-sm);
 		margin: 0 6px;
 		transition: background 0.15s, color 0.15s;
 		text-decoration: none;
-		color: var(--color-text-muted);
+		color: var(--theme-text-muted);
 		position: relative;
 	}
 
 	.rail-item:hover {
-		background-color: var(--color-cream);
-		color: var(--color-text);
+		background-color: var(--theme-surface);
+		color: var(--theme-text);
 	}
 
 	.rail-item.active {
-		color: var(--color-sage);
-		background-color: color-mix(in srgb, var(--color-sage) 12%, transparent);
+		color: var(--theme-accent);
+		background-color: transparent;
 	}
 
 	.active-indicator {
@@ -108,10 +108,10 @@
 		top: 0;
 		left: 50%;
 		transform: translateX(-50%);
-		width: 32px;
-		height: 3px;
-		background-color: var(--color-sage);
-		border-radius: 0 0 3px 3px;
+		width: 24px;
+		height: 2px;
+		background-color: var(--theme-accent);
+		border-radius: 0 0 2px 2px;
 	}
 
 	.rail-item.active .active-indicator {
