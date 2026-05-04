@@ -16,6 +16,7 @@
 		zoom?: number;
 		height?: string;
 		fitBounds?: boolean;
+		routeLine?: boolean;
 	}
 
 	let {
@@ -23,7 +24,8 @@
 		center = [49.172937, -0.988765],
 		zoom = 10,
 		height = '500px',
-		fitBounds = false
+		fitBounds = false,
+		routeLine = false
 	}: Props = $props();
 
 	let mapContainer: HTMLDivElement;
@@ -50,7 +52,7 @@
 
 		import('@googlemaps/js-api-loader').then(async ({ Loader }) => {
 			const loader = new Loader({ apiKey, version: 'weekly' });
-			const { Map, InfoWindow, LatLngBounds } = await loader.importLibrary('maps');
+			const { Map, InfoWindow, LatLngBounds, Polyline } = await loader.importLibrary('maps');
 			const { Marker } = await loader.importLibrary('marker');
 
 			map = new Map(mapContainer, {
@@ -81,6 +83,29 @@
 						`<div style="font-size:0.85rem;"><strong>${m.title}</strong><br>${m.description}</div>`
 					);
 					infoWindow!.open({ map, anchor: marker });
+				});
+			}
+
+			if (routeLine && markers.length >= 2) {
+				new Polyline({
+					path: markers.slice(0, 2).map((m) => ({ lat: m.lat, lng: m.lng })),
+					geodesic: true,
+					strokeColor: 'transparent',
+					strokeOpacity: 0,
+					icons: [
+						{
+							icon: {
+								path: 'M 0,-1 0,1',
+								strokeColor: '#7a4a2a',
+								strokeOpacity: 0.85,
+								strokeWeight: 2.5,
+								scale: 3
+							},
+							offset: '0',
+							repeat: '12px'
+						}
+					],
+					map
 				});
 			}
 

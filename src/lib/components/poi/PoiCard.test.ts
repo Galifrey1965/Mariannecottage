@@ -11,9 +11,10 @@ vi.mock('@googlemaps/js-api-loader', () => {
 	class LatLngBounds { extend = vi.fn().mockReturnThis(); }
 	class InfoWindow { setContent = vi.fn(); open = vi.fn(); close = vi.fn(); }
 	class Marker { addListener = vi.fn(); setMap = vi.fn(); }
+	class Polyline { setMap = vi.fn(); }
 	class Loader {
 		constructor(_: unknown) {}
-		importLibrary = vi.fn().mockResolvedValue({ Map, LatLngBounds, InfoWindow, Marker });
+		importLibrary = vi.fn().mockResolvedValue({ Map, LatLngBounds, InfoWindow, Marker, Polyline });
 	}
 	return { Loader };
 });
