@@ -2,6 +2,7 @@ import { render, fireEvent } from '@testing-library/svelte';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import PoiCard from './PoiCard.svelte';
 import type { Poi } from '$lib/data/poi';
+import { favorites } from '$lib/stores/favorites.svelte';
 import * as en from '../../../../messages/en.json';
 
 // Mock Google Maps loader — required by PoiMap child component
@@ -43,6 +44,7 @@ describe('PoiCard', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 		localStorage.clear();
+		favorites.items = [];
 	});
 
 	describe('content', () => {
@@ -172,17 +174,15 @@ describe('PoiCard', () => {
 		});
 
 		it('removes poi id from localStorage on unfavourite', async () => {
-			localStorage.setItem('poi:favorites', JSON.stringify(['omaha-beach']));
+			favorites.items = ['omaha-beach'];
 			const { getByRole } = render(PoiCard, { props: defaultProps });
-			// Initial state should be favourited (read from localStorage on mount)
 			const unfavBtn = getByRole('button', { name: 'Remove from favourites' });
 			await fireEvent.click(unfavBtn);
-			const stored = JSON.parse(localStorage.getItem('poi:favorites') ?? '[]');
-			expect(stored).not.toContain('omaha-beach');
+			expect(favorites.has('omaha-beach')).toBe(false);
 		});
 
-		it('initialises as favourited when id is in localStorage', () => {
-			localStorage.setItem('poi:favorites', JSON.stringify(['omaha-beach']));
+		it('initialises as favourited when id is in the store', () => {
+			favorites.items = ['omaha-beach'];
 			const { getByRole } = render(PoiCard, { props: defaultProps });
 			expect(getByRole('button', { name: 'Remove from favourites' })).toHaveAttribute(
 				'aria-pressed',

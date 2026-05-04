@@ -2,6 +2,7 @@
 	import type { Poi } from '$lib/data/poi.js';
 	import type { Messages, Locale } from '$lib/i18n.js';
 	import { t } from '$lib/i18n.js';
+	import { favorites } from '$lib/stores/favorites.svelte';
 	import PoiCarousel from './PoiCarousel.svelte';
 	import PoiMap from './PoiMap.svelte';
 
@@ -13,37 +14,8 @@
 
 	let { poi, messages, lang }: Props = $props();
 
-	// Map panel toggle
 	let mapOpen = $state(false);
-
-	// Favourite state — initialised from localStorage on mount
-	const FAVORITES_KEY = 'poi:favorites';
-	let isFavourite = $state(false);
-
-	$effect(() => {
-		if (typeof window === 'undefined') return;
-		try {
-			const favs: string[] = JSON.parse(localStorage.getItem(FAVORITES_KEY) ?? '[]');
-			isFavourite = favs.includes(poi.id);
-		} catch {
-			isFavourite = false;
-		}
-	});
-
-	function toggleFavourite() {
-		if (typeof window === 'undefined') return;
-		try {
-			const favs: string[] = JSON.parse(localStorage.getItem(FAVORITES_KEY) ?? '[]');
-			const updated = isFavourite
-				? favs.filter((id) => id !== poi.id)
-				: [...favs, poi.id];
-			localStorage.setItem(FAVORITES_KEY, JSON.stringify(updated));
-			isFavourite = !isFavourite;
-		} catch {
-			// localStorage unavailable — toggle in memory only
-			isFavourite = !isFavourite;
-		}
-	}
+	const isFavourite = $derived(favorites.has(poi.id));
 
 	// Derived values
 	const title = $derived(t(messages, poi.titleKey));
@@ -176,7 +148,7 @@
 				type="button"
 				class="poi-card__fav-btn"
 				class:poi-card__fav-btn--active={isFavourite}
-				onclick={toggleFavourite}
+				onclick={() => favorites.toggle(poi.id)}
 				aria-pressed={isFavourite}
 				aria-label={isFavourite
 					? t(messages, 'poi.actions.unfavourite')

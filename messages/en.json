@@ -339,7 +339,9 @@
 			"category": "Category",
 			"sort": "Sort by",
 			"sort_distance": "Distance",
-			"sort_popularity": "Popularity"
+			"sort_popularity": "Popularity",
+			"favorites": "Favourites",
+			"favorites_empty": "No favourites yet — tap the heart on any place to save it here."
 		},
 		"accessibility": {
 			"label": "Accessibility",

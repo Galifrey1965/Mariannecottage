@@ -5,19 +5,24 @@
 	import type { PageData } from './$types';
 	import PoiFilterBar from '$lib/components/poi/PoiFilterBar.svelte';
 	import PoiGrid from '$lib/components/poi/PoiGrid.svelte';
+	import { favorites } from '$lib/stores/favorites.svelte';
 
 	let { data }: { data: PageData } = $props();
 	const { lang, messages } = data;
 
 	let selectedCategory = $state<PoiCategory | 'all'>('all');
 	let sortBy = $state<'distance' | 'popularity'>('distance');
+	let showFavoritesOnly = $state(false);
 
 	const filteredAndSorted = $derived(
-		POIS.filter((poi) => selectedCategory === 'all' || poi.category === selectedCategory).sort(
-			(a, b) =>
-				sortBy === 'distance'
-					? a.distanceKm - b.distanceKm
-					: b.popularityScore - a.popularityScore
+		POIS.filter(
+			(poi) =>
+				(selectedCategory === 'all' || poi.category === selectedCategory) &&
+				(!showFavoritesOnly || favorites.has(poi.id))
+		).sort((a, b) =>
+			sortBy === 'distance'
+				? a.distanceKm - b.distanceKm
+				: b.popularityScore - a.popularityScore
 		)
 	);
 </script>
@@ -31,10 +36,14 @@
 	<p class="page-description">{t(messages, 'explore.description')}</p>
 
 	<div class="filter-bar-wrapper">
-		<PoiFilterBar {messages} {lang} bind:selectedCategory bind:sortBy />
+		<PoiFilterBar {messages} {lang} bind:selectedCategory bind:sortBy bind:showFavoritesOnly />
 	</div>
 
-	<PoiGrid pois={filteredAndSorted} {messages} {lang} />
+	{#if showFavoritesOnly && filteredAndSorted.length === 0}
+		<p class="empty-state">{t(messages, 'poi.filter.favorites_empty')}</p>
+	{:else}
+		<PoiGrid pois={filteredAndSorted} {messages} {lang} />
+	{/if}
 </section>
 
 <style>
@@ -64,7 +73,7 @@
 		font-size: 1.1rem;
 		margin: 0 0 2.5rem;
 		line-height: 1.7;
-		max-width: 50rem;
+		max-width: 65rem;
 	}
 
 	.filter-bar-wrapper {
@@ -73,5 +82,15 @@
 		background: var(--theme-surface);
 		border-radius: var(--theme-radius-sm);
 		border: var(--theme-border-thin);
+	}
+
+	.empty-state {
+		padding: 3rem 1.5rem;
+		text-align: center;
+		color: var(--theme-text-muted);
+		font-size: 1rem;
+		font-style: italic;
+		border: 1px dashed var(--theme-border);
+		border-radius: var(--theme-radius-sm);
 	}
 </style>
