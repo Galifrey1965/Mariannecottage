@@ -1202,8 +1202,8 @@
 	.desktop-table { display: none; overflow-x: auto; }
 	@media (min-width: 840px) { .desktop-table { display: block; } }
 	table { width: 100%; font-size: 0.875rem; border-collapse: collapse; }
-	thead tr { border-bottom: 1px solid var(--color-cream-dark); background: var(--color-cream); }
-	th { text-align: left; padding: 0.75rem 1rem; font-weight: 500; color: var(--color-text-muted); }
+	thead tr { border-bottom: 1px solid var(--color-cream-dark); background: var(--color-sage); }
+	th { text-align: left; padding: 0.75rem 1rem; font-weight: 600; color: white; letter-spacing: 0.02em; }
 	tbody tr { border-bottom: 1px solid var(--color-cream-dark); cursor: pointer; transition: background 0.15s ease; }
 	tbody tr:hover { background: var(--color-cream); }
 	td { padding: 0.75rem 1rem; }
