@@ -1,20 +1,38 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { onMount } from 'svelte';
+	import { invalidateAll } from '$app/navigation';
 	import { localePath, t, formatDate as fmtDate, formatCurrency as fmtCur, plural } from '$lib/i18n';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
 	const { lang, messages } = data;
+	const booking = $derived(data.booking);
 
-	const params = $derived($page.url.searchParams);
-	const ref = $derived(params.get('ref') || '—');
-	const name = $derived(params.get('name') || '');
-	const email = $derived(params.get('email') || '');
-	const checkin = $derived(params.get('checkin') || '');
-	const checkout = $derived(params.get('checkout') || '');
-	const nights = $derived(params.get('nights') || '');
-	const guestCount = $derived(params.get('guests') || '');
-	const total = $derived(params.get('total') || '');
+	const ref = $derived(booking.booking_reference);
+	const name = $derived(booking.guest_name);
+	const email = $derived(booking.guest_email);
+	const checkin = $derived(booking.check_in_date);
+	const checkout = $derived(booking.check_out_date);
+	const nights = $derived(String(booking.num_nights));
+	const guestCount = $derived(String(booking.num_guests));
+	const total = $derived(String(booking.total_cost));
+
+	// Webhook race: Stripe redirects user back the instant payment succeeds, but
+	// our webhook handler runs asynchronously. Poll the load function until status
+	// flips to confirmed (or we give up after ~12s).
+	let pollAttempts = $state(0);
+	const MAX_POLLS = 6;
+	onMount(() => {
+		if (booking.status !== 'pending_payment') return;
+		const interval = setInterval(async () => {
+			pollAttempts += 1;
+			await invalidateAll();
+			if (booking.status !== 'pending_payment' || pollAttempts >= MAX_POLLS) {
+				clearInterval(interval);
+			}
+		}, 2000);
+		return () => clearInterval(interval);
+	});
 
 	const formatDate = (iso: string) => {
 		if (!iso) return '—';
@@ -37,13 +55,31 @@
 <section class="page-section">
 	<!-- Success header -->
 	<div class="success-header">
-		<div class="success-icon">
-			<span>✓</span>
-		</div>
-		<h1 class="success-title">{t(messages, 'booking_confirm.thank_you')}</h1>
-		<p class="success-subtitle">
-			{t(messages, 'booking_confirm.confirmation_email')} <strong>{email}</strong>
-		</p>
+		{#if booking.status === 'confirmed'}
+			<div class="success-icon">
+				<span>✓</span>
+			</div>
+			<h1 class="success-title">{t(messages, 'booking_confirm.thank_you')}</h1>
+			<p class="success-subtitle">
+				{t(messages, 'booking_confirm.confirmation_email')} <strong>{email}</strong>
+			</p>
+		{:else if booking.status === 'pending_payment'}
+			<div class="success-icon pending">
+				<span>⋯</span>
+			</div>
+			<h1 class="success-title">Confirming your payment…</h1>
+			<p class="success-subtitle">
+				This usually takes a few seconds. Your booking reference is <strong>{ref}</strong> — keep this page open.
+			</p>
+		{:else}
+			<div class="success-icon error">
+				<span>!</span>
+			</div>
+			<h1 class="success-title">Booking status: {booking.status}</h1>
+			<p class="success-subtitle">
+				Your reference is <strong>{ref}</strong>. Please contact us if you have questions.
+			</p>
+		{/if}
 	</div>
 
 	<!-- Booking Reference -->
@@ -122,6 +158,11 @@
 		background: color-mix(in srgb, var(--color-sage) 20%, transparent); margin-bottom: 1rem;
 	}
 	.success-icon span { font-size: 1.75rem; color: var(--color-sage); }
+	.success-icon.pending { background: color-mix(in srgb, var(--theme-warm) 20%, transparent); }
+	.success-icon.pending span { color: var(--theme-warm); animation: pulse 1.4s ease-in-out infinite; }
+	.success-icon.error { background: rgba(180, 60, 60, 0.15); }
+	.success-icon.error span { color: rgb(180, 60, 60); font-weight: 700; }
+	@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
 	.success-title { font-family: 'Lora', serif; font-size: 2rem; font-weight: 700; color: var(--color-text); margin: 0 0 0.5rem; }
 	.success-subtitle { color: var(--color-text-muted); font-size: 1.125rem; margin: 0; }
 

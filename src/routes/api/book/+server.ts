@@ -69,7 +69,7 @@ export const POST: RequestHandler = async ({ request }) => {
 			subtotal,
 			tax,
 			total_cost,
-			status: 'pending',
+			status: 'pending_payment',
 			booking_reference,
 			source: 'web'
 		});

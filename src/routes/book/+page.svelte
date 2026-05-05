@@ -116,17 +116,20 @@
 				formError = result.error || t(messages, 'book.error_booking_failed');
 				return;
 			}
-			const params = new URLSearchParams({
-				ref: result.booking.booking_reference,
-				name: result.booking.guest_name,
-				email: result.booking.guest_email,
-				checkin: result.booking.check_in_date,
-				checkout: result.booking.check_out_date,
-				nights: String(result.booking.num_nights),
-				guests: String(result.booking.num_guests),
-				total: String(result.booking.total_cost)
+
+			// Hand off to Stripe-hosted Checkout. The booking row is in
+			// pending_payment until the webhook confirms it post-payment.
+			const checkoutRes = await fetch('/api/stripe/checkout-session', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ booking_reference: result.booking.booking_reference })
 			});
-			goto(`/book/confirm?${params.toString()}`);
+			const checkout = await checkoutRes.json();
+			if (!checkout.success || !checkout.url) {
+				formError = checkout.error || t(messages, 'book.error_booking_failed');
+				return;
+			}
+			window.location.href = checkout.url;
 		} catch {
 			formError = t(messages, 'book.error_network');
 		} finally {
