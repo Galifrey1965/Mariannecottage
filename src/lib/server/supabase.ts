@@ -467,11 +467,21 @@ export async function getDefaultCancellationPolicy(): Promise<CancellationPolicy
 
 // 2026-05-05: site_banners — admin-managed top-of-page messages.
 
-export type SiteBannerType = 'info' | 'construction' | 'discount' | 'seasonal' | 'announcement';
+export type SiteBannerEffect = 'none' | 'fireworks' | 'snow' | 'sparkles' | 'hearts' | 'confetti';
+export type SiteBannerEffectIntensity = 'continuous' | 'burst-idle' | 'load-only';
+export type SiteBannerLocale = 'en' | 'fr' | 'de';
+export type SiteBannerIcon =
+	| 'info' | 'alert' | 'megaphone' | 'gift' | 'percent' | 'star' | 'sparkles'
+	| 'heart' | 'snowflake' | 'party' | 'ghost' | 'flag' | 'sun' | 'moon'
+	| 'bell' | 'check' | 'flame';
+export type SiteBannerPalette =
+	| 'sage' | 'cream' | 'sky' | 'amber' | 'mint' | 'terracotta'
+	| 'lavender' | 'coral' | 'ocean' | 'crimson' | 'charcoal' | 'ukraine';
 
 export interface SiteBanner {
 	id: string;
-	type: SiteBannerType;
+	icon: SiteBannerIcon | null;
+	palette: SiteBannerPalette;
 	message_en: string;
 	message_fr?: string | null;
 	message_de?: string | null;
@@ -479,12 +489,17 @@ export interface SiteBanner {
 	display_order: number;
 	starts_at?: string | null;
 	ends_at?: string | null;
+	effect: SiteBannerEffect;
+	effect_intensity: SiteBannerEffectIntensity;
+	locales: SiteBannerLocale[];
+	is_recurring: boolean;
 	created_at: string;
 	updated_at: string;
 }
 
 export interface SiteBannerInput {
-	type: SiteBannerType;
+	icon: SiteBannerIcon | null;
+	palette?: SiteBannerPalette;
 	message_en: string;
 	message_fr?: string | null;
 	message_de?: string | null;
@@ -492,6 +507,10 @@ export interface SiteBannerInput {
 	display_order?: number;
 	starts_at?: string | null;
 	ends_at?: string | null;
+	effect?: SiteBannerEffect;
+	effect_intensity?: SiteBannerEffectIntensity;
+	locales?: SiteBannerLocale[];
+	is_recurring?: boolean;
 }
 
 // Public — RLS already filters to active rows.
@@ -523,14 +542,19 @@ export async function createSiteBanner(input: SiteBannerInput): Promise<SiteBann
 		.from('site_banners')
 		.insert([
 			{
-				type: input.type,
+				icon: input.icon ?? null,
+				palette: input.palette ?? 'sage',
 				message_en: input.message_en,
 				message_fr: input.message_fr ?? null,
 				message_de: input.message_de ?? null,
 				enabled: input.enabled ?? true,
 				display_order: input.display_order ?? 0,
 				starts_at: input.starts_at ?? null,
-				ends_at: input.ends_at ?? null
+				ends_at: input.ends_at ?? null,
+				effect: input.effect ?? 'none',
+				effect_intensity: input.effect_intensity ?? 'burst-idle',
+				locales: input.locales ?? ['en', 'fr', 'de'],
+				is_recurring: input.is_recurring ?? false
 			}
 		])
 		.select()
@@ -544,7 +568,8 @@ export async function updateSiteBanner(
 	input: Partial<SiteBannerInput>
 ): Promise<SiteBanner> {
 	const patch: Record<string, unknown> = { updated_at: new Date().toISOString() };
-	if (input.type !== undefined) patch.type = input.type;
+	if (input.icon !== undefined) patch.icon = input.icon;
+	if (input.palette !== undefined) patch.palette = input.palette;
 	if (input.message_en !== undefined) patch.message_en = input.message_en;
 	if (input.message_fr !== undefined) patch.message_fr = input.message_fr;
 	if (input.message_de !== undefined) patch.message_de = input.message_de;
@@ -552,6 +577,10 @@ export async function updateSiteBanner(
 	if (input.display_order !== undefined) patch.display_order = input.display_order;
 	if (input.starts_at !== undefined) patch.starts_at = input.starts_at;
 	if (input.ends_at !== undefined) patch.ends_at = input.ends_at;
+	if (input.effect !== undefined) patch.effect = input.effect;
+	if (input.effect_intensity !== undefined) patch.effect_intensity = input.effect_intensity;
+	if (input.locales !== undefined) patch.locales = input.locales;
+	if (input.is_recurring !== undefined) patch.is_recurring = input.is_recurring;
 	const { data, error } = await adminClient
 		.from('site_banners')
 		.update(patch)

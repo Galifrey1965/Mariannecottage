@@ -56,7 +56,7 @@
 		<div class="nav-progress" role="progressbar" aria-label={t(messages, 'a11y.loading')}></div>
 	{/if}
 
-	{#each banners as banner (banner.id)}
+	{#each banners.filter((b) => !b.locales || b.locales.length === 0 || b.locales.includes(lang)) as banner (banner.id)}
 		<SiteBanner {banner} {lang} />
 	{/each}
 

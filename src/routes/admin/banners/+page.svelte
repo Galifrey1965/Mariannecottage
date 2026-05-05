@@ -1,6 +1,15 @@
 <script lang="ts">
-	import type { SiteBanner, SiteBannerType } from '$lib/server/supabase';
+	import type {
+		SiteBanner,
+		SiteBannerEffect,
+		SiteBannerEffectIntensity,
+		SiteBannerLocale,
+		SiteBannerIcon,
+		SiteBannerPalette
+	} from '$lib/server/supabase';
 	import type { PageData } from './$types';
+	import BannerPreview from '$lib/components/BannerPreview.svelte';
+	import { PALETTES, PALETTE_NAMES, ICON_LABELS, ICON_NAMES, ICON_PATHS } from '$lib/banners/presets';
 
 	let { data }: { data: PageData } = $props();
 
@@ -9,21 +18,78 @@
 	let saving = $state(false);
 	let saveError = $state('');
 	let deleting = $state<string | null>(null);
+	let previewing = $state<Partial<SiteBanner> | null>(null);
 
-	const TYPES: SiteBannerType[] = ['info', 'construction', 'discount', 'seasonal', 'announcement'];
+	const EFFECTS: SiteBannerEffect[] = ['none', 'fireworks', 'snow', 'sparkles', 'hearts', 'confetti'];
+	const INTENSITIES: SiteBannerEffectIntensity[] = ['continuous', 'burst-idle', 'load-only'];
+	const ALL_LOCALES: SiteBannerLocale[] = ['en', 'fr', 'de'];
+
+	const EFFECT_LABELS: Record<SiteBannerEffect, string> = {
+		none: '— None —',
+		fireworks: '🎆 Fireworks',
+		snow: '❄ Snow',
+		sparkles: '✨ Sparkles',
+		hearts: '💗 Hearts',
+		confetti: '🎉 Confetti'
+	};
+	const INTENSITY_LABELS: Record<SiteBannerEffectIntensity, string> = {
+		continuous: 'Continuous',
+		'burst-idle': 'Burst then idle (recommended)',
+		'load-only': 'Once on page load'
+	};
+	const LOCALE_LABELS: Record<SiteBannerLocale, string> = {
+		en: 'English',
+		fr: 'Français',
+		de: 'Deutsch'
+	};
+
+	function setIcon(value: SiteBannerIcon | '') {
+		if (!editing) return;
+		editing.icon = value === '' ? null : value;
+	}
+
+	function setPalette(value: SiteBannerPalette) {
+		if (!editing) return;
+		editing.palette = value;
+	}
+
+	function toggleLocale(loc: SiteBannerLocale) {
+		if (!editing) return;
+		const current = editing.locales ?? ['en', 'fr', 'de'];
+		if (current.includes(loc)) {
+			editing.locales = current.filter((l) => l !== loc);
+		} else {
+			editing.locales = [...current, loc];
+		}
+	}
 
 	function openCreate() {
 		editing = {
-			type: 'info',
+			icon: 'info',
+			palette: 'sage',
 			message_en: '',
 			message_fr: '',
 			message_de: '',
 			enabled: true,
 			display_order: 0,
 			starts_at: null,
-			ends_at: null
+			ends_at: null,
+			effect: 'none',
+			effect_intensity: 'burst-idle',
+			locales: ['en', 'fr', 'de'],
+			is_recurring: false
 		};
 		saveError = '';
+	}
+
+	function fmtDate(iso: string | null | undefined, recurring: boolean): string {
+		if (!iso) return '…';
+		const d = new Date(iso);
+		if (Number.isNaN(d.getTime())) return '…';
+		const opts: Intl.DateTimeFormatOptions = recurring
+			? { day: 'numeric', month: 'short' }
+			: { day: 'numeric', month: 'short', year: 'numeric' };
+		return d.toLocaleDateString(undefined, opts);
 	}
 
 	function openEdit(b: SiteBanner) {
@@ -61,14 +127,19 @@
 		try {
 			const payload = {
 				id: editing.id,
-				type: editing.type,
+				icon: editing.icon ?? null,
+				palette: editing.palette ?? 'sage',
 				message_en: (editing.message_en ?? '').trim(),
 				message_fr: (editing.message_fr ?? '').trim() || null,
 				message_de: (editing.message_de ?? '').trim() || null,
 				enabled: !!editing.enabled,
 				display_order: Number(editing.display_order ?? 0),
 				starts_at: editing.starts_at ?? null,
-				ends_at: editing.ends_at ?? null
+				ends_at: editing.ends_at ?? null,
+				effect: editing.effect ?? 'none',
+				effect_intensity: editing.effect_intensity ?? 'burst-idle',
+				locales: editing.locales ?? ['en', 'fr', 'de'],
+				is_recurring: !!editing.is_recurring
 			};
 			const method = editing.id ? 'PATCH' : 'POST';
 			const res = await fetch('/api/admin/banners', {
@@ -121,13 +192,9 @@
 		}
 	}
 
-	const TYPE_LABELS: Record<SiteBannerType, string> = {
-		info: 'ℹ Info',
-		construction: '⚠ Construction',
-		discount: '% Discount',
-		seasonal: '✦ Seasonal',
-		announcement: '📣 Announcement'
-	};
+	function paletteOf(b: { palette?: SiteBannerPalette }) {
+		return PALETTES[b.palette ?? 'sage'];
+	}
 </script>
 
 <div class="page">
@@ -148,8 +215,10 @@
 			<table>
 				<thead>
 					<tr>
-						<th>Type</th>
+						<th>Look</th>
 						<th>Message (EN)</th>
+						<th>Effect</th>
+						<th>Locales</th>
 						<th>Active</th>
 						<th>Order</th>
 						<th></th>
@@ -158,16 +227,38 @@
 				<tbody>
 					{#each banners as b}
 						<tr class:disabled={!b.enabled}>
-							<td>{TYPE_LABELS[b.type]}</td>
+							<td class="look-cell">
+								<span
+									class="swatch"
+									style="background:{paletteOf(b).bg};color:{paletteOf(b).fg};border-color:{paletteOf(b).border};"
+									title={paletteOf(b).label}
+								>
+									{#if b.icon}
+										<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">{@html ICON_PATHS[b.icon]}</svg>
+									{:else}
+										<span class="swatch-empty" aria-hidden="true">·</span>
+									{/if}
+								</span>
+							</td>
 							<td>
 								<button class="row-btn" onclick={() => openEdit(b)}>{b.message_en}</button>
 								{#if b.starts_at || b.ends_at}
 									<p class="sub">
-										{b.starts_at ? new Date(b.starts_at).toLocaleDateString() : '…'}
-										→
-										{b.ends_at ? new Date(b.ends_at).toLocaleDateString() : '…'}
+										{fmtDate(b.starts_at, !!b.is_recurring)} → {fmtDate(b.ends_at, !!b.is_recurring)}
+										{#if b.is_recurring}
+											<span class="badge-recurring" title="Repeats every year">↻ yearly</span>
+										{/if}
 									</p>
 								{/if}
+							</td>
+							<td class="effect-cell">
+								{EFFECT_LABELS[b.effect ?? 'none']}
+								{#if (b.effect ?? 'none') !== 'none'}
+									<span class="sub">{INTENSITY_LABELS[b.effect_intensity ?? 'burst-idle']}</span>
+								{/if}
+							</td>
+							<td class="locales-cell">
+								{(b.locales ?? ['en', 'fr', 'de']).map((l) => l.toUpperCase()).join(' · ')}
 							</td>
 							<td>
 								<label class="toggle">
@@ -176,6 +267,9 @@
 							</td>
 							<td>{b.display_order}</td>
 							<td class="row-actions">
+								<button class="link-btn" onclick={() => (previewing = b)} title="Preview banner + effect">
+									Preview
+								</button>
 								<button class="link-btn" onclick={() => openEdit(b)}>Edit</button>
 								<button
 									class="link-btn danger"
@@ -197,13 +291,48 @@
 		<div class="modal" onclick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
 			<h3 class="modal-title">{editing.id ? 'Edit' : 'New'} banner</h3>
 
-			<label class="form-label" for="b-type">Type</label>
-			<select id="b-type" class="form-input" bind:value={editing.type}>
-				{#each TYPES as t}
-					<option value={t}>{TYPE_LABELS[t]}</option>
+			<label class="form-label">Icon</label>
+			<div class="icon-grid">
+				<button
+					type="button"
+					class="icon-tile"
+					class:selected={editing.icon === null}
+					onclick={() => setIcon('')}
+					title="No icon"
+				>
+					<span class="no-icon">∅</span>
+					<span class="tile-label">None</span>
+				</button>
+				{#each ICON_NAMES as iname}
+					<button
+						type="button"
+						class="icon-tile"
+						class:selected={editing.icon === iname}
+						onclick={() => setIcon(iname)}
+						title={ICON_LABELS[iname]}
+					>
+						<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							{@html ICON_PATHS[iname]}
+						</svg>
+						<span class="tile-label">{ICON_LABELS[iname]}</span>
+					</button>
 				{/each}
-			</select>
-			<p class="hint">Type drives the colour + icon automatically.</p>
+			</div>
+
+			<label class="form-label">Palette</label>
+			<div class="palette-grid">
+				{#each PALETTE_NAMES as pname}
+					<button
+						type="button"
+						class="palette-tile"
+						class:selected={editing.palette === pname}
+						style="background:{PALETTES[pname].bg};color:{PALETTES[pname].fg};border-color:{PALETTES[pname].border};"
+						onclick={() => setPalette(pname)}
+					>
+						<span>{PALETTES[pname].label}</span>
+					</button>
+				{/each}
+			</div>
 
 			<label class="form-label" for="b-en">Message (English) *</label>
 			<input id="b-en" type="text" class="form-input" bind:value={editing.message_en} maxlength="240" />
@@ -239,6 +368,51 @@
 				</div>
 			</div>
 
+			<div class="row-2">
+				<div>
+					<label class="form-label" for="b-effect">Effect</label>
+					<select id="b-effect" class="form-input" bind:value={editing.effect}>
+						{#each EFFECTS as e}
+							<option value={e}>{EFFECT_LABELS[e]}</option>
+						{/each}
+					</select>
+				</div>
+				<div>
+					<label class="form-label" for="b-intensity">Cadence</label>
+					<select
+						id="b-intensity"
+						class="form-input"
+						bind:value={editing.effect_intensity}
+						disabled={(editing.effect ?? 'none') === 'none'}
+					>
+						{#each INTENSITIES as i}
+							<option value={i}>{INTENSITY_LABELS[i]}</option>
+						{/each}
+					</select>
+				</div>
+			</div>
+			<p class="hint">
+				Fireworks + Confetti use canvas; Snow / Sparkles / Hearts are CSS-only. All respect
+				prefers-reduced-motion. Visitors get a "stop effects" button on the banner.
+			</p>
+
+			<label class="form-label">Show to languages</label>
+			<div class="locale-checks">
+				{#each ALL_LOCALES as loc}
+					<label class="locale-check">
+						<input
+							type="checkbox"
+							checked={(editing.locales ?? ['en', 'fr', 'de']).includes(loc)}
+							onchange={() => toggleLocale(loc)}
+						/>
+						<span>{LOCALE_LABELS[loc]}</span>
+					</label>
+				{/each}
+			</div>
+			<p class="hint">
+				e.g. tick only English for Bonfire Night, only French for Bastille Day, all three for Christmas.
+			</p>
+
 			<label class="form-label" for="b-order">Display order</label>
 			<input id="b-order" type="number" class="form-input" bind:value={editing.display_order} step="1" />
 
@@ -247,11 +421,24 @@
 				<span>Enabled</span>
 			</label>
 
+			<label class="form-checkbox">
+				<input type="checkbox" bind:checked={editing.is_recurring} />
+				<span>Repeats every year (ignore the year on the dates above — fires on the same day annually)</span>
+			</label>
+
 			{#if saveError}
 				<p class="error">{saveError}</p>
 			{/if}
 
 			<div class="modal-actions">
+				<button
+					type="button"
+					class="btn-link"
+					onclick={() => (previewing = { ...editing! })}
+					disabled={saving || !(editing.message_en ?? '').trim()}
+				>
+					Preview
+				</button>
 				<button type="button" class="btn-link" onclick={close} disabled={saving}>Cancel</button>
 				<button type="button" class="btn-primary" onclick={save} disabled={saving}>
 					{saving ? 'Saving…' : 'Save'}
@@ -259,6 +446,10 @@
 			</div>
 		</div>
 	</div>
+{/if}
+
+{#if previewing}
+	<BannerPreview banner={previewing} onclose={() => (previewing = null)} />
 {/if}
 
 <style>
@@ -269,9 +460,9 @@
 	.empty { color: var(--color-text-muted); font-size: 0.875rem; margin: 0; }
 	.hint { font-size: 0.8125rem; color: var(--color-text-muted); margin: 0.25rem 0 0; }
 
-	.table-wrap { background: var(--color-bg); border: 1px solid var(--color-cream-dark); border-radius: 12px; overflow-x: auto; }
+	.table-wrap { background: var(--color-bg); border: 1px solid var(--color-cream-dark); border-radius: 12px; overflow: hidden; overflow-x: auto; }
 	table { width: 100%; font-size: 0.875rem; border-collapse: collapse; }
-	th { text-align: left; padding: 0.75rem 1rem; font-weight: 500; color: var(--color-text-muted); background: var(--color-cream); border-bottom: 1px solid var(--color-cream-dark); }
+	th { text-align: left; padding: 0.75rem 1rem; font-weight: 600; color: white; background: var(--color-sage); border-bottom: 1px solid var(--color-sage); letter-spacing: 0.02em; }
 	td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--color-cream-dark); vertical-align: top; }
 	tr:last-child td { border-bottom: none; }
 	tr.disabled td { color: var(--color-text-muted); opacity: 0.65; }
@@ -325,6 +516,77 @@
 	.row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
 	.form-checkbox { display: flex; align-items: center; gap: 0.6rem; margin-top: 1.25rem; font-size: 0.9rem; cursor: pointer; }
 	.form-checkbox input { width: 1.1rem; height: 1.1rem; }
+
+	.locale-checks { display: flex; gap: 1.25rem; margin-top: 0.4rem; flex-wrap: wrap; }
+	.locale-check { display: inline-flex; align-items: center; gap: 0.45rem; font-size: 0.875rem; cursor: pointer; }
+	.locale-check input { width: 1rem; height: 1rem; }
+
+	.effect-cell { font-size: 0.85rem; }
+	.effect-cell .sub { display: block; }
+	.locales-cell { font-size: 0.78rem; color: var(--color-text-muted); letter-spacing: 0.05em; }
+
+	.look-cell { width: 56px; }
+	.swatch {
+		display: inline-flex; align-items: center; justify-content: center;
+		width: 32px; height: 32px;
+		border-radius: 8px;
+		border: 1px solid;
+	}
+	.swatch-empty { font-size: 1rem; opacity: 0.45; }
+
+	.icon-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(74px, 1fr));
+		gap: 0.4rem;
+		margin-top: 0.4rem;
+	}
+	.icon-tile {
+		display: flex; flex-direction: column; align-items: center; gap: 0.25rem;
+		padding: 0.55rem 0.4rem;
+		background: var(--color-cream);
+		border: 1px solid var(--color-cream-dark);
+		border-radius: 8px;
+		font-size: 0.7rem;
+		color: var(--color-text-muted);
+		cursor: pointer;
+		transition: all 0.12s ease;
+	}
+	.icon-tile:hover { background: var(--color-bg); border-color: var(--color-sage); }
+	.icon-tile.selected { background: var(--color-sage); color: white; border-color: var(--color-sage); }
+	.icon-tile .tile-label { font-size: 0.65rem; line-height: 1.1; text-align: center; }
+	.icon-tile .no-icon { font-size: 1.1rem; line-height: 1; }
+
+	.palette-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+		gap: 0.4rem;
+		margin-top: 0.4rem;
+	}
+	.palette-tile {
+		padding: 0.55rem 0.6rem;
+		border: 2px solid;
+		border-radius: 8px;
+		font-size: 0.78rem;
+		font-weight: 600;
+		cursor: pointer;
+		text-align: left;
+		transition: transform 0.1s ease, box-shadow 0.1s ease;
+	}
+	.palette-tile:hover { transform: translateY(-1px); box-shadow: 0 3px 8px rgba(0,0,0,0.12); }
+	.palette-tile.selected { outline: 3px solid var(--color-sage); outline-offset: 2px; }
+
+	.badge-recurring {
+		display: inline-block;
+		margin-left: 0.4rem;
+		padding: 0.05rem 0.45rem;
+		border-radius: 9999px;
+		background: var(--color-cream);
+		border: 1px solid var(--color-cream-dark);
+		font-size: 0.7rem;
+		color: var(--color-sage);
+		font-weight: 500;
+		letter-spacing: 0.02em;
+	}
 
 	.modal-actions { display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1.5rem; }
 
