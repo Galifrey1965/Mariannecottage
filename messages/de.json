@@ -148,7 +148,7 @@
 		},
 		"breakfast": {
 			"heading": "Frühstück",
-			"description": "Genießen Sie jeden Morgen ein köstliches Buffet und kontinentales Frühstück mit frischen Croissants und Baguettes von unserer lokalen Bäckerei, saisonalen Früchten, Saft, Joghurt und hausgemachten Konfitüren. Spezielle Wünsche (wie Eier) werden gerne auf Anfrage erfüllt."
+			"description": "Genießen Sie jeden Morgen ein köstliches Buffet und kontinentales Frühstück mit frischen, von Mark gebackenen Croissants und Baguettes, saisonalen Früchten, Saft, Joghurt und hausgemachten Konfitüren. Spezielle Wünsche (wie Eier) werden gerne auf Anfrage erfüllt."
 		},
 		"evening_meal": {
 			"heading": "Abendessen",
@@ -373,7 +373,8 @@
 		"contact": "Kontakt",
 		"social": "Folgen Sie Uns",
 		"copyright": "© 2024 Marianne Cottage. Alle Rechte vorbehalten.",
-		"version": "Version"
+		"version": "Version",
+		"cookie_preferences": "Cookie-Einstellungen"
 	},
 	"a11y": {
 		"skip_to_content": "Zum Hauptinhalt springen",

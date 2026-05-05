@@ -43,14 +43,35 @@ export function setConsent(choice: ConsentChoice): void {
 }
 
 /**
- * Subscribes to consent changes. Returns an unsubscribe function suitable
- * for use as a Svelte $effect cleanup.
+ * Clears the persisted consent choice so the banner re-appears and the
+ * user can pick again. Used by the "Cookie preferences" footer link —
+ * without it, a guest who declined has no way to re-enable Google Maps.
+ * Broadcasts choice=null so any listening component can re-show its UI.
  */
-export function onConsentChange(callback: (choice: ConsentChoice) => void): () => void {
+export function clearConsent(): void {
+	if (typeof window === 'undefined') return;
+	try {
+		window.localStorage.removeItem(STORAGE_KEY);
+	} catch {
+		// non-fatal
+	}
+	try {
+		window.dispatchEvent(new CustomEvent(EVENT, { detail: { choice: null } }));
+	} catch {
+		// ignored
+	}
+}
+
+/**
+ * Subscribes to consent changes. Returns an unsubscribe function suitable
+ * for use as a Svelte $effect cleanup. The callback receives null when
+ * consent has been cleared (banner should re-appear).
+ */
+export function onConsentChange(callback: (choice: ConsentChoice | null) => void): () => void {
 	if (typeof window === 'undefined') return () => {};
 	const handler = (e: Event) => {
-		const detail = (e as CustomEvent<{ choice: ConsentChoice }>).detail;
-		if (detail?.choice) callback(detail.choice);
+		const detail = (e as CustomEvent<{ choice: ConsentChoice | null }>).detail;
+		callback(detail?.choice ?? null);
 	};
 	window.addEventListener(EVENT, handler);
 	return () => window.removeEventListener(EVENT, handler);

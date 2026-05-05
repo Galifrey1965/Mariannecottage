@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import { t } from '$lib/i18n';
 	import type { Locale, Messages } from '$lib/i18n';
-	import { getConsent, setConsent, type ConsentChoice } from '$lib/consent';
+	import { getConsent, setConsent, onConsentChange, type ConsentChoice } from '$lib/consent';
 
 	interface Props {
 		lang: Locale;
@@ -17,6 +17,12 @@
 	onMount(() => {
 		mounted = true;
 		choice = getConsent();
+		// Subscribe so the banner re-opens when the footer "Cookie preferences"
+		// link calls clearConsent(): choice flips back to null and the banner
+		// becomes visible again without a page reload.
+		return onConsentChange((next) => {
+			choice = next;
+		});
 	});
 
 	function set(value: ConsentChoice) {

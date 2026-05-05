@@ -69,15 +69,75 @@
 
 	<!-- Breakfast -->
 	<div class="highlight-box breakfast-box">
-		<h2 class="section-heading">{t(messages, 'rooms.breakfast.heading')}</h2>
-		<p class="box-text">{t(messages, 'rooms.breakfast.description')}</p>
+		<div class="box-content">
+			<h2 class="section-heading">{t(messages, 'rooms.breakfast.heading')}</h2>
+			<p class="box-text">{t(messages, 'rooms.breakfast.description')}</p>
+		</div>
+		<svg
+			class="box-art"
+			viewBox="0 0 220 140"
+			fill="none"
+			stroke="currentColor"
+			stroke-width="1.6"
+			stroke-linecap="round"
+			stroke-linejoin="round"
+			aria-hidden="true"
+		>
+			<!-- Croissant -->
+			<g transform="translate(10,40)">
+				<path d="M 10 55 C 0 32, 18 6, 52 4 C 86 2, 110 16, 113 36 C 114 47, 106 55, 92 55 C 80 55, 73 56, 66 62 C 55 73, 33 73, 22 62 C 14 56, 8 53, 10 55 Z" />
+				<line x1="28" y1="48" x2="38" y2="32" />
+				<line x1="44" y1="52" x2="54" y2="34" />
+				<line x1="60" y1="56" x2="70" y2="38" />
+				<line x1="78" y1="56" x2="88" y2="40" />
+			</g>
+			<!-- Coffee cup -->
+			<g transform="translate(140,40)">
+				<path d="M 8 32 L 50 32 L 45 78 L 13 78 Z" />
+				<path d="M 50 40 C 66 40, 66 64, 50 64" />
+				<ellipse cx="29" cy="80" rx="26" ry="3" />
+				<path d="M 19 24 C 16 20, 22 16, 19 12 C 16 8, 22 4, 19 0" />
+				<path d="M 30 24 C 27 20, 33 16, 30 12 C 27 8, 33 4, 30 0" />
+				<path d="M 41 24 C 38 20, 44 16, 41 12 C 38 8, 44 4, 41 0" />
+			</g>
+		</svg>
 	</div>
 
 	<!-- Evening Meal -->
 	<div class="highlight-box evening-box">
-		<h2 class="section-heading">{t(messages, 'rooms.evening_meal.heading')}</h2>
-		<p class="box-text">{t(messages, 'rooms.evening_meal.description')}</p>
-		<p class="box-text-note">{t(messages, 'rooms.evening_meal.book_note')}</p>
+		<div class="box-content">
+			<h2 class="section-heading">{t(messages, 'rooms.evening_meal.heading')}</h2>
+			<p class="box-text">{t(messages, 'rooms.evening_meal.description')}</p>
+			<p class="box-text-note">{t(messages, 'rooms.evening_meal.book_note')}</p>
+		</div>
+		<svg
+			class="box-art"
+			viewBox="0 0 220 140"
+			fill="none"
+			stroke="currentColor"
+			stroke-width="1.6"
+			stroke-linecap="round"
+			stroke-linejoin="round"
+			aria-hidden="true"
+		>
+			<!-- Wine glass -->
+			<g transform="translate(20,15)">
+				<path d="M 8 4 L 50 4 Q 54 32, 42 50 Q 33 60, 29 60 Q 25 60, 16 50 Q 4 32, 8 4 Z" />
+				<path d="M 12 18 Q 29 25, 46 18" />
+				<line x1="29" y1="60" x2="29" y2="100" />
+				<line x1="14" y1="100" x2="44" y2="100" />
+			</g>
+			<!-- Plate with fork and knife -->
+			<g transform="translate(95,55)">
+				<ellipse cx="58" cy="40" rx="55" ry="14" />
+				<ellipse cx="58" cy="38" rx="42" ry="9" />
+				<line x1="18" y1="-2" x2="18" y2="50" />
+				<line x1="13" y1="-2" x2="13" y2="14" />
+				<line x1="23" y1="-2" x2="23" y2="14" />
+				<line x1="98" y1="-2" x2="98" y2="50" />
+				<path d="M 94 -2 L 98 4 L 102 -2" />
+			</g>
+		</svg>
 	</div>
 </section>
 
@@ -115,6 +175,8 @@
 	.amenity-icon { color: var(--theme-accent); flex-shrink: 0; margin-top: 0.1rem; }
 	.amenity-text { color: var(--theme-text-muted); }
 	.highlight-box {
+		position: relative;
+		overflow: hidden;
 		padding: 2.25rem;
 		border-radius: var(--theme-radius-md);
 		margin-bottom: 3rem;
@@ -122,6 +184,27 @@
 	}
 	.breakfast-box { background: var(--theme-surface); }
 	.evening-box { background: var(--theme-surface-2); }
+	/* Decorative line art tucked into the bottom-right third of each panel.
+	   Reserves text width via max-width on .box-content so copy doesn't run
+	   under the artwork on wider viewports. */
+	.box-content { position: relative; z-index: 1; }
+	@media (min-width: 600px) {
+		.box-content { max-width: 70%; }
+	}
+	.box-art {
+		position: absolute;
+		right: -0.5rem;
+		bottom: -0.75rem;
+		width: 11rem;
+		height: auto;
+		color: var(--theme-warm);
+		opacity: 0.18;
+		pointer-events: none;
+	}
+	@media (min-width: 600px) {
+		.box-art { width: 14rem; right: 1rem; bottom: 1rem; }
+	}
+	.evening-box .box-art { color: var(--theme-text); opacity: 0.16; }
 	.box-text { color: var(--theme-text-muted); margin: 0 0 1.5rem; line-height: 1.7; }
 	.box-text-note { color: var(--theme-text-muted); font-size: 0.9rem; font-style: italic; margin: 0; line-height: 1.6; }
 	.cta-button {

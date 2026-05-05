@@ -148,7 +148,7 @@
 		},
 		"breakfast": {
 			"heading": "Breakfast",
-			"description": "Enjoy a delicious buffet and continental breakfast each morning, featuring fresh croissants and baguettes from our local boulangerie, seasonal fruits, juice, yoghurt, and homemade jams. Special requests (such as eggs) are happily accommodated upon request."
+			"description": "Enjoy a delicious buffet and continental breakfast each morning, featuring fresh croissants and baguettes baked by Mark, seasonal fruits, juice, yoghurt, and homemade jams. Special requests (such as eggs) are happily accommodated upon request."
 		},
 		"evening_meal": {
 			"heading": "Evening Meal",
@@ -373,7 +373,8 @@
 		"contact": "Contact",
 		"social": "Follow Us",
 		"copyright": "© 2024 Marianne Cottage. All rights reserved.",
-		"version": "Version"
+		"version": "Version",
+		"cookie_preferences": "Cookie preferences"
 	},
 	"a11y": {
 		"skip_to_content": "Skip to main content",

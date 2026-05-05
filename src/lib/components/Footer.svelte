@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { t } from '$lib/i18n';
 	import type { Messages, Locale } from '$lib/i18n';
+	import { clearConsent } from '$lib/consent';
 
 	interface Props {
 		lang: Locale;
@@ -8,6 +9,16 @@
 	}
 
 	let { messages }: Props = $props();
+
+	function reopenCookieBanner() {
+		clearConsent();
+		// Smooth-scroll to bottom so the re-opened banner is in view; otherwise
+		// the footer-clicker stays anchored at the page bottom and the banner
+		// is already there, so this is a no-op in practice.
+		if (typeof window !== 'undefined') {
+			window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+		}
+	}
 
 	const version: string = typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : '0.0.0';
 	const buildDate: string = typeof __BUILD_DATE__ !== 'undefined' ? __BUILD_DATE__ : new Date().toISOString().slice(0, 10);
@@ -33,6 +44,9 @@
 			<div class="footer-meta-block">
 				<p class="footer-copy">{t(messages, 'footer.copyright')}</p>
 				<div class="footer-meta">
+					<button type="button" class="cookie-prefs-link" onclick={reopenCookieBanner}>
+						{t(messages, 'footer.cookie_preferences')}
+					</button>
 					<a
 						href="https://github.com/Galifrey1965/Mariannecottage/releases"
 						target="_blank"
@@ -186,6 +200,28 @@
 	}
 
 	.version-link:hover {
+		opacity: 1;
+		color: white;
+	}
+
+	/* Plain-button styling so guests can re-open the consent banner —
+	   declining once otherwise locks Google Maps off with no UI to revisit. */
+	.cookie-prefs-link {
+		appearance: none;
+		background: none;
+		border: none;
+		padding: 0;
+		font-family: inherit;
+		font-size: 0.8rem;
+		color: var(--color-footer-accent);
+		opacity: 0.78;
+		cursor: pointer;
+		text-decoration: underline;
+		text-underline-offset: 0.2em;
+		transition: opacity 0.2s ease, color 0.2s ease;
+	}
+
+	.cookie-prefs-link:hover {
 		opacity: 1;
 		color: white;
 	}

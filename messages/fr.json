@@ -148,7 +148,7 @@
 		},
 		"breakfast": {
 			"heading": "Petit-Déjeuner",
-			"description": "Profitez d'un délicieux buffet et petit-déjeuner continental chaque matin, avec des croissants et baguettes frais de notre boulangerie locale, des fruits de saison, du jus, du yaourt et des confitures maison. Les demandes spéciales (comme les œufs) sont volontiers accommodées sur demande."
+			"description": "Profitez d'un délicieux buffet et petit-déjeuner continental chaque matin, avec des croissants et baguettes frais cuits par Mark, des fruits de saison, du jus, du yaourt et des confitures maison. Les demandes spéciales (comme les œufs) sont volontiers accommodées sur demande."
 		},
 		"evening_meal": {
 			"heading": "Repas du Soir",
@@ -373,7 +373,8 @@
 		"contact": "Contact",
 		"social": "Nous Suivre",
 		"copyright": "© 2024 Marianne Cottage. Tous droits réservés.",
-		"version": "Version"
+		"version": "Version",
+		"cookie_preferences": "Préférences de cookies"
 	},
 	"a11y": {
 		"skip_to_content": "Aller au contenu principal",
