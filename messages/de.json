@@ -56,7 +56,12 @@
 		"body": "Wir verwenden notwendige Cookies, damit die Website funktioniert und Ihre Sprache merkt. Mit Ihrer Einwilligung nutzen wir außerdem Google Maps für Standortfunktionen sowie Tracking-Pixel zur Zustellbestätigung von E-Mails.",
 		"accept": "Alle akzeptieren",
 		"reject": "Nur notwendige",
-		"learn_more": "Mehr erfahren"
+		"learn_more": "Mehr erfahren",
+		"map_blocked": {
+			"title": "Karte benötigt Google-Maps-Cookies",
+			"body": "Diese Karte wird von Google Maps bereitgestellt und setzt Drittanbieter-Cookies. Aktivieren Sie optionale Cookies, um sie anzuzeigen.",
+			"cta": "Karte anzeigen"
+		}
 	},
 	"home": {
 		"hero": {

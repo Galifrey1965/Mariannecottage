@@ -56,7 +56,12 @@
 		"body": "We use essential cookies to keep the site running and to remember your language preference. With your consent we also use Google Maps for location features and email tracking pixels for delivery confirmation.",
 		"accept": "Accept all",
 		"reject": "Essential only",
-		"learn_more": "Learn more"
+		"learn_more": "Learn more",
+		"map_blocked": {
+			"title": "Map needs Google Maps cookies",
+			"body": "This map is powered by Google Maps, which sets third-party cookies. Enable optional cookies to view it.",
+			"cta": "Show map"
+		}
 	},
 	"home": {
 		"hero": {

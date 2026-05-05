@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { t } from '$lib/i18n';
 	import type { Locale, Messages } from '$lib/i18n';
+	import { getConsent, setConsent, type ConsentChoice } from '$lib/consent';
 
 	interface Props {
 		lang: Locale;
@@ -10,42 +11,17 @@
 
 	let { lang, messages }: Props = $props();
 
-	const STORAGE_KEY = 'marianne_cookie_consent';
-
-	// 'accepted' = all (essential + maps + email pixels)
-	// 'rejected' = essentials only
-	// null = no decision yet → show banner
-	type Choice = 'accepted' | 'rejected';
-
-	let choice = $state<Choice | null>(null);
+	let choice = $state<ConsentChoice | null>(null);
 	let mounted = $state(false);
 
 	onMount(() => {
 		mounted = true;
-		try {
-			const v = localStorage.getItem(STORAGE_KEY);
-			if (v === 'accepted' || v === 'rejected') {
-				choice = v;
-			}
-		} catch {
-			// localStorage unavailable (private mode in some browsers) — show
-			// banner; the choice just won't persist across visits.
-		}
+		choice = getConsent();
 	});
 
-	function set(value: Choice) {
+	function set(value: ConsentChoice) {
 		choice = value;
-		try {
-			localStorage.setItem(STORAGE_KEY, value);
-		} catch {
-			// non-fatal; in-memory choice still hides the banner for this session
-		}
-		// Broadcast so feature components (Maps, etc.) can react without a reload.
-		try {
-			window.dispatchEvent(new CustomEvent('cookieconsent', { detail: { choice: value } }));
-		} catch {
-			// ignored
-		}
+		setConsent(value);
 	}
 
 	const visible = $derived(mounted && choice === null);

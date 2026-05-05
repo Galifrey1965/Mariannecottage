@@ -86,6 +86,7 @@
 				center={[49.1728, -0.9887]}
 				zoom={13}
 				height="400px"
+				{messages}
 			/>
 		</div>
 	</div>

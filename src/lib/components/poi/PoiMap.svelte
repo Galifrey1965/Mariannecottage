@@ -85,7 +85,7 @@
 		</div>
 
 		<div class="poi-map-panel__map">
-			<GoogleMap {markers} fitBounds routeLine height="220px" />
+			<GoogleMap {markers} {messages} fitBounds routeLine height="220px" />
 		</div>
 
 		<p class="poi-map-panel__attribution" aria-hidden="true">

@@ -1,6 +1,9 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { env } from '$env/dynamic/public';
+	import { getConsent, setConsent, onConsentChange } from '$lib/consent';
+	import { t } from '$lib/i18n';
+	import type { Messages } from '$lib/i18n';
 
 	interface Marker {
 		lat: number;
@@ -17,6 +20,7 @@
 		height?: string;
 		fitBounds?: boolean;
 		routeLine?: boolean;
+		messages?: Messages;
 	}
 
 	let {
@@ -25,11 +29,14 @@
 		zoom = 10,
 		height = '500px',
 		fitBounds = false,
-		routeLine = false
+		routeLine = false,
+		messages
 	}: Props = $props();
 
 	let mapContainer: HTMLDivElement;
 	let missingKey = $state(false);
+	let consented = $state(false);
+	let mapLoaded = $state(false);
 
 	const TYPE_GLYPHS: Record<string, string> = {
 		cottage: '🏠',
@@ -40,9 +47,12 @@
 		museums: '🏛️'
 	};
 
-	// Estimate a Web Mercator zoom level that fits the marker bounds in the
-	// container, with margin. Used as the initial zoom so the map starts at
-	// the right view rather than relying solely on a deferred fitBounds call.
+	function tx(key: string, fallback: string): string {
+		if (!messages) return fallback;
+		const v = t(messages, key);
+		return v === key ? fallback : v;
+	}
+
 	function computeFitZoom(ms: Marker[], container: HTMLDivElement): number {
 		if (ms.length < 2 || !container) return 10;
 		const lats = ms.map((m) => m.lat);
@@ -61,110 +71,126 @@
 		return Math.max(2, Math.min(14, zoom));
 	}
 
-	onMount(() => {
+	async function loadMap() {
+		if (mapLoaded) return;
 		const apiKey = env.PUBLIC_GOOGLE_MAPS_API_KEY;
 		if (!apiKey) {
 			missingKey = true;
 			return;
 		}
+		mapLoaded = true;
 
-		let map: google.maps.Map | undefined;
-		let infoWindow: google.maps.InfoWindow | undefined;
+		const { Loader } = await import('@googlemaps/js-api-loader');
+		const loader = new Loader({ apiKey, version: 'weekly' });
+		const { Map, InfoWindow, LatLngBounds, Polyline } = await loader.importLibrary('maps');
+		const { Marker } = await loader.importLibrary('marker');
 
-		import('@googlemaps/js-api-loader').then(async ({ Loader }) => {
-			const loader = new Loader({ apiKey, version: 'weekly' });
-			const { Map, InfoWindow, LatLngBounds, Polyline } = await loader.importLibrary('maps');
-			const { Marker } = await loader.importLibrary('marker');
+		let initialCenter = { lat: center[0], lng: center[1] };
+		let initialZoom = zoom;
+		if (fitBounds && markers.length > 1) {
+			const lats = markers.map((m) => m.lat);
+			const lngs = markers.map((m) => m.lng);
+			initialCenter = {
+				lat: (Math.min(...lats) + Math.max(...lats)) / 2,
+				lng: (Math.min(...lngs) + Math.max(...lngs)) / 2
+			};
+			initialZoom = computeFitZoom(markers, mapContainer);
+		}
 
-			// If we'll fit-bounds, compute the framing center+zoom up front so
-			// the map mounts directly at the right view rather than at the
-			// default cottage zoom 10 (which leaves distant POIs off-screen).
-			let initialCenter = { lat: center[0], lng: center[1] };
-			let initialZoom = zoom;
-			if (fitBounds && markers.length > 1) {
-				const lats = markers.map((m) => m.lat);
-				const lngs = markers.map((m) => m.lng);
-				initialCenter = {
-					lat: (Math.min(...lats) + Math.max(...lats)) / 2,
-					lng: (Math.min(...lngs) + Math.max(...lngs)) / 2
-				};
-				initialZoom = computeFitZoom(markers, mapContainer);
-			}
+		const map = new Map(mapContainer, {
+			center: initialCenter,
+			zoom: initialZoom,
+			maxZoom: fitBounds ? 14 : undefined,
+			mapTypeControl: false,
+			streetViewControl: false,
+			fullscreenControl: false
+		});
+		const infoWindow = new InfoWindow();
 
-			map = new Map(mapContainer, {
-				center: initialCenter,
-				zoom: initialZoom,
-				maxZoom: fitBounds ? 14 : undefined,
-				mapTypeControl: false,
-				streetViewControl: false,
-				fullscreenControl: false
-			});
-			infoWindow = new InfoWindow();
-
-			for (const m of markers) {
-				const glyph = TYPE_GLYPHS[m.type] || '📍';
-				const marker = new Marker({
-					position: { lat: m.lat, lng: m.lng },
-					map,
-					title: m.title,
-					label: { text: glyph, fontSize: '20px' },
-					icon: {
-						path: 'M 0,0 m -16,-16 a 16,16 0 1,0 32,0 a 16,16 0 1,0 -32,0',
-						fillColor: 'transparent',
-						strokeColor: 'transparent',
-						scale: 1
-					}
-				});
-				marker.addListener('click', () => {
-					infoWindow!.setContent(
-						`<div style="font-size:0.85rem;"><strong>${m.title}</strong><br>${m.description}</div>`
-					);
-					infoWindow!.open({ map, anchor: marker });
-				});
-			}
-
-			if (routeLine && markers.length >= 2) {
-				try {
-					new Polyline({
-						path: markers.slice(0, 2).map((m) => ({ lat: m.lat, lng: m.lng })),
-						geodesic: true,
-						strokeColor: 'transparent',
-						strokeOpacity: 0,
-						icons: [
-							{
-								icon: {
-									path: 'M 0,-1 0,1',
-									strokeColor: '#7a4a2a',
-									strokeOpacity: 0.85,
-									strokeWeight: 2.5,
-									scale: 3
-								},
-								offset: '0',
-								repeat: '12px'
-							}
-						],
-						map
-					});
-				} catch (e) {
-					console.warn('GoogleMap: route polyline failed to render', e);
+		for (const m of markers) {
+			const glyph = TYPE_GLYPHS[m.type] || '📍';
+			const marker = new Marker({
+				position: { lat: m.lat, lng: m.lng },
+				map,
+				title: m.title,
+				label: { text: glyph, fontSize: '20px' },
+				icon: {
+					path: 'M 0,0 m -16,-16 a 16,16 0 1,0 32,0 a 16,16 0 1,0 -32,0',
+					fillColor: 'transparent',
+					strokeColor: 'transparent',
+					scale: 1
 				}
-			}
+			});
+			marker.addListener('click', () => {
+				infoWindow.setContent(
+					`<div style="font-size:0.85rem;"><strong>${m.title}</strong><br>${m.description}</div>`
+				);
+				infoWindow.open({ map, anchor: marker });
+			});
+		}
 
-			// Precision pass — once the panel transition has settled, re-fit
-			// the bounds with the actual container size. Wrapped in try/catch
-			// so a stale map reference can't crash the rest of the page.
-			if (fitBounds && markers.length > 1) {
-				const bounds = new LatLngBounds();
-				for (const m of markers) bounds.extend({ lat: m.lat, lng: m.lng });
-				setTimeout(() => {
-					try { map?.fitBounds(bounds, 40); } catch (e) { console.warn('fitBounds failed', e); }
-				}, 120);
+		if (routeLine && markers.length >= 2) {
+			try {
+				new Polyline({
+					path: markers.slice(0, 2).map((m) => ({ lat: m.lat, lng: m.lng })),
+					geodesic: true,
+					strokeColor: 'transparent',
+					strokeOpacity: 0,
+					icons: [
+						{
+							icon: {
+								path: 'M 0,-1 0,1',
+								strokeColor: '#7a4a2a',
+								strokeOpacity: 0.85,
+								strokeWeight: 2.5,
+								scale: 3
+							},
+							offset: '0',
+							repeat: '12px'
+						}
+					],
+					map
+				});
+			} catch (e) {
+				console.warn('GoogleMap: route polyline failed to render', e);
+			}
+		}
+
+		if (fitBounds && markers.length > 1) {
+			const bounds = new LatLngBounds();
+			for (const m of markers) bounds.extend({ lat: m.lat, lng: m.lng });
+			setTimeout(() => {
+				try {
+					map?.fitBounds(bounds, 40);
+				} catch (e) {
+					console.warn('fitBounds failed', e);
+				}
+			}, 120);
+		}
+	}
+
+	function handleEnable() {
+		setConsent('accepted');
+		// onConsentChange listener flips `consented` and triggers loadMap()
+	}
+
+	onMount(() => {
+		consented = getConsent() === 'accepted';
+		if (consented) loadMap();
+
+		const unsubscribe = onConsentChange((choice) => {
+			if (choice === 'accepted') {
+				consented = true;
+				loadMap();
+			} else {
+				// User revoked consent — we can't easily tear down a mounted map.
+				// Mark as un-consented so future re-mounts gate correctly; existing
+				// map instance remains until navigation. Acceptable trade-off.
+				consented = false;
 			}
 		});
 
-		return () => {
-			if (infoWindow) infoWindow.close();
-		};
+		return unsubscribe;
 	});
 </script>
 
@@ -172,7 +198,37 @@
 	{#if missingKey}
 		<div class="map__placeholder">
 			<p>Map preview unavailable in this environment</p>
-			<p class="map__placeholder-note">Set <code>PUBLIC_GOOGLE_MAPS_API_KEY</code> to display the map</p>
+			<p class="map__placeholder-note">
+				Set <code>PUBLIC_GOOGLE_MAPS_API_KEY</code> to display the map
+			</p>
+		</div>
+	{:else if !consented}
+		<div class="map__consent">
+			<svg
+				class="map__consent-icon"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="1.5"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				aria-hidden="true"
+			>
+				<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+				<circle cx="12" cy="10" r="3" />
+			</svg>
+			<p class="map__consent-title">
+				{tx('cookies.map_blocked.title', 'Map needs Google Maps cookies')}
+			</p>
+			<p class="map__consent-body">
+				{tx(
+					'cookies.map_blocked.body',
+					'This map is powered by Google Maps, which sets third-party cookies. Enable optional cookies to view it.'
+				)}
+			</p>
+			<button type="button" class="map__consent-cta" onclick={handleEnable}>
+				{tx('cookies.map_blocked.cta', 'Show map')}
+			</button>
 		</div>
 	{/if}
 </div>
@@ -204,5 +260,59 @@
 		background: var(--color-cream-dark, #ede6d8);
 		padding: 0 0.25rem;
 		border-radius: 0.125rem;
+	}
+
+	.map__consent {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		height: 100%;
+		gap: 0.65rem;
+		padding: 1.5rem 1.25rem;
+		text-align: center;
+		color: var(--theme-text, #2b2b2b);
+		background: var(--theme-surface, var(--color-cream, #f5f0e8));
+	}
+	.map__consent-icon {
+		width: 2.25rem;
+		height: 2.25rem;
+		color: var(--theme-accent, #7a4a2a);
+		opacity: 0.75;
+	}
+	.map__consent-title {
+		margin: 0;
+		font-family: var(--theme-font-display, inherit);
+		font-weight: 600;
+		font-size: 1rem;
+		color: var(--theme-warm, var(--color-text, #2b2b2b));
+	}
+	.map__consent-body {
+		margin: 0;
+		max-width: 32rem;
+		font-size: 0.88rem;
+		line-height: 1.55;
+		color: var(--theme-text-muted, var(--color-text-muted, #5f5e5a));
+	}
+	.map__consent-cta {
+		margin-top: 0.4rem;
+		padding: 0.55rem 1.4rem;
+		font-family: inherit;
+		font-size: 0.85rem;
+		font-weight: 600;
+		letter-spacing: 0.04em;
+		color: #ffffff;
+		background: var(--theme-accent, #7a4a2a);
+		border: 1px solid var(--theme-accent, #7a4a2a);
+		border-radius: 9999px;
+		cursor: pointer;
+		transition: opacity 0.2s ease;
+	}
+	.map__consent-cta:hover {
+		opacity: 0.88;
+	}
+	.map__consent-cta:focus-visible {
+		outline: 2px solid var(--theme-accent, #7a4a2a);
+		outline-offset: 2px;
 	}
 </style>
