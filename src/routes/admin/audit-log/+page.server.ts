@@ -1,7 +1,7 @@
 import type { PageServerLoad } from './$types';
 import { adminClient } from '$lib/server/supabase';
 
-const PAGE_SIZE = 50;
+const PAGE_SIZE = 10;
 
 export const load: PageServerLoad = async ({ locals, url }) => {
 	if (!locals.user) {
