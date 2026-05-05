@@ -2,6 +2,8 @@
 	import type { Booking, CancellationPolicySchedule } from '$lib/server/supabase';
 	import type { PageData } from './$types';
 	import BookingCalendar, { type BookingDayInfo } from '$lib/components/BookingCalendar.svelte';
+	import Flag from '$lib/components/Flag.svelte';
+	import { isFlagCode } from '$lib/flags/flags';
 	import enMessages from '../../../messages/en.json';
 
 	let { data }: { data: PageData } = $props();
@@ -362,9 +364,6 @@
 	$effect(() => { fetchBookings(); });
 	$effect(() => { statusFilter; fetchBookings(); });
 
-	const countryFlags: Record<string, string> = {
-		GB: '🇬🇧', FR: '🇫🇷', DE: '🇩🇪', NL: '🇳🇱', BE: '🇧🇪', US: '🇺🇸', CA: '🇨🇦', AU: '🇦🇺'
-	};
 
 	const formatDate = (iso: string) =>
 		new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
@@ -699,8 +698,8 @@
 									</td>
 									<td>
 										<div class="guest-cell">
-											{#if booking.guest_country && countryFlags[booking.guest_country]}
-												<span>{countryFlags[booking.guest_country]}</span>
+											{#if isFlagCode(booking.guest_country)}
+												<Flag code={booking.guest_country} height="0.95rem" label={booking.guest_country} />
 											{/if}
 											<div>
 												<p class="guest-name">{booking.guest_name}</p>
@@ -729,7 +728,7 @@
 							<div class="mobile-card-top">
 								<div>
 									<p class="guest-name">
-										{#if booking.guest_country && countryFlags[booking.guest_country]}{countryFlags[booking.guest_country]}{/if}
+										{#if isFlagCode(booking.guest_country)}<Flag code={booking.guest_country} height="0.9rem" label={booking.guest_country} />{' '}{/if}
 										{booking.guest_name}
 									</p>
 									<p class="mono sub-text">
@@ -969,7 +968,12 @@
 							{#if selectedBooking.guest_country}
 								<div>
 									<p class="detail-label">Country</p>
-									<p>{countryFlags[selectedBooking.guest_country] || ''} {selectedBooking.guest_country}</p>
+									<p class="country-line">
+										{#if isFlagCode(selectedBooking.guest_country)}
+											<Flag code={selectedBooking.guest_country} height="1rem" label={selectedBooking.guest_country} />
+										{/if}
+										{selectedBooking.guest_country}
+									</p>
 								</div>
 							{/if}
 							<div>

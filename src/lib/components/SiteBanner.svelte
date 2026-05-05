@@ -5,6 +5,38 @@
 	import BannerEffect from '$lib/effects/BannerEffect.svelte';
 	import { isDismissed, dismiss } from '$lib/effects/dismissal';
 	import { PALETTES, ICON_PATHS } from '$lib/banners/presets';
+	import Flag from '$lib/components/Flag.svelte';
+	import { isFlagCode } from '$lib/flags/flags';
+
+	type MessageSegment = { type: 'text'; value: string } | { type: 'flag'; code: string };
+
+	// Replaces flag emoji (🇺🇦, 🇫🇷, …) — pairs of Unicode regional-indicator
+	// codepoints — with Flag SVGs, since Windows Chrome falls back to letters
+	// like "UA" instead of rendering the actual flag glyph.
+	function tokenizeMessage(text: string): MessageSegment[] {
+		const segments: MessageSegment[] = [];
+		const RI_BASE = 0x1f1e6; // regional indicator A
+		const re = /(\p{Regional_Indicator}\p{Regional_Indicator})/gu;
+		let cursor = 0;
+		for (const m of text.matchAll(re)) {
+			const idx = m.index ?? 0;
+			if (idx > cursor) segments.push({ type: 'text', value: text.slice(cursor, idx) });
+			const pair = m[1];
+			const cp1 = pair.codePointAt(0);
+			const cp2 = pair.codePointAt(2);
+			if (cp1 !== undefined && cp2 !== undefined) {
+				const code = String.fromCharCode(0x41 + cp1 - RI_BASE, 0x41 + cp2 - RI_BASE).toLowerCase();
+				if (isFlagCode(code)) {
+					segments.push({ type: 'flag', code });
+				} else {
+					segments.push({ type: 'text', value: pair });
+				}
+			}
+			cursor = idx + pair.length;
+		}
+		if (cursor < text.length) segments.push({ type: 'text', value: text.slice(cursor) });
+		return segments;
+	}
 
 	interface Props {
 		banner: SiteBanner;
@@ -24,6 +56,8 @@
 		(lang === 'de' && banner.message_de) ||
 		banner.message_en
 	);
+
+	const segments = $derived(tokenizeMessage(message));
 
 	const iconPath = $derived(banner.icon ? ICON_PATHS[banner.icon] : null);
 
@@ -56,7 +90,11 @@
 			{@html iconPath}
 		</svg>
 	{/if}
-	<span>{message}</span>
+	<span class="banner-message">
+		{#each segments as seg}
+			{#if seg.type === 'text'}{seg.value}{:else}<Flag code={seg.code} height="0.95em" />{/if}
+		{/each}
+	</span>
 
 	{#if effectAllowed && effect !== 'none' && !suppressEffect}
 		<button
@@ -91,6 +129,7 @@
 		z-index: 1000;
 	}
 	.site-banner svg { flex-shrink: 0; }
+	.banner-message { display: inline-flex; align-items: center; gap: 0.35em; flex-wrap: wrap; justify-content: center; }
 
 	.stop-fx {
 		position: absolute;
