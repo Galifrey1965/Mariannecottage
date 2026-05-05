@@ -1,8 +1,19 @@
-import { getAvailability, getTaxSettings, getRatePlans, getTestBlockedDates } from '$lib/server/supabase';
+import { adminClient, getAvailability, getTaxSettings, getRatePlans, getTestBlockedDates } from '$lib/server/supabase';
 import type { PageServerLoad } from './$types';
 import type { RatePlan } from '$lib/server/supabase';
 
 export const load: PageServerLoad = async () => {
+	// Lazy sweep: clear any soft-reserves whose 20-min TTL has elapsed
+	// before we read availability. The Netlify daily cron is a backstop —
+	// this on-visit sweep is what makes abandoned reservations free up
+	// for the next visitor without waiting for the cron. If the RPC itself
+	// fails we still serve the page (worst case: stale availability for
+	// this one render).
+	const { error: sweepError } = await adminClient.rpc('expire_pending_bookings');
+	if (sweepError) {
+		console.error('[/book load] expire_pending_bookings failed:', sweepError);
+	}
+
 	const today = new Date();
 	const endDate = new Date(today);
 	endDate.setDate(endDate.getDate() + 90);

@@ -3,9 +3,12 @@
 // itself, just POSTs to the in-app /api/sweep-pending endpoint with the
 // shared secret. Schedule declared inline per Netlify Functions v2.
 //
-// Cadence: every 5 minutes. With 20-min TTL this gives a worst-case 5-min
-// lag between countdown-zero and dates being released; documented in
-// documentation/specs/phase-2-direct-booking.md PR 1.
+// Cadence: daily backstop. The booking page server load also calls
+// expire_pending_bookings on every visit, so a stale reservation is
+// almost always cleared the moment the next visitor lands on /book —
+// this scheduled run only catches the case where nobody visits for a
+// long stretch. Originally */5 minutes; that was overkill for a 4-bed
+// B&B with low-volume bookings.
 
 export default async () => {
 	const siteUrl = process.env.URL || process.env.PUBLIC_SITE_URL;
@@ -42,5 +45,5 @@ export default async () => {
 };
 
 export const config = {
-	schedule: '*/5 * * * *'
+	schedule: '@daily'
 };
