@@ -60,7 +60,8 @@
 		"map_blocked": {
 			"title": "Map needs Google Maps cookies",
 			"body": "Google Maps sets third-party cookies.",
-			"cta": "Show map"
+			"cta": "Show map",
+			"change_choice": "Change cookie choice"
 		}
 	},
 	"home": {
@@ -373,8 +374,7 @@
 		"contact": "Contact",
 		"social": "Follow Us",
 		"copyright": "© 2024 Marianne Cottage. All rights reserved.",
-		"version": "Version",
-		"cookie_preferences": "Cookie preferences"
+		"version": "Version"
 	},
 	"a11y": {
 		"skip_to_content": "Skip to main content",

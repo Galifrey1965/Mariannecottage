@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { env } from '$env/dynamic/public';
-	import { getConsent, setConsent, onConsentChange } from '$lib/consent';
+	import { getConsent, setConsent, clearConsent, onConsentChange } from '$lib/consent';
 	import { t } from '$lib/i18n';
 	import type { Messages } from '$lib/i18n';
 
@@ -174,6 +174,14 @@
 		// onConsentChange listener flips `consented` and triggers loadMap()
 	}
 
+	function handleChangeChoice() {
+		// Re-open the original consent banner so the guest can pick again.
+		// This is the only path back into the dialog after declining — the
+		// footer used to host this link but it lived too far from the
+		// affected feature, so it was moved into the map overlay itself.
+		clearConsent();
+	}
+
 	onMount(() => {
 		consented = getConsent() === 'accepted';
 		if (consented) loadMap();
@@ -228,6 +236,9 @@
 			</p>
 			<button type="button" class="map__consent-cta" onclick={handleEnable}>
 				{tx('cookies.map_blocked.cta', 'Show map')}
+			</button>
+			<button type="button" class="map__consent-secondary" onclick={handleChangeChoice}>
+				{tx('cookies.map_blocked.change_choice', 'Change cookie choice')}
 			</button>
 		</div>
 	{/if}
@@ -316,5 +327,27 @@
 	.map__consent-cta:focus-visible {
 		outline: 2px solid var(--theme-accent, #7a4a2a);
 		outline-offset: 2px;
+	}
+	.map__consent-secondary {
+		appearance: none;
+		background: none;
+		border: none;
+		padding: 0.15rem 0.25rem;
+		margin-top: 0.15rem;
+		font-family: inherit;
+		font-size: 0.75rem;
+		color: var(--theme-text-muted, var(--color-text-muted, #5f5e5a));
+		text-decoration: underline;
+		text-underline-offset: 0.2em;
+		cursor: pointer;
+		transition: color 0.2s ease;
+	}
+	.map__consent-secondary:hover {
+		color: var(--theme-warm, var(--color-text, #2b2b2b));
+	}
+	.map__consent-secondary:focus-visible {
+		outline: 2px solid var(--theme-accent, #7a4a2a);
+		outline-offset: 2px;
+		border-radius: 2px;
 	}
 </style>
