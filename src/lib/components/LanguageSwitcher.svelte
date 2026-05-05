@@ -10,9 +10,9 @@
 	let { lang, messages }: Props = $props();
 
 	const flagSvgs: Record<Locale, string> = {
-		en: `<svg xmlns="http://www.w3.org/2000/svg" width="22" height="16" viewBox="0 0 60 30"><clipPath id="lsf-a"><path d="M0 0v30h60V0z"/></clipPath><clipPath id="lsf-b"><path d="M30 15h30v15zv15H0zH0V0zV0h30z"/></clipPath><g clip-path="url(#lsf-a)"><path d="M0 0v30h60V0z" fill="#012169"/><path d="M0 0l60 30m0-30L0 30" stroke="#fff" stroke-width="6"/><path d="M0 0l60 30m0-30L0 30" clip-path="url(#lsf-b)" stroke="#C8102E" stroke-width="4"/><path d="M30 0v30M0 15h60" stroke="#fff" stroke-width="10"/><path d="M30 0v30M0 15h60" stroke="#C8102E" stroke-width="6"/></g></svg>`,
-		fr: `<svg xmlns="http://www.w3.org/2000/svg" width="22" height="16" viewBox="0 0 3 2"><rect width="1" height="2" fill="#002395"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ED2939"/></svg>`,
-		de: `<svg xmlns="http://www.w3.org/2000/svg" width="22" height="16" viewBox="0 0 5 3"><rect width="5" height="1" fill="#000"/><rect y="1" width="5" height="1" fill="#D00"/><rect y="2" width="5" height="1" fill="#FFCE00"/></svg>`
+		en: `<svg xmlns="http://www.w3.org/2000/svg" width="26" height="18" viewBox="0 0 60 30"><clipPath id="lsf-a"><path d="M0 0v30h60V0z"/></clipPath><clipPath id="lsf-b"><path d="M30 15h30v15zv15H0zH0V0zV0h30z"/></clipPath><g clip-path="url(#lsf-a)"><path d="M0 0v30h60V0z" fill="#012169"/><path d="M0 0l60 30m0-30L0 30" stroke="#fff" stroke-width="6"/><path d="M0 0l60 30m0-30L0 30" clip-path="url(#lsf-b)" stroke="#C8102E" stroke-width="4"/><path d="M30 0v30M0 15h60" stroke="#fff" stroke-width="10"/><path d="M30 0v30M0 15h60" stroke="#C8102E" stroke-width="6"/></g></svg>`,
+		fr: `<svg xmlns="http://www.w3.org/2000/svg" width="26" height="18" viewBox="0 0 3 2"><rect width="1" height="2" fill="#002395"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ED2939"/></svg>`,
+		de: `<svg xmlns="http://www.w3.org/2000/svg" width="26" height="18" viewBox="0 0 5 3"><rect width="5" height="1" fill="#000"/><rect y="1" width="5" height="1" fill="#D00"/><rect y="2" width="5" height="1" fill="#FFCE00"/></svg>`
 	};
 
 	function tooltipFor(locale: Locale): string {
@@ -46,26 +46,25 @@
 	.flag-switcher {
 		display: inline-flex;
 		align-items: center;
-		gap: 0.375rem;
+		gap: 0.5rem;
 	}
 
 	.flag-btn {
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		padding: 4px;
+		padding: 3px;
 		border: 1px solid transparent;
 		background: transparent;
-		border-radius: 4px;
+		border-radius: 5px;
 		cursor: pointer;
 		line-height: 0;
 		transition: border-color 0.15s ease, transform 0.15s ease, opacity 0.15s ease;
-		opacity: 0.55;
+		opacity: 0.7;
 	}
 
 	.flag-btn:hover {
 		opacity: 1;
-		border-color: var(--color-cream-dark);
 		transform: translateY(-1px);
 	}
 
@@ -77,12 +76,14 @@
 
 	.flag-btn.active {
 		opacity: 1;
-		border-color: var(--color-sage);
+	}
+	.flag-btn.active :global(svg) {
+		box-shadow: 0 0 0 1.5px var(--color-sage), 0 0 0 2.5px var(--color-cream);
 	}
 
 	.flag-btn :global(svg) {
 		display: block;
 		border-radius: 2px;
-		box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08);
+		box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.22);
 	}
 </style>

@@ -291,10 +291,10 @@
 	.weekdays { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.5rem; }
 	.days-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.25rem; }
 	.weekdays { margin-bottom: 1rem; }
-	.weekday { text-align: center; font-size: 0.7rem; font-weight: 600; color: var(--color-text-muted); padding: 0.5rem 0; letter-spacing: 0.05em; text-transform: uppercase; }
+	.weekday { text-align: center; font-size: 0.78rem; font-weight: 600; color: var(--color-text-muted); padding: 0.5rem 0; letter-spacing: 0.05em; text-transform: uppercase; }
 
 	.day {
-		aspect-ratio: 1; min-height: 44px; border-radius: 50%; font-size: 0.875rem; font-weight: 500;
+		aspect-ratio: 1; min-height: 44px; border-radius: 50%; font-size: 1.05rem; font-weight: 500;
 		border: none; cursor: pointer; transition: all 0.15s ease;
 	}
 	.day.available { background: var(--md-sys-color-surface-container-lowest); color: var(--color-text); }
