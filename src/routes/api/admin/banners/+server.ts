@@ -27,7 +27,7 @@ const VALID_LOCALES: SiteBannerLocale[] = ['en', 'fr', 'de'];
 const VALID_ICONS: SiteBannerIcon[] = [
 	'info', 'alert', 'megaphone', 'gift', 'percent', 'star', 'sparkles',
 	'heart', 'snowflake', 'party', 'ghost', 'flag', 'sun', 'moon',
-	'bell', 'check', 'flame'
+	'bell', 'check', 'flame', 'flower'
 ];
 const VALID_PALETTES: SiteBannerPalette[] = [
 	'sage', 'cream', 'sky', 'amber', 'mint', 'terracotta',

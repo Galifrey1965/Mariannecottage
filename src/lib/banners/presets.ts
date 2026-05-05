@@ -45,7 +45,8 @@ export const ICON_LABELS: Record<SiteBannerIcon, string> = {
 	moon:      'Moon',
 	bell:      'Bell',
 	check:     'Check',
-	flame:     'Flame'
+	flame:     'Flame',
+	flower:    'Flower (poppy)'
 };
 
 export const ICON_NAMES = Object.keys(ICON_LABELS) as SiteBannerIcon[];
@@ -71,5 +72,6 @@ export const ICON_PATHS: Record<SiteBannerIcon, string> = {
 	moon:      '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>',
 	bell:      '<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>',
 	check:     '<path d="M20 6 9 17l-5-5"/>',
-	flame:     '<path d="M8.5 14.5A2.5 2.5 0 0 0 11 17a2.5 2.5 0 0 0 2.5-2.5c0-1.5-.5-2-1.5-3-2-2-2-4-2-4s-2 1-2 3.5c0 1 0 1 .5 3z"/><path d="M12 2s5 4 5 9a5 5 0 0 1-10 0c0-3 2-6 2-6"/>'
+	flame:     '<path d="M8.5 14.5A2.5 2.5 0 0 0 11 17a2.5 2.5 0 0 0 2.5-2.5c0-1.5-.5-2-1.5-3-2-2-2-4-2-4s-2 1-2 3.5c0 1 0 1 .5 3z"/><path d="M12 2s5 4 5 9a5 5 0 0 1-10 0c0-3 2-6 2-6"/>',
+	flower:    '<path d="M12 7.5a4.5 4.5 0 1 1 4.5 4.5"/><path d="M7.5 12a4.5 4.5 0 1 1 4.5 4.5"/><path d="M12 7.5a4.5 4.5 0 1 0-4.5 4.5"/><path d="M16.5 12a4.5 4.5 0 1 0-4.5 4.5"/><circle cx="12" cy="12" r="2"/><path d="M12 16.5V21"/><path d="m8 21 4-3 4 3"/>'
 };

@@ -473,7 +473,7 @@ export type SiteBannerLocale = 'en' | 'fr' | 'de';
 export type SiteBannerIcon =
 	| 'info' | 'alert' | 'megaphone' | 'gift' | 'percent' | 'star' | 'sparkles'
 	| 'heart' | 'snowflake' | 'party' | 'ghost' | 'flag' | 'sun' | 'moon'
-	| 'bell' | 'check' | 'flame';
+	| 'bell' | 'check' | 'flame' | 'flower';
 export type SiteBannerPalette =
 	| 'sage' | 'cream' | 'sky' | 'amber' | 'mint' | 'terracotta'
 	| 'lavender' | 'coral' | 'ocean' | 'crimson' | 'charcoal' | 'ukraine';
