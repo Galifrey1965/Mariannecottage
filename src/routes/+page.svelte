@@ -5,10 +5,11 @@
 	import RoomCard from '$lib/components/RoomCard.svelte';
 	import AttractionCard from '$lib/components/AttractionCard.svelte';
 	import BookDirectCta from '$lib/components/BookDirectCta.svelte';
+	import Reviews from '$lib/components/Reviews.svelte';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
-	const { lang, messages } = data;
+	const { lang, messages, rating } = data;
 </script>
 
 <!-- Hero Section (contains h1) -->
@@ -91,6 +92,14 @@
 	</div>
 </section>
 
+<!-- Reviews -->
+{#if rating && rating.ratingCount > 0}
+	<section class="section-wide reviews-bg">
+		<h2 class="section-heading center">{t(messages, 'home.reviews.heading')}</h2>
+		<Reviews {messages} {lang} {rating} />
+	</section>
+{/if}
+
 <!-- Booking CTA -->
 <section class="section-narrow cta-section">
 	<h2 class="section-heading center">{t(messages, 'home.booking.heading')}</h2>
@@ -152,6 +161,10 @@
 		border-top: var(--theme-border-thin);
 		border-bottom: var(--theme-border-thin);
 		border-radius: 0;
+	}
+
+	.reviews-bg {
+		background: var(--theme-bg);
 	}
 	.attractions-grid { display: grid; grid-template-columns: 1fr; gap: 2.5rem; margin-bottom: 2.5rem; }
 	@media (min-width: 840px) { .attractions-grid { grid-template-columns: repeat(3, 1fr); } }

@@ -92,6 +92,19 @@
 			"heading": "Bereit zu Buchen?",
 			"cta": "Verfügbarkeit Prüfen"
 		},
+		"reviews": {
+			"heading": "Was unsere Gäste sagen",
+			"from_count": "aus {count} Google-Bewertungen",
+			"see_all": "Alle Bewertungen auf Google",
+			"no_text": "Mit 5 Sternen auf Google bewertet",
+			"aria_summary": "Bewertet mit {rating} von 5, aus {count} Bewertungen",
+			"aria_stars": "{rating} von 5 Sternen",
+			"placeholder": {
+				"title": "Seien Sie der Nächste",
+				"body": "Bei uns übernachtet? Erzählen Sie zukünftigen Gästen, was Ihnen gefallen hat, mit einer Bewertung auf Google.",
+				"cta": "Bewertung schreiben"
+			}
+		},
 		"rooms_data": {
 			"bedroom1": "Schlafzimmer 1",
 			"bedroom1_desc": "Komfortables Schlafzimmer mit Gartenblick",

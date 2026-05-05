@@ -92,6 +92,19 @@
 			"heading": "Prêt à Réserver?",
 			"cta": "Vérifier la Disponibilité"
 		},
+		"reviews": {
+			"heading": "Ce que disent nos hôtes",
+			"from_count": "sur {count} avis Google",
+			"see_all": "Tous les avis sur Google",
+			"no_text": "Noté 5 étoiles sur Google",
+			"aria_summary": "Note de {rating} sur 5, sur {count} avis",
+			"aria_stars": "{rating} étoiles sur 5",
+			"placeholder": {
+				"title": "Soyez le prochain à partager",
+				"body": "Vous avez séjourné chez nous ? Faites part de votre expérience aux futurs hôtes en laissant un avis sur Google.",
+				"cta": "Laisser un avis"
+			}
+		},
 		"rooms_data": {
 			"bedroom1": "Chambre 1",
 			"bedroom1_desc": "Chambre confortable avec vue sur le jardin",

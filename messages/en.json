@@ -92,6 +92,19 @@
 			"heading": "Ready to Book?",
 			"cta": "Check Availability"
 		},
+		"reviews": {
+			"heading": "What our guests say",
+			"from_count": "from {count} Google reviews",
+			"see_all": "All reviews on Google",
+			"no_text": "Rated 5 stars on Google",
+			"aria_summary": "Rated {rating} out of 5, from {count} reviews",
+			"aria_stars": "{rating} stars out of 5",
+			"placeholder": {
+				"title": "Be the next to share",
+				"body": "Stayed with us? Tell future guests what you loved by leaving a review on Google.",
+				"cta": "Write a review"
+			}
+		},
 		"rooms_data": {
 			"bedroom1": "Bedroom 1",
 			"bedroom1_desc": "Comfortable bedroom with garden views",

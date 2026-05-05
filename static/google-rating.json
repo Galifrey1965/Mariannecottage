@@ -3,5 +3,26 @@
   "name": "Marianne Cottage Bed and Breakfast.",
   "ratingValue": 5,
   "ratingCount": 2,
-  "fetchedAt": "2026-05-05T12:46:20.406Z"
+  "googleMapsUri": "https://maps.google.com/?cid=7408820093215513589&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+  "reviews": [
+    {
+      "authorName": "Virginie Delahaye",
+      "authorPhoto": "https://lh3.googleusercontent.com/a/ACg8ocLKCb7BSGIl0hJltXqT9g5TlW6mNazI0bXdMFpc5sW8Y1R4tg=s128-c0x00000000-cc-rp-mo",
+      "rating": 5,
+      "text": "Endroit parfait au calme. Les chambres sont cosy et très confortables. Tout y est : bouteille d'eau, bouilloire, thé et même petits gâteaux. Le petit déjeuner est également super et copieux. Mark et Kim sont très chaleureux et nous ont très très bien accueillis. Nous y reviendrons bien volontiers lors d'un prochain séjour à St lo.",
+      "languageCode": "fr",
+      "publishTime": "2025-05-05T15:29:07.352251Z",
+      "relativeTime": "12 months ago"
+    },
+    {
+      "authorName": "Niels Christian Hansen",
+      "authorPhoto": "https://lh3.googleusercontent.com/a/ACg8ocIS0aDaJD403UrBVp4tqdHHxRC0sdsLt-mDiCBqyRn6H8XIAw=s128-c0x00000000-cc-rp-mo",
+      "rating": 5,
+      "text": "",
+      "languageCode": "en",
+      "publishTime": "2025-07-07T15:04:06.271088884Z",
+      "relativeTime": "10 months ago"
+    }
+  ],
+  "fetchedAt": "2026-05-05T13:07:55.713Z"
 }
