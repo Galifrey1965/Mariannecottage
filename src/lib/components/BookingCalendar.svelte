@@ -206,6 +206,7 @@
 				const pos = info.position ?? 'single';
 				let cls: string;
 				if (info.source === 'booking_com') cls = 'booked-imported';
+				else if (info.source === 'admin_block') cls = 'booked-admin-block';
 				else if (info.source === 'test') cls = 'booked-test';
 				else if (info.status === 'cancelled' || info.status === 'expired' || info.status === 'refunded' || info.status === 'refunded_overbooked' || info.status === 'payment_failed') cls = 'booked-cancelled';
 				else if (info.status === 'pending' || info.status === 'pending_payment') cls = 'booked-pending';
@@ -339,6 +340,11 @@
 		color: white; cursor: pointer; font-weight: 600;
 	}
 	.day.booked-imported:hover { filter: brightness(1.1); }
+	.day.booked-admin-block {
+		background: var(--color-brown, #6b5642);
+		color: white; cursor: pointer; font-weight: 600;
+	}
+	.day.booked-admin-block:hover { filter: brightness(1.15); }
 	.day.booked-other { background: var(--color-cream-dark); color: var(--color-text); cursor: pointer; }
 
 	/* Multi-night grouping — rounded outer edges, square inner edges, so a

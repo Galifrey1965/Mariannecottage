@@ -61,7 +61,7 @@ export interface Booking {
 	last_payment_error?: string;
 	cancellation_policy_id?: string;
 	admin_notes?: string;
-	source?: 'web' | 'admin' | 'booking_com' | 'test';
+	source?: 'web' | 'admin' | 'booking_com' | 'admin_block' | 'test';
 	ical_uid?: string;
 	ical_summary?: string;
 	external_ref?: string;
