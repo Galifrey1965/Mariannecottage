@@ -202,7 +202,8 @@
 			"tripadvisor": "TripAdvisor",
 			"facebook": "Facebook"
 		},
-		"location_map": "Trouvez-nous sur la Carte"
+		"location_map": "Trouvez-nous sur la Carte",
+		"static_map_alt": "Carte indiquant Marianne Cottage à Couvains, Normandie"
 	},
 	"book": {
 		"title": "Réservez Votre Séjour",
@@ -406,7 +407,9 @@
 			"sort_distance": "Distance",
 			"sort_popularity": "Popularité",
 			"favorites": "Favoris",
-			"favorites_empty": "Aucun favori pour le moment — touchez le cœur sur un lieu pour l'enregistrer ici."
+			"favorites_empty": "Aucun favori pour le moment — touchez le cœur sur un lieu pour l'enregistrer ici.",
+			"results_count": "{count} sur {total} attractions affichées",
+			"results_count_one": "1 sur {total} attractions affichées"
 		},
 		"accessibility": {
 			"label": "Accessibilité",

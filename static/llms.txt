@@ -1,0 +1,62 @@
+# Marianne Cottage
+
+> Two-storey holiday cottage in Couvains, Normandy, France. Bed-and-breakfast accommodation with breakfast included and an optional evening meal. Run by a couple who live on-site.
+
+This file is a structured summary for AI / LLM crawlers. The source-of-truth machine-readable data is the JSON-LD `BedAndBreakfast` schema injected into every page's `<head>`.
+
+## Overview
+
+- **Type:** Bed and breakfast (two private guest bedrooms)
+- **Location:** 1 La Haye, 50680 Couvains, Manche, Normandy, France
+- **Coordinates:** 49.172937 N, -0.988765 W
+- **Languages:** English (primary), French, German
+- **Telephone:** +33 7 80 73 17 04
+- **Email:** booking@mariannecottage.fr
+- **Website:** https://mariannecottage.fr
+
+## Key facts
+
+- Two-storey cottage, not a longère (single-storey style common in Normandy).
+- Two private bedrooms (one double, one twin) with a shared bathroom.
+- Breakfast is included; evening meals available on request when booked in advance.
+- Closest airport: Caen–Carpiquet (45 km).
+- Closest port: Cherbourg (~70 km), Caen-Ouistreham (~80 km).
+- Accessible by car only — no public transport.
+- Pets are not allowed.
+- Free WiFi, free parking, private garden.
+
+## Local area / things to do
+
+- **WW2 history:** Within easy driving distance of the D-Day beaches (Utah, Omaha, Gold, Juno, Sword), Pointe du Hoc, the American cemetery at Colleville-sur-Mer, and the Normandy American Memorial.
+- **Towns:** Bayeux (~25 km — Bayeux Tapestry, cathedral, old town), Saint-Lô (~10 km), Cherbourg (~70 km).
+- **Nature:** Cotentin and Bessin Marshes Regional Natural Park, sea cliffs at Étretat (further afield).
+- **Heritage:** Mont-Saint-Michel (~110 km — day-trip distance), various châteaux and abbeys in the surrounding bocage.
+
+The `/explore` page on the site catalogues the points of interest, distances from the cottage, accessibility level, and (where available) external links.
+
+## Site structure
+
+- [/](https://mariannecottage.fr/) — home page, hero image, overview, highlights, room preview, reviews
+- [/rooms](https://mariannecottage.fr/rooms) — bedroom photos and descriptions, breakfast and evening-meal details
+- [/gallery](https://mariannecottage.fr/gallery) — photo gallery filtered by category (rooms, garden, breakfast, surroundings)
+- [/explore](https://mariannecottage.fr/explore) — points of interest in the surrounding area with distances and accessibility ratings
+- [/contact](https://mariannecottage.fr/contact) — full contact details, directions, embedded map, enquiry form
+- [/book](https://mariannecottage.fr/book) — three-step booking wizard (dates, guest details, review) with live availability and Stripe payment
+- [/legal](https://mariannecottage.fr/legal) — legal notices, GDPR, cookies, terms
+
+## Locale variants
+
+Every page is available in English (default), French (`?lang=fr`), and German (`?lang=de`). The site uses `hreflang` link tags and a sitemap at `/sitemap.xml` to declare the alternates. Path-based locale prefixes (e.g. `/fr/...`) are not used.
+
+## Booking
+
+- Direct booking is through the site's `/book` page; payment via Stripe.
+- Also listed on Booking.com and TripAdvisor; direct booking offers a small discount.
+- Cancellation policy is shown in the booking flow before payment.
+
+## What this site is NOT
+
+- Not a hotel, not a chain, not a holiday rental for self-catering.
+- Not pet-friendly.
+- Not accessible by public transport.
+- Not a longère (single-storey rural Normandy farmhouse) — the cottage has two storeys.

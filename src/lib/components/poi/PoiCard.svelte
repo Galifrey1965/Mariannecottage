@@ -15,6 +15,21 @@
 	let { poi, messages, lang }: Props = $props();
 
 	let mapOpen = $state(false);
+	let distanceChipEl: HTMLButtonElement | undefined = $state();
+	let wasMapOpen = false;
+
+	// When the inline map panel closes, return focus to the distance chip
+	// that opened it — otherwise focus is lost to the document body if the
+	// user closed via the panel's own close button or an outside click.
+	$effect(() => {
+		if (mapOpen) {
+			wasMapOpen = true;
+		} else if (wasMapOpen) {
+			wasMapOpen = false;
+			queueMicrotask(() => distanceChipEl?.focus());
+		}
+	});
+
 	const isFavourite = $derived(favorites.has(poi.id));
 
 	// Derived values
@@ -123,6 +138,7 @@
 		<div class="poi-card__icon-actions">
 			<!-- Distance chip — toggles inline map -->
 			<button
+				bind:this={distanceChipEl}
 				type="button"
 				class="poi-card__distance-chip"
 				class:poi-card__distance-chip--active={mapOpen}

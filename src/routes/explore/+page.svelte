@@ -35,6 +35,17 @@
 		<PoiFilterBar {messages} {lang} bind:selectedCategory bind:sortBy bind:showFavoritesOnly />
 	</div>
 
+	<!-- aria-live region announces filter result count to screen-reader users
+	     when chips toggle. Visually muted but kept in flow so sighted users
+	     also see the running total. -->
+	<p class="results-count" aria-live="polite" aria-atomic="true">
+		{t(
+			messages,
+			filteredAndSorted.length === 1 ? 'poi.filter.results_count_one' : 'poi.filter.results_count',
+			{ count: String(filteredAndSorted.length), total: String(POIS.length) }
+		)}
+	</p>
+
 	{#if showFavoritesOnly && filteredAndSorted.length === 0}
 		<p class="empty-state">{t(messages, 'poi.filter.favorites_empty')}</p>
 	{:else}
@@ -95,5 +106,11 @@
 		font-style: italic;
 		border: 1px dashed var(--theme-border);
 		border-radius: var(--theme-radius-sm);
+	}
+
+	.results-count {
+		margin: 0 0 1rem;
+		font-size: 0.85rem;
+		color: var(--theme-text-muted);
 	}
 </style>

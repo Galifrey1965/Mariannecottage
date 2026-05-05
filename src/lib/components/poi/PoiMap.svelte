@@ -39,8 +39,15 @@
 		}
 	]);
 
+	let closeBtnEl: HTMLButtonElement | undefined = $state();
+
 	$effect(() => {
 		if (!open) return;
+
+		// Move focus into the panel on open so screen-reader / keyboard users
+		// land on the close button (the natural "exit" affordance) rather
+		// than being stranded on the now-pressed distance chip.
+		queueMicrotask(() => closeBtnEl?.focus());
 
 		function handleDocClick(e: MouseEvent) {
 			const panel = (e.target as Element)?.closest?.('.poi-map-panel');
@@ -62,6 +69,7 @@
 			<span class="poi-map-panel__title">{title}</span>
 			<span class="poi-map-panel__distance">{distanceLabel}</span>
 			<button
+				bind:this={closeBtnEl}
 				class="poi-map-panel__close"
 				type="button"
 				onclick={onclose}

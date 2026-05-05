@@ -202,7 +202,8 @@
 			"tripadvisor": "TripAdvisor",
 			"facebook": "Facebook"
 		},
-		"location_map": "Find Us on the Map"
+		"location_map": "Find Us on the Map",
+		"static_map_alt": "Map showing Marianne Cottage in Couvains, Normandy"
 	},
 	"book": {
 		"title": "Book Your Stay",
@@ -406,7 +407,9 @@
 			"sort_distance": "Distance",
 			"sort_popularity": "Popularity",
 			"favorites": "Favourites",
-			"favorites_empty": "No favourites yet — tap the heart on any place to save it here."
+			"favorites_empty": "No favourites yet — tap the heart on any place to save it here.",
+			"results_count": "Showing {count} of {total} attractions",
+			"results_count_one": "Showing 1 of {total} attractions"
 		},
 		"accessibility": {
 			"label": "Accessibility",

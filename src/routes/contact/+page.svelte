@@ -21,7 +21,7 @@
 
 			<div class="info-block">
 				<h3 class="info-heading">{t(messages, 'contact.email_label')}</h3>
-				<a href="mailto:mariannecottage@gmail.com" class="info-link">
+				<a href="mailto:{t(messages, 'contact.email')}" class="info-link">
 					{t(messages, 'contact.email')}
 				</a>
 			</div>
@@ -87,6 +87,9 @@
 				zoom={13}
 				height="400px"
 				{messages}
+				staticMapSrc="/images/cottage-static-map.png"
+				staticMapSrcset="/images/cottage-static-map.png 1x, /images/cottage-static-map@2x.png 2x"
+				staticMapAlt={t(messages, 'contact.static_map_alt')}
 			/>
 		</div>
 	</div>
