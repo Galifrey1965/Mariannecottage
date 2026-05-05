@@ -1,6 +1,6 @@
 <script lang="ts">
 	import '../app.css';
-	import { page } from '$app/stores';
+	import { page, navigating } from '$app/stores';
 	import { afterNavigate } from '$app/navigation';
 	import Header from '$lib/components/Header.svelte';
 	import Footer from '$lib/components/Footer.svelte';
@@ -51,6 +51,10 @@
 
 <div class="app-shell">
 	<a href="#main-content" class="skip-link">{t(messages, 'a11y.skip_to_content')}</a>
+
+	{#if $navigating}
+		<div class="nav-progress" role="progressbar" aria-label={t(messages, 'a11y.loading')}></div>
+	{/if}
 
 	{#each banners as banner (banner.id)}
 		<SiteBanner {banner} {lang} />
@@ -127,5 +131,26 @@
 
 	.skip-link:focus {
 		top: 0.5rem;
+	}
+
+	/* Indeterminate top progress strip — visible only while $navigating is
+	   truthy (between link click and the new page's load() resolving).
+	   Sits above the sticky header (z-index 40 → use 50 here). */
+	.nav-progress {
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		height: 2px;
+		z-index: 60;
+		background: linear-gradient(90deg, transparent, var(--theme-accent, var(--color-sage)), transparent);
+		background-size: 40% 100%;
+		background-repeat: no-repeat;
+		animation: nav-progress-slide 1.1s linear infinite;
+		pointer-events: none;
+	}
+	@keyframes nav-progress-slide {
+		0%   { background-position: -40% 0; }
+		100% { background-position: 140% 0; }
 	}
 </style>

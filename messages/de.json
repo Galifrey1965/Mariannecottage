@@ -178,7 +178,7 @@
 		"address_label": "Adresse",
 		"address": "1 La Haye, 50680 Couvains, Frankreich",
 		"email_label": "E-Mail",
-		"email": "mariannecottage@gmail.com",
+		"email": "booking@mariannecottage.fr",
 		"phone_label": "Telefon",
 		"phone": "+33 (0)7 80 73 17 04",
 		"airport": "Nächster Flughafen",
@@ -290,7 +290,7 @@
 		"directions": "Anfahrt zum Anwesen",
 		"important": "Bitte beachten: Fahren Sie über das Dorf Couvains an. Meiden Sie die Belleval-Straße.",
 		"address": "Adresse",
-		"contact_info": "Fragen? Kontaktieren Sie uns unter mariannecottage@gmail.com oder +33 (0)7 80 73 17 04",
+		"contact_info": "Fragen? Kontaktieren Sie uns unter booking@mariannecottage.fr oder +33 (0)7 80 73 17 04",
 		"label_checkin": "Anreise",
 		"label_checkout": "Abreise",
 		"label_duration": "Dauer",
@@ -389,7 +389,8 @@
 		"completed": "abgeschlossen",
 		"current": "aktuell",
 		"pending": "ausstehend",
-		"side_navigation": "Seitennavigation"
+		"side_navigation": "Seitennavigation",
+		"loading": "Wird geladen"
 	},
 	"poi": {
 		"category": {

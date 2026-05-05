@@ -102,7 +102,12 @@
 	</div>
 
 	<button type="submit" class="submit-btn" disabled={isSubmitting}>
-		{isSubmitting ? t(messages, 'enquiry_form.sending') : t(messages, 'contact.form.submit')}
+		<!-- Lucide "send" (ISC) — https://lucide.dev/icons/send -->
+		<svg class="submit-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+			<path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/>
+			<path d="m21.854 2.147-10.94 10.939"/>
+		</svg>
+		<span>{isSubmitting ? t(messages, 'enquiry_form.sending') : t(messages, 'contact.form.submit')}</span>
 	</button>
 </form>
 
@@ -197,7 +202,12 @@
 		border-radius: var(--theme-radius-pill);
 		cursor: pointer;
 		transition: background 0.25s ease, border-color 0.25s ease;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.55rem;
 	}
+	.submit-icon { flex-shrink: 0; }
 	.submit-btn:hover {
 		background: var(--theme-accent-hover);
 		border-color: var(--theme-accent-hover);

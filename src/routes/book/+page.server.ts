@@ -10,40 +10,24 @@ export const load: PageServerLoad = async () => {
 	const startStr = today.toISOString().split('T')[0];
 	const endStr = endDate.toISOString().split('T')[0];
 
+	// Run the four Supabase calls in parallel — they're independent.
+	// Each .catch returns a sane fallback so one failed lookup doesn't
+	// break the page; matches the prior per-query try/catch behaviour.
+	const [availability, taxSettings, ratePlansResult, testBlockedDates] = await Promise.all([
+		getAvailability(startStr, endStr).catch(() => null),
+		getTaxSettings().catch(() => null),
+		getRatePlans().catch((): RatePlan[] => []),
+		getTestBlockedDates(startStr).catch((): string[] => [])
+	]);
+
 	const availabilityMap: Record<string, boolean> = {};
-	let taxRate = 0.68;
-	let ratePlans: RatePlan[] = [];
-
-	try {
-		const availability = await getAvailability(startStr, endStr);
-		if (availability) {
-			for (const row of availability) {
-				availabilityMap[row.date] = row.available;
-			}
+	if (availability) {
+		for (const row of availability) {
+			availabilityMap[row.date] = row.available;
 		}
-	} catch {
-		// fall through with empty availability map
 	}
 
-	try {
-		const taxSettings = await getTaxSettings();
-		taxRate = taxSettings.taxe_de_sejour_per_person_per_night;
-	} catch {
-		// fall through with sane default
-	}
+	const taxRate = taxSettings?.taxe_de_sejour_per_person_per_night ?? 0.68;
 
-	try {
-		ratePlans = await getRatePlans();
-	} catch {
-		ratePlans = [];
-	}
-
-	let testBlockedDates: string[] = [];
-	try {
-		testBlockedDates = await getTestBlockedDates(startStr);
-	} catch {
-		// non-fatal — calendar just won't distinguish test rows
-	}
-
-	return { availability: availabilityMap, taxRate, ratePlans, testBlockedDates };
+	return { availability: availabilityMap, taxRate, ratePlans: ratePlansResult, testBlockedDates };
 };

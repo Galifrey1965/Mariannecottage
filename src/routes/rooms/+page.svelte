@@ -160,13 +160,9 @@
 	}
 	.breakfast-box { background: var(--theme-surface); }
 	.evening-box { background: var(--theme-surface-2); }
-	/* Decorative line art tucked into the bottom-right third of each panel.
-	   Reserves text width via max-width on .box-content so copy doesn't run
-	   under the artwork on wider viewports. */
+	/* Decorative line art sits in the bottom-right at low opacity; text flows
+	   full-width over it. pointer-events:none on .box-art keeps it inert. */
 	.box-content { position: relative; z-index: 1; }
-	@media (min-width: 600px) {
-		.box-content { max-width: 70%; }
-	}
 	.box-art {
 		position: absolute;
 		right: 1rem;

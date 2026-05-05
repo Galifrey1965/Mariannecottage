@@ -378,8 +378,17 @@
 		margin: 0 0 0.5rem;
 	}
 
-	/* Steps */
-	.steps { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 2rem; }
+	/* Steps — sticky under the main header (56px mobile / 64px ≥600px) so the
+	   wizard progress stays visible while the page scrolls. z-index sits below
+	   the header (40) and above page content. */
+	.steps {
+		display: flex; align-items: center; gap: 0.5rem;
+		position: sticky; top: 56px; z-index: 30;
+		background: var(--color-bg);
+		padding: 0.75rem 0; margin-bottom: 1.5rem;
+		border-bottom: 1px solid var(--color-cream-dark);
+	}
+	@media (min-width: 600px) { .steps { top: 64px; } }
 	.step-btn {
 		display: flex; align-items: center; gap: 0.5rem;
 		padding: 0.375rem 0.75rem; border-radius: 999px;

@@ -111,7 +111,9 @@
 
 <style>
 	/* Toolbar wrapper matches the `/explore` POI filter bar — surface-coloured
-	   panel with thin border, so the two pages share the same chrome. */
+	   panel with thin border, so the two pages share the same chrome.
+	   Sticky under main header (56px mobile / 64px ≥600px); z-index below
+	   the header (40) and above page content. */
 	.filters {
 		display: flex;
 		flex-wrap: wrap;
@@ -121,7 +123,11 @@
 		background: var(--theme-surface);
 		border: var(--theme-border-thin);
 		border-radius: var(--theme-radius-sm);
+		position: sticky;
+		top: 56px;
+		z-index: 30;
 	}
+	@media (min-width: 600px) { .filters { top: 64px; } }
 	.filter-chip {
 		display: inline-flex;
 		align-items: center;

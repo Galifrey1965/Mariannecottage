@@ -267,7 +267,6 @@
 		<div class="legend">
 			<div class="legend-item"><div class="legend-swatch available"></div><span>{t(messages, 'calendar.available')}</span></div>
 			<div class="legend-item"><div class="legend-swatch unavailable"></div><span>{t(messages, 'calendar.unavailable')}</span></div>
-			<div class="legend-item"><div class="legend-swatch past"></div><span>{t(messages, 'calendar.past_date')}</span></div>
 			{#if testBlockedDates.length > 0}
 				<div class="legend-item"><div class="legend-swatch test-blocked"></div><span>{t(messages, 'calendar.test_blocked')}</span></div>
 			{/if}
@@ -307,7 +306,7 @@
 	}
 	.day.available { background: var(--md-sys-color-surface-container-lowest); color: var(--color-text); }
 	.day.available:hover { background: var(--color-cream-dark); }
-	.day.unavailable { background: var(--md-sys-color-error); color: var(--md-sys-color-on-error); cursor: not-allowed; }
+	.day.unavailable { background: transparent; color: var(--color-text-muted); opacity: 0.3; cursor: not-allowed; }
 	.day.test-blocked {
 		background: repeating-linear-gradient(45deg, #f5b942, #f5b942 4px, #e89c1c 4px, #e89c1c 8px);
 		color: #4a3300;
@@ -354,7 +353,7 @@
 	.legend-item { display: flex; align-items: center; gap: 0.5rem; }
 	.legend-swatch { width: 1rem; height: 1rem; border-radius: 4px; }
 	.legend-swatch.available { background: var(--md-sys-color-surface-container-lowest); border: 1px solid var(--color-cream-dark); }
-	.legend-swatch.unavailable { background: var(--md-sys-color-error); }
+	.legend-swatch.unavailable { background: var(--color-disabled); opacity: 0.3; }
 	.legend-swatch.past { background: var(--color-disabled); opacity: 0.3; }
 	.legend-swatch.test-blocked { background: repeating-linear-gradient(45deg, #f5b942, #f5b942 3px, #e89c1c 3px, #e89c1c 6px); }
 

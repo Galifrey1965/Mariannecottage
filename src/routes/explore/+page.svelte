@@ -73,13 +73,19 @@
 		text-wrap: pretty;
 	}
 
+	/* Sticky under main header (56px mobile / 64px ≥600px), z-index below
+	   header (40) and above page content. Surface background already opaque. */
 	.filter-bar-wrapper {
 		margin-bottom: 2rem;
 		padding: 0.85rem 1.1rem;
 		background: var(--theme-surface);
 		border-radius: var(--theme-radius-sm);
 		border: var(--theme-border-thin);
+		position: sticky;
+		top: 56px;
+		z-index: 30;
 	}
+	@media (min-width: 600px) { .filter-bar-wrapper { top: 64px; } }
 
 	.empty-state {
 		padding: 3rem 1.5rem;
