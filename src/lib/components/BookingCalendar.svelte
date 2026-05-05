@@ -129,6 +129,14 @@
 		let e = date;
 		if (e < s) { const tmp = s; s = e; e = tmp; }
 
+		// Same-date second click → 1-night stay (checkout = checkin + 1).
+		// Without this, same-date clicks produce nights=0 and the form shows
+		// identical check-in / check-out dates.
+		if (toISODate(s) === toISODate(e)) {
+			e = new Date(s.getFullYear(), s.getMonth(), s.getDate() + 1);
+			if (!isAvailable(e)) return; // next day unavailable — can't form a 1-night stay
+		}
+
 		if (!isRangeAvailable(s, e)) return; // block if unavailable dates in range
 
 		selectedStart = s;

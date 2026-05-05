@@ -55,7 +55,6 @@
 
 	const realAvailability: Record<string, boolean> = data.availability || {};
 	const testBlockedDates: string[] = data.testBlockedDates || [];
-	const taxRate: number = data.taxRate ?? 0.68;
 
 	const handleDateRangeSelect = (start: Date, end: Date) => {
 		checkInDate = start;
@@ -343,7 +342,6 @@
 				checkOutDate={checkOutDate}
 				nightly_rate={nightly_rate}
 				guests={guests}
-				taxRate={taxRate}
 				cancellationPolicy={cancellationPolicy}
 			/>
 
@@ -491,10 +489,22 @@
 	/* Support */
 	.support-section { text-align: center; margin-top: 3rem; }
 	.support-text { color: var(--color-text-muted); margin: 0 0 1rem; }
+	/* Outlined sage pill — matches the `.cta-button` used on the home page so
+	   the page doesn't introduce a brown variant nothing else uses. */
 	.btn-secondary {
-		display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 2rem;
-		background: var(--color-brown); color: white; font-weight: 600;
-		border-radius: 9999px; text-decoration: none; transition: opacity 0.2s;
+		display: inline-flex; align-items: center; gap: 0.5rem;
+		padding: 0.85rem 2.25rem;
+		background: transparent;
+		color: var(--theme-accent);
+		font-family: var(--theme-font-body);
+		font-weight: 600;
+		font-size: 0.9rem;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		border: 1px solid var(--theme-accent);
+		border-radius: 9999px;
+		text-decoration: none;
+		transition: background 0.25s ease, color 0.25s ease;
 	}
-	.btn-secondary:hover { opacity: 0.9; }
+	.btn-secondary:hover { background: var(--theme-accent); color: var(--theme-bg); }
 </style>

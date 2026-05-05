@@ -57,7 +57,12 @@
 		/>
 	</div>
 	<div class="cta-center">
-		<a href={localePath(lang, '/rooms')} class="cta-button">{t(messages, 'home.rooms.cta')}</a>
+		<a href={localePath(lang, '/rooms')} class="cta-button">
+			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+				<path d="M2 4v16"/><path d="M2 8h18a2 2 0 0 1 2 2v10"/><path d="M2 17h20"/><path d="M6 8v9"/>
+			</svg>
+			{t(messages, 'home.rooms.cta')}
+		</a>
 	</div>
 </section>
 
@@ -88,7 +93,12 @@
 		/>
 	</div>
 	<div class="cta-center">
-		<a href={localePath(lang, '/explore')} class="cta-button">{t(messages, 'home.attractions.cta')}</a>
+		<a href={localePath(lang, '/explore')} class="cta-button">
+			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+				<polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21 3 6"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/>
+			</svg>
+			{t(messages, 'home.attractions.cta')}
+		</a>
 	</div>
 </section>
 
@@ -105,6 +115,9 @@
 	<h2 class="section-heading center">{t(messages, 'home.booking.heading')}</h2>
 	<p class="cta-description">{t(messages, 'home.about.p1')}</p>
 	<a href={localePath(lang, '/book')} class="cta-button large">
+		<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+			<path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="m9 16 2 2 4-4"/>
+		</svg>
 		{t(messages, 'home.booking.cta')}
 	</a>
 </section>
@@ -168,7 +181,9 @@
 
 	.cta-center { text-align: center; }
 	.cta-button {
-		display: inline-block;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
 		padding: 0.85rem 2.25rem;
 		background: transparent;
 		color: var(--theme-accent);

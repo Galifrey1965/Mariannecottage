@@ -155,7 +155,7 @@
 			"description": "Disponible sur arrangement. Mark prépare un dîner maison à partir de 20€ par personne. Faites-nous part de vos préférences lors de la réservation!",
 			"book_note": "Cochez l'option repas du soir sur le formulaire de réservation pour le demander.",
 			"book_option_label": "Ajouter un repas du soir pendant mon séjour",
-			"book_option_hint": "Dîner maison à partir de 20€ par personne — Mark confirmera les détails après la réservation.",
+			"book_option_hint": "Dîner maison, réglé en espèces à Mark à la fin de votre séjour (avec la bière ou le vin). Parlez-en à Mark à votre arrivée pour les détails.",
 			"request_line": "Repas du soir demandé."
 		}
 	},

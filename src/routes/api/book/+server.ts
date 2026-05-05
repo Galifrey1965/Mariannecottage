@@ -4,7 +4,6 @@ import {
 	createBookingAtomic,
 	BookingDatesTakenError,
 	generateBookingReference,
-	getTaxSettings,
 	getRateForBooking
 } from '$lib/server/supabase';
 import { detectLocale, isValidLocale } from '$lib/i18n';
@@ -48,11 +47,10 @@ export const POST: RequestHandler = async ({ request }) => {
 	const nightly_rate = rate.nightly_rate;
 	const subtotal = Math.round(num_nights * nightly_rate * 100) / 100;
 
-	const taxSettings = await getTaxSettings();
-	const taxRate = taxSettings.taxe_de_sejour_per_person_per_night;
-	const tax = Math.round(num_guests * num_nights * taxRate * 100) / 100;
-
-	const total_cost = Math.round((subtotal + tax) * 100) / 100;
+	// Tourist tax is included in the per-night rate Mark quotes, so we don't
+	// add it on top — `tax` stays 0 and total === subtotal.
+	const tax = 0;
+	const total_cost = subtotal;
 	const booking_reference = generateBookingReference();
 
 	const guest_locale = isValidLocale(body.locale)

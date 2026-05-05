@@ -110,23 +110,27 @@
 </div>
 
 <style>
+	/* Toolbar wrapper matches the `/explore` POI filter bar — surface-coloured
+	   panel with thin border, so the two pages share the same chrome. */
 	.filters {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 0.5rem;
+		gap: 0.4rem;
 		margin-bottom: 2rem;
-		padding-bottom: 1.25rem;
-		border-bottom: var(--theme-border-thin);
+		padding: 0.85rem 1.1rem;
+		background: var(--theme-surface);
+		border: var(--theme-border-thin);
+		border-radius: var(--theme-radius-sm);
 	}
 	.filter-chip {
 		display: inline-flex;
 		align-items: center;
-		padding: 0.45rem 1.1rem;
+		padding: 0.4rem 0.95rem;
 		border-radius: var(--theme-radius-pill);
 		font-family: var(--theme-font-body);
 		font-size: 0.78rem;
 		font-weight: 600;
-		letter-spacing: 0.06em;
+		letter-spacing: 0.05em;
 		text-transform: uppercase;
 		border: 1px solid var(--theme-border);
 		background: transparent;
@@ -151,6 +155,7 @@
 	.filter-chip.active:hover {
 		background: var(--theme-accent-hover);
 		border-color: var(--theme-accent-hover);
+		color: var(--theme-bg);
 	}
 
 	.gallery-grid {

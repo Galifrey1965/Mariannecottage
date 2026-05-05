@@ -31,10 +31,15 @@
 
 	const reviews = $derived(rating?.reviews ?? []);
 	const visibleReviews = $derived(reviews.slice(0, MAX_VISIBLE));
-	const placeholderCount = $derived(Math.max(0, TARGET_CARDS - visibleReviews.length));
-	// Append one "leave a review" CTA card after real reviews. If we're padding
-	// to TARGET_CARDS, the first padding slot serves as the CTA — no double-up.
-	const cardCount = $derived(visibleReviews.length + Math.max(1, placeholderCount));
+	// Place the "leave a review" CTA in the middle column of the 3-col grid.
+	// With ≥1 review, slot it at index 1 so row 1 reads [review, CTA, review];
+	// with 0 reviews, render it first and let the quiet placeholders pad out
+	// the row to TARGET_CARDS.
+	const placeholderIndex = $derived(visibleReviews.length === 0 ? 0 : 1);
+	const reviewsBefore = $derived(visibleReviews.slice(0, placeholderIndex));
+	const reviewsAfter = $derived(visibleReviews.slice(placeholderIndex));
+	const quietPlaceholderCount = $derived(Math.max(0, TARGET_CARDS - visibleReviews.length - 1));
+	const cardCount = $derived(visibleReviews.length + 1 + quietPlaceholderCount);
 
 	function formatPublishDate(iso: string | null, fallback: string): string {
 		if (!iso) return fallback;
@@ -70,7 +75,7 @@
 		</header>
 
 		<div class="cards" style="--card-count: {cardCount}">
-			{#each visibleReviews as review, i}
+			{#snippet reviewCard(review: Review)}
 				<article class="card review" lang={review.languageCode}>
 					<div class="card-stars" aria-label={t(messages, 'home.reviews.aria_stars', { rating: String(review.rating) })}>
 						{#each Array(5) as _, j}
@@ -93,6 +98,10 @@
 						</span>
 					</footer>
 				</article>
+			{/snippet}
+
+			{#each reviewsBefore as review}
+				{@render reviewCard(review)}
 			{/each}
 
 			<a class="card placeholder" href={reviewUrl} target="_blank" rel="noopener noreferrer">
@@ -106,7 +115,11 @@
 				<span class="placeholder-cta">{t(messages, 'home.reviews.placeholder.cta')}</span>
 			</a>
 
-			{#each Array(Math.max(0, placeholderCount - 1)) as _}
+			{#each reviewsAfter as review}
+				{@render reviewCard(review)}
+			{/each}
+
+			{#each Array(quietPlaceholderCount) as _}
 				<div class="card placeholder-quiet" aria-hidden="true">
 					<svg class="quiet-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
 						<path d="M12 2l2.95 6.91L22 10l-5.5 4.78L18.18 22 12 18.27 5.82 22l1.68-7.22L2 10l7.05-1.09L12 2z" />
@@ -360,22 +373,30 @@
 		margin-top: 2rem;
 	}
 
+	/* Match the outlined pill used by other section CTAs (Home `.cta-button`).
+	   Previously this was a plain underlined text link, which read as a
+	   different control class to the rest of the site. */
 	.see-all {
 		display: inline-flex;
 		align-items: center;
-		gap: 0.4rem;
-		padding: 0.6rem 1.25rem;
-		font-family: var(--theme-font-body);
-		font-weight: 500;
-		font-size: 0.92rem;
+		gap: 0.5rem;
+		padding: 0.85rem 2.25rem;
+		background: transparent;
 		color: var(--theme-accent);
+		font-family: var(--theme-font-body);
+		font-weight: 600;
+		font-size: 0.9rem;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		border: 1px solid var(--theme-accent);
+		border-radius: var(--theme-radius-pill);
 		text-decoration: none;
-		border-bottom: 1px solid transparent;
-		transition: border-color 0.2s ease;
+		transition: background 0.25s ease, color 0.25s ease;
 	}
 
 	.see-all:hover {
-		border-bottom-color: var(--theme-accent);
+		background: var(--theme-accent);
+		color: var(--theme-bg);
 	}
 
 	.see-all svg {

@@ -131,17 +131,15 @@ describe('POST /api/book', () => {
 		expect(createBookingAtomic).toHaveBeenCalledWith(expect.objectContaining({ nightly_rate: 140 }));
 	});
 
-	it('calculates taxe de séjour as guests × nights × per-person-per-night rate', async () => {
+	it('treats per-night rate as tax-inclusive — total === subtotal, no taxe de séjour added', async () => {
 		vi.mocked(createBookingAtomic).mockResolvedValueOnce({ id: '1' } as any);
 		await POST(makeRequest(validBody));
-		// 2 guests × 3 nights × 0.68 = 4.08
 		// nightly_rate = 120 (mocked plan rate_2_guests)
-		// subtotal = 3 × 120 = 360
-		// total = 360 + 4.08 = 364.08
+		// subtotal = 3 × 120 = 360. Tourist tax is included in the quote per Mark.
 		expect(createBookingAtomic).toHaveBeenCalledWith(expect.objectContaining({
 			subtotal: 360,
-			tax: 4.08,
-			total_cost: 364.08
+			tax: 0,
+			total_cost: 360
 		}));
 	});
 

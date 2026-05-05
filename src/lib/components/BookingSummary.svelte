@@ -9,11 +9,10 @@
 		checkOutDate?: Date;
 		nightly_rate?: number;
 		guests?: number;
-		taxRate?: number;
 		cancellationPolicy?: string;
 	}
 
-	let { messages, lang, checkInDate, checkOutDate, nightly_rate = 120, guests = 1, taxRate = 0.68, cancellationPolicy }: Props = $props();
+	let { messages, lang, checkInDate, checkOutDate, nightly_rate = 120, guests = 1, cancellationPolicy }: Props = $props();
 
 	const nights = $derived(
 		checkInDate && checkOutDate
@@ -21,9 +20,8 @@
 			: 0
 	);
 
-	const subtotal = $derived(nights * nightly_rate);
-	const tax = $derived(Math.round(guests * nights * taxRate * 100) / 100);
-	const total = $derived(subtotal + tax);
+	// Per-night rate Mark quotes is tax-inclusive, so total === subtotal.
+	const total = $derived(nights * nightly_rate);
 
 	const fmtCurrency = (amount: number) => formatCurrency(lang, amount);
 </script>
@@ -42,8 +40,7 @@
 		<hr />
 
 		<div class="summary-rows">
-			<div class="row"><span class="label">{nightly_rate}€ × {nights} {nights > 1 ? t(messages, 'book.nights') : t(messages, 'book.night')}</span><span class="value">{fmtCurrency(subtotal)}</span></div>
-			<div class="row"><span class="label">{t(messages, 'booking_summary.tax')}</span><span class="value">{fmtCurrency(tax)}</span></div>
+			<div class="row"><span class="label">{nightly_rate}€ × {nights} {nights > 1 ? t(messages, 'book.nights') : t(messages, 'book.night')}</span><span class="value">{fmtCurrency(total)}</span></div>
 		</div>
 
 		<hr />

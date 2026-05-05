@@ -126,9 +126,8 @@
 		font-weight: 600;
 		text-decoration: none;
 		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-		transition: all 0.2s ease;
+		transition: padding 0.2s ease, background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
 	}
-	.hero-cta.has-hint { padding: 0.625rem 1.5rem; }
 
 	.hero-cta__main {
 		display: inline-flex;
@@ -142,14 +141,46 @@
 		gap: 0.35rem;
 		font-size: 0.72rem;
 		font-weight: 500;
-		opacity: 0.95;
+		opacity: 1;
 		letter-spacing: 0.02em;
+		max-height: 1.5em;
+		transition: opacity 0.2s ease, max-height 0.2s ease;
+	}
+
+	/* Pointer-fine devices: hide the savings hint by default, expand the
+	   button on hover/focus to reveal it. Touch / coarse pointers always
+	   show it since hover doesn't translate. */
+	@media (hover: hover) and (pointer: fine) {
+		.hero-cta.has-hint .hero-cta__hint {
+			opacity: 0;
+			max-height: 0;
+			overflow: hidden;
+		}
+		.hero-cta.has-hint:hover .hero-cta__hint,
+		.hero-cta.has-hint:focus-visible .hero-cta__hint {
+			opacity: 1;
+			max-height: 1.5em;
+		}
+		.hero-cta.has-hint:hover,
+		.hero-cta.has-hint:focus-visible {
+			padding: 0.625rem 1.5rem;
+		}
+	}
+
+	@media not all and (hover: hover) {
+		.hero-cta.has-hint { padding: 0.625rem 1.5rem; }
 	}
 
 	.hero-cta:hover {
 		background-color: var(--color-sage-hover);
 		transform: scale(1.05);
 		color: white;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.hero-cta,
+		.hero-cta__hint { transition: none; }
+		.hero-cta:hover { transform: none; }
 	}
 
 	.visually-hidden {
