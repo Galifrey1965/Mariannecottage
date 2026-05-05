@@ -534,10 +534,9 @@
 
 	let bcSyncing = $state(false);
 	let bcSyncMessage = $state('');
-	// Cron pulls the BC iCal hourly. We surface the last-sync timestamp so
-	// the admin can decide whether to bother clicking — 5 min ago = skip;
-	// 50 min ago and you're about to leave the page = click. Reactive via
-	// $state so the manual sync updates it without a full reload.
+	// We surface the last-sync timestamp so the admin can decide whether to
+	// bother clicking the manual sync. Reactive via $state so the manual
+	// sync updates it without a full reload.
 	let lastBcSyncAt = $state<string | null>(data.lastBcSyncAt ?? null);
 
 	function formatRelativeTime(iso: string | null): string {
@@ -631,7 +630,6 @@
 				</p>
 				<p class="sub-text">
 					{bcBookings.length === 1 ? '1 active reservation' : `${bcBookings.length} active reservations`}{#if bcPendingPromotionRuns > 0} · {bcPendingPromotionRuns} pending sync{/if}
-					· cron polls hourly
 				</p>
 				<div class="bc-sync-actions">
 					<button onclick={triggerBcSync} disabled={bcSyncing} class="bc-sync-btn" title="Pull the latest Booking.com iCal feed now">
