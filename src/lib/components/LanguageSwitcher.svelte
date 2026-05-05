@@ -86,6 +86,5 @@
 	.flag-btn :global(svg) {
 		display: block;
 		border-radius: 2px;
-		box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.18);
 	}
 </style>
