@@ -113,7 +113,7 @@
 		"title": "Kontakt & Anfahrt",
 		"address_label": "Adresse",
 		"address": "1 La Haye, 50680 Couvains, Frankreich",
-		"email_label": "Email",
+		"email_label": "E-Mail",
 		"email": "mariannecottage@gmail.com",
 		"phone_label": "Telefon",
 		"phone": "+33 (0)7 80 73 17 04",
@@ -126,7 +126,7 @@
 		"form": {
 			"heading": "Senden Sie uns eine Nachricht",
 			"name": "Name",
-			"email": "Email",
+			"email": "E-Mail",
 			"message": "Nachricht",
 			"submit": "Senden",
 			"success": "Danke! Wir werden uns bald bei Ihnen melden.",
