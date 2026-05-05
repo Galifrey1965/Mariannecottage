@@ -44,7 +44,6 @@
 </script>
 
 <svelte:head>
-	<html {lang} />
 	<SEOHead {messages} {lang} {alternates} {rating} />
 	<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 	<link rel="icon" type="image/png" href="/favicon.png" sizes="64x64" />
