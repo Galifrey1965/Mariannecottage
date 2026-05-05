@@ -142,7 +142,21 @@ Still worth confirming on the OVH account dashboard (not blocking, but good hygi
 
 ## Email — transactional
 
-_Originally planned: **Resend** free tier (3,000/month). Now likely **redundant** — Brevo (above) covers transactional sending too at higher daily limits (300/day = 9k/month vs Resend's 3k/month free), and is already configured with DKIM/SPF/DMARC. Decision deferred to Phase 2 when transactional emails are first wired into the SvelteKit app. If we go with Brevo, the only change is the SDK / API endpoint in the app code; DNS already supports it._
+| Field | Value |
+|---|---|
+| **Provider** | **Brevo** (same account as outbound SMTP, above) |
+| **Plan** | Free — 300 emails/day, 9,000/month |
+| **API used** | Brevo v3 transactional HTTP — `POST https://api.brevo.com/v3/smtp/email` |
+| **API key** | `BREVO_API_KEY` env var. Generate in Brevo dashboard → SMTP & API → API Keys (distinct from the SMTP key used for Gmail "Send mail as") |
+| **Sender** | `Marianne Cottage <booking@mariannecottage.fr>` (verified Brevo sender; DKIM/SPF/DMARC live in OVH zone) |
+| **Wired in** | 2026-05-05 (Phase 2 PR 5) — `src/lib/server/email/` module. Webhook (booking-confirmation, refund-issued, overbooked-apology), admin/guest cancel paths (booking-cancelled), `/api/contact` (admin-notify + guest-ack). EN/FR/DE templates. |
+| **Selection logic** | `index.ts` selects `BrevoEmailService` when `BREVO_API_KEY` + `EMAIL_FROM` set and `EMAIL_DRY_RUN != 'true'`; otherwise `StubEmailService` (log-only). |
+| **Cost** | £0/month at cottage volume |
+| **Alternatives if we ever need to move** | Resend (3k/mo free), Postmark, AWS SES, Mailjet — all swappable by writing one new `EmailService` impl and updating `index.ts` |
+
+**Notes:** A short-lived **Resend** integration was committed earlier in the same session (`890f494`) before realising Brevo was already provisioned. Reverted in the next commit. The Resend account Mark created is unused — safe to leave dormant or cancel.
+
+_Originally planned: Resend free tier (3,000/month). Discarded — Brevo covers transactional at higher limits (9k/month vs 3k) and DNS was already configured._
 
 ---
 
