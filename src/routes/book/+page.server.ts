@@ -1,4 +1,5 @@
 import { adminClient, getAvailability, getTaxSettings, getRatePlans, getTestBlockedDates } from '$lib/server/supabase';
+import { runBcSyncLazyIfStale } from '$lib/server/bc-sync';
 import type { PageServerLoad } from './$types';
 import type { RatePlan } from '$lib/server/supabase';
 
@@ -13,6 +14,12 @@ export const load: PageServerLoad = async () => {
 	if (sweepError) {
 		console.error('[/book load] expire_pending_bookings failed:', sweepError);
 	}
+
+	// Lazy BC sync: pull the Booking.com iCal feed if the last sync was
+	// more than 10 min ago. Bounds how often /book hits BC's feed (a busy
+	// flurry of visits → 1 fetch per 10 min). The Netlify daily cron is
+	// the backstop in case nobody visits /book for a long stretch.
+	await runBcSyncLazyIfStale();
 
 	const today = new Date();
 	const endDate = new Date(today);

@@ -1,6 +1,12 @@
-// S-02: hourly Netlify scheduled function that triggers the Booking.com
+// S-02: daily Netlify scheduled function that triggers the Booking.com
 // availability sync. Posts to the in-app /api/sync-booking-com endpoint
-// with the shared secret; the schedule itself is declared in netlify.toml.
+// with the shared secret; the schedule itself is declared inline below.
+//
+// Cadence: daily backstop. The /book page server load runs a debounced
+// lazy sync (runBcSyncLazyIfStale, 10-min window) on every visit, so an
+// active site keeps BC fresh on real demand. This run only catches
+// stretches with no /book traffic. Originally @hourly; that was overkill
+// for a 4-bed B&B — most hours had no bookings on either side to clash.
 //
 // Runtime: Netlify Functions v2 (web-standard handler signature).
 
@@ -39,5 +45,5 @@ export default async () => {
 };
 
 export const config = {
-	schedule: '@hourly'
+	schedule: '@daily'
 };
