@@ -96,8 +96,8 @@
 </section>
 
 <style>
-	.page-section { max-width: 56rem; margin: 0 auto; padding: 5rem 1rem; }
-	@media (min-width: 600px) { .page-section { padding: 6rem 1.5rem; } }
+	.page-section { max-width: 56rem; margin: 0 auto; padding: 2.5rem 1rem; }
+	@media (min-width: 600px) { .page-section { padding: 3.5rem 1.5rem; } }
 	.page-title {
 		font-family: var(--theme-font-display);
 		font-size: clamp(2rem, 4vw, 2.75rem);
@@ -116,8 +116,8 @@
 		color: var(--theme-warm); margin: 0 0 0.4rem;
 		letter-spacing: 0.04em; text-transform: uppercase;
 	}
-	.info-text { color: var(--theme-text-muted); margin: 0; }
-	.info-link { color: var(--theme-accent); text-decoration: none; }
+	.info-text { color: var(--theme-text); margin: 0; font-size: 1rem; line-height: 1.5; }
+	.info-link { color: var(--theme-accent); text-decoration: none; font-size: 1rem; }
 	.info-link:hover { text-decoration: underline; }
 	.directions-box {
 		padding: 1.25rem;

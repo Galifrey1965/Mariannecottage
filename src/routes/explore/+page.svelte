@@ -50,12 +50,12 @@
 	.page-section {
 		max-width: 1440px;
 		margin: 0 auto;
-		padding: 5rem 1rem;
+		padding: 2.5rem 1rem;
 	}
 
 	@media (min-width: 600px) {
 		.page-section {
-			padding: 6rem 1.5rem;
+			padding: 3.5rem 1.5rem;
 		}
 	}
 
