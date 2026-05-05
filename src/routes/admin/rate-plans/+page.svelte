@@ -138,7 +138,7 @@
 
 	.table-wrap { background: var(--color-bg); border: 1px solid var(--color-cream-dark); border-radius: 12px; overflow: hidden; overflow-x: auto; }
 	table { width: 100%; font-size: 0.875rem; border-collapse: collapse; }
-	th { text-align: left; padding: 0.75rem 1rem; font-weight: 500; color: var(--color-text-muted); background: var(--color-cream); border-bottom: 1px solid var(--color-cream-dark); }
+	th { text-align: left; padding: 0.75rem 1rem; font-weight: 600; color: white; background: var(--color-sage); border-bottom: 1px solid var(--color-sage); letter-spacing: 0.02em; }
 	td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--color-cream-dark); }
 	tr:last-child td { border-bottom: none; }
 	tr.muted td { color: var(--color-text-muted); }
