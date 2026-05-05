@@ -39,9 +39,15 @@ async function stripBackground(srcBuffer) {
 	return sharp(out, { raw: { width: info.width, height: info.height, channels: 4 } });
 }
 
-const srcBuffer = await sharp(SRC).toBuffer();
 const meta = await sharp(SRC).metadata();
 console.log(`source: ${meta.width}×${meta.height}`);
+
+// Crop to just the central cottage scene (drop circle frame, MARIANNE/COTTAGE
+// arched text, and the leaf sprigs). Header has limited horizontal space so
+// stripping the chrome lets the cottage itself read at the same footprint.
+// Coordinates calibrated to the 556×461 AI source — re-tune if source changes.
+const CROP = { left: 150, top: 155, width: 260, height: 195 };
+const srcBuffer = await sharp(SRC).extract(CROP).toBuffer();
 
 const transparent = await stripBackground(srcBuffer);
 const transparentBuffer = await transparent.png().toBuffer();

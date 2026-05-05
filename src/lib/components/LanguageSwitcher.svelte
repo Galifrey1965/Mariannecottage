@@ -46,44 +46,46 @@
 	.flag-switcher {
 		display: inline-flex;
 		align-items: center;
-		gap: 0.5rem;
+		gap: 0.55rem;
 	}
 
 	.flag-btn {
+		position: relative;
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		padding: 3px;
-		border: 1px solid transparent;
+		padding: 4px 2px 8px;
+		border: none;
 		background: transparent;
-		border-radius: 5px;
 		cursor: pointer;
 		line-height: 0;
-		transition: border-color 0.15s ease, transform 0.15s ease, opacity 0.15s ease;
-		opacity: 0.7;
+		transition: transform 0.15s ease;
 	}
 
 	.flag-btn:hover {
-		opacity: 1;
 		transform: translateY(-1px);
 	}
 
 	.flag-btn:focus-visible {
-		outline: 2px solid var(--color-sage);
-		outline-offset: 2px;
-		opacity: 1;
+		outline: 2px solid var(--theme-warm, #2a1f15);
+		outline-offset: 3px;
+		border-radius: 3px;
 	}
 
-	.flag-btn.active {
-		opacity: 1;
-	}
-	.flag-btn.active :global(svg) {
-		box-shadow: 0 0 0 1.5px var(--color-sage), 0 0 0 2.5px var(--color-cream);
+	.flag-btn.active::after {
+		content: '';
+		position: absolute;
+		left: 25%;
+		right: 25%;
+		bottom: 1px;
+		height: 2px;
+		background: var(--theme-warm, #2a1f15);
+		border-radius: 1px;
 	}
 
 	.flag-btn :global(svg) {
 		display: block;
 		border-radius: 2px;
-		box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.22);
+		box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.18);
 	}
 </style>
