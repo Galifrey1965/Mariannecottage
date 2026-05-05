@@ -14,22 +14,19 @@
 		created_at: string;
 	};
 
-	let events = $state<Event[]>(data.events as Event[]);
-	let profilesById = $state(data.profilesById ?? {});
-	let page = $state<number>(data.page ?? 0);
-	let pageSize = $state<number>(data.pageSize ?? 50);
-	let total = $state<number>(data.total ?? 0);
+	const events = $derived(data.events as Event[]);
+	const profilesById = $derived(data.profilesById ?? {});
+	const page = $derived(data.page ?? 0);
+	const pageSize = $derived(data.pageSize ?? 50);
+	const total = $derived(data.total ?? 0);
+
+	// Filter inputs are user-editable so they must be $state. Initial values
+	// come from the loaded data; if the user navigates back/forward the inputs
+	// won't auto-resync, which is an acceptable edge case for this admin tool.
 	let actionPrefix = $state<string>(data.actionPrefix ?? '');
 	let fromDate = $state<string>(data.fromDate ?? '');
 	let toDate = $state<string>(data.toDate ?? '');
 	let expanded = $state<Record<string, boolean>>({});
-
-	$effect(() => {
-		events = data.events as Event[];
-		profilesById = data.profilesById ?? {};
-		page = data.page ?? 0;
-		total = data.total ?? 0;
-	});
 
 	function formatDateTime(iso: string): string {
 		return new Date(iso).toLocaleString('en-GB', {
