@@ -29,11 +29,10 @@
 	function switchLocale(newLang: Locale) {
 		if (newLang === lang) return;
 		const url = new URL($page.url);
-		if (newLang === 'en') {
-			url.searchParams.delete('lang');
-		} else {
-			url.searchParams.set('lang', newLang);
-		}
+		// Always set the lang param — including for EN. Deleting it makes the
+		// hook fall back to the cookie, so a user who clicked FR earlier could
+		// never get back to English without clearing cookies / hard reload.
+		url.searchParams.set('lang', newLang);
 		goto(url.pathname + url.search, { invalidateAll: true });
 	}
 </script>
