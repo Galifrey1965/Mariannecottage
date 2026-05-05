@@ -291,47 +291,44 @@
 		<div class="modal" onclick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
 			<h3 class="modal-title">{editing.id ? 'Edit' : 'New'} banner</h3>
 
-			<label class="form-label">Icon</label>
-			<div class="icon-grid">
-				<button
-					type="button"
-					class="icon-tile"
-					class:selected={editing.icon === null}
-					onclick={() => setIcon('')}
-					title="No icon"
-				>
-					<span class="no-icon">∅</span>
-					<span class="tile-label">None</span>
-				</button>
-				{#each ICON_NAMES as iname}
-					<button
-						type="button"
-						class="icon-tile"
-						class:selected={editing.icon === iname}
-						onclick={() => setIcon(iname)}
-						title={ICON_LABELS[iname]}
+			<div class="row-2">
+				<div>
+					<label class="form-label" for="b-icon">Icon</label>
+					<select
+						id="b-icon"
+						class="form-input"
+						value={editing.icon ?? ''}
+						onchange={(e) => setIcon((e.target as HTMLSelectElement).value as SiteBannerIcon | '')}
 					>
-						<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-							{@html ICON_PATHS[iname]}
-						</svg>
-						<span class="tile-label">{ICON_LABELS[iname]}</span>
-					</button>
-				{/each}
+						<option value="">— None —</option>
+						{#each ICON_NAMES as iname}
+							<option value={iname}>{ICON_LABELS[iname]}</option>
+						{/each}
+					</select>
+				</div>
+				<div>
+					<label class="form-label" for="b-palette">Palette</label>
+					<select
+						id="b-palette"
+						class="form-input"
+						value={editing.palette ?? 'sage'}
+						onchange={(e) => setPalette((e.target as HTMLSelectElement).value as SiteBannerPalette)}
+					>
+						{#each PALETTE_NAMES as pname}
+							<option value={pname}>{PALETTES[pname].label}</option>
+						{/each}
+					</select>
+				</div>
 			</div>
 
-			<label class="form-label">Palette</label>
-			<div class="palette-grid">
-				{#each PALETTE_NAMES as pname}
-					<button
-						type="button"
-						class="palette-tile"
-						class:selected={editing.palette === pname}
-						style="background:{PALETTES[pname].bg};color:{PALETTES[pname].fg};border-color:{PALETTES[pname].border};"
-						onclick={() => setPalette(pname)}
-					>
-						<span>{PALETTES[pname].label}</span>
-					</button>
-				{/each}
+			<div
+				class="look-chip"
+				style="background:{PALETTES[editing.palette ?? 'sage'].bg};color:{PALETTES[editing.palette ?? 'sage'].fg};border-color:{PALETTES[editing.palette ?? 'sage'].border};"
+			>
+				{#if editing.icon}
+					<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">{@html ICON_PATHS[editing.icon]}</svg>
+				{/if}
+				<span>{(editing.message_en ?? '').trim() || 'Live look — your message appears here'}</span>
 			</div>
 
 			<label class="form-label" for="b-en">Message (English) *</label>
@@ -534,46 +531,17 @@
 	}
 	.swatch-empty { font-size: 1rem; opacity: 0.45; }
 
-	.icon-grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(74px, 1fr));
-		gap: 0.4rem;
-		margin-top: 0.4rem;
-	}
-	.icon-tile {
-		display: flex; flex-direction: column; align-items: center; gap: 0.25rem;
-		padding: 0.55rem 0.4rem;
-		background: var(--color-cream);
-		border: 1px solid var(--color-cream-dark);
+	.look-chip {
+		display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+		padding: 0.55rem 1rem;
+		margin-top: 0.75rem;
+		border: 1px solid;
 		border-radius: 8px;
-		font-size: 0.7rem;
-		color: var(--color-text-muted);
-		cursor: pointer;
-		transition: all 0.12s ease;
+		font-size: 0.85rem;
+		font-weight: 500;
+		text-align: center;
 	}
-	.icon-tile:hover { background: var(--color-bg); border-color: var(--color-sage); }
-	.icon-tile.selected { background: var(--color-sage); color: white; border-color: var(--color-sage); }
-	.icon-tile .tile-label { font-size: 0.65rem; line-height: 1.1; text-align: center; }
-	.icon-tile .no-icon { font-size: 1.1rem; line-height: 1; }
-
-	.palette-grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
-		gap: 0.4rem;
-		margin-top: 0.4rem;
-	}
-	.palette-tile {
-		padding: 0.55rem 0.6rem;
-		border: 2px solid;
-		border-radius: 8px;
-		font-size: 0.78rem;
-		font-weight: 600;
-		cursor: pointer;
-		text-align: left;
-		transition: transform 0.1s ease, box-shadow 0.1s ease;
-	}
-	.palette-tile:hover { transform: translateY(-1px); box-shadow: 0 3px 8px rgba(0,0,0,0.12); }
-	.palette-tile.selected { outline: 3px solid var(--color-sage); outline-offset: 2px; }
+	.look-chip svg { flex-shrink: 0; }
 
 	.badge-recurring {
 		display: inline-block;

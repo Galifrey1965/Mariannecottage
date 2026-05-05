@@ -52,6 +52,13 @@
 </script>
 
 <div class="preview-root" role="dialog" aria-modal="true" aria-label="Banner preview">
+	<button
+		type="button"
+		class="preview-dismiss-layer"
+		onclick={onclose}
+		aria-label="Click to close preview"
+	></button>
+
 	<div class="preview-banner-slot">
 		<SiteBannerView banner={previewBanner} {lang} suppressEffect />
 	</div>
@@ -60,7 +67,7 @@
 		Close preview ✕
 	</button>
 
-	<p class="preview-hint">Auto-closes in {Math.round(autoCloseMs / 1000)}s · Esc or click here</p>
+	<p class="preview-hint">Auto-closes in {Math.round(autoCloseMs / 1000)}s · click anywhere or Esc</p>
 
 	<BannerEffect
 		effect={previewBanner.effect}
@@ -73,10 +80,21 @@
 	.preview-root {
 		position: fixed;
 		inset: 0;
-		background: rgba(20, 20, 20, 0.78);
+		/* Transparent — admin page shows through. Click anywhere to dismiss. */
+		background: transparent;
 		z-index: 2000;
 		display: flex;
 		flex-direction: column;
+	}
+	.preview-dismiss-layer {
+		position: absolute;
+		inset: 0;
+		background: transparent;
+		border: none;
+		padding: 0;
+		margin: 0;
+		cursor: pointer;
+		z-index: 2000;
 	}
 	.preview-banner-slot {
 		position: relative;
@@ -87,28 +105,29 @@
 		top: 1rem;
 		right: 1rem;
 		z-index: 2002;
-		background: rgba(255, 255, 255, 0.95);
-		color: #222;
-		border: none;
+		background: var(--color-bg, #fff);
+		color: var(--color-text, #222);
+		border: 1px solid var(--color-cream-dark, #d8c9a4);
 		padding: 0.6rem 1rem;
 		border-radius: 9999px;
 		font-weight: 600;
 		font-size: 0.9rem;
 		cursor: pointer;
-		box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+		box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
 	}
-	.preview-close:hover { background: #fff; }
+	.preview-close:hover { background: var(--color-cream, #f6f1e6); }
 	.preview-hint {
 		position: fixed;
 		bottom: 1.25rem;
 		left: 50%;
 		transform: translateX(-50%);
 		z-index: 2002;
-		color: rgba(255, 255, 255, 0.85);
+		color: var(--color-text-muted, #666);
 		font-size: 0.8rem;
 		margin: 0;
 		padding: 0.4rem 0.9rem;
-		background: rgba(0, 0, 0, 0.4);
+		background: var(--color-bg, #fff);
+		border: 1px solid var(--color-cream-dark, #d8c9a4);
 		border-radius: 9999px;
 	}
 </style>
