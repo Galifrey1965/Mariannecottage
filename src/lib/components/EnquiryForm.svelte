@@ -1,8 +1,6 @@
 <script lang="ts">
 	import { t } from '$lib/i18n';
 	import type { Messages } from '$lib/i18n';
-	import Textfield from '@smui/textfield';
-	import TextfieldIcon from '@smui/textfield/icon';
 
 	interface Props {
 		messages: Messages;
@@ -60,49 +58,47 @@
 	{/if}
 
 	<div class="field">
-		<Textfield
-			variant="outlined"
-			bind:value={formData.name}
-			label={t(messages, 'contact.form.name')}
-			required
-			style="width: 100%;"
-			input$id="name"
-			input$autocomplete="name"
-		>
-			<TextfieldIcon slot="leadingIcon">
-				<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-			</TextfieldIcon>
-		</Textfield>
+		<label for="enq-name" class="label">{t(messages, 'contact.form.name')}</label>
+		<div class="input-wrap">
+			<svg class="leading-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+			<input
+				id="enq-name"
+				name="name"
+				type="text"
+				autocomplete="name"
+				required
+				bind:value={formData.name}
+				class="input has-icon"
+			/>
+		</div>
 	</div>
 
 	<div class="field">
-		<Textfield
-			variant="outlined"
-			bind:value={formData.email}
-			label={t(messages, 'contact.form.email')}
-			type="email"
-			required
-			style="width: 100%;"
-			input$id="email"
-			input$autocomplete="email"
-		>
-			<TextfieldIcon slot="leadingIcon">
-				<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-			</TextfieldIcon>
-		</Textfield>
+		<label for="enq-email" class="label">{t(messages, 'contact.form.email')}</label>
+		<div class="input-wrap">
+			<svg class="leading-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+			<input
+				id="enq-email"
+				name="email"
+				type="email"
+				autocomplete="email"
+				required
+				bind:value={formData.email}
+				class="input has-icon"
+			/>
+		</div>
 	</div>
 
 	<div class="field">
-		<Textfield
-			variant="outlined"
-			textarea
+		<label for="enq-message" class="label">{t(messages, 'contact.form.message')}</label>
+		<textarea
+			id="enq-message"
+			name="message"
+			rows="5"
+			required
 			bind:value={formData.message}
-			label={t(messages, 'contact.form.message')}
-			required
-			style="width: 100%;"
-			input$id="message"
-			input$rows={5}
-		/>
+			class="input textarea"
+		></textarea>
 	</div>
 
 	<button type="submit" class="submit-btn" disabled={isSubmitting}>
@@ -114,30 +110,77 @@
 	.form {
 		display: flex;
 		flex-direction: column;
-		gap: 1rem;
+		gap: 1.1rem;
 	}
 
 	.alert {
-		padding: 1rem;
-		border-radius: var(--md-shape-corner-small);
+		padding: 0.875rem 1rem;
+		border-radius: var(--theme-radius-md, 0.5rem);
 		font-size: 0.875rem;
 	}
-
 	.alert-success {
-		background-color: var(--color-success-bg);
-		border: 1px solid var(--color-success-border);
-		color: var(--color-success-text);
+		background-color: var(--color-success-bg, #e9f3ea);
+		border: 1px solid var(--color-success-border, #b9d8bd);
+		color: var(--color-success-text, #2d5a35);
 	}
-
 	.alert-error {
-		background-color: var(--color-error-bg);
-		border: 1px solid var(--color-error-border);
-		color: var(--color-error-text);
+		background-color: var(--color-error-bg, #f6e4e4);
+		border: 1px solid var(--color-error-border, #d8b9b9);
+		color: var(--color-error-text, #7a2a2a);
 	}
 
 	.field {
 		display: flex;
 		flex-direction: column;
+		gap: 0.35rem;
+	}
+
+	.label {
+		font-size: 0.78rem;
+		font-weight: 500;
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+		color: var(--theme-warm);
+	}
+
+	.input-wrap {
+		position: relative;
+		display: flex;
+		align-items: center;
+	}
+
+	.leading-icon {
+		position: absolute;
+		left: 0.85rem;
+		color: var(--theme-text-muted, #6b5a48);
+		pointer-events: none;
+	}
+
+	.input {
+		width: 100%;
+		box-sizing: border-box;
+		padding: 0.75rem 1rem;
+		font-family: var(--theme-font-body, inherit);
+		font-size: 0.95rem;
+		color: var(--theme-text, #222);
+		background: var(--theme-bg, #fff);
+		border: 1px solid var(--theme-border, #d8cdb8);
+		border-radius: var(--theme-radius-md, 0.5rem);
+		transition: border-color 0.2s, box-shadow 0.2s;
+	}
+	.input.has-icon {
+		padding-left: 2.5rem;
+	}
+	.input:focus {
+		outline: none;
+		border-color: var(--theme-accent, #7a4a2a);
+		box-shadow: 0 0 0 3px color-mix(in srgb, var(--theme-accent, #7a4a2a) 18%, transparent);
+	}
+	.textarea {
+		resize: vertical;
+		min-height: 6.5rem;
+		line-height: 1.45;
+		font-family: var(--theme-font-body, inherit);
 	}
 
 	.submit-btn {
@@ -155,15 +198,13 @@
 		cursor: pointer;
 		transition: background 0.25s ease, border-color 0.25s ease;
 	}
-
 	.submit-btn:hover {
 		background: var(--theme-accent-hover);
 		border-color: var(--theme-accent-hover);
 	}
-
 	.submit-btn:disabled {
-		background: var(--color-disabled);
-		border-color: var(--color-disabled);
+		background: var(--color-disabled, #c9c1b4);
+		border-color: var(--color-disabled, #c9c1b4);
 		cursor: not-allowed;
 	}
 </style>
