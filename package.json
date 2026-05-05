@@ -5,7 +5,8 @@
 	"type": "module",
 	"scripts": {
 		"dev": "vite dev",
-		"build": "vite build",
+		"build": "node --env-file-if-exists=.env scripts/fetch-google-rating.mjs && vite build",
+		"fetch-rating": "node --env-file-if-exists=.env scripts/fetch-google-rating.mjs",
 		"preview": "vite preview",
 		"prepare": "npm run smui-theme-light && svelte-kit sync || echo ''",
 		"smui-theme-light": "smui-theme compile static/smui.css -i src/theme",

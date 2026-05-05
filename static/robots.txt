@@ -1,3 +1,8 @@
 User-agent: *
 Allow: /
-Sitemap: https://mariannecottage.netlify.app/sitemap.xml
+
+# Admin area is gated by auth; keep crawlers out as belt-and-braces
+Disallow: /admin/
+Disallow: /api/
+
+Sitemap: https://mariannecottage.fr/sitemap.xml

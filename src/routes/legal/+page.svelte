@@ -6,10 +6,6 @@
 	const { messages } = data;
 </script>
 
-<svelte:head>
-	<title>{t(messages, 'legal.title')}</title>
-</svelte:head>
-
 <section class="page-section">
 	<h1 class="page-title">{t(messages, 'legal.title')}</h1>
 

@@ -11,11 +11,6 @@
 	const { lang, messages } = data;
 </script>
 
-<svelte:head>
-	<title>{t(messages, 'meta.title')}</title>
-	<meta name="description" content={t(messages, 'meta.description')} />
-</svelte:head>
-
 <!-- Hero Section (contains h1) -->
 <HeroSection
 	{lang}

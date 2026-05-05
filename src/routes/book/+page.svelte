@@ -138,10 +138,6 @@
 	}
 </script>
 
-<svelte:head>
-	<title>{t(messages, 'book.title')}</title>
-</svelte:head>
-
 <section class="page-section">
 	<h1 class="page-title">{t(messages, 'book.title')}</h1>
 

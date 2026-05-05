@@ -1,7 +1,35 @@
 {
 	"meta": {
 		"title": "Marianne Cottage - Bed & Breakfast in der Normandie",
-		"description": "Charmantes Bauernhaus aus dem 19. Jahrhundert mit 2 Schlafzimmern im Herzen der Normandie. Kostenlos WiFi, Parkplatz und Frühstück inbegriffen."
+		"description": "Charmantes Bauernhaus aus dem 19. Jahrhundert mit 2 Schlafzimmern im Herzen der Normandie. Kostenlos WiFi, Parkplatz und Frühstück inbegriffen.",
+		"home": {
+			"title": "Marianne Cottage - Bed & Breakfast in der Normandie",
+			"description": "Charmante Pension mit 2 Zimmern im Herzen der Normandie, nahe Bayeux. WLAN, Parkplatz und Frühstück inklusive. Direkt buchen für beste Preise."
+		},
+		"rooms": {
+			"title": "Zimmer - Marianne Cottage B&B Normandie",
+			"description": "Zwei Zimmer mit eigenem Bad in unserer Pension nahe Bayeux. Antikes Mobiliar, Gartenblick und Frühstück bei jedem Aufenthalt inklusive."
+		},
+		"gallery": {
+			"title": "Galerie - Fotos von Marianne Cottage",
+			"description": "Fotos von Marianne Cottage in Couvains, Normandie: Zimmer, Garten, umliegende Landschaft und nahegelegene D-Day-Strände."
+		},
+		"explore": {
+			"title": "Normandie entdecken - Marianne Cottage",
+			"description": "Sehenswertes in der Nähe: Teppich von Bayeux, D-Day-Landungsstrände, Mont-Saint-Michel und ruhige Dörfer der Normandie."
+		},
+		"contact": {
+			"title": "Kontakt - Marianne Cottage Bed & Breakfast",
+			"description": "Kontaktieren Sie uns zu Ihrem Aufenthalt im Marianne Cottage in Couvains, Normandie. Telefon, E-Mail oder Nachricht senden."
+		},
+		"book": {
+			"title": "Buchen - Marianne Cottage Normandie",
+			"description": "Verfügbarkeit prüfen und Aufenthalt im Marianne Cottage buchen. Zwei Zimmer mit eigenem Bad, Frühstück inklusive, direkt buchen."
+		},
+		"legal": {
+			"title": "Rechtliches - Marianne Cottage",
+			"description": "Rechtliche Hinweise, Datenschutzerklärung und Nutzungsbedingungen für Marianne Cottage, Pension in Couvains, Normandie."
+		}
 	},
 	"nav": {
 		"home": "Startseite",
@@ -82,6 +110,12 @@
 		"suite": {
 			"heading": "Geräumige 2-Zimmer Suite",
 			"description": "Unsere Suite verfügt über zwei Schlafzimmer, ein modernes Badezimmer mit begehbarer Dusche und einen schönen Gartenblick. Komfortable Betten, frische Bettwäsche und durchdachte Details machen diesen Ort zum perfekten Zuhause auf Zeit."
+		},
+		"images": {
+			"double_bedroom": "Doppelbett-Schlafzimmer im Marianne Cottage",
+			"twin_bedroom": "Schlafzimmer mit zwei Einzelbetten im Marianne Cottage",
+			"bathroom": "Badezimmer im Marianne Cottage",
+			"living_dining": "Wohn- und Essbereich im Marianne Cottage"
 		},
 		"amenities": {
 			"heading": "Ausstattung",

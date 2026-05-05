@@ -8,10 +8,6 @@
 	const { lang, messages } = data;
 </script>
 
-<svelte:head>
-	<title>{t(messages, 'contact.title')}</title>
-</svelte:head>
-
 <section class="page-section">
 	<h1 class="page-title">{t(messages, 'contact.title')}</h1>
 

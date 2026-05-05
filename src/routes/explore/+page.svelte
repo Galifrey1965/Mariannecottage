@@ -27,10 +27,6 @@
 	);
 </script>
 
-<svelte:head>
-	<title>{t(messages, 'explore.title')}</title>
-</svelte:head>
-
 <section class="page-section">
 	<h1 class="page-title">{t(messages, 'explore.title')}</h1>
 	<p class="page-description">{t(messages, 'explore.description')}</p>

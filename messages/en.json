@@ -1,7 +1,35 @@
 {
 	"meta": {
 		"title": "Marianne Cottage - Bed & Breakfast in Normandy",
-		"description": "Charming 1800s farmhouse with 2 bedrooms in the heart of Normandy. Free WiFi, parking, and breakfast included."
+		"description": "Charming 1800s farmhouse with 2 bedrooms in the heart of Normandy. Free WiFi, parking, and breakfast included.",
+		"home": {
+			"title": "Marianne Cottage - Bed & Breakfast in Normandy",
+			"description": "Charming 2-bedroom B&B in the heart of Normandy near Bayeux. Free WiFi, parking, and breakfast included. Book direct for the best rates."
+		},
+		"rooms": {
+			"title": "Rooms - Marianne Cottage B&B Normandy",
+			"description": "Two ensuite bedrooms in our farmhouse B&B near Bayeux. Antique-style furnishings, garden views, and breakfast included with every stay."
+		},
+		"gallery": {
+			"title": "Gallery - Marianne Cottage Photos",
+			"description": "Photos of Marianne Cottage in Couvains, Normandy: rooms, gardens, the surrounding countryside, and nearby D-Day beaches."
+		},
+		"explore": {
+			"title": "Explore Normandy - Marianne Cottage",
+			"description": "Things to see near our cottage: Bayeux Tapestry, D-Day landing beaches, Mont-Saint-Michel, and quiet Normandy villages within easy reach."
+		},
+		"contact": {
+			"title": "Contact - Marianne Cottage Bed & Breakfast",
+			"description": "Get in touch about your stay at Marianne Cottage in Couvains, Normandy. Find us, call, email, or send a message."
+		},
+		"book": {
+			"title": "Book Your Stay - Marianne Cottage Normandy",
+			"description": "Check availability and book your stay at Marianne Cottage. Two ensuite rooms, breakfast included, secure direct booking."
+		},
+		"legal": {
+			"title": "Legal & Privacy - Marianne Cottage",
+			"description": "Legal information, privacy policy, and terms for Marianne Cottage Bed & Breakfast in Couvains, Normandy."
+		}
 	},
 	"nav": {
 		"home": "Home",
@@ -82,6 +110,12 @@
 		"suite": {
 			"heading": "Spacious 2-Bedroom Suite",
 			"description": "Our suite features two bedrooms, a modern walk-in shower bathroom with quality toiletries, and beautiful garden views. Comfortable beds, fresh linens, and thoughtful touches make this the perfect home away from home."
+		},
+		"images": {
+			"double_bedroom": "Double-bed bedroom at Marianne Cottage",
+			"twin_bedroom": "Twin-bed bedroom at Marianne Cottage",
+			"bathroom": "Bathroom at Marianne Cottage",
+			"living_dining": "Living and dining area at Marianne Cottage"
 		},
 		"amenities": {
 			"heading": "Amenities",

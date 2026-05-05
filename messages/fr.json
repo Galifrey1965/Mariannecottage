@@ -1,7 +1,35 @@
 {
 	"meta": {
 		"title": "Marianne Cottage - Chambres d'Hôtes en Normandie",
-		"description": "Charmante maison de ferme du 19ème siècle avec 2 chambres au cœur de la Normandie. WiFi gratuit, parking gratuit et petit-déjeuner inclus."
+		"description": "Charmante maison de ferme du 19ème siècle avec 2 chambres au cœur de la Normandie. WiFi gratuit, parking gratuit et petit-déjeuner inclus.",
+		"home": {
+			"title": "Marianne Cottage - Chambres d'Hôtes en Normandie",
+			"description": "Chambre d'hôtes de charme avec 2 chambres au cœur de la Normandie, près de Bayeux. WiFi, parking et petit-déjeuner inclus. Réservez en direct."
+		},
+		"rooms": {
+			"title": "Chambres - Marianne Cottage Normandie",
+			"description": "Deux chambres avec salle de bain privative dans notre chambre d'hôtes près de Bayeux. Mobilier ancien, vue sur jardin, petit-déjeuner inclus."
+		},
+		"gallery": {
+			"title": "Galerie - Photos de Marianne Cottage",
+			"description": "Photos de Marianne Cottage à Couvains, en Normandie : les chambres, le jardin, la campagne environnante et les plages du Débarquement."
+		},
+		"explore": {
+			"title": "Découvrir la Normandie - Marianne Cottage",
+			"description": "À voir près de notre maison d'hôtes : Tapisserie de Bayeux, plages du Débarquement, Mont-Saint-Michel et villages normands à proximité."
+		},
+		"contact": {
+			"title": "Contact - Chambres d'Hôtes Marianne Cottage",
+			"description": "Contactez-nous pour votre séjour à Marianne Cottage, à Couvains en Normandie. Téléphone, e-mail ou formulaire de contact."
+		},
+		"book": {
+			"title": "Réserver - Marianne Cottage Normandie",
+			"description": "Vérifiez les disponibilités et réservez votre séjour à Marianne Cottage. Deux chambres avec salle de bain, petit-déjeuner inclus, réservation directe."
+		},
+		"legal": {
+			"title": "Mentions Légales - Marianne Cottage",
+			"description": "Mentions légales, politique de confidentialité et conditions d'utilisation de Marianne Cottage, chambres d'hôtes à Couvains, Normandie."
+		}
 	},
 	"nav": {
 		"home": "Accueil",
@@ -82,6 +110,12 @@
 		"suite": {
 			"heading": "Suite Spacieuse 2 Chambres",
 			"description": "Notre suite dispose de deux chambres, d'une salle de bains moderne avec douche à l'italienne et de jolies vues sur le jardin. Les lits confortables, le linge frais et les petites attentions font de cet endroit la maison loin de chez vous parfaite."
+		},
+		"images": {
+			"double_bedroom": "Chambre avec lit double à Marianne Cottage",
+			"twin_bedroom": "Chambre avec lits jumeaux à Marianne Cottage",
+			"bathroom": "Salle de bain de Marianne Cottage",
+			"living_dining": "Salon-salle à manger de Marianne Cottage"
 		},
 		"amenities": {
 			"heading": "Équipements",

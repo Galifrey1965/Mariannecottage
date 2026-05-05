@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { page } from '$app/stores';
+	import { goto } from '$app/navigation';
 	import { LOCALES, t, type Locale } from '$lib/i18n';
 	import type { Messages } from '$lib/i18n';
 
@@ -21,8 +23,13 @@
 
 	function switchLocale(newLang: Locale) {
 		if (newLang === lang) return;
-		document.cookie = `marianne_locale=${newLang}; path=/; max-age=${60 * 60 * 24 * 365}; SameSite=Lax`;
-		location.reload();
+		const url = new URL($page.url);
+		if (newLang === 'en') {
+			url.searchParams.delete('lang');
+		} else {
+			url.searchParams.set('lang', newLang);
+		}
+		goto(url.pathname + url.search, { invalidateAll: true });
 	}
 </script>
 

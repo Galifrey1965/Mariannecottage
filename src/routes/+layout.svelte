@@ -15,11 +15,17 @@
 
 	let { children, data }: { children: any; data: LayoutData } = $props();
 
-	const { lang, messages, banners } = data;
+	const { lang, messages, banners, rating } = data;
 
 	const baseUrl = 'https://mariannecottage.fr';
-	const currentPath = $page.url.pathname;
-	const alternates = LOCALES.map(l => ({ lang: l, url: `${baseUrl}${currentPath}` }));
+	const alternates = $derived(
+		LOCALES.map(l => ({
+			lang: l,
+			url: l === 'en'
+				? `${baseUrl}${$page.url.pathname}`
+				: `${baseUrl}${$page.url.pathname}?lang=${l}`
+		}))
+	);
 
 	// scroll-behavior: smooth on <html> can cause SvelteKit's scroll reset to land mid-page
 	afterNavigate(({ type }) => {
@@ -40,7 +46,7 @@
 
 <svelte:head>
 	<html {lang} />
-	<SEOHead {messages} {lang} alternates={alternates} />
+	<SEOHead {messages} {lang} {alternates} {rating} />
 	<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 	<link rel="icon" type="image/png" href="/favicon.png" sizes="64x64" />
 </svelte:head>

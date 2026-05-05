@@ -32,10 +32,6 @@
 	];
 </script>
 
-<svelte:head>
-	<title>{t(messages, 'gallery.title')}</title>
-</svelte:head>
-
 <section class="page-section">
 	<h1 class="page-title center">{t(messages, 'gallery.title')}</h1>
 	<PhotoGallery {messages} {images} />

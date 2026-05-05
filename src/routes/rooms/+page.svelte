@@ -17,10 +17,6 @@
 	};
 </script>
 
-<svelte:head>
-	<title>{t(messages, 'rooms.title')}</title>
-</svelte:head>
-
 <section class="page-section">
 	<h1 class="page-title">{t(messages, 'rooms.title')}</h1>
 
@@ -30,10 +26,10 @@
 		<p class="description">{t(messages, 'rooms.suite.description')}</p>
 
 		<div class="image-grid">
-			<img src="/images/gallery/bedroom-double-bed.jpeg" alt="Bedroom 1" class="room-image" />
-			<img src="/images/gallery/bedroom-twin-full.jpeg" alt="Bedroom 2" class="room-image" />
-			<img src="/images/gallery/bathroom-main.jpeg" alt="Bathroom" class="room-image" />
-			<img src="/images/gallery/living-dining-room.jpeg" alt="Common area" class="room-image" />
+			<img src="/images/gallery/bedroom-double-bed.jpeg" alt={t(messages, 'rooms.images.double_bedroom')} class="room-image" loading="lazy" decoding="async" />
+			<img src="/images/gallery/bedroom-twin-full.jpeg" alt={t(messages, 'rooms.images.twin_bedroom')} class="room-image" loading="lazy" decoding="async" />
+			<img src="/images/gallery/bathroom-main.jpeg" alt={t(messages, 'rooms.images.bathroom')} class="room-image" loading="lazy" decoding="async" />
+			<img src="/images/gallery/living-dining-room.jpeg" alt={t(messages, 'rooms.images.living_dining')} class="room-image" loading="lazy" decoding="async" />
 		</div>
 	</div>
 
