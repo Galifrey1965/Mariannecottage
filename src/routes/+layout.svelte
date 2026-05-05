@@ -14,7 +14,7 @@
 
 	let { children, data }: { children: any; data: LayoutData } = $props();
 
-	const { lang, messages, banners, rating } = data;
+	const { lang, messages, banners, rating, isAdmin } = data;
 
 	const baseUrl = 'https://mariannecottage.fr';
 	const alternates = $derived(
@@ -39,7 +39,10 @@
 		{ label: t(messages, 'nav.gallery'), icon: '<rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>', href: localePath(lang, '/gallery') },
 		{ label: t(messages, 'nav.explore'), icon: '<circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/>', href: localePath(lang, '/explore') },
 		{ label: t(messages, 'nav.contact'), icon: '<rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>', href: localePath(lang, '/contact') },
-		{ label: t(messages, 'nav.book'), icon: '<path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="m9 16 2 2 4-4"/>', href: localePath(lang, '/book') }
+		{ label: t(messages, 'nav.book'), icon: '<path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="m9 16 2 2 4-4"/>', href: localePath(lang, '/book') },
+		...(isAdmin
+			? [{ label: 'Admin', icon: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/>', href: '/admin' }]
+			: [])
 	];
 </script>
 

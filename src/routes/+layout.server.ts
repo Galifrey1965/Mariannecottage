@@ -34,5 +34,6 @@ export const load: LayoutServerLoad = async ({ locals }) => {
 	// both <html lang> via transformPageChunk and the messages bundle).
 	const lang = locals.lang;
 	const [banners, rating] = await Promise.all([getActiveBanners(), loadRating()]);
-	return { lang, messages: allMessages[lang], banners, rating };
+	const isAdmin = locals.profile?.role === 'owner' || locals.profile?.role === 'developer';
+	return { lang, messages: allMessages[lang], banners, rating, isAdmin };
 };

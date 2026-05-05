@@ -23,8 +23,6 @@
 
 <div class="admin-shell">
 	<header class="admin-header">
-		<a href="/" class="back-link">← Back to site</a>
-
 		{#if showShell}
 			<nav class="admin-nav" aria-label="Admin sections">
 				{#each navItems as item}
@@ -69,16 +67,6 @@
 		flex-wrap: wrap;
 	}
 	@media (min-width: 600px) { .admin-header { padding: 0.55rem 1.5rem; } }
-
-	.back-link {
-		font-size: 0.875rem;
-		color: var(--color-text-muted);
-		text-decoration: none;
-		padding: 0.35rem 0.6rem;
-		border-radius: 8px;
-		transition: background 0.15s ease, color 0.15s ease;
-	}
-	.back-link:hover { background: var(--color-cream); color: var(--color-sage); }
 
 	.admin-nav {
 		display: flex;
