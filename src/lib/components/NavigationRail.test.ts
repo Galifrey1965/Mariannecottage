@@ -1,10 +1,9 @@
 // @vitest-environment happy-dom
 import { describe, it, expect, vi } from 'vitest';
 import { render } from '@testing-library/svelte';
-import { writable } from 'svelte/store';
 
-vi.mock('$app/stores', () => ({
-	page: writable({ url: new URL('http://localhost/'), params: {} })
+vi.mock('$app/state', () => ({
+	page: { url: new URL('http://localhost/'), params: {} }
 }));
 
 const { default: NavigationRail } = await import('./NavigationRail.svelte');
