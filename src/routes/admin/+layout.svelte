@@ -14,7 +14,8 @@
 		{ href: '/admin/availability',          label: 'Availability' },
 		{ href: '/admin/rate-plans',            label: 'Rate plans' },
 		{ href: '/admin/cancellation-policies', label: 'Policies' },
-		{ href: '/admin/banners',               label: 'Banners' }
+		{ href: '/admin/banners',               label: 'Banners' },
+		{ href: '/admin/audit-log',             label: 'Audit log' }
 	];
 
 	function isActive(item: NavItem, pathname: string): boolean {
