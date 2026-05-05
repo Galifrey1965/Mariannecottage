@@ -4,7 +4,7 @@
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
-	const { messages } = data;
+	const messages = $derived(data.messages);
 
 	const images = [
 		// Exterior & garden (existing photos)

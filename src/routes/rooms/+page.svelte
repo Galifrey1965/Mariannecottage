@@ -3,7 +3,7 @@
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
-	const { messages } = data;
+	const messages = $derived(data.messages);
 
 	const amenityIcons: Record<string, string> = {
 		comfortable_beds: '<path d="M2 20v-8a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v8"/><path d="M2 17h20"/><path d="M6 10V7a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/><path d="M12 10V7a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/>',

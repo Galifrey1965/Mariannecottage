@@ -7,7 +7,8 @@
 	import type { RatePlan } from '$lib/server/supabase';
 
 	let { data }: { data: PageData } = $props();
-	const { lang, messages } = data;
+	const lang = $derived(data.lang);
+	const messages = $derived(data.messages);
 
 	let step = $state<1 | 2 | 3>(1);
 

@@ -8,7 +8,9 @@
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
-	const { lang, messages, rating } = data;
+	const lang = $derived(data.lang);
+	const messages = $derived(data.messages);
+	const rating = $derived(data.rating);
 </script>
 
 <!-- Hero Section (contains h1) -->

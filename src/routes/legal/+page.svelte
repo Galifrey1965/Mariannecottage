@@ -3,7 +3,7 @@
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
-	const { messages } = data;
+	const messages = $derived(data.messages);
 </script>
 
 <section class="page-section">

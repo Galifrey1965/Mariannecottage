@@ -8,7 +8,8 @@
 	import { favorites } from '$lib/stores/favorites.svelte';
 
 	let { data }: { data: PageData } = $props();
-	const { lang, messages } = data;
+	const lang = $derived(data.lang);
+	const messages = $derived(data.messages);
 
 	let selectedCategory = $state<PoiCategory | 'all'>('all');
 	let sortBy = $state<'distance' | 'popularity'>('distance');

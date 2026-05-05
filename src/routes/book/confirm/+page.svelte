@@ -5,7 +5,8 @@
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
-	const { lang, messages } = data;
+	const lang = $derived(data.lang);
+	const messages = $derived(data.messages);
 	const booking = $derived(data.booking);
 
 	const ref = $derived(booking.booking_reference);
