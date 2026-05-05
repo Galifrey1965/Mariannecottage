@@ -59,7 +59,7 @@
 		"learn_more": "Learn more",
 		"map_blocked": {
 			"title": "Map needs Google Maps cookies",
-			"body": "This map is powered by Google Maps, which sets third-party cookies. Enable optional cookies to view it.",
+			"body": "Google Maps sets third-party cookies.",
 			"cta": "Show map"
 		}
 	},
@@ -152,7 +152,11 @@
 		},
 		"evening_meal": {
 			"heading": "Evening Meal",
-			"description": "Available by arrangement. Mark prepares a home-cooked dinner from €20 per person. Let us know your preferences when you book!"
+			"description": "Available by arrangement. Mark prepares a home-cooked dinner from €20 per person. Let us know your preferences when you book!",
+			"book_note": "Tick the evening meal option on the booking form to request it for your stay.",
+			"book_option_label": "Add an evening meal during my stay",
+			"book_option_hint": "Home-cooked dinner from €20 per person — Mark will confirm details after booking.",
+			"request_line": "Evening meal requested."
 		}
 	},
 	"gallery": {
@@ -353,7 +357,7 @@
 		"bayeux_desc": "Famous medieval town with stunning cathedral"
 	},
 	"legal": {
-		"title": "Mentions Légales / Legal Notice / Impressum",
+		"title": "Legal Notice",
 		"placeholder": "Legal information will be published here shortly, including SIRET number, company details, hosting provider, and data protection policy.",
 		"todo_heading": "Information to be completed:",
 		"siret": "SIRET number",

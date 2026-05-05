@@ -58,8 +58,8 @@
 		"reject": "Nur notwendige",
 		"learn_more": "Mehr erfahren",
 		"map_blocked": {
-			"title": "Karte benötigt Google-Maps-Cookies",
-			"body": "Diese Karte wird von Google Maps bereitgestellt und setzt Drittanbieter-Cookies. Aktivieren Sie optionale Cookies, um sie anzuzeigen.",
+			"title": "Karte mit Google-Maps-Cookies",
+			"body": "Google Maps setzt Drittanbieter-Cookies.",
 			"cta": "Karte anzeigen"
 		}
 	},
@@ -152,7 +152,11 @@
 		},
 		"evening_meal": {
 			"heading": "Abendessen",
-			"description": "Nach Absprache erhältlich. Mark bereitet ein hausgemachtes Dinner ab 20€ pro Person zu. Teilen Sie uns Ihre Vorlieben bei der Buchung mit!"
+			"description": "Nach Absprache erhältlich. Mark bereitet ein hausgemachtes Dinner ab 20€ pro Person zu. Teilen Sie uns Ihre Vorlieben bei der Buchung mit!",
+			"book_note": "Setzen Sie im Buchungsformular ein Häkchen, um das Abendessen für Ihren Aufenthalt zu bestellen.",
+			"book_option_label": "Abendessen während meines Aufenthalts hinzufügen",
+			"book_option_hint": "Hausgemachtes Dinner ab 20€ pro Person — Mark bestätigt die Details nach der Buchung.",
+			"request_line": "Abendessen gewünscht."
 		}
 	},
 	"gallery": {

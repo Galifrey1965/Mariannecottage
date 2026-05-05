@@ -46,6 +46,7 @@
 	let guestCountry = $state('');
 	let guests = $state(1);
 	let specialRequests = $state('');
+	let eveningMeal = $state(false);
 
 	let submitting = $state(false);
 	let formError = $state('');
@@ -108,7 +109,11 @@
 					num_guests: guests,
 					check_in_date: formatDateISO(checkInDate),
 					check_out_date: formatDateISO(checkOutDate),
-					special_requests: specialRequests.trim() || undefined
+					special_requests:
+						(eveningMeal
+							? t(messages, 'rooms.evening_meal.request_line') +
+								(specialRequests.trim() ? '\n\n' + specialRequests.trim() : '')
+							: specialRequests.trim()) || undefined
 				})
 			});
 			const result = await res.json();
@@ -238,6 +243,16 @@
 						</div>
 
 						<div class="field">
+							<label class="evening-meal-option">
+								<input type="checkbox" bind:checked={eveningMeal} class="evening-meal-checkbox" />
+								<span class="evening-meal-text">
+									<span class="evening-meal-label">{t(messages, 'rooms.evening_meal.book_option_label')}</span>
+									<span class="evening-meal-hint">{t(messages, 'rooms.evening_meal.book_option_hint')}</span>
+								</span>
+							</label>
+						</div>
+
+						<div class="field">
 							<label for="specialRequests" class="field-label">{t(messages, 'book.special_requests')}</label>
 							<textarea id="specialRequests" bind:value={specialRequests} class="field-input textarea" rows="3" placeholder={t(messages, 'book.placeholder_requests')}></textarea>
 						</div>
@@ -265,6 +280,9 @@
 						{/if}
 						{#if guestCountry}
 							<div class="review-row"><span class="review-label">{t(messages, 'book.label_country')}</span><span class="review-value">{guestCountry}</span></div>
+						{/if}
+						{#if eveningMeal}
+							<div class="review-row"><span class="review-label">{t(messages, 'rooms.evening_meal.heading')}</span><span class="review-value">✓</span></div>
 						{/if}
 						{#if specialRequests}
 							<div class="review-block"><span class="review-label">{t(messages, 'book.label_special_requests')}</span><p class="review-value">{specialRequests}</p></div>
@@ -410,6 +428,25 @@
 	.field-input.error { border-color: var(--md-sys-color-error); }
 	.field-input.textarea { resize: none; }
 	.field-error { font-size: 0.75rem; color: var(--md-sys-color-error); margin: 0.25rem 0 0; }
+
+	.evening-meal-option {
+		display: flex; align-items: flex-start; gap: 0.75rem;
+		padding: 0.85rem 1rem;
+		border: 1px solid var(--color-cream-dark);
+		border-radius: 8px;
+		cursor: pointer;
+		background: var(--color-cream);
+		transition: border-color 0.15s ease, background 0.15s ease;
+	}
+	.evening-meal-option:hover { border-color: var(--color-sage); }
+	.evening-meal-checkbox {
+		flex-shrink: 0; width: 1.1rem; height: 1.1rem; margin-top: 0.15rem;
+		accent-color: var(--color-sage); cursor: pointer;
+	}
+	.evening-meal-text { display: flex; flex-direction: column; gap: 0.2rem; }
+	.evening-meal-label { font-size: 0.95rem; font-weight: 500; color: var(--color-text); }
+	.evening-meal-hint { font-size: 0.82rem; color: var(--color-text-muted); line-height: 1.45; }
+
 	.field-row { display: grid; grid-template-columns: 1fr; gap: 1rem; }
 	@media (min-width: 600px) { .field-row { grid-template-columns: 1fr 1fr; } }
 

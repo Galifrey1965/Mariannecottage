@@ -58,8 +58,8 @@
 		"reject": "Essentiels uniquement",
 		"learn_more": "En savoir plus",
 		"map_blocked": {
-			"title": "La carte nécessite les cookies Google Maps",
-			"body": "Cette carte est fournie par Google Maps, qui dépose des cookies tiers. Activez les cookies optionnels pour la voir.",
+			"title": "Carte avec cookies Google Maps",
+			"body": "Google Maps dépose des cookies tiers.",
 			"cta": "Afficher la carte"
 		}
 	},
@@ -152,7 +152,11 @@
 		},
 		"evening_meal": {
 			"heading": "Repas du Soir",
-			"description": "Disponible sur arrangement. Mark prépare un dîner maison à partir de 20€ par personne. Faites-nous part de vos préférences lors de la réservation!"
+			"description": "Disponible sur arrangement. Mark prépare un dîner maison à partir de 20€ par personne. Faites-nous part de vos préférences lors de la réservation!",
+			"book_note": "Cochez l'option repas du soir sur le formulaire de réservation pour le demander.",
+			"book_option_label": "Ajouter un repas du soir pendant mon séjour",
+			"book_option_hint": "Dîner maison à partir de 20€ par personne — Mark confirmera les détails après la réservation.",
+			"request_line": "Repas du soir demandé."
 		}
 	},
 	"gallery": {

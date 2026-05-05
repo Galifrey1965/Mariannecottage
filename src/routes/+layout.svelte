@@ -9,7 +9,6 @@
 	import SEOHead from '$lib/components/SEOHead.svelte';
 	import SiteBanner from '$lib/components/SiteBanner.svelte';
 	import CookieConsent from '$lib/components/CookieConsent.svelte';
-	import ThemeSwitcher from '$lib/components/dev/ThemeSwitcher.svelte';
 	import { LOCALES, localePath, t } from '$lib/i18n';
 	import type { LayoutData } from './$types';
 
@@ -73,7 +72,6 @@
 </div>
 
 <CookieConsent {lang} {messages} />
-<ThemeSwitcher />
 
 <style>
 	:global(html) {

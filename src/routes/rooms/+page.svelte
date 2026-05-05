@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { localePath, t } from '$lib/i18n';
+	import { t } from '$lib/i18n';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
-	const { lang, messages } = data;
+	const { messages } = data;
 
 	const amenityIcons: Record<string, string> = {
 		comfortable_beds: '<path d="M2 20v-8a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v8"/><path d="M2 17h20"/><path d="M6 10V7a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/><path d="M12 10V7a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/>',
@@ -77,9 +77,7 @@
 	<div class="highlight-box evening-box">
 		<h2 class="section-heading">{t(messages, 'rooms.evening_meal.heading')}</h2>
 		<p class="box-text">{t(messages, 'rooms.evening_meal.description')}</p>
-		<a href={localePath(lang, '/contact')} class="cta-button">
-			{t(messages, 'contact.form.submit')}
-		</a>
+		<p class="box-text-note">{t(messages, 'rooms.evening_meal.book_note')}</p>
 	</div>
 </section>
 
@@ -125,6 +123,7 @@
 	.breakfast-box { background: var(--theme-surface); }
 	.evening-box { background: var(--theme-surface-2); }
 	.box-text { color: var(--theme-text-muted); margin: 0 0 1.5rem; line-height: 1.7; }
+	.box-text-note { color: var(--theme-text-muted); font-size: 0.9rem; font-style: italic; margin: 0; line-height: 1.6; }
 	.cta-button {
 		display: inline-block;
 		padding: 0.85rem 2rem;

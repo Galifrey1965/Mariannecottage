@@ -36,11 +36,11 @@
 	/* Accent */
 	--color-gold: var(--theme-gold);
 
-	/* Footer */
-	--color-footer-bg: #5d3a1a;
-	--color-footer-text: #fef3c7;
-	--color-footer-accent: #fde68a;
-	--color-footer-border: #7c4a23;
+	/* Footer — sage green to match the brand palette */
+	--color-footer-bg: var(--theme-accent);
+	--color-footer-text: #ffffff;
+	--color-footer-accent: rgba(255, 255, 255, 0.78);
+	--color-footer-border: rgba(255, 255, 255, 0.18);
 
 	/* Alerts */
 	--color-success-bg: #f0fdf4;
