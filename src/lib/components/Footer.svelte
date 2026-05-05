@@ -69,6 +69,15 @@
 		z-index: 10;
 	}
 
+	/* NavigationRail (72px, position: fixed) is visible at 600–839px and
+	   overlays the left edge of any element outside .main-content. The
+	   footer is a sibling of .app-body so it doesn't inherit the
+	   .main-content margin-left:72px shift — give it the same offset
+	   here so the brand block isn't clipped behind the rail. */
+	@media (min-width: 600px) and (max-width: 839px) {
+		.footer { padding-left: 72px; }
+	}
+
 	.footer-inner {
 		max-width: 1440px;
 		margin: 0 auto;

@@ -22,14 +22,19 @@
 import { writeFile, mkdir } from 'node:fs/promises';
 import { resolve, dirname } from 'node:path';
 
-const KEY = process.env.PUBLIC_GOOGLE_MAPS_API_KEY ?? process.env.GOOGLE_MAPS_API_KEY;
+const KEY =
+	process.env.GOOGLE_STATIC_MAPS ??
+	process.env.GOOGLE_MAPS_API_KEY ??
+	process.env.PUBLIC_GOOGLE_MAPS_API_KEY;
 const LAT = 49.172937;
 const LNG = -0.988765;
 const OUT_1X = resolve(process.cwd(), 'static/images/cottage-static-map.png');
 const OUT_2X = resolve(process.cwd(), 'static/images/cottage-static-map@2x.png');
 
 if (!KEY) {
-	console.warn('[fetch-static-map] PUBLIC_GOOGLE_MAPS_API_KEY not set — skipping fetch.');
+	console.warn(
+		'[fetch-static-map] No key found (looked for GOOGLE_STATIC_MAPS, GOOGLE_MAPS_API_KEY, PUBLIC_GOOGLE_MAPS_API_KEY) — skipping fetch.'
+	);
 	process.exit(0);
 }
 
