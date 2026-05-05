@@ -465,6 +465,92 @@ export async function getDefaultCancellationPolicy(): Promise<CancellationPolicy
 	return (data as CancellationPolicy | null) ?? null;
 }
 
+// PR 4: cancellation_policies admin CRUD.
+
+export interface CancellationPolicyInput {
+	name: string;
+	description?: string | null;
+	schedule: CancellationPolicySchedule[];
+	is_default?: boolean;
+}
+
+export async function listCancellationPoliciesAdmin(): Promise<CancellationPolicy[]> {
+	const { data, error } = await adminClient
+		.from('cancellation_policies')
+		.select('*')
+		.order('is_default', { ascending: false })
+		.order('name', { ascending: true });
+	if (error) throw error;
+	return (data as CancellationPolicy[] | null) ?? [];
+}
+
+export async function createCancellationPolicy(
+	input: CancellationPolicyInput
+): Promise<CancellationPolicy> {
+	if (input.is_default) await clearDefaultCancellationPolicy(null);
+	const { data, error } = await adminClient
+		.from('cancellation_policies')
+		.insert([
+			{
+				name: input.name,
+				description: input.description ?? null,
+				schedule: input.schedule,
+				is_default: !!input.is_default
+			}
+		])
+		.select()
+		.single();
+	if (error) throw error;
+	return data as CancellationPolicy;
+}
+
+export async function updateCancellationPolicy(
+	id: string,
+	input: Partial<CancellationPolicyInput>
+): Promise<CancellationPolicy> {
+	if (input.is_default) await clearDefaultCancellationPolicy(id);
+	const patch: Record<string, unknown> = { updated_at: new Date().toISOString() };
+	if (input.name !== undefined) patch.name = input.name;
+	if (input.description !== undefined) patch.description = input.description;
+	if (input.schedule !== undefined) patch.schedule = input.schedule;
+	if (input.is_default !== undefined) patch.is_default = input.is_default;
+	const { data, error } = await adminClient
+		.from('cancellation_policies')
+		.update(patch)
+		.eq('id', id)
+		.select()
+		.single();
+	if (error) throw error;
+	return data as CancellationPolicy;
+}
+
+export async function deleteCancellationPolicy(id: string): Promise<void> {
+	const { error } = await adminClient.from('cancellation_policies').delete().eq('id', id);
+	if (error) throw error;
+}
+
+// Returns count of bookings (across all statuses) snapshot to this policy.
+// Used by the admin delete-policy guard to refuse delete when historical
+// bookings still reference the row.
+export async function countBookingsUsingPolicy(id: string): Promise<number> {
+	const { count, error } = await adminClient
+		.from('bookings')
+		.select('id', { count: 'exact', head: true })
+		.eq('cancellation_policy_id', id);
+	if (error) throw error;
+	return count ?? 0;
+}
+
+async function clearDefaultCancellationPolicy(exceptId: string | null): Promise<void> {
+	let query = adminClient
+		.from('cancellation_policies')
+		.update({ is_default: false, updated_at: new Date().toISOString() })
+		.eq('is_default', true);
+	if (exceptId) query = query.neq('id', exceptId);
+	const { error } = await query;
+	if (error) throw error;
+}
+
 // Tax settings (B-04)
 export async function getTaxSettings(): Promise<TaxSettings> {
 	const { data, error } = await anonClient
