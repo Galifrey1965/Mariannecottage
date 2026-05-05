@@ -53,8 +53,13 @@
 	.flake {
 		position: absolute;
 		top: -10vh;
-		color: #fff;
-		text-shadow: 0 0 4px rgba(180, 220, 255, 0.6);
+		color: #ffffff;
+		/* Layered shadow so flakes read against light cream / sunny photos:
+		   crisp blue edge → soft blue halo → subtle ground shadow. */
+		text-shadow:
+			0 0 1px rgba(40, 80, 130, 0.85),
+			0 0 6px rgba(100, 150, 200, 0.65),
+			0 2px 6px rgba(20, 40, 70, 0.30);
 		animation-name: snowfall;
 		animation-timing-function: linear;
 		animation-iteration-count: infinite;

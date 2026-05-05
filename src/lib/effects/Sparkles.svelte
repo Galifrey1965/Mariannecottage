@@ -15,10 +15,10 @@
 	const sparkles = Array.from({ length: count }, (_, i) => ({
 		left: Math.random() * 100,
 		top: Math.random() * 100,
-		size: 0.4 + Math.random() * 0.8,
+		size: 0.7 + Math.random() * 1.1,
 		delay: Math.random() * 4,
 		duration: 1.6 + Math.random() * 2.4,
-		hue: 35 + Math.random() * 30,
+		hue: 35 + Math.random() * 25,
 		key: i
 	}));
 
@@ -53,15 +53,33 @@
 	.sparkle {
 		position: absolute;
 		display: block;
-		background: radial-gradient(circle, hsl(var(--hue) 95% 75%) 0%, transparent 70%);
-		border-radius: 50%;
+		background: radial-gradient(
+			circle,
+			#fffae8 0%,
+			hsl(var(--hue) 95% 60%) 35%,
+			hsl(var(--hue) 80% 45%) 65%,
+			transparent 80%
+		);
+		/* 4-point sparkle shape — diamond with concave sides reads as a glint. */
+		clip-path: polygon(
+			50% 0%,
+			58% 42%,
+			100% 50%,
+			58% 58%,
+			50% 100%,
+			42% 58%,
+			0% 50%,
+			42% 42%
+		);
 		opacity: 0;
 		animation: twinkle ease-in-out infinite;
-		filter: drop-shadow(0 0 6px hsl(var(--hue) 95% 70% / 0.7));
+		filter:
+			drop-shadow(0 0 4px hsl(var(--hue) 90% 50% / 0.85))
+			drop-shadow(0 1px 2px rgba(0, 0, 0, 0.25));
 	}
 	@keyframes twinkle {
-		0%, 100% { opacity: 0; transform: scale(0.4); }
-		50%      { opacity: 1; transform: scale(1.1); }
+		0%, 100% { opacity: 0; transform: scale(0.3) rotate(0deg); }
+		50%      { opacity: 1; transform: scale(1.1) rotate(45deg); }
 	}
 	@media (prefers-reduced-motion: reduce) {
 		.sparkle-layer { display: none; }
