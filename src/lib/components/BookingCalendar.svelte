@@ -306,13 +306,13 @@
 	}
 	.day.available { background: var(--md-sys-color-surface-container-lowest); color: var(--color-text); }
 	.day.available:hover { background: var(--color-cream-dark); }
-	.day.unavailable { background: transparent; color: var(--color-text-muted); opacity: 0.3; cursor: not-allowed; }
+	.day.unavailable { background: transparent; color: var(--color-text-muted); opacity: 0.3; cursor: default; }
 	.day.test-blocked {
 		background: repeating-linear-gradient(45deg, #f5b942, #f5b942 4px, #e89c1c 4px, #e89c1c 8px);
 		color: #4a3300;
 		cursor: not-allowed;
 	}
-	.day.past { color: var(--color-text-muted); opacity: 0.3; cursor: not-allowed; background: transparent; }
+	.day.past { color: var(--color-text-muted); opacity: 0.3; cursor: default; background: transparent; }
 	/* Outside-month days — preview from prev/next month for visual continuity
 	   on bookings spanning month boundaries. Display-only, never clickable. */
 	.day.outside { opacity: 0.35; cursor: default; pointer-events: none; }
