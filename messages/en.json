@@ -23,6 +23,13 @@
 	"banner": {
 		"construction": "This site is under construction. Bookings are not yet live — please check back soon."
 	},
+	"cookies": {
+		"title": "We value your privacy",
+		"body": "We use essential cookies to keep the site running and to remember your language preference. With your consent we also use Google Maps for location features and email tracking pixels for delivery confirmation.",
+		"accept": "Accept all",
+		"reject": "Essential only",
+		"learn_more": "Learn more"
+	},
 	"home": {
 		"hero": {
 			"tagline": "A haven of peace in the heart of Normandy",

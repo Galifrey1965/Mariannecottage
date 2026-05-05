@@ -23,6 +23,13 @@
 	"banner": {
 		"construction": "Ce site est en cours de construction. Les réservations ne sont pas encore disponibles — merci de revenir bientôt."
 	},
+	"cookies": {
+		"title": "Nous respectons votre vie privée",
+		"body": "Nous utilisons des cookies essentiels au fonctionnement du site et à la mémorisation de votre langue. Avec votre consentement, nous utilisons aussi Google Maps pour les fonctionnalités de localisation et des pixels de suivi pour la confirmation de livraison des e-mails.",
+		"accept": "Tout accepter",
+		"reject": "Essentiels uniquement",
+		"learn_more": "En savoir plus"
+	},
 	"home": {
 		"hero": {
 			"tagline": "Un havre de paix au cœur de la Normandie",

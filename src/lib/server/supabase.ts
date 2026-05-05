@@ -465,6 +465,108 @@ export async function getDefaultCancellationPolicy(): Promise<CancellationPolicy
 	return (data as CancellationPolicy | null) ?? null;
 }
 
+// 2026-05-05: site_banners — admin-managed top-of-page messages.
+
+export type SiteBannerType = 'info' | 'construction' | 'discount' | 'seasonal' | 'announcement';
+
+export interface SiteBanner {
+	id: string;
+	type: SiteBannerType;
+	message_en: string;
+	message_fr?: string | null;
+	message_de?: string | null;
+	enabled: boolean;
+	display_order: number;
+	starts_at?: string | null;
+	ends_at?: string | null;
+	created_at: string;
+	updated_at: string;
+}
+
+export interface SiteBannerInput {
+	type: SiteBannerType;
+	message_en: string;
+	message_fr?: string | null;
+	message_de?: string | null;
+	enabled?: boolean;
+	display_order?: number;
+	starts_at?: string | null;
+	ends_at?: string | null;
+}
+
+// Public — RLS already filters to active rows.
+export async function getActiveBanners(): Promise<SiteBanner[]> {
+	const { data, error } = await anonClient
+		.from('site_banners')
+		.select('*')
+		.order('display_order', { ascending: true });
+	if (error) {
+		console.error('getActiveBanners failed:', error);
+		return [];
+	}
+	return (data as SiteBanner[] | null) ?? [];
+}
+
+// Admin — service-role bypasses RLS so disabled rows come back too.
+export async function listSiteBannersAdmin(): Promise<SiteBanner[]> {
+	const { data, error } = await adminClient
+		.from('site_banners')
+		.select('*')
+		.order('display_order', { ascending: true })
+		.order('created_at', { ascending: false });
+	if (error) throw error;
+	return (data as SiteBanner[] | null) ?? [];
+}
+
+export async function createSiteBanner(input: SiteBannerInput): Promise<SiteBanner> {
+	const { data, error } = await adminClient
+		.from('site_banners')
+		.insert([
+			{
+				type: input.type,
+				message_en: input.message_en,
+				message_fr: input.message_fr ?? null,
+				message_de: input.message_de ?? null,
+				enabled: input.enabled ?? true,
+				display_order: input.display_order ?? 0,
+				starts_at: input.starts_at ?? null,
+				ends_at: input.ends_at ?? null
+			}
+		])
+		.select()
+		.single();
+	if (error) throw error;
+	return data as SiteBanner;
+}
+
+export async function updateSiteBanner(
+	id: string,
+	input: Partial<SiteBannerInput>
+): Promise<SiteBanner> {
+	const patch: Record<string, unknown> = { updated_at: new Date().toISOString() };
+	if (input.type !== undefined) patch.type = input.type;
+	if (input.message_en !== undefined) patch.message_en = input.message_en;
+	if (input.message_fr !== undefined) patch.message_fr = input.message_fr;
+	if (input.message_de !== undefined) patch.message_de = input.message_de;
+	if (input.enabled !== undefined) patch.enabled = input.enabled;
+	if (input.display_order !== undefined) patch.display_order = input.display_order;
+	if (input.starts_at !== undefined) patch.starts_at = input.starts_at;
+	if (input.ends_at !== undefined) patch.ends_at = input.ends_at;
+	const { data, error } = await adminClient
+		.from('site_banners')
+		.update(patch)
+		.eq('id', id)
+		.select()
+		.single();
+	if (error) throw error;
+	return data as SiteBanner;
+}
+
+export async function deleteSiteBanner(id: string): Promise<void> {
+	const { error } = await adminClient.from('site_banners').delete().eq('id', id);
+	if (error) throw error;
+}
+
 // PR 4: cancellation_policies admin CRUD.
 
 export interface CancellationPolicyInput {

@@ -21,6 +21,7 @@
 				<a href="/admin" class="nav-link">Bookings</a>
 				<a href="/admin/rate-plans" class="nav-link">Rate plans</a>
 				<a href="/admin/cancellation-policies" class="nav-link">Policies</a>
+				<a href="/admin/banners" class="nav-link">Banners</a>
 
 				<span class="user-pill">{displayName}</span>
 

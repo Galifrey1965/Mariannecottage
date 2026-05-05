@@ -23,6 +23,13 @@
 	"banner": {
 		"construction": "Diese Website befindet sich im Aufbau. Buchungen sind noch nicht verfügbar — bitte schauen Sie bald wieder vorbei."
 	},
+	"cookies": {
+		"title": "Wir schätzen Ihre Privatsphäre",
+		"body": "Wir verwenden notwendige Cookies, damit die Website funktioniert und Ihre Sprache merkt. Mit Ihrer Einwilligung nutzen wir außerdem Google Maps für Standortfunktionen sowie Tracking-Pixel zur Zustellbestätigung von E-Mails.",
+		"accept": "Alle akzeptieren",
+		"reject": "Nur notwendige",
+		"learn_more": "Mehr erfahren"
+	},
 	"home": {
 		"hero": {
 			"tagline": "Ein Hafen des Friedens im Herzen der Normandie",
