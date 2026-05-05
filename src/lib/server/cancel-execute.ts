@@ -17,6 +17,8 @@ import {
 } from './supabase';
 import { computeRefund, type RefundQuote } from './cancellation';
 import { getStripe } from './stripe';
+import { emailService } from './email';
+import { bookingToEmailDetails, localeFromBooking } from './email-adapter';
 
 const CANCELLABLE_STATUSES = new Set(['pending', 'pending_payment', 'confirmed']);
 
@@ -191,5 +193,33 @@ export async function executeCancellation(input: ExecuteCancelInput): Promise<Ex
 		}
 	});
 
-	return { booking: updated as Booking, stripeRefundId };
+	const updatedBooking = updated as Booking;
+
+	// Notify the guest. Failure here doesn't roll back the cancellation —
+	// the row is cancelled, the refund is in flight, and we don't want a
+	// flaky email to make the admin think the action didn't take. The
+	// charge.refunded webhook will follow up with the refund-issued email
+	// once Stripe actually clears the refund.
+	if (updatedBooking.guest_email) {
+		try {
+			const refundSummary =
+				stripeRefundId && quote && quote.refund_amount > 0
+					? {
+							refundAmount: quote.refund_amount,
+							refundPct: quote.refund_pct,
+							policyName: quote.policy_name
+					  }
+					: null;
+			await emailService.sendBookingCancelled(
+				bookingToEmailDetails(updatedBooking),
+				refundSummary,
+				localeFromBooking(updatedBooking)
+			);
+		} catch (err) {
+			const message = err instanceof Error ? err.message : 'unknown';
+			console.error(`[cancel-execute] cancellation email failed for ${booking.id}: ${message}`);
+		}
+	}
+
+	return { booking: updatedBooking, stripeRefundId };
 }

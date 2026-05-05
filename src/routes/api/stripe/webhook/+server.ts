@@ -25,8 +25,14 @@
 import type { RequestHandler } from './$types';
 import { json } from '@sveltejs/kit';
 import type Stripe from 'stripe';
-import { adminClient } from '$lib/server/supabase';
+import { adminClient, type Booking } from '$lib/server/supabase';
 import { getStripe, getWebhookSecret } from '$lib/server/stripe';
+import { emailService } from '$lib/server/email';
+import {
+	bookingToEmailDetails,
+	buildCancelMagicLink,
+	localeFromBooking
+} from '$lib/server/email-adapter';
 
 export const POST: RequestHandler = async ({ request }) => {
 	const stripe = getStripe();
@@ -130,6 +136,24 @@ async function handlePaymentIntentSucceeded(
 				prior_status: booking.status
 			}
 		);
+
+		// Apologise: the late-success race means we took the guest's money for a
+		// stay we no longer have inventory for, then auto-refunded it. Distinct
+		// template from the user-cancelled flow — framing is "we let you down".
+		if (!result.duplicate) {
+			await safeSend('refunded-overbooked', booking.id, async () => {
+				const full = await loadFullBooking(booking.id);
+				if (!full || !full.guest_email) return;
+				const lang = localeFromBooking(full);
+				const refundAmount = (pi.amount ?? 0) / 100;
+				await emailService.sendBookingOverbooked(
+					bookingToEmailDetails(full),
+					refundAmount,
+					lang
+				);
+			});
+		}
+
 		return { duplicate: result.duplicate, action: 'refunded_overbooked' };
 	}
 
@@ -164,6 +188,24 @@ async function handlePaymentIntentSucceeded(
 			prior_status: booking.status
 		}
 	);
+
+	// Send confirmation email — only on the first (non-duplicate) firing of
+	// this event so a Stripe retry doesn't double-send. Failures are logged
+	// but don't fail the webhook (the booking is confirmed regardless).
+	if (!result.duplicate) {
+		await safeSend('booking-confirmation', booking.id, async () => {
+			const full = await loadFullBooking(booking.id);
+			if (!full || !full.guest_email) return;
+			const lang = localeFromBooking(full);
+			const cancelLink = buildCancelMagicLink(full);
+			await emailService.sendBookingConfirmation(
+				bookingToEmailDetails(full),
+				lang,
+				cancelLink
+			);
+		});
+	}
+
 	return { duplicate: result.duplicate, action: 'confirmed' };
 }
 
@@ -255,7 +297,49 @@ async function handleChargeRefunded(
 			prior_status: booking.status
 		}
 	);
+
+	if (!result.duplicate) {
+		await safeSend('refund-issued', booking.id, async () => {
+			const full = await loadFullBooking(booking.id);
+			if (!full || !full.guest_email) return;
+			const lang = localeFromBooking(full);
+			// charge.amount_refunded is in the smallest currency unit (cents for EUR).
+			const refundAmount = (charge.amount_refunded ?? 0) / 100;
+			await emailService.sendRefundIssued(
+				bookingToEmailDetails(full),
+				refundAmount,
+				lang
+			);
+		});
+	}
+
 	return { duplicate: result.duplicate, action: 'refunded' };
+}
+
+async function loadFullBooking(bookingId: string): Promise<Booking | null> {
+	const { data, error } = await adminClient
+		.from('bookings')
+		.select('*')
+		.eq('id', bookingId)
+		.maybeSingle();
+	if (error) {
+		console.error(`[stripe-webhook] failed to load booking ${bookingId} for email:`, error);
+		return null;
+	}
+	return (data as Booking | null) ?? null;
+}
+
+async function safeSend(
+	tag: string,
+	bookingId: string,
+	send: () => Promise<void>
+): Promise<void> {
+	try {
+		await send();
+	} catch (err) {
+		const message = err instanceof Error ? err.message : 'unknown';
+		console.error(`[stripe-webhook] email '${tag}' for booking ${bookingId} failed: ${message}`);
+	}
 }
 
 async function findBookingForPaymentIntent(pi: Stripe.PaymentIntent) {

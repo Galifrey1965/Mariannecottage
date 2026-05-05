@@ -66,6 +66,7 @@ export interface Booking {
 	ical_summary?: string;
 	external_ref?: string;
 	cancellation_token_used_at?: string;
+	guest_locale?: 'en' | 'fr' | 'de';
 }
 
 // B-06 Phase 2 (2026-05-03): cancellation policy catalogue.

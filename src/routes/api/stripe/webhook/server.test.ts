@@ -35,7 +35,31 @@ vi.mock('$lib/server/stripe', () => ({
 	_resetStripeCacheForTests: () => {}
 }));
 
+vi.mock('$lib/server/email', () => ({
+	emailService: {
+		sendBookingConfirmation: vi.fn(async () => undefined),
+		sendBookingCancelled: vi.fn(async () => undefined),
+		sendBookingOverbooked: vi.fn(async () => undefined),
+		sendRefundIssued: vi.fn(async () => undefined),
+		sendEnquiry: vi.fn(async () => undefined)
+	}
+}));
+
+vi.mock('$lib/server/email-adapter', async () => {
+	// Real adapter except the magic-link generator — we don't want tests to
+	// require CANCEL_TOKEN_SECRET in the env and the link content isn't what
+	// these tests assert.
+	const actual = await vi.importActual<typeof import('$lib/server/email-adapter')>(
+		'$lib/server/email-adapter'
+	);
+	return {
+		...actual,
+		buildCancelMagicLink: () => null
+	};
+});
+
 import { POST } from './+server';
+import { emailService } from '$lib/server/email';
 
 function makeRequest(body: string, headers: Record<string, string> = {}) {
 	return {
@@ -74,6 +98,11 @@ beforeEach(() => {
 	mocks.refundsCreate.mockReset();
 	mocks.rpc.mockReset();
 	mocks.from.mockReset();
+	vi.mocked(emailService.sendBookingConfirmation).mockClear();
+	vi.mocked(emailService.sendBookingCancelled).mockClear();
+	vi.mocked(emailService.sendBookingOverbooked).mockClear();
+	vi.mocked(emailService.sendRefundIssued).mockClear();
+	vi.mocked(emailService.sendEnquiry).mockClear();
 });
 
 describe('POST /api/stripe/webhook — dark-deploy guard', () => {
@@ -149,6 +178,118 @@ describe('POST /api/stripe/webhook — idempotency replay', () => {
 		// And no refunds issued on either pass (this is the happy-path branch,
 		// not the late-success race).
 		expect(mocks.refundsCreate).not.toHaveBeenCalled();
+	});
+});
+
+describe('POST /api/stripe/webhook — email side-effects', () => {
+	function fullBookingRow(overrides: Partial<Record<string, unknown>> = {}) {
+		return {
+			id: 'b_email',
+			status: 'pending_payment',
+			check_in_date: '2026-06-01',
+			check_out_date: '2026-06-04',
+			booking_reference: 'MC-EMAIL-001',
+			guest_name: 'Test Guest',
+			guest_email: 'guest@example.invalid',
+			num_guests: 2,
+			num_nights: 3,
+			total_cost: 350,
+			guest_locale: 'fr',
+			...overrides
+		};
+	}
+
+	it('sends booking confirmation on first (non-duplicate) confirmed event', async () => {
+		mocks.getStripe.mockReturnValue(makeMockStripe());
+		const event = {
+			id: 'evt_email_confirm_1',
+			type: 'payment_intent.succeeded',
+			created: Math.floor(Date.now() / 1000),
+			data: { object: { id: 'pi_email_1', amount: 35000, metadata: { booking_id: 'b_email' } } }
+		} as unknown as Stripe.Event;
+		mocks.constructEvent.mockReturnValue(event);
+		mockBookingLookup(fullBookingRow());
+		mocks.rpc.mockResolvedValue({ data: { duplicate: false }, error: null });
+
+		const res = await POST(makeRequest('{}', { 'stripe-signature': 'sig' }));
+		expect(res.status).toBe(200);
+
+		expect(emailService.sendBookingConfirmation).toHaveBeenCalledTimes(1);
+		const [bookingArg, langArg, linkArg] = vi.mocked(emailService.sendBookingConfirmation).mock.calls[0];
+		expect(bookingArg.reference).toBe('MC-EMAIL-001');
+		expect(bookingArg.guestEmail).toBe('guest@example.invalid');
+		expect(langArg).toBe('fr');
+		expect(linkArg).toBeNull();
+	});
+
+	it('does NOT send booking confirmation on duplicate (replayed) event', async () => {
+		mocks.getStripe.mockReturnValue(makeMockStripe());
+		const event = {
+			id: 'evt_email_confirm_dup',
+			type: 'payment_intent.succeeded',
+			created: Math.floor(Date.now() / 1000),
+			data: { object: { id: 'pi_email_2', amount: 35000, metadata: { booking_id: 'b_email' } } }
+		} as unknown as Stripe.Event;
+		mocks.constructEvent.mockReturnValue(event);
+		mockBookingLookup(fullBookingRow());
+		mocks.rpc.mockResolvedValue({ data: { duplicate: true }, error: null });
+
+		const res = await POST(makeRequest('{}', { 'stripe-signature': 'sig' }));
+		expect(res.status).toBe(200);
+		expect(emailService.sendBookingConfirmation).not.toHaveBeenCalled();
+	});
+
+	it('sends overbooked apology (not cancellation) on late-success refund', async () => {
+		mocks.getStripe.mockReturnValue(makeMockStripe());
+		const event = {
+			id: 'evt_email_overbooked',
+			type: 'payment_intent.succeeded',
+			created: Math.floor(Date.now() / 1000),
+			data: { object: { id: 'pi_email_3', amount: 35000, metadata: { booking_id: 'b_email' } } }
+		} as unknown as Stripe.Event;
+		mocks.constructEvent.mockReturnValue(event);
+		mockBookingLookup(fullBookingRow({ status: 'expired' }));
+		mocks.refundsCreate.mockResolvedValue({ id: 're_2', status: 'pending' });
+		mocks.rpc.mockResolvedValue({ data: { duplicate: false }, error: null });
+
+		const res = await POST(makeRequest('{}', { 'stripe-signature': 'sig' }));
+		expect(res.status).toBe(200);
+
+		expect(emailService.sendBookingOverbooked).toHaveBeenCalledTimes(1);
+		expect(emailService.sendBookingCancelled).not.toHaveBeenCalled();
+		const [bookingArg, refundAmount, langArg] = vi.mocked(
+			emailService.sendBookingOverbooked
+		).mock.calls[0];
+		expect(bookingArg.reference).toBe('MC-EMAIL-001');
+		expect(refundAmount).toBe(350); // pi.amount 35000 cents → 350 EUR
+		expect(langArg).toBe('fr');
+	});
+
+	it('sends refund-issued on charge.refunded for non-duplicate event', async () => {
+		mocks.getStripe.mockReturnValue(makeMockStripe());
+		const event = {
+			id: 'evt_email_refund',
+			type: 'charge.refunded',
+			created: Math.floor(Date.now() / 1000),
+			data: {
+				object: {
+					id: 'ch_1',
+					payment_intent: 'pi_email_4',
+					amount_refunded: 17500
+				}
+			}
+		} as unknown as Stripe.Event;
+		mocks.constructEvent.mockReturnValue(event);
+		mockBookingLookup(fullBookingRow({ status: 'cancelled' }));
+		mocks.rpc.mockResolvedValue({ data: { duplicate: false }, error: null });
+
+		const res = await POST(makeRequest('{}', { 'stripe-signature': 'sig' }));
+		expect(res.status).toBe(200);
+
+		expect(emailService.sendRefundIssued).toHaveBeenCalledTimes(1);
+		const [, refundAmount, langArg] = vi.mocked(emailService.sendRefundIssued).mock.calls[0];
+		expect(refundAmount).toBe(175); // 17500 cents
+		expect(langArg).toBe('fr');
 	});
 });
 

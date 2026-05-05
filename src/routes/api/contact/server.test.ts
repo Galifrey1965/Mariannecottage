@@ -72,10 +72,22 @@ describe('POST /api/contact', () => {
 		expect(res.status).toBe(200);
 		const data = await res.json();
 		expect(data.success).toBe(true);
-		expect(emailService.sendEnquiry).toHaveBeenCalledWith(expect.objectContaining({
-			name: 'Jane Doe',
-			email: 'jane@example.com'
-		}));
+		expect(emailService.sendEnquiry).toHaveBeenCalledWith(
+			expect.objectContaining({
+				name: 'Jane Doe',
+				email: 'jane@example.com'
+			}),
+			expect.stringMatching(/^(en|fr|de)$/)
+		);
+	});
+
+	it('passes explicit locale through to sendEnquiry', async () => {
+		const res = await POST(makeRequest({ ...validBody, locale: 'fr' }));
+		expect(res.status).toBe(200);
+		expect(emailService.sendEnquiry).toHaveBeenCalledWith(
+			expect.any(Object),
+			'fr'
+		);
 	});
 
 	it('500 when emailService throws', async () => {

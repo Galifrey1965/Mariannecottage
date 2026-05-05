@@ -7,6 +7,7 @@ import {
 	getTaxSettings,
 	getRateForBooking
 } from '$lib/server/supabase';
+import { detectLocale, isValidLocale } from '$lib/i18n';
 
 export const POST: RequestHandler = async ({ request }) => {
 	const body = await request.json();
@@ -54,6 +55,10 @@ export const POST: RequestHandler = async ({ request }) => {
 	const total_cost = Math.round((subtotal + tax) * 100) / 100;
 	const booking_reference = generateBookingReference();
 
+	const guest_locale = isValidLocale(body.locale)
+		? body.locale
+		: detectLocale(request.headers.get('accept-language'));
+
 	try {
 		const booking = await createBookingAtomic({
 			guest_name: body.guest_name,
@@ -71,7 +76,8 @@ export const POST: RequestHandler = async ({ request }) => {
 			total_cost,
 			status: 'pending_payment',
 			booking_reference,
-			source: 'web'
+			source: 'web',
+			guest_locale
 		});
 
 		return json({ success: true, booking });

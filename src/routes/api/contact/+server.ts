@@ -1,5 +1,7 @@
 import { json } from '@sveltejs/kit';
 import { emailService } from '$lib/server/email';
+import { detectLocale, isValidLocale } from '$lib/i18n';
+import type { Locale } from '$lib/i18n';
 import type { RequestHandler } from './$types';
 
 export const POST: RequestHandler = async ({ request }) => {
@@ -7,7 +9,6 @@ export const POST: RequestHandler = async ({ request }) => {
 		const data = await request.json();
 		const { name, email, message } = data;
 
-		// Validation
 		if (!name || !email || !message) {
 			return json(
 				{ error: 'Missing required fields' },
@@ -37,12 +38,18 @@ export const POST: RequestHandler = async ({ request }) => {
 			);
 		}
 
-		// Send email via stub service
-		await emailService.sendEnquiry({
-			name: name.trim(),
-			email: email.trim(),
-			message: message.trim()
-		});
+		const locale: Locale = isValidLocale(data.locale)
+			? data.locale
+			: detectLocale(request.headers.get('accept-language'));
+
+		await emailService.sendEnquiry(
+			{
+				name: name.trim(),
+				email: email.trim(),
+				message: message.trim()
+			},
+			locale
+		);
 
 		return json(
 			{ success: true, message: 'Enquiry received' },
