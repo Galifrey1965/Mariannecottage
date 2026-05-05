@@ -267,16 +267,18 @@
 							</td>
 							<td>{b.display_order}</td>
 							<td class="row-actions">
-								<button class="link-btn" onclick={() => (previewing = b)} title="Preview banner + effect">
-									Preview
-								</button>
-								<button class="link-btn" onclick={() => openEdit(b)}>Edit</button>
-								<button
-									class="link-btn danger"
-									disabled={deleting === b.id}
-									onclick={() => deleteBanner(b)}>
-									{deleting === b.id ? '…' : 'Delete'}
-								</button>
+								<div class="row-actions-inner">
+									<button class="link-btn" onclick={() => (previewing = b)} title="Preview banner + effect">
+										Preview
+									</button>
+									<button class="link-btn" onclick={() => openEdit(b)}>Edit</button>
+									<button
+										class="link-btn danger"
+										disabled={deleting === b.id}
+										onclick={() => deleteBanner(b)}>
+										{deleting === b.id ? '…' : 'Delete'}
+									</button>
+								</div>
 							</td>
 						</tr>
 					{/each}
@@ -470,7 +472,8 @@
 
 	.toggle { display: inline-flex; align-items: center; cursor: pointer; }
 
-	.row-actions { display: flex; gap: 0.75rem; justify-content: flex-end; }
+	.row-actions { text-align: right; white-space: nowrap; }
+	.row-actions-inner { display: inline-flex; gap: 0.75rem; align-items: center; justify-content: flex-end; }
 	.link-btn { background: none; border: none; padding: 0; color: var(--color-sage); cursor: pointer; font-size: 0.875rem; }
 	.link-btn:hover { text-decoration: underline; }
 	.link-btn:disabled { opacity: 0.5; cursor: not-allowed; }
