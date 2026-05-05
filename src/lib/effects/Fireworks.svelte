@@ -16,7 +16,7 @@
 	let burstTimer: ReturnType<typeof setTimeout> | null = null;
 	let phaseTimer: ReturnType<typeof setTimeout> | null = null;
 
-	type BurstType = 'standard' | 'ring' | 'willow' | 'palm' | 'double';
+	type BurstType = 'standard' | 'ring' | 'willow' | 'palm' | 'double' | 'crossette';
 	type LaunchStyle = 'vertical' | 'angled' | 'side-arc';
 
 	type Particle = {
@@ -34,6 +34,10 @@
 		// Rocket-only: which burst pattern + payload of secondary rockets.
 		burstType?: BurstType;
 		secondaryBurstAt?: number; // ms after explode — for 'double'
+		// Spark-only: if set, the spark splits into a mini-burst at this life
+		// point. childHue overrides the colour of the secondary fragments.
+		splitAt?: number;
+		childHue?: number;
 	};
 
 	const PALETTES: Record<string, number[]> = {
@@ -44,9 +48,10 @@
 		pastel:    [330, 280, 200, 150, 50]
 	};
 
-	const BURST_TYPES: BurstType[] = ['standard', 'ring', 'willow', 'palm', 'double'];
-	// Weights match the array above — standard most common.
-	const BURST_WEIGHTS = [40, 18, 18, 14, 10];
+	const BURST_TYPES: BurstType[] = ['standard', 'ring', 'willow', 'palm', 'double', 'crossette'];
+	// Weights match the array above — standard most common; crossette is the
+	// rarest as it's the most particle-heavy (and most spectacular).
+	const BURST_WEIGHTS = [32, 16, 16, 13, 11, 12];
 
 	const LAUNCH_STYLES: LaunchStyle[] = ['vertical', 'angled', 'side-arc'];
 	const LAUNCH_WEIGHTS = [55, 30, 15];
@@ -240,6 +245,33 @@
 				}, p.secondaryBurstAt ?? 400);
 				break;
 			}
+			case 'crossette': {
+				// Break-and-rebreak shell. Outer break: ~24 medium sparks
+				// arranged evenly. Each carries a splitAt lifetime, after
+				// which it pops into a mini-burst of ~12 smaller fragments
+				// in a contrasting hue.
+				const count = 24;
+				const childHue = (p.hue + 60 + Math.random() * 60) % 360;
+				for (let i = 0; i < count; i++) {
+					const angle = (i / count) * Math.PI * 2 + Math.random() * 0.08;
+					const speed = 2.4 + Math.random() * 1.2;
+					particles.push({
+						x: p.x, y: p.y,
+						vx: Math.cos(angle) * speed,
+						vy: Math.sin(angle) * speed,
+						life: 0,
+						maxLife: 95,
+						hue: p.hue,
+						size: 2.0,
+						kind: 'spark',
+						gravity: 0.04,
+						drag: 0.978,
+						splitAt: 36 + Math.random() * 8,
+						childHue
+					});
+				}
+				break;
+			}
 			case 'standard':
 			default: {
 				const count = 80 + Math.floor(Math.random() * 40);
@@ -309,6 +341,29 @@
 					explode(p, now);
 					continue;
 				}
+			} else if (p.kind === 'spark' && p.splitAt !== undefined && p.life >= p.splitAt) {
+				// Crossette break — this spark mini-explodes into a small
+				// burst of fragments in the child hue.
+				const fragments = 11;
+				const speed = 1.4 + Math.random() * 0.6;
+				for (let i = 0; i < fragments; i++) {
+					const angle = (i / fragments) * Math.PI * 2 + Math.random() * 0.2;
+					particles.push({
+						x: p.x, y: p.y,
+						// Inherit half the parent's velocity so the mini-burst
+						// trails realistically rather than starting from rest.
+						vx: p.vx * 0.4 + Math.cos(angle) * speed,
+						vy: p.vy * 0.4 + Math.sin(angle) * speed,
+						life: 0,
+						maxLife: 38 + Math.random() * 16,
+						hue: (p.childHue ?? p.hue) + (Math.random() - 0.5) * 10,
+						size: 1.1 + Math.random() * 0.4,
+						kind: 'spark',
+						gravity: 0.05,
+						drag: 0.97
+					});
+				}
+				continue; // remove the original — it has split.
 			} else if (p.life >= p.maxLife) {
 				continue;
 			}
