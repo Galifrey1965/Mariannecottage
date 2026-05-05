@@ -51,9 +51,18 @@
 
 <header class="header">
 	<div class="header-inner">
-		<a href={localePath(lang, '/')} class="logo">
-			<span class="logo-name">Marianne</span>
-			<span class="logo-subtitle">Cottage</span>
+		<a href={localePath(lang, '/')} class="logo" aria-label="Marianne Cottage">
+			<img
+				src="/images/logo.png"
+				srcset="/images/logo.png 1x, /images/logo@2x.png 2x"
+				alt=""
+				class="logo-badge"
+				aria-hidden="true"
+			/>
+			<span class="logo-wordmark">
+				<span class="logo-name">Marianne</span>
+				<span class="logo-subtitle">Cottage</span>
+			</span>
 		</a>
 
 		<nav class="desktop-nav" aria-label={t(messages, 'a11y.main_navigation')}>
@@ -153,10 +162,28 @@
 
 	.logo {
 		display: flex;
-		align-items: baseline;
-		gap: 0.375rem;
+		align-items: center;
+		gap: 0.625rem;
 		text-decoration: none;
 		flex-shrink: 0;
+		color: var(--theme-warm);
+	}
+
+	.logo-badge {
+		display: block;
+		height: 40px;
+		width: auto;
+		flex-shrink: 0;
+	}
+
+	@media (min-width: 600px) {
+		.logo-badge { height: 48px; }
+	}
+
+	.logo-wordmark {
+		display: flex;
+		align-items: baseline;
+		gap: 0.375rem;
 	}
 
 	.logo-name {

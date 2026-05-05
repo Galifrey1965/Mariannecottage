@@ -39,7 +39,8 @@
 <svelte:head>
 	<html {lang} />
 	<SEOHead {messages} {lang} alternates={alternates} />
-	<link rel="icon" href="/favicon.png" />
+	<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+	<link rel="icon" type="image/png" href="/favicon.png" sizes="64x64" />
 </svelte:head>
 
 <div class="app-shell">
