@@ -75,13 +75,16 @@
 
 	.flag-btn {
 		appearance: none;
-		border: none;
+		/* Transparent border in the base state keeps the layout stable when
+		   the active flag picks up a visible 1px border below — no widths
+		   shift between selections. */
+		border: 1px solid transparent;
 		background: transparent;
 		cursor: pointer;
 		padding: 0.3rem 0.55rem;
 		border-radius: var(--theme-radius-pill);
 		line-height: 0;
-		transition: background 0.2s ease;
+		transition: background 0.2s ease, border-color 0.2s ease;
 	}
 
 	.flag-btn:hover {
@@ -95,6 +98,7 @@
 
 	.flag-btn.active {
 		background: var(--theme-bg);
+		border-color: #000;
 	}
 	.flag-btn.active:hover {
 		background: var(--theme-bg);
