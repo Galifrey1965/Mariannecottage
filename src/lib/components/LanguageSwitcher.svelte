@@ -37,15 +37,16 @@
 	}
 </script>
 
-<div class="flag-switcher" role="group" aria-label="Language">
+<div class="flag-switcher" role="radiogroup" aria-label="Language">
 	{#each LOCALES as locale}
 		<button
 			type="button"
+			role="radio"
 			class="flag-btn"
 			class:active={locale === lang}
+			aria-checked={locale === lang}
 			title={tooltipFor(locale)}
 			aria-label={tooltipFor(locale)}
-			aria-current={locale === lang ? 'true' : undefined}
 			onclick={() => switchLocale(locale)}
 		>
 			<Flag code={flagFor[locale]} height="1.15rem" />
@@ -54,44 +55,48 @@
 </div>
 
 <style>
+	/* Grouped pill toggle — matches the distance|popularity sort toggle on
+	   /explore so the chrome reads as a coherent design language across the
+	   site. Bordered pill, light surface inside, transparent buttons that
+	   light up with the warm accent when their flag is active.
+
+	   IMPORTANT: behaviour is unchanged from the previous styling — same
+	   click handler, same goto with invalidateAll, same query-param flow.
+	   This is purely a styling pass. */
 	.flag-switcher {
 		display: inline-flex;
 		align-items: center;
-		gap: 0.55rem;
+		border: 1px solid var(--theme-border);
+		border-radius: var(--theme-radius-pill);
+		padding: 2px;
+		gap: 2px;
+		background: var(--theme-bg);
 	}
 
 	.flag-btn {
-		position: relative;
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		padding: 4px 2px 8px;
+		appearance: none;
 		border: none;
 		background: transparent;
 		cursor: pointer;
+		padding: 0.3rem 0.55rem;
+		border-radius: var(--theme-radius-pill);
 		line-height: 0;
-		transition: transform 0.15s ease;
+		transition: background 0.2s ease;
 	}
 
 	.flag-btn:hover {
-		transform: translateY(-1px);
+		background: rgba(0, 0, 0, 0.04);
 	}
 
 	.flag-btn:focus-visible {
-		outline: 2px solid var(--theme-warm, #2a1f15);
-		outline-offset: 3px;
-		border-radius: 3px;
+		outline: 2px solid var(--theme-accent);
+		outline-offset: 2px;
 	}
 
-	.flag-btn.active::after {
-		content: '';
-		position: absolute;
-		left: 25%;
-		right: 25%;
-		bottom: 1px;
-		height: 2px;
-		background: var(--theme-warm, #2a1f15);
-		border-radius: 1px;
+	.flag-btn.active {
+		background: var(--theme-accent);
 	}
-
+	.flag-btn.active:hover {
+		background: var(--theme-accent-hover, var(--theme-accent));
+	}
 </style>
