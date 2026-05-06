@@ -29,6 +29,20 @@
 		// reaches minDate's month — the public booking calendar uses this so
 		// guests can't navigate into months that are entirely in the past.
 		disablePastMonths?: boolean;
+		// Minimum stay in nights. Default 1 keeps the admin/availability
+		// behaviour where a single-night block is fine; the public /book page
+		// passes the policy value (currently 2). Ranges shorter than this are
+		// shown as invalid (preview-invalid) and the date-range callback never
+		// fires.
+		minNights?: number;
+		// Fired when the guest clicks an "orphan" day — a day that is itself
+		// free but has no run of `minNights` consecutive available days
+		// containing it. Such days can't be booked online (the minimum-stay
+		// rule blocks them) but the cottage is technically free, so we
+		// surface them as a "contact us" affordance rather than hiding them.
+		// Only emitted in non-click-mode (the public booking flow); the
+		// admin calendar opts out by leaving this undefined.
+		onOrphanClick?: (date: Date) => void;
 	}
 
 	let {
@@ -42,7 +56,9 @@
 		bookingByDate = {},
 		onDayClick,
 		showLegend = true,
-		disablePastMonths = false
+		disablePastMonths = false,
+		minNights = 1,
+		onOrphanClick
 	}: Props = $props();
 
 	const isClickMode = $derived(onDayClick !== undefined);
@@ -70,6 +86,42 @@
 	};
 	const isAvailable = (date: Date) => availability[toISODate(date)] !== false;
 	const isPast = (date: Date) => date < minDate;
+	// A date is "free" (selectable for a booking) when it's not past, the
+	// availability map says it's open, and no test fixture is blocking it.
+	// Used by the orphan detector to count contiguous bookable runs.
+	const isFree = (date: Date) =>
+		!isPast(date) && isAvailable(date) && !testBlockedSet.has(toISODate(date));
+
+	// Orphan day: a free day where no run of `minNights` consecutive free
+	// days containing it exists, so the minimum-stay rule blocks every
+	// possible range that touches it. Surfaced as "contact us" rather than
+	// hidden, per Mark's product call (2026-05-06): a free day sandwiched
+	// between bookings is still free, just not bookable through the form.
+	const isOrphan = (date: Date): boolean => {
+		if (minNights <= 1) return false;
+		if (!isFree(date)) return false;
+		// Walk left and right counting consecutive free days, capped at
+		// minNights-1 in each direction (we only need to know whether the
+		// total run reaches minNights — if it does, this day is fine).
+		// setDate() is used in preference to ms arithmetic so DST transitions
+		// and month-end rollovers don't produce off-by-one date errors.
+		let run = 1;
+		for (let k = 1; k < minNights; k++) {
+			const left = new Date(date);
+			left.setDate(left.getDate() - k);
+			if (!isFree(left)) break;
+			run++;
+			if (run >= minNights) return false;
+		}
+		for (let k = 1; k < minNights; k++) {
+			const right = new Date(date);
+			right.setDate(right.getDate() + k);
+			if (!isFree(right)) break;
+			run++;
+			if (run >= minNights) return false;
+		}
+		return true;
+	};
 
 	/** Check if every date in the range [a, b] is available */
 	const isRangeAvailable = (a: Date, b: Date): boolean => {
@@ -110,6 +162,14 @@
 		}
 		if (isPast(date) || !isAvailable(date)) return;
 
+		// Orphan day → can't form a valid minimum-stay range. Hand off to
+		// the parent so it can show "contact us" affordance, then bail
+		// without touching the in-progress selection.
+		if (isOrphan(date)) {
+			if (onOrphanClick) onOrphanClick(date);
+			return;
+		}
+
 		// No start yet — set it
 		if (!selectedStart) {
 			selectedStart = date;
@@ -129,15 +189,19 @@
 		let e = date;
 		if (e < s) { const tmp = s; s = e; e = tmp; }
 
-		// Same-date second click → 1-night stay (checkout = checkin + 1).
-		// Without this, same-date clicks produce nights=0 and the form shows
-		// identical check-in / check-out dates.
+		// Same-date second click. With a 1-night minimum we auto-promote to a
+		// 1-night stay (checkout = checkin + 1) for convenience. With a 2+-night
+		// minimum that shortcut is misleading (the user'd think they booked 1
+		// night), so we just leave the start set and wait for the user to click
+		// an actual checkout.
 		if (toISODate(s) === toISODate(e)) {
+			if (minNights > 1) return;
 			e = new Date(s.getFullYear(), s.getMonth(), s.getDate() + 1);
 			if (!isAvailable(e)) return; // next day unavailable — can't form a 1-night stay
 		}
 
 		if (!isRangeAvailable(s, e)) return; // block if unavailable dates in range
+		if (nightsBetween(s, e) < minNights) return; // below the minimum stay
 
 		selectedStart = s;
 		selectedEnd = e;
@@ -190,12 +254,24 @@
 		selectedStart && displayEnd ? nightsBetween(selectedStart, displayEnd) : 0
 	);
 
-	const previewValid = $derived(
-		selectedStart && displayEnd ? isRangeAvailable(
-			selectedStart < displayEnd ? selectedStart : displayEnd,
-			selectedStart < displayEnd ? displayEnd : selectedStart
-		) : true
-	);
+	const previewValid = $derived.by(() => {
+		// Cast after the truthy guard — the derived value's narrowing inside
+		// a closure isn't reliable in Svelte 5 ($derived signals a value of
+		// `Date | null` but TS doesn't always carry the narrowing through to
+		// inline comparisons). Locals + explicit casts keep the comparison
+		// well-typed.
+		if (!selectedStart || !displayEnd) return true;
+		const start = selectedStart as Date;
+		const end = displayEnd as Date;
+		const s = start < end ? start : end;
+		const e = start < end ? end : start;
+		if (!isRangeAvailable(s, e)) return false;
+		// Range below the configured minimum stay is also "invalid preview"
+		// — the hover state turns red so the guest sees the rule before
+		// committing the click.
+		if (nightsBetween(s, e) < minNights) return false;
+		return true;
+	});
 
 	function dayClass(date: Date): string {
 		const outside = isOutsideMonth(date) ? ' outside' : '';
@@ -221,6 +297,9 @@
 		if (isInRange(date) && !previewValid) return 'day preview-invalid' + outside;
 		if (isInRange(date) && isHoverPreview) return 'day hover-range' + outside;
 		if (isInRange(date)) return 'day selected-range' + outside;
+		// Orphan must outrank "available" so the guest sees the by-arrangement
+		// styling rather than mistaking it for a clickable start date.
+		if (isOrphan(date)) return 'day orphan' + outside;
 		return 'day available' + outside;
 	}
 </script>
@@ -307,6 +386,20 @@
 	}
 	.day.available { background: var(--md-sys-color-surface-container-lowest); color: var(--color-text); }
 	.day.available:hover { background: var(--color-cream-dark); }
+
+	/* Orphan day — free but blocked from online booking by the minimum-stay
+	   rule. Subtle warm-stripe pattern so guests see something different
+	   from a normal available day; clicking opens the parent's
+	   "contact us" affordance rather than starting a range selection. */
+	.day.orphan {
+		background: repeating-linear-gradient(135deg,
+			var(--md-sys-color-surface-container-lowest) 0 5px,
+			var(--color-cream-dark) 5px 10px);
+		color: var(--color-brown, #8b6f47);
+		cursor: help;
+		font-weight: 500;
+	}
+	.day.orphan:hover { filter: brightness(0.95); }
 	.day.unavailable { background: transparent; color: var(--color-text-muted); opacity: 0.3; cursor: default; }
 	.day.test-blocked {
 		background: repeating-linear-gradient(45deg, #f5b942, #f5b942 4px, #e89c1c 4px, #e89c1c 8px);

@@ -48,13 +48,28 @@ function makeRequest(body: Record<string, unknown>) {
 	} as any;
 }
 
-const validBody = {
-	guest_name: 'John Doe',
-	guest_email: 'john@example.com',
-	num_guests: 2,
-	check_in_date: '2026-04-01',
-	check_out_date: '2026-04-04'
-};
+function isoDateNDaysAhead(n: number): string {
+	// UTC-anchored to match getEarliestCheckInDate's TZ behaviour. Otherwise
+	// a non-UTC test host could pick a "today" that's a day off from the
+	// server's "today" and the lead-time guard would land in the wrong
+	// branch.
+	const d = new Date();
+	d.setUTCHours(0, 0, 0, 0);
+	d.setUTCDate(d.getUTCDate() + n);
+	return d.toISOString().slice(0, 10);
+}
+
+// 30 days out keeps clear of the 48h lead-time + 2-night minimum guards;
+// computed at call-time so the suite never goes stale relative to "now".
+function makeValidBody(): Record<string, unknown> {
+	return {
+		guest_name: 'John Doe',
+		guest_email: 'john@example.com',
+		num_guests: 2,
+		check_in_date: isoDateNDaysAhead(30),
+		check_out_date: isoDateNDaysAhead(33)
+	};
+}
 
 beforeEach(() => {
 	vi.clearAllMocks();
@@ -62,7 +77,7 @@ beforeEach(() => {
 
 describe('POST /api/book', () => {
 	it('400 when guest_name missing', async () => {
-		const { guest_name: _g, ...body } = validBody;
+		const { guest_name: _g, ...body } = makeValidBody();
 		const res = await POST(makeRequest(body));
 		expect(res.status).toBe(400);
 		const data = await res.json();
@@ -70,32 +85,32 @@ describe('POST /api/book', () => {
 	});
 
 	it('400 when guest_email missing', async () => {
-		const { guest_email: _e, ...body } = validBody;
+		const { guest_email: _e, ...body } = makeValidBody();
 		const res = await POST(makeRequest(body));
 		expect(res.status).toBe(400);
 	});
 
 	it('400 when num_guests missing', async () => {
-		const { num_guests: _n, ...body } = validBody;
+		const { num_guests: _n, ...body } = makeValidBody();
 		const res = await POST(makeRequest(body));
 		expect(res.status).toBe(400);
 	});
 
 	it('400 for invalid email', async () => {
-		const res = await POST(makeRequest({ ...validBody, guest_email: 'not-an-email' }));
+		const res = await POST(makeRequest({ ...makeValidBody(), guest_email: 'not-an-email' }));
 		expect(res.status).toBe(400);
 		const data = await res.json();
 		expect(data.error).toContain('email');
 	});
 
 	it('400 when num_guests out of range (5)', async () => {
-		const res = await POST(makeRequest({ ...validBody, num_guests: 5 }));
+		const res = await POST(makeRequest({ ...makeValidBody(), num_guests: 5 }));
 		expect(res.status).toBe(400);
 	});
 
 	it('400 when checkout <= checkin', async () => {
 		const res = await POST(makeRequest({
-			...validBody,
+			...makeValidBody(),
 			check_in_date: '2026-04-04',
 			check_out_date: '2026-04-01'
 		}));
@@ -104,9 +119,36 @@ describe('POST /api/book', () => {
 		expect(data.error).toContain('Check-out');
 	});
 
+	it('400 with min_nights when stay is shorter than the policy minimum', async () => {
+		const res = await POST(makeRequest({
+			...makeValidBody(),
+			check_in_date: isoDateNDaysAhead(30),
+			check_out_date: isoDateNDaysAhead(31) // 1 night
+		}));
+		expect(res.status).toBe(400);
+		const data = await res.json();
+		expect(data.error_code).toBe('min_nights');
+		expect(data.min_nights).toBe(2);
+		expect(createBookingAtomic).not.toHaveBeenCalled();
+	});
+
+	it('400 with lead_time when check-in is inside the lead-time window', async () => {
+		// Same-day check-in is well inside the 48h floor.
+		const res = await POST(makeRequest({
+			...makeValidBody(),
+			check_in_date: isoDateNDaysAhead(0),
+			check_out_date: isoDateNDaysAhead(3)
+		}));
+		expect(res.status).toBe(400);
+		const data = await res.json();
+		expect(data.error_code).toBe('lead_time');
+		expect(data.min_lead_hours).toBe(48);
+		expect(createBookingAtomic).not.toHaveBeenCalled();
+	});
+
 	it('400 with no_rate_plan when no plan covers the dates', async () => {
 		vi.mocked(getRateForBooking).mockResolvedValueOnce(null);
-		const res = await POST(makeRequest(validBody));
+		const res = await POST(makeRequest(makeValidBody()));
 		expect(res.status).toBe(400);
 		const data = await res.json();
 		expect(data.error_code).toBe('no_rate_plan');
@@ -115,25 +157,25 @@ describe('POST /api/book', () => {
 
 	it('calculates nights correctly for 3-night stay', async () => {
 		vi.mocked(createBookingAtomic).mockResolvedValueOnce({ id: '1', booking_reference: 'MC-20260323-TEST' } as any);
-		await POST(makeRequest(validBody));
+		await POST(makeRequest(makeValidBody()));
 		expect(createBookingAtomic).toHaveBeenCalledWith(expect.objectContaining({ num_nights: 3 }));
 	});
 
 	it('uses per-guest rate from rate plan (2 guests => 120)', async () => {
 		vi.mocked(createBookingAtomic).mockResolvedValueOnce({ id: '1' } as any);
-		await POST(makeRequest(validBody));
+		await POST(makeRequest(makeValidBody()));
 		expect(createBookingAtomic).toHaveBeenCalledWith(expect.objectContaining({ nightly_rate: 120 }));
 	});
 
 	it('uses per-guest rate from rate plan (3 guests => 140)', async () => {
 		vi.mocked(createBookingAtomic).mockResolvedValueOnce({ id: '1' } as any);
-		await POST(makeRequest({ ...validBody, num_guests: 3 }));
+		await POST(makeRequest({ ...makeValidBody(), num_guests: 3 }));
 		expect(createBookingAtomic).toHaveBeenCalledWith(expect.objectContaining({ nightly_rate: 140 }));
 	});
 
 	it('treats per-night rate as tax-inclusive — total === subtotal, no taxe de séjour added', async () => {
 		vi.mocked(createBookingAtomic).mockResolvedValueOnce({ id: '1' } as any);
-		await POST(makeRequest(validBody));
+		await POST(makeRequest(makeValidBody()));
 		// nightly_rate = 120 (mocked plan rate_2_guests)
 		// subtotal = 3 × 120 = 360. Tourist tax is included in the quote per Mark.
 		expect(createBookingAtomic).toHaveBeenCalledWith(expect.objectContaining({
@@ -145,7 +187,7 @@ describe('POST /api/book', () => {
 
 	it('ignores any client-supplied nightly_rate (server-authoritative)', async () => {
 		vi.mocked(createBookingAtomic).mockResolvedValueOnce({ id: '1' } as any);
-		await POST(makeRequest({ ...validBody, nightly_rate: 9999 }));
+		await POST(makeRequest({ ...makeValidBody(), nightly_rate: 9999 }));
 		// rate plan still wins
 		expect(createBookingAtomic).toHaveBeenCalledWith(expect.objectContaining({ nightly_rate: 120 }));
 	});
@@ -153,7 +195,7 @@ describe('POST /api/book', () => {
 	it('returns booking on success', async () => {
 		const mockBooking = { id: '1', booking_reference: 'MC-20260323-TEST' };
 		vi.mocked(createBookingAtomic).mockResolvedValueOnce(mockBooking as any);
-		const res = await POST(makeRequest(validBody));
+		const res = await POST(makeRequest(makeValidBody()));
 		expect(res.status).toBe(200);
 		const data = await res.json();
 		expect(data.success).toBe(true);
@@ -162,7 +204,7 @@ describe('POST /api/book', () => {
 
 	it('returns 409 with dates_taken error_code when BookingDatesTakenError thrown', async () => {
 		vi.mocked(createBookingAtomic).mockRejectedValueOnce(new BookingDatesTakenError());
-		const res = await POST(makeRequest(validBody));
+		const res = await POST(makeRequest(makeValidBody()));
 		expect(res.status).toBe(409);
 		const data = await res.json();
 		expect(data.success).toBe(false);
@@ -171,7 +213,7 @@ describe('POST /api/book', () => {
 
 	it('500 when createBookingAtomic throws unexpected error', async () => {
 		vi.mocked(createBookingAtomic).mockRejectedValueOnce(new Error('DB error'));
-		const res = await POST(makeRequest(validBody));
+		const res = await POST(makeRequest(makeValidBody()));
 		expect(res.status).toBe(500);
 		const data = await res.json();
 		expect(data.success).toBe(false);

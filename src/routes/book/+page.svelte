@@ -3,6 +3,7 @@
 	import { localePath, t, formatDate, formatCurrency, plural } from '$lib/i18n';
 	import BookingCalendar from '$lib/components/BookingCalendar.svelte';
 	import BookingSummary from '$lib/components/BookingSummary.svelte';
+	import { MIN_NIGHTS, MIN_LEAD_HOURS, getEarliestCheckInDate } from '$lib/booking-policy';
 	import type { PageData } from './$types';
 	import type { RatePlan } from '$lib/server/supabase';
 
@@ -62,6 +63,16 @@
 		checkOutDate = end;
 		step = 2;
 	};
+
+	// Orphan day click — surfaces a "contact us" affordance because the
+	// minimum-stay rule prevents online booking of single-night gaps
+	// between existing bookings.
+	let orphanDate = $state<Date | null>(null);
+	const handleOrphanClick = (date: Date) => { orphanDate = date; };
+	const closeOrphanDialog = () => { orphanDate = null; };
+	const orphanDateLabel = $derived(
+		orphanDate ? formatDate(lang, orphanDate, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) : ''
+	);
 
 	const nights = $derived(
 		checkInDate && checkOutDate
@@ -179,6 +190,9 @@
 			{#if step === 1}
 				<div>
 					<h2 class="section-heading">{t(messages, 'book.heading')}</h2>
+					<p class="stay-rules">
+						{MIN_NIGHTS} nights minimum · {MIN_LEAD_HOURS} hours notice
+					</p>
 					<BookingCalendar
 						bind:this={calendarRef}
 						{messages}
@@ -186,7 +200,9 @@
 						availability={realAvailability}
 						{testBlockedDates}
 						onDateRangeSelect={handleDateRangeSelect}
-						minDate={new Date()}
+						onOrphanClick={handleOrphanClick}
+						minDate={getEarliestCheckInDate()}
+						minNights={MIN_NIGHTS}
 						disablePastMonths
 					/>
 				</div>
@@ -375,6 +391,25 @@
 	</div>
 </section>
 
+{#if orphanDate}
+	<div class="orphan-overlay" role="dialog" aria-modal="true" aria-labelledby="orphan-title">
+		<button onclick={closeOrphanDialog} class="orphan-backdrop" aria-label="Close"></button>
+		<div class="orphan-dialog">
+			<h3 id="orphan-title" class="orphan-title">{orphanDateLabel}</h3>
+			<p class="orphan-body">
+				The cottage is free this night, but it sits between other bookings — too short
+				a gap for our online {MIN_NIGHTS}-night minimum. We're happy to take this one
+				directly.
+			</p>
+			<p class="orphan-contact">{t(messages, 'book.contact_info')}</p>
+			<div class="orphan-actions">
+				<button onclick={closeOrphanDialog} class="btn-outline">Close</button>
+				<a href={localePath(lang, '/contact')} class="btn-primary">{t(messages, 'book.contact_us')}</a>
+			</div>
+		</div>
+	</div>
+{/if}
+
 <style>
 	.page-section { max-width: 1440px; margin: 0 auto; padding: 4rem 1rem; }
 	@media (min-width: 600px) { .page-section { padding: 4rem 1.5rem; } }
@@ -449,6 +484,36 @@
 	/* Form card */
 	.form-card { background: var(--color-cream); border-radius: var(--md-shape-corner-medium); padding: 1.5rem; }
 	.section-heading { font-family: 'Lora', serif; font-size: 1.25rem; font-weight: 600; color: var(--color-text); margin: 0 0 1.5rem; }
+	.stay-rules { margin: -1rem 0 1rem; font-size: 0.85rem; color: var(--color-text-muted); }
+
+	/* Orphan-day "contact us" overlay — appears when a guest clicks a date
+	   that is technically free but blocked from online booking by the
+	   minimum-stay rule (a single-night gap between two existing stays). */
+	.orphan-overlay {
+		position: fixed; inset: 0; z-index: 100;
+		display: flex; align-items: center; justify-content: center;
+		padding: 1rem;
+	}
+	.orphan-backdrop {
+		position: absolute; inset: 0;
+		background: rgba(0, 0, 0, 0.45);
+		border: none; padding: 0; cursor: pointer;
+	}
+	.orphan-dialog {
+		position: relative;
+		background: var(--color-bg, white);
+		border-radius: 16px;
+		max-width: 440px; width: 100%;
+		padding: 1.5rem;
+		box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+	}
+	.orphan-title {
+		font-family: 'Lora', serif; font-size: 1.25rem; font-weight: 600;
+		margin: 0 0 0.75rem; color: var(--color-text);
+	}
+	.orphan-body { margin: 0 0 1rem; line-height: 1.5; color: var(--color-text); }
+	.orphan-contact { margin: 0 0 1.25rem; font-size: 0.9rem; color: var(--color-text-muted); }
+	.orphan-actions { display: flex; gap: 0.75rem; justify-content: flex-end; flex-wrap: wrap; }
 	.form-fields { display: flex; flex-direction: column; gap: 1.25rem; }
 	.field {}
 	.field-label { display: block; font-size: 0.875rem; font-weight: 500; color: var(--color-text); margin-bottom: 0.375rem; }

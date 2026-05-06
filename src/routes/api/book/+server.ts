@@ -7,6 +7,7 @@ import {
 	getRateForBooking
 } from '$lib/server/supabase';
 import { detectLocale, isValidLocale } from '$lib/i18n';
+import { MIN_NIGHTS, MIN_LEAD_HOURS, getEarliestCheckInDate } from '$lib/booking-policy';
 
 export const POST: RequestHandler = async ({ request }) => {
 	const body = await request.json();
@@ -34,6 +35,34 @@ export const POST: RequestHandler = async ({ request }) => {
 	}
 
 	const num_nights = Math.ceil((checkOut.getTime() - checkIn.getTime()) / (1000 * 60 * 60 * 24));
+
+	// Booking policy guards — defended on the server because the calendar
+	// rules can be bypassed by anyone POSTing directly to the API. Errors use
+	// short error_code values so the client can localise the message.
+	if (num_nights < MIN_NIGHTS) {
+		return json(
+			{
+				success: false,
+				error_code: 'min_nights',
+				error: `${MIN_NIGHTS}-night minimum stay`,
+				min_nights: MIN_NIGHTS
+			},
+			{ status: 400 }
+		);
+	}
+
+	const earliest = getEarliestCheckInDate();
+	if (checkIn < earliest) {
+		return json(
+			{
+				success: false,
+				error_code: 'lead_time',
+				error: `Bookings require at least ${MIN_LEAD_HOURS} hours notice`,
+				min_lead_hours: MIN_LEAD_HOURS
+			},
+			{ status: 400 }
+		);
+	}
 
 	// B-01 / PR 4: rate is determined server-side by check-in date + guest count.
 	// Reject if no active plan covers the check-in (no silent 120 fallback).
