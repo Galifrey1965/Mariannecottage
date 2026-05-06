@@ -49,9 +49,11 @@
 		</div>
 		<div class="cookie-actions">
 			<button type="button" class="btn btn-secondary" onclick={() => set('rejected')}>
+				<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
 				{t(messages, 'cookies.reject')}
 			</button>
 			<button type="button" class="btn btn-primary" onclick={() => set('accepted')}>
+				<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
 				{t(messages, 'cookies.accept')}
 			</button>
 		</div>
@@ -103,6 +105,9 @@
 	}
 
 	.btn {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
 		padding: 0.55rem 1.1rem;
 		border-radius: 9999px;
 		font-size: 0.8125rem;

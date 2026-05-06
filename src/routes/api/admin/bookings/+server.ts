@@ -259,7 +259,7 @@ export const PATCH: RequestHandler = async ({ locals, request }) => {
 	}
 
 	const body = await request.json();
-	const { id, status, admin_notes } = body;
+	const { id, status, admin_notes, reason } = body;
 	// Enrichment fields — used primarily for Booking.com imports where the
 	// iCal feed gives us only dates + UID and Mark fills in the rest from
 	// the BC reservation email. Web/admin bookings can also be edited here.
@@ -278,12 +278,14 @@ export const PATCH: RequestHandler = async ({ locals, request }) => {
 	] as const;
 
 	let bcCancellation: { check_in_date: string; check_out_date: string } | null = null;
+	let isManualConfirm = false;
+	let priorAdminNotes: string | null = null;
 
 	if (status) {
 		// Need the current status + source to validate the transition.
 		const { data: current, error: fetchErr } = await adminClient
 			.from('bookings')
-			.select('status, source, check_in_date, check_out_date')
+			.select('status, source, check_in_date, check_out_date, admin_notes')
 			.eq('id', id)
 			.maybeSingle();
 		if (fetchErr) {
@@ -313,6 +315,8 @@ export const PATCH: RequestHandler = async ({ locals, request }) => {
 				check_out_date: current.check_out_date as string
 			};
 		}
+		isManualConfirm = current.status === 'pending' && status === 'confirmed';
+		priorAdminNotes = (current.admin_notes as string | null) ?? null;
 	}
 
 	const updates: Record<string, unknown> = { updated_at: new Date().toISOString() };
@@ -320,6 +324,16 @@ export const PATCH: RequestHandler = async ({ locals, request }) => {
 	if (admin_notes !== undefined) updates.admin_notes = admin_notes;
 	for (const f of ENRICHABLE) {
 		if (body[f] !== undefined) updates[f] = body[f];
+	}
+
+	// Manual confirm: append a stamped audit line to admin_notes so the reason
+	// is visible on the booking detail panel as well as in the audit log.
+	const trimmedReason = typeof reason === 'string' ? reason.trim() : '';
+	if (isManualConfirm && trimmedReason) {
+		const stamp = new Date().toISOString().slice(0, 16).replace('T', ' ');
+		const appended = `[Manual confirm ${stamp}] ${trimmedReason}`;
+		const base = (admin_notes !== undefined ? String(admin_notes) : priorAdminNotes) ?? '';
+		updates.admin_notes = base ? `${base}\n${appended}` : appended;
 	}
 
 	const { data, error } = await adminClient
@@ -357,12 +371,13 @@ export const PATCH: RequestHandler = async ({ locals, request }) => {
 
 	await logAdminEvent({
 		user_id: locals.user.id,
-		action: 'booking.update',
+		action: isManualConfirm ? 'booking.manual_confirm' : 'booking.update',
 		target_type: 'booking',
 		target_id: id,
 		metadata: {
 			fields: Object.keys(updates).filter((k) => k !== 'updated_at'),
-			status: status ?? null
+			status: status ?? null,
+			...(isManualConfirm && trimmedReason ? { reason: trimmedReason } : {})
 		}
 	});
 

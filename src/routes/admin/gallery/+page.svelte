@@ -293,7 +293,10 @@
 				{images.length} image{images.length === 1 ? '' : 's'} · {categories.length} categories
 			</p>
 		</div>
-		<a href="/admin/gallery/categories" class="btn-link">Manage categories</a>
+		<a href="/admin/gallery/categories" class="btn-outline">
+			<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"/></svg>
+			Manage categories
+		</a>
 	</div>
 
 	<!-- Upload zone -->
@@ -589,6 +592,20 @@
 	.btn-primary:hover { opacity: 0.9; }
 	.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
 	.btn-link { background: none; border: none; padding: 0.45rem 0.85rem; color: var(--color-sage); cursor: pointer; font-size: 0.875rem; text-decoration: none; display: inline-flex; align-items: center; gap: 0.3rem; }
+	.btn-outline {
+		display: inline-flex; align-items: center; gap: 0.5rem;
+		padding: 0.5rem 1rem;
+		background: transparent;
+		color: var(--color-sage);
+		border: 1px solid var(--color-sage);
+		border-radius: 9999px;
+		font-weight: 600;
+		font-size: 0.875rem;
+		text-decoration: none;
+		cursor: pointer;
+		transition: background 0.15s ease, color 0.15s ease;
+	}
+	.btn-outline:hover { background: var(--color-sage); color: white; }
 	.btn-link:hover { text-decoration: underline; }
 	.btn-link:disabled { opacity: 0.5; cursor: not-allowed; }
 	.btn-link.danger { color: var(--color-error-text, #b91c1c); }

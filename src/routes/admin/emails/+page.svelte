@@ -18,6 +18,8 @@
 	let selectedId = $state<string>(templates[0]?.id ?? '');
 	let selectedLocale = $state<Locale>('en');
 	let view = $state<'html' | 'text'>('html');
+	let iframeEl = $state<HTMLIFrameElement | null>(null);
+	let iframeHeight = $state<number>(540);
 
 	const selected = $derived<Template | undefined>(
 		templates.find((t) => t.id === selectedId)
@@ -34,6 +36,19 @@
 		if (tmpl && !tmpl.variants.some((v) => v.locale === selectedLocale)) {
 			selectedLocale = tmpl.variants[0]?.locale ?? 'en';
 		}
+	}
+
+	// Auto-size the preview iframe to its content so the parent page (not the
+	// iframe) provides scrolling. allow-same-origin in the sandbox lets us read
+	// the inner documentElement.
+	function resizeIframe() {
+		const doc = iframeEl?.contentDocument;
+		if (!doc) return;
+		const next = Math.max(
+			doc.documentElement?.scrollHeight ?? 0,
+			doc.body?.scrollHeight ?? 0
+		);
+		if (next > 0) iframeHeight = next + 16;
 	}
 </script>
 
@@ -118,10 +133,13 @@
 
 				{#if view === 'html'}
 					<iframe
+						bind:this={iframeEl}
 						title={`${selected.name} — ${LOCALE_LABELS[currentVariant.locale]}`}
 						srcdoc={currentVariant.html}
 						class="html-frame"
 						sandbox="allow-same-origin"
+						style="height: {iframeHeight}px;"
+						onload={resizeIframe}
 					></iframe>
 				{:else}
 					<pre class="text-body">{currentVariant.text}</pre>
@@ -165,7 +183,6 @@
 		border: 1px solid var(--color-cream-dark);
 		border-radius: 12px;
 		padding: 1rem;
-		min-height: 600px;
 		display: flex; flex-direction: column; gap: 0.75rem;
 	}
 	.preview-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; }
@@ -186,11 +203,18 @@
 	.subject-row .label { color: var(--color-text-muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
 	.subject-row .subject { font-weight: 500; }
 
-	.html-frame { width: 100%; min-height: 540px; border: 1px solid var(--color-cream-dark); border-radius: 8px; background: white; }
+	.html-frame {
+		width: 100%;
+		border: 1px solid var(--color-cream-dark);
+		border-radius: 8px;
+		background: white;
+		display: block;
+		overflow: hidden;
+	}
 	.text-body {
 		font-family: ui-monospace, 'SF Mono', Menlo, monospace;
 		font-size: 0.85rem; background: var(--color-cream); padding: 1rem;
-		border-radius: 8px; white-space: pre-wrap; margin: 0; min-height: 540px;
+		border-radius: 8px; white-space: pre-wrap; margin: 0;
 	}
 
 	.empty { color: var(--color-text-muted); }

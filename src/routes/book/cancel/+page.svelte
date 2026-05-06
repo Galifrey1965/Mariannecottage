@@ -64,9 +64,13 @@
 					class="form-input"
 				></textarea>
 				<button type="submit" disabled={submitting} class="btn-primary">
+					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>
 					{submitting ? 'Cancelling…' : data.refund_amount > 0 ? `Cancel and refund ${formatCurrency(data.refund_amount)}` : 'Cancel booking'}
 				</button>
-				<a href="/" class="btn-link">Keep my booking</a>
+				<a href="/" class="btn-link">
+					<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+					Keep my booking
+				</a>
 			</form>
 		{/if}
 	</div>
@@ -150,7 +154,9 @@
 		box-shadow: 0 0 0 2px color-mix(in srgb, var(--theme-accent) 25%, transparent);
 	}
 	.btn-primary {
-		display: inline-block;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
 		margin-top: 1.5rem;
 		padding: 0.85rem 2rem;
 		background: var(--theme-accent);
@@ -168,7 +174,9 @@
 	.btn-primary:hover { background: var(--theme-accent-hover); border-color: var(--theme-accent-hover); }
 	.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
 	.btn-link {
-		display: inline-block;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
 		margin-top: 1.5rem;
 		margin-left: 1rem;
 		color: var(--theme-text-muted);

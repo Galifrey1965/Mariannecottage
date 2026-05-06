@@ -89,6 +89,45 @@
 	let notesValue = $state('');
 	let updatingStatus = $state(false);
 
+	// Manual confirm flow — used when a guest pays off-Stripe (phone, bank
+	// transfer) and the admin needs to mark the pending booking as paid. We
+	// require a short reason so the audit log captures *why* it was force-
+	// confirmed, and append it to admin_notes so it's visible on the booking.
+	let manualConfirm = $state<{ id: string; reason: string; saving: boolean; error: string } | null>(null);
+	function openManualConfirm(b: Booking) {
+		manualConfirm = { id: b.id, reason: '', saving: false, error: '' };
+	}
+	function closeManualConfirm() {
+		manualConfirm = null;
+	}
+	async function submitManualConfirm() {
+		if (!manualConfirm) return;
+		const reason = manualConfirm.reason.trim();
+		if (reason.length < 3) {
+			manualConfirm = { ...manualConfirm, error: 'Add a short reason (e.g. "paid by phone, Visa ****1234").' };
+			return;
+		}
+		manualConfirm = { ...manualConfirm, saving: true, error: '' };
+		try {
+			const res = await fetch('/api/admin/bookings', {
+				method: 'PATCH',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ id: manualConfirm.id, status: 'confirmed', reason })
+			});
+			const result = await res.json().catch(() => ({}));
+			if (!res.ok || !result.success) {
+				manualConfirm = { ...manualConfirm, saving: false, error: result?.error || `Confirm failed (${res.status})` };
+				return;
+			}
+			if (selectedBooking?.id === manualConfirm.id) selectedBooking = result.booking;
+			manualConfirm = null;
+			await refetchAll();
+		} catch (err) {
+			const msg = err instanceof Error ? err.message : 'Network error';
+			if (manualConfirm) manualConfirm = { ...manualConfirm, saving: false, error: msg };
+		}
+	}
+
 	// PR 4 admin slice — cancel & refund flow
 	interface CancelPreview {
 		booking: {
@@ -1209,25 +1248,16 @@
 				<div class="detail-content">
 					<div class="detail-header">
 						<div>
-							<p class="mono sub-text" style="color: var(--color-sage);">
-								{selectedBooking.booking_reference}
+							<p class="mono sub-text source-line" style="color: var(--color-sage);">
+								<span>{selectedBooking.booking_reference}</span>
 								{#if sourceChipLabel(selectedBooking.source)}
 									<span class="source-chip {selectedBooking.source}">{sourceChipLabel(selectedBooking.source)}</span>
 								{/if}
+								<span class="source-full">· {sourceFullLabel(selectedBooking.source)}</span>
 							</p>
 							<h3 class="detail-title">{selectedBooking.guest_name}</h3>
 						</div>
-						<button onclick={closeDetail} class="close-btn">✕</button>
-					</div>
-
-					<div class="detail-section">
-						<p class="detail-label">Source</p>
-						<p>
-							{sourceFullLabel(selectedBooking.source)}
-							{#if sourceChipLabel(selectedBooking.source)}
-								<span class="source-chip {selectedBooking.source}">{sourceChipLabel(selectedBooking.source)}</span>
-							{/if}
-						</p>
+						<button onclick={closeDetail} class="close-btn" aria-label="Close booking detail">✕</button>
 					</div>
 
 					<div class="detail-section">
@@ -1269,12 +1299,13 @@
 							<div class="status-buttons" style="margin-top: 0.5rem;">
 								{#if selectedBooking.status === 'pending'}
 									<button
-										onclick={() => updateBookingStatus(selectedBooking!.id, 'confirmed')}
-										disabled={updatingStatus}
+										onclick={() => openManualConfirm(selectedBooking!)}
+										disabled={updatingStatus || manualConfirm !== null}
 										class="status-toggle confirmed"
+										title="Mark this pending booking as paid (e.g. guest paid by phone or bank transfer)"
 									>
 										<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
-										confirm
+										Mark as paid
 									</button>
 								{/if}
 								<button
@@ -1317,6 +1348,32 @@
 									</button>
 								{/if}
 							</div>
+							{#if manualConfirm && manualConfirm.id === selectedBooking.id}
+								<div class="manual-confirm-box" role="group" aria-label="Manual confirm — record reason">
+									<label class="form-label" for="mc-reason">Reason (added to admin notes &amp; audit log)</label>
+									<textarea
+										id="mc-reason"
+										class="form-input"
+										rows="2"
+										placeholder="e.g. Paid by phone — Visa ending 4242, ref ABC123"
+										bind:value={manualConfirm.reason}
+										disabled={manualConfirm.saving}
+									></textarea>
+									{#if manualConfirm.error}
+										<p class="sub-text" style="color: var(--md-sys-color-error); margin: 0.4rem 0 0;" role="alert">{manualConfirm.error}</p>
+									{/if}
+									<div class="manual-confirm-actions">
+										<button type="button" class="btn-outline-sm" onclick={closeManualConfirm} disabled={manualConfirm.saving}>
+											<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+											Cancel
+										</button>
+										<button type="button" class="btn-primary-sm" onclick={submitManualConfirm} disabled={manualConfirm.saving}>
+											<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+											{manualConfirm.saving ? 'Confirming…' : 'Confirm as paid'}
+										</button>
+									</div>
+								</div>
+							{/if}
 							{#if resendError}
 								<p class="sub-text" style="margin-top: 0.5rem; color: var(--md-sys-color-error);" role="alert">{resendError}</p>
 							{/if}
@@ -1640,6 +1697,20 @@
 	.source-chip.admin { background: #e0ecff; color: #1d4ed8; border: 1px solid #93b8f0; }
 	.source-chip.booking_com { background: #003580; color: white; border: 1px solid #003580; }
 
+	.source-line {
+		display: flex;
+		align-items: center;
+		gap: 0.4rem;
+		flex-wrap: wrap;
+		margin: 0;
+	}
+	.source-line .source-chip { margin-left: 0; }
+	.source-full {
+		color: var(--color-text-muted);
+		font-size: 0.75rem;
+		font-weight: 400;
+	}
+
 	/* Booking.com stat card */
 	.stat-card--bc { display: flex; flex-direction: column; gap: 0.4rem; }
 	.stat-card--bc .stat-label { display: inline-flex; align-items: center; gap: 0.4rem; }
@@ -1736,6 +1807,33 @@
 	.status-toggle.active.pending { background: var(--color-warning-bg); color: var(--color-warning-text); border-color: var(--color-warning-text); font-weight: 600; }
 	.status-toggle.active.confirmed { background: var(--color-success-bg); color: var(--color-success-text); border-color: var(--color-success-text); font-weight: 600; }
 	.status-toggle.active.cancelled { background: var(--color-error-bg); color: var(--color-error-text); border-color: var(--color-error-text); font-weight: 600; }
+
+	.manual-confirm-box {
+		margin-top: 0.75rem;
+		padding: 0.85rem;
+		background: var(--color-cream);
+		border: 1px solid var(--color-cream-dark);
+		border-radius: 10px;
+	}
+	.manual-confirm-box .form-label { margin-top: 0; }
+	.manual-confirm-box textarea.form-input {
+		width: 100%;
+		font-family: inherit;
+		font-size: 0.875rem;
+		resize: vertical;
+	}
+	.manual-confirm-actions { display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 0.6rem; }
+	.btn-primary-sm, .btn-outline-sm {
+		display: inline-flex; align-items: center; gap: 0.35rem;
+		padding: 0.4rem 0.85rem; font-size: 0.825rem; border-radius: 9999px;
+		font-weight: 600; cursor: pointer;
+	}
+	.btn-primary-sm { background: var(--color-sage); color: white; border: 1px solid var(--color-sage); }
+	.btn-primary-sm:hover:not(:disabled) { opacity: 0.9; }
+	.btn-primary-sm:disabled { opacity: 0.5; cursor: not-allowed; }
+	.btn-outline-sm { background: transparent; color: var(--color-text-muted); border: 1px solid var(--color-cream-dark); }
+	.btn-outline-sm:hover:not(:disabled) { background: var(--color-bg); }
+	.btn-outline-sm:disabled { opacity: 0.5; cursor: not-allowed; }
 
 	.pricing-rows { font-size: 0.875rem; display: flex; flex-direction: column; gap: 0.25rem; }
 	.pricing-row { display: flex; justify-content: space-between; color: var(--color-text-muted); }

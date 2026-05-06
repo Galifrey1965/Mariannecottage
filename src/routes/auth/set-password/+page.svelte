@@ -50,7 +50,10 @@
 				This invitation or recovery link is no longer valid. Please request a fresh email
 				and click the new link within the hour.
 			</p>
-			<a href="/admin/login" class="btn-primary" style="display:block;text-align:center;text-decoration:none;">Go to sign in</a>
+			<a href="/admin/login" class="btn-primary" style="display:inline-flex;align-items:center;justify-content:center;gap:0.5rem;text-decoration:none;">
+				<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+				Go to sign in
+			</a>
 		{:else}
 		<h2 class="title">Set your password</h2>
 		<p class="lede">
@@ -91,6 +94,7 @@
 			{/if}
 
 			<button type="submit" disabled={submitting} class="btn-primary">
+				<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
 				{submitting ? 'Saving…' : 'Save password'}
 			</button>
 		</form>
@@ -161,6 +165,10 @@
 		margin: 0 0 1rem;
 	}
 	.btn-primary {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.5rem;
 		width: 100%;
 		padding: 0.75rem 1.5rem;
 		background: var(--color-sage);
