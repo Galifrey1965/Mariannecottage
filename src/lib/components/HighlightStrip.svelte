@@ -68,11 +68,12 @@
 </div>
 
 <style>
-	.strip { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; padding: 2rem 0; }
+	.strip { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.7rem; padding: 0; }
 	@media (min-width: 600px) { .strip { grid-template-columns: repeat(3, 1fr); } }
 	@media (min-width: 840px) { .strip { grid-template-columns: repeat(6, 1fr); } }
-	.highlight-item { text-align: center; padding: 1rem; background: var(--color-cream); border-radius: var(--md-shape-corner-medium); transition: box-shadow 0.2s ease; }
+	.highlight-item { text-align: center; padding: 0.7rem 0.6rem; background: var(--color-cream); border-radius: var(--md-shape-corner-medium); transition: box-shadow 0.2s ease; }
 	.highlight-item:hover { box-shadow: var(--md-elevation-shadow-1); }
-	.highlight-icon { display: flex; align-items: center; justify-content: center; margin-bottom: 0.5rem; color: var(--color-sage); }
-	.highlight-label { font-size: 0.875rem; font-weight: 600; color: var(--color-brown); margin: 0; }
+	.highlight-icon { display: flex; align-items: center; justify-content: center; margin-bottom: 0.35rem; color: var(--color-sage); }
+	.highlight-icon svg { width: 28px; height: 28px; }
+	.highlight-label { font-size: 0.8125rem; font-weight: 600; color: var(--color-brown); margin: 0; line-height: 1.25; }
 </style>

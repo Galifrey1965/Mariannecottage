@@ -158,6 +158,17 @@
 		border-top: var(--theme-border-thin);
 		border-bottom: var(--theme-border-thin);
 		border-radius: 0;
+		/* Half the vertical padding of the other section-wide sections —
+		   the highlights are visual sugar (icons + 1-line labels), they
+		   don't need the same breathing room as content-heavy sections. */
+		padding-top: 2rem;
+		padding-bottom: 2rem;
+	}
+	@media (min-width: 600px) {
+		.highlights-bg {
+			padding-top: 2.75rem;
+			padding-bottom: 2.75rem;
+		}
 	}
 
 	.rooms-grid { display: grid; grid-template-columns: 1fr; gap: 2.5rem; margin-bottom: 2.5rem; }
