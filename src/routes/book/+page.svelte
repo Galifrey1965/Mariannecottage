@@ -24,7 +24,14 @@
 	const ratePlans: RatePlan[] = data.ratePlans ?? [];
 
 	function formatDateISO(d: Date): string {
-		return d.toISOString().split('T')[0];
+		// Local-time, not toISOString — toISOString shifts to UTC, which in
+		// timezones east of UTC (e.g. BST) drops the calendar date by one and
+		// silently sends "13 May" when the user picked "14 May", colliding
+		// with adjacent bookings on the prior day.
+		const y = d.getFullYear();
+		const m = String(d.getMonth() + 1).padStart(2, '0');
+		const day = String(d.getDate()).padStart(2, '0');
+		return `${y}-${m}-${day}`;
 	}
 
 	function findRatePlan(plans: RatePlan[], dateISO: string): RatePlan | null {
