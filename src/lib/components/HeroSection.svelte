@@ -40,9 +40,6 @@
 				</span>
 				{#if savingsHint}
 					<span class="hero-cta__hint" aria-hidden="true">
-						<svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true">
-							<path d="M12 2v20M5 9l7-7 7 7" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" transform="rotate(180 12 12)" />
-						</svg>
 						<span>{savingsHint}</span>
 					</span>
 					<span class="visually-hidden"> — {savingsHint}</span>
