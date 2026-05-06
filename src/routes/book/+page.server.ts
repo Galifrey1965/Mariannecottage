@@ -4,22 +4,26 @@ import type { PageServerLoad } from './$types';
 import type { RatePlan } from '$lib/server/supabase';
 
 export const load: PageServerLoad = async () => {
-	// Lazy sweep: clear any soft-reserves whose 20-min TTL has elapsed
-	// before we read availability. The Netlify daily cron is a backstop —
-	// this on-visit sweep is what makes abandoned reservations free up
-	// for the next visitor without waiting for the cron. If the RPC itself
-	// fails we still serve the page (worst case: stale availability for
-	// this one render).
-	const { error: sweepError } = await adminClient.rpc('expire_pending_bookings');
-	if (sweepError) {
-		console.error('[/book load] expire_pending_bookings failed:', sweepError);
-	}
-
-	// Lazy BC sync: pull the Booking.com iCal feed if the last sync was
-	// more than 10 min ago. Bounds how often /book hits BC's feed (a busy
-	// flurry of visits → 1 fetch per 10 min). The Netlify daily cron is
-	// the backstop in case nobody visits /book for a long stretch.
-	await runBcSyncLazyIfStale();
+	// Background: clear any soft-reserves whose 20-min TTL has elapsed
+	// (frees abandoned-booking dates for the next visitor) and pull the
+	// Booking.com iCal feed if the last sync was >10 min ago.
+	//
+	// Both run fire-and-forget so the user-facing page render isn't gated
+	// on a third-party HTTP call (BC iCal can take seconds) or any extra
+	// Supabase round-trip. The trade-off: this render uses whatever the
+	// availability table holds *now*, so it can be ≤10 min stale relative
+	// to BC and may briefly display an expired soft-reserve as taken.
+	// Backstops:
+	//   - The Netlify daily cron always runs both jobs.
+	//   - The 10-min debounce in runBcSyncLazyIfStale means the next
+	//     visit will simply re-attempt the sync if a fire-and-forget run
+	//     was killed before completing on Netlify Functions.
+	void adminClient.rpc('expire_pending_bookings').then(({ error }) => {
+		if (error) console.error('[/book load] expire_pending_bookings failed:', error);
+	});
+	void runBcSyncLazyIfStale().catch((err) => {
+		console.error('[/book load] BC sync failed:', err);
+	});
 
 	const today = new Date();
 	const endDate = new Date(today);
