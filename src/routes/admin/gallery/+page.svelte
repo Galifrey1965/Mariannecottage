@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import type { GalleryImage, GalleryCategory, Room } from '$lib/server/gallery';
+	import { modalA11y } from '$lib/actions/modal-a11y';
 	import { dndzone, type DndEvent } from 'svelte-dnd-action';
 	import { flip } from 'svelte/animate';
 
@@ -431,7 +432,14 @@
 <!-- Edit modal -->
 {#if editing}
 	<div class="modal-backdrop" onclick={closeEdit} role="presentation">
-		<div class="modal" onclick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
+		<div
+			class="modal"
+			onclick={(e) => e.stopPropagation()}
+			role="dialog"
+			aria-modal="true"
+			tabindex="-1"
+			use:modalA11y={{ onClose: closeEdit }}
+		>
 			<h3 class="modal-title">Edit image</h3>
 
 			<img src={editing.urls.full} alt={editing.alt_en} class="modal-preview" />

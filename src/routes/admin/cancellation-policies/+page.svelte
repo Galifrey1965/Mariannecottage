@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { CancellationPolicy, CancellationPolicySchedule } from '$lib/server/supabase';
 	import type { PageData } from './$types';
+	import { modalA11y } from '$lib/actions/modal-a11y';
 
 	let { data }: { data: PageData } = $props();
 
@@ -200,7 +201,14 @@
 
 {#if editing}
 	<div class="modal-backdrop" onclick={close} role="presentation">
-		<div class="modal" onclick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
+		<div
+			class="modal"
+			onclick={(e) => e.stopPropagation()}
+			role="dialog"
+			aria-modal="true"
+			tabindex="-1"
+			use:modalA11y={{ onClose: close }}
+		>
 			<h3 class="modal-title">{editing.id ? 'Edit' : 'New'} cancellation policy</h3>
 
 			<label class="form-label" for="cp-name">Name</label>

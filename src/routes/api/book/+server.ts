@@ -9,8 +9,19 @@ import {
 } from '$lib/server/supabase';
 import { detectLocale, isValidLocale } from '$lib/i18n';
 import { MIN_NIGHTS, MIN_LEAD_HOURS, getEarliestCheckInDate } from '$lib/booking-policy';
+import { rateLimitResponse } from '$lib/server/rate-limit';
 
-export const POST: RequestHandler = async ({ request }) => {
+// Public booking creation endpoint — rate limit per IP so a bot can't
+// flood-create pending bookings (which would also flood Stripe with
+// abandoned PaymentIntents). 10/min is well above any real human pace.
+const BOOK_MAX = 10;
+const BOOK_WINDOW_MS = 60_000;
+
+export const POST: RequestHandler = async ({ request, getClientAddress }) => {
+	const ip = getClientAddress();
+	const limited = rateLimitResponse(`book:${ip}`, BOOK_MAX, BOOK_WINDOW_MS);
+	if (limited) return limited;
+
 	const body = await request.json();
 
 	// Synchronous expired-pending-payment sweep before we attempt the

@@ -151,6 +151,12 @@
 	let paymentElement = $state<StripePaymentElement | null>(null);
 	let paymentMountNode: HTMLDivElement | undefined = $state();
 	let paymentReady = $state(false);
+	// T&Cs acceptance — must be ticked on step 3 before the Pay button is
+	// enabled. The timestamp captured client-side is forwarded to the
+	// PaymentIntent endpoint so it lands on bookings.terms_accepted_at.
+	let termsAccepted = $state(false);
+	let termsAcceptedAt = $state<string | null>(null);
+
 	let confirmedBooking = $state<{
 		booking_reference: string;
 		guest_name: string;
@@ -310,9 +316,31 @@
 
 	async function submitPayment() {
 		if (!stripe || !elements || !bookingRef) return;
+		if (!termsAccepted) {
+			formError = t(messages, 'book.terms_required');
+			return;
+		}
 		submitting = true;
 		formError = '';
 		try {
+			// Persist the T&Cs acceptance timestamp on the booking row before
+			// confirming the payment. The endpoint reuses the existing
+			// PaymentIntent so this is an idempotent stamp call.
+			const stampedAt = termsAcceptedAt ?? new Date().toISOString();
+			termsAcceptedAt = stampedAt;
+			await fetch('/api/stripe/payment-intent', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					booking_reference: bookingRef,
+					terms_accepted_at: stampedAt
+				})
+			}).catch(() => {
+				// Non-fatal: if this fails, the booking still has the timestamp
+				// captured client-side; we just won't have it server-side.
+				// The Stripe confirmPayment call below is what matters.
+			});
+
 			const returnUrl = new URL(
 				localePath(lang, '/book/confirm'),
 				window.location.origin
@@ -593,12 +621,25 @@
 						<div class="error-box" role="alert">{formError}</div>
 					{/if}
 
+					<label class="terms-row">
+						<input
+							type="checkbox"
+							bind:checked={termsAccepted}
+							onchange={() => {
+								if (termsAccepted && !termsAcceptedAt) termsAcceptedAt = new Date().toISOString();
+							}}
+							class="terms-check"
+							required
+						/>
+						<span class="terms-label">{@html t(messages, 'book.terms_label_html')}</span>
+					</label>
+
 					<div class="actions">
 						<button onclick={() => { step = 2; discardPendingBooking(); }} disabled={submitting} class="btn-outline">
 							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
 							{t(messages, 'book.back')}
 						</button>
-						<button onclick={submitPayment} disabled={submitting || !paymentReady} class="btn-primary flex-1">
+						<button onclick={submitPayment} disabled={submitting || !paymentReady || !termsAccepted} class="btn-primary flex-1">
 							{#if submitting}
 								{t(messages, 'book.pay_processing')}
 							{:else}
@@ -821,6 +862,26 @@
 	.error-box { padding: 1rem; margin-bottom: 1rem; background: var(--color-error-bg); color: var(--color-error-text); border-radius: var(--md-shape-corner-small); font-size: 0.875rem; }
 	.warning-banner { padding: 0.875rem 1rem; background: var(--color-warning-bg); color: var(--color-warning-text); border-radius: var(--md-shape-corner-small); font-size: 0.8125rem; }
 	.cancel-note { font-size: 0.75rem; color: var(--color-text-muted); margin: 1rem 0 0; text-align: center; }
+	.terms-row {
+		display: flex;
+		align-items: flex-start;
+		gap: 0.6rem;
+		margin: 1rem 0 0.75rem;
+		font-size: 0.875rem;
+		line-height: 1.5;
+		color: var(--color-text);
+		cursor: pointer;
+	}
+	.terms-check {
+		flex-shrink: 0;
+		margin-top: 0.2rem;
+		width: 1.05rem;
+		height: 1.05rem;
+		accent-color: var(--color-sage);
+		cursor: pointer;
+	}
+	.terms-label :global(a) { color: var(--color-sage); text-decoration: underline; }
+	.terms-label :global(a:hover) { text-decoration: none; }
 
 	/* Payment Element */
 	.pay-subhead { margin: 0 0 1rem; font-size: 0.85rem; color: var(--color-text-muted); }

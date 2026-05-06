@@ -15,9 +15,20 @@ status = 301
 force = true
 
 # Headers for security
+#
+# CSP is pragmatic — allows 'unsafe-inline' for scripts and styles because
+# SvelteKit's hydration emits inline scripts and Svelte scoped styles use
+# inline declarations. Hardening to nonce-based CSP is a future pass.
+# Allowlists: Stripe (js + iframes), Google Maps tiles + JS, Supabase
+# Storage (gallery images), Brevo tracking pixels (only loaded on email open
+# but harmless here for parity). frame-ancestors 'self' supersedes
+# X-Frame-Options (kept below for older browsers).
 [[headers]]
 for = "/*"
 [headers.values]
+"Content-Security-Policy" = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://m.stripe.com https://m.stripe.network https://maps.googleapis.com https://maps.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://api.stripe.com https://*.stripe.com https://*.supabase.co wss://*.supabase.co https://maps.googleapis.com https://*.googleapis.com; frame-src 'self' https://js.stripe.com https://hooks.stripe.com https://*.stripe.com https://www.google.com https://maps.google.com; media-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; upgrade-insecure-requests"
+"Strict-Transport-Security" = "max-age=31536000; includeSubDomains"
+"Permissions-Policy" = "camera=(), microphone=(), geolocation=(), interest-cohort=(), browsing-topics=()"
 "X-Frame-Options" = "SAMEORIGIN"
 "X-Content-Type-Options" = "nosniff"
 "Referrer-Policy" = "strict-origin-when-cross-origin"

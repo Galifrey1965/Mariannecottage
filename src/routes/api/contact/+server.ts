@@ -1,10 +1,21 @@
 import { json } from '@sveltejs/kit';
 import { emailService } from '$lib/server/email';
 import { detectLocale, isValidLocale } from '$lib/i18n';
+import { rateLimitResponse } from '$lib/server/rate-limit';
 import type { Locale } from '$lib/i18n';
 import type { RequestHandler } from './$types';
 
-export const POST: RequestHandler = async ({ request }) => {
+// Public-facing form, no auth — rate limit by IP. 5 submissions / minute is
+// generous for a real human filling in a contact form and well below
+// what's needed to spam the inbox.
+const CONTACT_MAX = 5;
+const CONTACT_WINDOW_MS = 60_000;
+
+export const POST: RequestHandler = async ({ request, getClientAddress }) => {
+	const ip = getClientAddress();
+	const limited = rateLimitResponse(`contact:${ip}`, CONTACT_MAX, CONTACT_WINDOW_MS);
+	if (limited) return limited;
+
 	try {
 		const data = await request.json();
 		const { name, email, message } = data;

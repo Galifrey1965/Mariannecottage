@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { t } from '$lib/i18n';
 	import type { Messages } from '$lib/i18n';
+	import { modalA11y } from '$lib/actions/modal-a11y';
 
 	interface GalleryImage {
 		thumb: string;
@@ -124,6 +125,8 @@
 			role="dialog"
 			aria-modal="true"
 			aria-label={currentImage.alt}
+			tabindex="-1"
+			use:modalA11y={{ onClose: () => (selectedImageIndex = null), skipInitialFocus: true }}
 		>
 			<div class="lightbox-content" onclick={e => e.stopPropagation()}>
 				<img src={currentImage.full} alt={currentImage.alt} />

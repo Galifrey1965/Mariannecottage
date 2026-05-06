@@ -49,6 +49,17 @@
 		{/if}
 	</header>
 
+	{#if showShell && data.emailServiceMode === 'stub'}
+		<div class="email-banner" role="alert">
+			<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+			<div>
+				<strong>Transactional email is OFF.</strong>
+				The Brevo adapter isn't configured (BREVO_API_KEY + EMAIL_FROM). Booking confirmations
+				and contact enquiries will not be delivered until this is set in Netlify env vars.
+			</div>
+		</div>
+	{/if}
+
 	<main class="admin-main">
 		{@render children()}
 	</main>
@@ -130,4 +141,20 @@
 
 	.admin-main { max-width: 1280px; margin: 0 auto; padding: 1.5rem 1rem; }
 	@media (min-width: 600px) { .admin-main { padding: 1.5rem; } }
+
+	.email-banner {
+		max-width: 1280px;
+		margin: 0.75rem auto 0;
+		padding: 0.85rem 1rem;
+		display: flex;
+		align-items: flex-start;
+		gap: 0.75rem;
+		background: #fff4d6;
+		border: 1px solid #f5b942;
+		color: #8a5a00;
+		border-radius: 12px;
+		font-size: 0.875rem;
+		line-height: 1.45;
+	}
+	.email-banner svg { flex-shrink: 0; margin-top: 0.1rem; }
 </style>

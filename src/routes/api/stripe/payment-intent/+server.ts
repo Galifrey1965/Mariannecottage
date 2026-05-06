@@ -31,6 +31,15 @@ export const POST: RequestHandler = async ({ request }) => {
 
 	const body = await request.json().catch(() => ({}));
 	const bookingRef: string | undefined = body.booking_reference;
+	// terms_accepted_at is sent by the wizard right before stripe.confirmPayment
+	// fires (step 3, after the T&Cs checkbox is ticked). Optional on the first
+	// call (step 2 → 3 just spins up the PaymentIntent so the Element can mount)
+	// and only validated for shape if present. The frontend gates the Pay
+	// button on the checkbox so a real guest path always passes a timestamp.
+	const termsAcceptedAt: string | undefined =
+		typeof body.terms_accepted_at === 'string' && !Number.isNaN(Date.parse(body.terms_accepted_at))
+			? body.terms_accepted_at
+			: undefined;
 	if (!bookingRef) {
 		return json({ success: false, error: 'missing booking_reference' }, { status: 400 });
 	}
@@ -38,7 +47,7 @@ export const POST: RequestHandler = async ({ request }) => {
 	const { data: booking, error: fetchErr } = await adminClient
 		.from('bookings')
 		.select(
-			'id, booking_reference, guest_name, guest_email, num_guests, num_nights, check_in_date, check_out_date, total_cost, status, payment_intent_id'
+			'id, booking_reference, guest_name, guest_email, num_guests, num_nights, check_in_date, check_out_date, total_cost, status, payment_intent_id, terms_accepted_at'
 		)
 		.eq('booking_reference', bookingRef)
 		.maybeSingle();
@@ -66,6 +75,16 @@ export const POST: RequestHandler = async ({ request }) => {
 				existing.status === 'requires_confirmation' ||
 				existing.status === 'requires_action'
 			) {
+				// Re-call from the wizard right before stripe.confirmPayment may
+				// carry the T&Cs timestamp — persist it once on the existing
+				// booking row when it arrives.
+				if (!booking.terms_accepted_at && termsAcceptedAt) {
+					const { error: termsErr } = await adminClient
+						.from('bookings')
+						.update({ terms_accepted_at: termsAcceptedAt })
+						.eq('id', booking.id);
+					if (termsErr) console.error('[payment-intent] failed to persist terms', termsErr);
+				}
 				return json({
 					success: true,
 					client_secret: existing.client_secret,
@@ -95,12 +114,20 @@ export const POST: RequestHandler = async ({ request }) => {
 		}
 	});
 
+	const updates: Record<string, unknown> = { payment_intent_id: intent.id };
+	// Stamp guest T&Cs acceptance once — the first time the wizard sends a
+	// timestamp (i.e. when they tick the box on step 3). Legally what matters
+	// is the first time they ticked the box, before the booking became
+	// chargeable; later retries keep the original timestamp.
+	if (!booking.terms_accepted_at && termsAcceptedAt) {
+		updates.terms_accepted_at = termsAcceptedAt;
+	}
 	const { error: updateErr } = await adminClient
 		.from('bookings')
-		.update({ payment_intent_id: intent.id })
+		.update(updates)
 		.eq('id', booking.id);
 	if (updateErr) {
-		console.error('[payment-intent] failed to persist payment_intent_id', updateErr);
+		console.error('[payment-intent] failed to persist payment_intent_id / terms', updateErr);
 	}
 
 	return json({
