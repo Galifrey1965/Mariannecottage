@@ -323,9 +323,6 @@
 		"cancellation": "Cancellation:",
 		"empty": "Select check-in and check-out dates to see pricing"
 	},
-	"room_card": {
-		"view_details": "→ View Details"
-	},
 	"enquiry_form": {
 		"all_fields_required": "All fields are required",
 		"sending": "Sending..."

@@ -44,15 +44,11 @@
 	<h2 class="section-heading center">{t(messages, 'home.rooms.heading')}</h2>
 	<div class="rooms-grid">
 		<RoomCard
-			{lang}
-			{messages}
 			image="/images/gallery/bedroom-double-bed.jpeg"
 			title={t(messages, 'home.rooms_data.bedroom1')}
 			description={t(messages, 'home.rooms_data.bedroom1_desc')}
 		/>
 		<RoomCard
-			{lang}
-			{messages}
 			image="/images/gallery/bedroom-twin-full.jpeg"
 			title={t(messages, 'home.rooms_data.bedroom2')}
 			description={t(messages, 'home.rooms_data.bedroom2_desc')}
@@ -115,7 +111,6 @@
 <!-- Booking CTA -->
 <section class="section-narrow cta-section">
 	<h2 class="section-heading center">{t(messages, 'home.booking.heading')}</h2>
-	<p class="cta-description">{t(messages, 'home.about.p1')}</p>
 	<a href={localePath(lang, '/book')} class="cta-button large">
 		<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
 			<path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="m9 16 2 2 4-4"/>
@@ -206,10 +201,4 @@
 	.cta-button.large { padding: 1rem 2.75rem; font-size: 0.95rem; }
 
 	.cta-section { text-align: center; }
-	.cta-description {
-		color: var(--theme-text-muted);
-		font-size: 1.15rem; line-height: 1.7;
-		margin: 0 auto 2.5rem; max-width: 38rem;
-		font-style: italic;
-	}
 </style>

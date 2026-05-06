@@ -323,9 +323,6 @@
 		"cancellation": "Stornierung:",
 		"empty": "Wählen Sie An- und Abreisedaten um die Preise zu sehen"
 	},
-	"room_card": {
-		"view_details": "→ Details Ansehen"
-	},
 	"enquiry_form": {
 		"all_fields_required": "Alle Felder sind erforderlich",
 		"sending": "Wird gesendet..."

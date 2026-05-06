@@ -323,9 +323,6 @@
 		"cancellation": "Annulation :",
 		"empty": "Sélectionnez les dates d'arrivée et de départ pour voir les tarifs"
 	},
-	"room_card": {
-		"view_details": "→ Voir les Détails"
-	},
 	"enquiry_form": {
 		"all_fields_required": "Tous les champs sont obligatoires",
 		"sending": "Envoi en cours..."
