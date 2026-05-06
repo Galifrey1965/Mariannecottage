@@ -1,7 +1,5 @@
 import { adminClient, getAvailability, getTaxSettings, getRatePlans, getTestBlockedDates, getCheckInDates } from '$lib/server/supabase';
 import { runBcSyncLazyIfStale } from '$lib/server/bc-sync';
-import { computeBookableWindows } from '$lib/booking-windows';
-import { MIN_NIGHTS, getEarliestCheckInDate } from '$lib/booking-policy';
 import type { PageServerLoad } from './$types';
 import type { RatePlan } from '$lib/server/supabase';
 
@@ -54,39 +52,5 @@ export const load: PageServerLoad = async () => {
 
 	const taxRate = taxSettings?.taxe_de_sejour_per_person_per_night ?? 0.68;
 
-	// Pre-compute the bookable-windows list server-side so the windows
-	// picker on step 1 has zero further round-trips. Bounded by the same
-	// rate-plan horizon the calendar uses — windows after the latest
-	// active plan would silently fail at "Continue to Pay" with
-	// "no rate plan covers those dates", so we don't bother surfacing
-	// them. If no active plan exists we fall back to the 90-day raw
-	// horizon so the page still renders something coherent.
-	const earliestCheckIn = getEarliestCheckInDate(today);
-	const activePlans = (ratePlansResult ?? []).filter((p) => p.is_active);
-	const latestPlanDateISO =
-		activePlans.length > 0
-			? activePlans.reduce((acc, p) => (p.valid_until > acc ? p.valid_until : acc), activePlans[0].valid_until)
-			: endStr;
-	const latestCheckIn = new Date(latestPlanDateISO + 'T00:00:00Z');
-	const horizonCap = new Date(today);
-	horizonCap.setDate(horizonCap.getDate() + 90);
-	const effectiveLatest = latestCheckIn < horizonCap ? latestCheckIn : horizonCap;
-
-	const windows = computeBookableWindows({
-		availability: availabilityMap,
-		checkoutOnlyDates,
-		ratePlans: ratePlansResult,
-		earliestCheckIn,
-		latestCheckIn: effectiveLatest,
-		minNights: MIN_NIGHTS
-	});
-
-	return {
-		availability: availabilityMap,
-		taxRate,
-		ratePlans: ratePlansResult,
-		testBlockedDates,
-		checkoutOnlyDates,
-		windows
-	};
+	return { availability: availabilityMap, taxRate, ratePlans: ratePlansResult, testBlockedDates, checkoutOnlyDates };
 };

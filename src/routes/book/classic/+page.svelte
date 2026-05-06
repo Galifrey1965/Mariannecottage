@@ -2,11 +2,10 @@
 	import { onDestroy } from 'svelte';
 	import { env as publicEnv } from '$env/dynamic/public';
 	import { localePath, t, formatDate, formatCurrency, plural } from '$lib/i18n';
-	import AvailableWindowsPicker from '$lib/components/AvailableWindowsPicker.svelte';
+	import BookingCalendar from '$lib/components/BookingCalendar.svelte';
 	import BookingSummary from '$lib/components/BookingSummary.svelte';
 	import BookingConfirmed from '$lib/components/BookingConfirmed.svelte';
-	import { MIN_NIGHTS, MIN_LEAD_HOURS } from '$lib/booking-policy';
-	import type { BookingWindow } from '$lib/booking-windows';
+	import { MIN_NIGHTS, MIN_LEAD_HOURS, getEarliestCheckInDate } from '$lib/booking-policy';
 	import type { PageData } from './$types';
 	import type { RatePlan } from '$lib/server/supabase';
 	import type { Stripe, StripeElements, StripePaymentElement } from '@stripe/stripe-js';
@@ -64,8 +63,11 @@
 
 	let formError = $state('');
 	let fieldErrors = $state<Record<string, string>>({});
+	let calendarRef: { goToToday: () => void } | undefined = $state();
 
-	const windows: BookingWindow[] = data.windows ?? [];
+	const realAvailability: Record<string, boolean> = data.availability || {};
+	const testBlockedDates: string[] = data.testBlockedDates || [];
+	const checkoutOnlyDates: string[] = data.checkoutOnlyDates || [];
 
 	function discardPendingBooking() {
 		// Called when the user changes dates after a booking row was already
@@ -97,11 +99,30 @@
 		step = 2;
 	};
 
+	let orphanDate = $state<Date | null>(null);
+	const handleOrphanClick = (date: Date) => { orphanDate = date; };
+	const closeOrphanDialog = () => { orphanDate = null; };
+	const orphanDateLabel = $derived(
+		orphanDate ? formatDate(lang, orphanDate, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) : ''
+	);
+
 	const nights = $derived(
 		checkInDate && checkOutDate
 			? Math.ceil((checkOutDate.getTime() - checkInDate.getTime()) / (1000 * 60 * 60 * 24))
 			: 0
 	);
+
+	// Cap the calendar at the last covered rate plan so guests can't wander
+	// into months with no rate (which silently rejects at the Continue button
+	// with "no rate plan covers those dates"). Picks the latest valid_until
+	// across active plans; absent any active plan, leaves the cap unset.
+	const maxBookableDate = $derived.by<Date | undefined>(() => {
+		const active = (ratePlans ?? []).filter((p) => p.is_active);
+		if (active.length === 0) return undefined;
+		const latest = active.reduce((acc, p) => (p.valid_until > acc ? p.valid_until : acc), active[0].valid_until);
+		const [y, m, d] = latest.split('-').map(Number);
+		return new Date(y, m - 1, d);
+	});
 
 	const matchingPlan = $derived(
 		checkInDate ? findRatePlan(ratePlans, formatDateISO(checkInDate)) : null
@@ -447,17 +468,20 @@
 					<p class="stay-rules">
 						{MIN_NIGHTS} nights minimum · {MIN_LEAD_HOURS} hours notice
 					</p>
-					<AvailableWindowsPicker
+					<BookingCalendar
+						bind:this={calendarRef}
 						{messages}
 						{lang}
-						{windows}
+						availability={realAvailability}
+						{testBlockedDates}
+						{checkoutOnlyDates}
+						onDateRangeSelect={handleDateRangeSelect}
+						onOrphanClick={handleOrphanClick}
+						minDate={getEarliestCheckInDate()}
+						maxDate={maxBookableDate}
 						minNights={MIN_NIGHTS}
-						onPick={handleDateRangeSelect}
+						disablePastMonths
 					/>
-					<p class="classic-fallback">
-						{t(messages, 'book.classic_fallback')}
-						<a href={localePath(lang, '/book/classic')}>{t(messages, 'book.classic_link')}</a>
-					</p>
 				</div>
 			{/if}
 
@@ -680,6 +704,25 @@
 	</div>
 </section>
 
+{#if orphanDate}
+	<div class="orphan-overlay" role="dialog" aria-modal="true" aria-labelledby="orphan-title">
+		<button onclick={closeOrphanDialog} class="orphan-backdrop" aria-label="Close"></button>
+		<div class="orphan-dialog">
+			<h3 id="orphan-title" class="orphan-title">{orphanDateLabel}</h3>
+			<p class="orphan-body">
+				The cottage is free this night, but it sits between other bookings — too short
+				a gap for our online {MIN_NIGHTS}-night minimum. We're happy to take this one
+				directly.
+			</p>
+			<p class="orphan-contact">{t(messages, 'book.contact_info')}</p>
+			<div class="orphan-actions">
+				<button onclick={closeOrphanDialog} class="btn-outline">Close</button>
+				<a href="{localePath(lang, '/contact')}{orphanDate ? `?date=${formatDateISO(orphanDate)}` : ''}" class="btn-primary">{t(messages, 'book.contact_us')}</a>
+			</div>
+		</div>
+	</div>
+{/if}
+
 <style>
 	.page-section { max-width: 1440px; margin: 0 auto; padding: 4rem 1rem; }
 	@media (min-width: 600px) { .page-section { padding: 4rem 1.5rem; } }
@@ -749,10 +792,31 @@
 	.section-heading { font-family: 'Lora', serif; font-size: 1.25rem; font-weight: 600; color: var(--color-text); margin: 0 0 1.5rem; }
 	.stay-rules { margin: -1rem 0 1rem; font-size: 0.85rem; color: var(--color-text-muted); }
 
-	.classic-fallback { margin: 1.25rem 0 0; font-size: 0.8rem; color: var(--color-text-muted); text-align: center; }
-	.classic-fallback a { color: var(--color-sage); text-decoration: underline; margin-left: 0.25rem; }
-	.classic-fallback a:hover { text-decoration: none; }
-
+	.orphan-overlay {
+		position: fixed; inset: 0; z-index: 100;
+		display: flex; align-items: center; justify-content: center;
+		padding: 1rem;
+	}
+	.orphan-backdrop {
+		position: absolute; inset: 0;
+		background: rgba(0, 0, 0, 0.45);
+		border: none; padding: 0; cursor: pointer;
+	}
+	.orphan-dialog {
+		position: relative;
+		background: var(--color-bg, white);
+		border-radius: 16px;
+		max-width: 440px; width: 100%;
+		padding: 1.5rem;
+		box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+	}
+	.orphan-title {
+		font-family: 'Lora', serif; font-size: 1.25rem; font-weight: 600;
+		margin: 0 0 0.75rem; color: var(--color-text);
+	}
+	.orphan-body { margin: 0 0 1rem; line-height: 1.5; color: var(--color-text); }
+	.orphan-contact { margin: 0 0 1.25rem; font-size: 0.9rem; color: var(--color-text-muted); }
+	.orphan-actions { display: flex; gap: 0.75rem; justify-content: flex-end; flex-wrap: wrap; }
 	.form-fields { display: flex; flex-direction: column; gap: 1.25rem; }
 	.field-label { display: block; font-size: 0.875rem; font-weight: 500; color: var(--color-text); margin-bottom: 0.375rem; }
 	@media (max-width: 599px) { .field-label { font-size: 1rem; } }

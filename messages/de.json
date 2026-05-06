@@ -287,7 +287,23 @@
 		"error_no_rate_plan": "Für diese Daten gibt es keinen Tarif. Bitte wählen Sie andere Daten oder kontaktieren Sie uns.",
 		"error_min_nights": "Mindestaufenthalt {n} Nächte. Bitte wählen Sie einen längeren Zeitraum.",
 		"error_lead_time": "Buchungen erfordern eine Vorankündigung von {h} Stunden. Bitte wählen Sie ein späteres Anreisedatum.",
-		"savings_hint": "5% sparen gegenüber Booking.com"
+		"savings_hint": "5% sparen gegenüber Booking.com",
+		"classic_fallback": "Lieber im Kalender auswählen?",
+		"classic_link": "Klassische Buchungsseite verwenden →"
+	},
+	"windows": {
+		"lede": "{count} buchbare Aufenthalte in den nächsten 90 Tagen. Klicken Sie auf ein Fenster, um die volle Länge zu buchen, oder kürzen Sie es.",
+		"up_to_nights": "Bis zu {n} Nächte",
+		"from_price": "Ab {price} (mind. {min} Nächte)",
+		"book_full": "Alle {nights} buchen",
+		"shorten": "Weniger Nächte wählen",
+		"cancel": "Abbrechen",
+		"refine_hint": "Passen Sie An- und Abreise innerhalb dieses Fensters an.",
+		"refine_invalid": "Mindestens {n} Nächte.",
+		"total_label": "Gesamt {price}",
+		"confirm": "Daten bestätigen",
+		"empty_title": "Keine buchbaren Fenster in den nächsten 90 Tagen",
+		"empty_body": "Bitte kontaktieren Sie uns — wir können möglicherweise einen kurzen Aufenthalt direkt arrangieren."
 	},
 	"booking_confirm": {
 		"title": "Buchung Bestätigt",

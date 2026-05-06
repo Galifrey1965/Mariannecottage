@@ -287,7 +287,23 @@
 		"error_no_rate_plan": "Aucun tarif ne couvre ces dates. Veuillez choisir d'autres dates ou nous contacter.",
 		"error_min_nights": "Séjour minimum de {n} nuits. Veuillez choisir une période plus longue.",
 		"error_lead_time": "Les réservations nécessitent un préavis de {h} heures. Veuillez choisir une date d'arrivée ultérieure.",
-		"savings_hint": "Économisez 5% vs Booking.com"
+		"savings_hint": "Économisez 5% vs Booking.com",
+		"classic_fallback": "Vous préférez sélectionner sur un calendrier ?",
+		"classic_link": "Utiliser la page de réservation classique →"
+	},
+	"windows": {
+		"lede": "{count} séjours réservables dans les 90 prochains jours. Cliquez sur une fenêtre pour réserver toute la durée, ou raccourcissez-la.",
+		"up_to_nights": "Jusqu'à {n} nuits",
+		"from_price": "À partir de {price} (min {min} nuits)",
+		"book_full": "Réserver les {nights} nuits",
+		"shorten": "Choisir moins de nuits",
+		"cancel": "Annuler",
+		"refine_hint": "Ajustez l'arrivée et le départ dans cette fenêtre.",
+		"refine_invalid": "Minimum {n} nuits.",
+		"total_label": "Total {price}",
+		"confirm": "Confirmer les dates",
+		"empty_title": "Aucune fenêtre réservable dans les 90 prochains jours",
+		"empty_body": "Veuillez nous contacter — nous pouvons peut-être organiser un séjour court directement."
 	},
 	"booking_confirm": {
 		"title": "Réservation Confirmée",

@@ -287,7 +287,23 @@
 		"error_no_rate_plan": "No rate plan covers those dates. Please choose different dates or contact us.",
 		"error_min_nights": "{n}-night minimum stay. Please pick a longer range.",
 		"error_lead_time": "Bookings need at least {h} hours notice. Please pick a later check-in date.",
-		"savings_hint": "Save 5% vs Booking.com"
+		"savings_hint": "Save 5% vs Booking.com",
+		"classic_fallback": "Prefer to pick on a calendar?",
+		"classic_link": "Use the classic booking page →"
+	},
+	"windows": {
+		"lede": "{count} bookable stays in the next 90 days. Click any window to book the whole length, or shorten it.",
+		"up_to_nights": "Up to {n} nights",
+		"from_price": "From {price} (min {min} nights)",
+		"book_full": "Book all {nights}",
+		"shorten": "Pick fewer nights",
+		"cancel": "Cancel",
+		"refine_hint": "Adjust check-in and check-out within this window.",
+		"refine_invalid": "Minimum {n} nights.",
+		"total_label": "Total {price}",
+		"confirm": "Confirm dates",
+		"empty_title": "No bookable windows in the next 90 days",
+		"empty_body": "Please contact us — we may be able to take a short or by-arrangement stay directly."
 	},
 	"booking_confirm": {
 		"title": "Booking Confirmed",
