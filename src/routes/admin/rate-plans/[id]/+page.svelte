@@ -129,12 +129,17 @@
 		<div class="actions">
 			{#if is_active}
 				<button type="button" class="btn-danger" onclick={archive} disabled={archiving}>
+					<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="5" x="2" y="3" rx="1"/><path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"/><path d="M10 12h4"/></svg>
 					{archiving ? 'Archiving…' : 'Archive'}
 				</button>
 			{/if}
 			<div class="actions-right">
-				<a class="btn-outline" href="/admin/rate-plans">Cancel</a>
+				<a class="btn-outline" href="/admin/rate-plans">
+					<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+					Cancel
+				</a>
 				<button class="btn-primary" type="submit" disabled={submitting}>
+					<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
 					{submitting ? 'Saving…' : 'Save changes'}
 				</button>
 			</div>
@@ -180,11 +185,11 @@
 
 	.actions { display: flex; justify-content: space-between; gap: 0.75rem; padding-top: 0.5rem; border-top: 1px solid var(--color-cream-dark); }
 	.actions-right { display: flex; gap: 0.75rem; margin-left: auto; }
-	.btn-outline { padding: 0.625rem 1.25rem; border: 1px solid var(--color-cream-dark); border-radius: 9999px; background: transparent; color: var(--color-text); font-size: 0.875rem; text-decoration: none; cursor: pointer; }
+	.btn-outline { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.625rem 1.25rem; border: 1px solid var(--color-cream-dark); border-radius: 9999px; background: transparent; color: var(--color-text); font-size: 0.875rem; text-decoration: none; cursor: pointer; }
 	.btn-outline:hover { background: var(--color-cream); }
-	.btn-primary { padding: 0.625rem 1.25rem; border: none; border-radius: 9999px; background: var(--color-sage); color: white; font-weight: 600; font-size: 0.875rem; cursor: pointer; }
+	.btn-primary { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.625rem 1.25rem; border: none; border-radius: 9999px; background: var(--color-sage); color: white; font-weight: 600; font-size: 0.875rem; cursor: pointer; }
 	.btn-primary:hover { opacity: 0.9; }
 	.btn-primary:disabled, .btn-danger:disabled { opacity: 0.5; cursor: not-allowed; }
-	.btn-danger { padding: 0.625rem 1.25rem; border: 1px solid var(--color-error-text, #b91c1c); border-radius: 9999px; background: transparent; color: var(--color-error-text, #b91c1c); font-size: 0.875rem; cursor: pointer; }
+	.btn-danger { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.625rem 1.25rem; border: 1px solid var(--color-error-text, #b91c1c); border-radius: 9999px; background: transparent; color: var(--color-error-text, #b91c1c); font-size: 0.875rem; cursor: pointer; }
 	.btn-danger:hover { background: var(--color-error-bg); }
 </style>

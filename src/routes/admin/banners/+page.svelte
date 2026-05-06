@@ -225,7 +225,10 @@
 				{banners.filter((b) => b.enabled).length} enabled, {banners.length} total
 			</p>
 		</div>
-		<button class="btn-primary" onclick={openCreate}>New banner</button>
+		<button class="btn-primary" onclick={openCreate}>
+			<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+			New banner
+		</button>
 	</div>
 
 	{#if banners.length === 0}
@@ -289,13 +292,18 @@
 							<td class="row-actions">
 								<div class="row-actions-inner">
 									<button class="link-btn" onclick={() => (previewing = b)} title="Preview banner + effect">
+										<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
 										Preview
 									</button>
-									<button class="link-btn" onclick={() => openEdit(b)}>Edit</button>
+									<button class="link-btn" onclick={() => openEdit(b)}>
+										<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+										Edit
+									</button>
 									<button
 										class="link-btn danger"
 										disabled={deleting === b.id}
 										onclick={() => deleteBanner(b)}>
+										<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
 										{deleting === b.id ? '…' : 'Delete'}
 									</button>
 								</div>
@@ -467,10 +475,15 @@
 					onclick={() => (previewing = { ...editing! })}
 					disabled={saving || !(editing.message_en ?? '').trim()}
 				>
+					<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
 					Preview
 				</button>
-				<button type="button" class="btn-link" onclick={close} disabled={saving}>Cancel</button>
+				<button type="button" class="btn-link" onclick={close} disabled={saving}>
+					<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+					Cancel
+				</button>
 				<button type="button" class="btn-primary" onclick={save} disabled={saving}>
+					<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
 					{saving ? 'Saving…' : 'Save'}
 				</button>
 			</div>
@@ -514,7 +527,7 @@
 
 	.row-actions { text-align: right; white-space: nowrap; }
 	.row-actions-inner { display: inline-flex; gap: 0.75rem; align-items: center; justify-content: flex-end; }
-	.link-btn { background: none; border: none; padding: 0; color: var(--color-sage); cursor: pointer; font-size: 0.875rem; }
+	.link-btn { display: inline-flex; align-items: center; gap: 0.3rem; background: none; border: none; padding: 0; color: var(--color-sage); cursor: pointer; font-size: 0.875rem; }
 	.link-btn:hover { text-decoration: underline; }
 	.link-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 	.link-btn.danger { color: var(--color-error-text, #b91c1c); }
@@ -527,7 +540,7 @@
 	}
 	.btn-primary:hover { opacity: 0.9; }
 	.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
-	.btn-link { background: none; border: none; padding: 0.625rem 1rem; color: var(--color-text-muted); cursor: pointer; font-size: 0.875rem; }
+	.btn-link { display: inline-flex; align-items: center; gap: 0.4rem; background: none; border: none; padding: 0.625rem 1rem; color: var(--color-text-muted); cursor: pointer; font-size: 0.875rem; }
 	.btn-link:hover { color: var(--color-sage); }
 
 	.modal-backdrop {

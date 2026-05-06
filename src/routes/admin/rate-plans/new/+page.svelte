@@ -97,8 +97,12 @@
 		{#if formError}<p class="error" role="alert">{formError}</p>{/if}
 
 		<div class="actions">
-			<a class="btn-outline" href="/admin/rate-plans">Cancel</a>
+			<a class="btn-outline" href="/admin/rate-plans">
+				<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+				Cancel
+			</a>
 			<button class="btn-primary" type="submit" disabled={submitting}>
+				<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
 				{submitting ? 'Saving…' : 'Create rate plan'}
 			</button>
 		</div>
@@ -135,9 +139,9 @@
 	.error { color: var(--color-error-text, #b91c1c); font-size: 0.875rem; margin: 0; }
 
 	.actions { display: flex; justify-content: flex-end; gap: 0.75rem; padding-top: 0.5rem; border-top: 1px solid var(--color-cream-dark); }
-	.btn-outline { padding: 0.625rem 1.25rem; border: 1px solid var(--color-cream-dark); border-radius: 9999px; background: transparent; color: var(--color-text); font-size: 0.875rem; text-decoration: none; cursor: pointer; }
+	.btn-outline { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.625rem 1.25rem; border: 1px solid var(--color-cream-dark); border-radius: 9999px; background: transparent; color: var(--color-text); font-size: 0.875rem; text-decoration: none; cursor: pointer; }
 	.btn-outline:hover { background: var(--color-cream); }
-	.btn-primary { padding: 0.625rem 1.25rem; border: none; border-radius: 9999px; background: var(--color-sage); color: white; font-weight: 600; font-size: 0.875rem; cursor: pointer; }
+	.btn-primary { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.625rem 1.25rem; border: none; border-radius: 9999px; background: var(--color-sage); color: white; font-weight: 600; font-size: 0.875rem; cursor: pointer; }
 	.btn-primary:hover { opacity: 0.9; }
 	.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
 </style>

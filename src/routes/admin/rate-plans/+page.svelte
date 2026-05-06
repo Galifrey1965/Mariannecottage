@@ -73,11 +73,15 @@
 								<td>{formatCurrency(p.rate_3_guests)}</td>
 								<td>{formatCurrency(p.rate_4_guests)}</td>
 								<td class="row-actions">
-									<a href="/admin/rate-plans/{p.id}" class="link-btn">Edit</a>
+									<a href="/admin/rate-plans/{p.id}" class="link-btn">
+										<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+										Edit
+									</a>
 									<button
 										class="link-btn danger"
 										disabled={archiving === p.id}
 										onclick={() => archive(p.id)}>
+										<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="5" x="2" y="3" rx="1"/><path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"/><path d="M10 12h4"/></svg>
 										{archiving === p.id ? '…' : 'Archive'}
 									</button>
 								</td>
@@ -148,7 +152,7 @@
 	.sub { font-size: 0.75rem; color: var(--color-text-muted); margin: 0.125rem 0 0; }
 
 	.row-actions { display: flex; gap: 0.75rem; justify-content: flex-end; }
-	.link-btn { background: none; border: none; padding: 0; color: var(--color-sage); cursor: pointer; font-size: 0.875rem; text-decoration: none; }
+	.link-btn { display: inline-flex; align-items: center; gap: 0.3rem; background: none; border: none; padding: 0; color: var(--color-sage); cursor: pointer; font-size: 0.875rem; text-decoration: none; }
 	.link-btn:hover { text-decoration: underline; }
 	.link-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 	.link-btn.danger { color: var(--color-error-text, #b91c1c); }

@@ -100,8 +100,14 @@
 			<p class="page-subtitle">{categories.length} categories · drag-bar order on the public gallery is taken from here</p>
 		</div>
 		<div class="header-actions">
-			<a href="/admin/gallery" class="btn-link">← Back to gallery</a>
-			<button class="btn-primary" onclick={openCreate}>New category</button>
+			<a href="/admin/gallery" class="btn-link">
+				<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+				Back to gallery
+			</a>
+			<button class="btn-primary" onclick={openCreate}>
+				<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+				New category
+			</button>
 		</div>
 	</div>
 
@@ -131,8 +137,14 @@
 							<td>{c.sort_order}</td>
 							<td>{c.image_count}</td>
 							<td class="row-actions">
-								<button class="link-btn" onclick={() => openEdit(c)}>Edit</button>
-								<button class="link-btn danger" disabled={c.image_count > 0} onclick={() => deleteCategory(c)} title={c.image_count > 0 ? 'Has photos — cannot delete' : 'Delete'}>Delete</button>
+								<button class="link-btn" onclick={() => openEdit(c)}>
+									<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+									Edit
+								</button>
+								<button class="link-btn danger" disabled={c.image_count > 0} onclick={() => deleteCategory(c)} title={c.image_count > 0 ? 'Has photos — cannot delete' : 'Delete'}>
+									<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+									Delete
+								</button>
 							</td>
 						</tr>
 					{/each}
@@ -174,8 +186,12 @@
 			{/if}
 
 			<div class="modal-actions">
-				<button type="button" class="btn-link" onclick={close} disabled={saving}>Cancel</button>
+				<button type="button" class="btn-link" onclick={close} disabled={saving}>
+					<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+					Cancel
+				</button>
 				<button type="button" class="btn-primary" onclick={save} disabled={saving}>
+					<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
 					{saving ? 'Saving…' : 'Save'}
 				</button>
 			</div>
@@ -200,7 +216,7 @@
 	.slug { font-family: ui-monospace, monospace; font-size: 0.78rem; background: var(--color-cream); padding: 0.1rem 0.4rem; border-radius: 4px; }
 	.row-actions { text-align: right; white-space: nowrap; display: flex; gap: 0.7rem; justify-content: flex-end; }
 
-	.link-btn { background: none; border: none; padding: 0; color: var(--color-sage); cursor: pointer; font-size: 0.875rem; }
+	.link-btn { display: inline-flex; align-items: center; gap: 0.3rem; background: none; border: none; padding: 0; color: var(--color-sage); cursor: pointer; font-size: 0.875rem; }
 	.link-btn:hover { text-decoration: underline; }
 	.link-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 	.link-btn.danger { color: var(--color-error-text, #b91c1c); }
@@ -213,7 +229,7 @@
 	}
 	.btn-primary:hover { opacity: 0.9; }
 	.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
-	.btn-link { background: none; border: none; padding: 0.45rem 0.85rem; color: var(--color-sage); cursor: pointer; font-size: 0.875rem; text-decoration: none; }
+	.btn-link { display: inline-flex; align-items: center; gap: 0.3rem; background: none; border: none; padding: 0.45rem 0.85rem; color: var(--color-sage); cursor: pointer; font-size: 0.875rem; text-decoration: none; }
 	.btn-link:hover { text-decoration: underline; }
 
 	.modal-backdrop {
