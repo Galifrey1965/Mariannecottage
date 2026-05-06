@@ -1,6 +1,22 @@
-# Gallery Admin — Plan
+# Gallery Admin
 
-Status: design agreed 2026-05-06, not yet built. Resume document in case the implementation session crashes mid-build.
+**Status:** SHIPPED 2026-05-06.
+
+- PR1 (commit `ef83c66`): backend + admin UI (no public-site change).
+- Seed pass (commit `37c0286`): 22 curated originals committed to `images/originals/` + home-hero photo upgraded.
+- PR2 (commit `e5a1701`): public `/gallery` flipped to read from `gallery_images` + `gallery_categories`.
+- Per-room filter chips on public gallery (commit `d1a88cf`): visitors can drill into specific bedrooms.
+- Translation endpoint promoted to generic `/api/admin/translate` (commit `0213ee4`); banners admin gained the same translate button.
+
+This document is retained as the design record — what was decided and why — rather than a live spec. Any future changes to gallery behaviour should be discussed before editing in here.
+
+---
+
+## Important: per-room filter is for photos, not bookings
+
+The `gallery_images.room_id` column and the per-room filter chips on `/gallery` exist solely so visitors can browse photos of each bedroom individually (visitors care which room they'll sleep in). It does **not** imply per-room bookings — the cottage rents as a single whole-property unit, confirmed with Mark 2026-05-06. See `decision-whole-cottage-only.md` in project memory.
+
+If you're tempted to extend `room_id` into `bookings` or `availability`, stop. That's a different decision and would need re-discussing.
 
 ## Goal
 

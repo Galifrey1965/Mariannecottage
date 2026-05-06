@@ -2,6 +2,8 @@
 
 Live booking flow backed by Supabase. Booking.com calendar is mirrored into the same `availability` table via the iCal sync (see [`booking-com-sync.md`](booking-com-sync.md)). **No payment is taken at this stage** — booking creates a `pending` row; status is moved to `confirmed`/`cancelled` from the admin dashboard. Stripe is parked: see [`../payments/stripe-plan.md`](../payments/stripe-plan.md).
 
+**Booking model: whole cottage only.** The two bedrooms share one bathroom, so the cottage always rents as a single package to a single party — confirmed with Mark 2026-05-06. The `availability` table tracks one row per date for the whole property; there is no per-room booking concept and the `rooms` table (used by the gallery for photo organisation) is not a billing/availability axis. If this ever changes, expect end-to-end rework across schema, `book_dates_atomic`, calendar UI, and iCal in/out feeds — don't half-measure it.
+
 ---
 
 ## Flow
