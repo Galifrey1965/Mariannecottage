@@ -542,11 +542,14 @@
 		return 1;
 	}
 
-	function handleAdminDayClick(bookingId: string | null) {
-		if (!bookingId) return;
+	function handleAdminDayClick(bookingId: string | null, date: Date) {
+		if (!bookingId) {
+			openBlockPanel(toLocalISO(date));
+			return;
+		}
 		if (bookingId.startsWith('imported:')) {
-			const date = bookingId.slice('imported:'.length);
-			const row = blockedAvailability.find(r => r.date === date) ?? { date, synced_from: null, synced_at: null };
+			const isoFromId = bookingId.slice('imported:'.length);
+			const row = blockedAvailability.find(r => r.date === isoFromId) ?? { date: isoFromId, synced_from: null, synced_at: null };
 			selectBooking(syntheticImportedBooking(row));
 			return;
 		}
@@ -554,6 +557,79 @@
 			?? pageBookings.find(x => x.id === bookingId);
 		if (b) selectBooking(b);
 	}
+
+	function toLocalISO(d: Date): string {
+		const y = d.getFullYear();
+		const m = String(d.getMonth() + 1).padStart(2, '0');
+		const day = String(d.getDate()).padStart(2, '0');
+		return `${y}-${m}-${day}`;
+	}
+
+	// Block-this-day side panel — opens when the admin clicks an empty
+	// (unbooked, unblocked) day in calendar mode. Replaces the standalone
+	// /admin/availability page; same POST /api/admin/availability endpoint
+	// behind the scenes, now with optional admin_notes capture.
+	let blockingDay = $state<{ dateISO: string; notes: string; saving: boolean; error: string } | null>(null);
+
+	function openBlockPanel(dateISO: string) {
+		blockingDay = { dateISO, notes: '', saving: false, error: '' };
+	}
+
+	function closeBlockPanel() {
+		blockingDay = null;
+	}
+
+	async function submitBlock() {
+		if (!blockingDay) return;
+		blockingDay.saving = true;
+		blockingDay.error = '';
+		try {
+			const res = await fetch('/api/admin/availability', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ date: blockingDay.dateISO, admin_notes: blockingDay.notes.trim() })
+			});
+			const payload = await res.json().catch(() => ({}));
+			if (!res.ok) {
+				blockingDay.error = payload?.error ?? `Failed to block ${blockingDay.dateISO}`;
+				return;
+			}
+			await refetchAll();
+			closeBlockPanel();
+		} catch (err) {
+			if (blockingDay) blockingDay.error = err instanceof Error ? err.message : 'Unknown error';
+		} finally {
+			if (blockingDay) blockingDay.saving = false;
+		}
+	}
+
+	// Release a manual admin_block — different from the cancel/refund flow
+	// because there's no Stripe charge to refund. Calls the dedicated DELETE
+	// endpoint on /api/admin/availability so audit logging stays distinct
+	// (action=availability.block.delete vs admin.cancel).
+	let releasingBlock = $state(false);
+	async function releaseBlock(b: Booking) {
+		if (!confirm('Release this admin block?\n\nThe date will become available again on the website and on the iCal feed to OTAs.')) return;
+		releasingBlock = true;
+		try {
+			const res = await fetch('/api/admin/availability', {
+				method: 'DELETE',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ id: b.id })
+			});
+			const payload = await res.json().catch(() => ({}));
+			if (!res.ok) {
+				alert(payload?.error || `Failed to release block (${res.status})`);
+				return;
+			}
+			selectedBooking = null;
+			await refetchAll();
+		} finally {
+			releasingBlock = false;
+		}
+	}
+
+	const isAdminBlock = $derived(selectedBooking?.source === 'admin_block');
 
 	const isPendingSyncBooking = (b: Booking | null) =>
 		Boolean(b && typeof b.id === 'string' && b.id.startsWith('imported:'));
@@ -663,6 +739,10 @@
 		</div>
 
 		<div class="stats-grid">
+			<div class="stat-card">
+				<p class="stat-label">Revenue</p>
+				<p class="stat-value" style="color: var(--color-sage);">{formatCurrency(stats.totalRevenue)}</p>
+			</div>
 			<button class="stat-card stat-card--clickable" class:active={statusFilter === 'confirmed'} onclick={() => setStatusShortcut('confirmed')} title="Filter to confirmed">
 				<p class="stat-label">Confirmed</p>
 				<p class="stat-value" style="color: var(--color-success-text);">{stats.confirmedCount}</p>
@@ -671,10 +751,6 @@
 				<p class="stat-label">Pending</p>
 				<p class="stat-value" style="color: var(--color-warning-text);">{stats.pendingCount}</p>
 			</button>
-			<div class="stat-card">
-				<p class="stat-label">Revenue</p>
-				<p class="stat-value" style="color: var(--color-sage);">{formatCurrency(stats.totalRevenue)}</p>
-			</div>
 			<div class="stat-card">
 				<p class="stat-label">Upcoming</p>
 				<p class="stat-value" style="color: var(--color-info-text);">{stats.upcomingCount}</p>
@@ -966,6 +1042,55 @@
 		</div>
 	{/if}
 
+	{#if blockingDay}
+		<div class="overlay cancel-overlay">
+			<button
+				onclick={closeBlockPanel}
+				class="overlay-backdrop"
+				aria-label="Close"
+				disabled={blockingDay.saving}
+			></button>
+			<div class="cancel-dialog">
+				<div class="detail-content">
+					<div class="detail-header">
+						<div>
+							<p class="mono sub-text" style="color: var(--color-sage);">{formatDate(blockingDay.dateISO)}</p>
+							<h3 class="detail-title">Block this day</h3>
+							<p class="sub-text" style="margin-top: 0.25rem;">
+								Marks the date as unavailable on the website and on the iCal feed
+								to OTAs (Booking.com, Airbnb).
+							</p>
+						</div>
+						<button onclick={closeBlockPanel} class="close-btn" disabled={blockingDay.saving}>✕</button>
+					</div>
+
+					<div class="detail-section">
+						<label for="block-notes" class="detail-label">Notes (optional)</label>
+						<textarea
+							id="block-notes"
+							bind:value={blockingDay.notes}
+							class="form-input"
+							rows="3"
+							placeholder="e.g. Owner stay, maintenance, family booking"
+							disabled={blockingDay.saving}
+						></textarea>
+					</div>
+
+					{#if blockingDay.error}
+						<p class="cancel-error">{blockingDay.error}</p>
+					{/if}
+
+					<div class="cancel-actions">
+						<button onclick={closeBlockPanel} class="btn-outline" disabled={blockingDay.saving}>Cancel</button>
+						<button onclick={submitBlock} class="btn-primary" disabled={blockingDay.saving}>
+							{blockingDay.saving ? 'Blocking…' : 'Block this day'}
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	{/if}
+
 	{#if selectedBooking}
 		<div class="overlay">
 			<button onclick={closeDetail} class="overlay-backdrop" aria-label="Close"></button>
@@ -1001,6 +1126,18 @@
 						</div>
 						{#if isTerminalStatus(selectedBooking.status)}
 							<p class="sub-text" style="margin-top: 0.5rem;">{terminalStatusHint(selectedBooking.status)}</p>
+						{:else if isAdminBlock}
+							<div class="status-buttons" style="margin-top: 0.5rem;">
+								<button
+									onclick={() => releaseBlock(selectedBooking!)}
+									disabled={releasingBlock}
+									class="status-toggle cancelled"
+								>{releasingBlock ? 'Releasing…' : 'Release block'}</button>
+							</div>
+							<p class="sub-text" style="margin-top: 0.5rem;">
+								Manual block — no Stripe charge, no guest. Releasing frees the date on the
+								site and on the iCal feed to Booking.com / Airbnb.
+							</p>
 						{:else if !isImportedBooking(selectedBooking)}
 							<div class="status-buttons" style="margin-top: 0.5rem;">
 								{#if selectedBooking.status === 'pending'}
@@ -1030,7 +1167,7 @@
 
 					<hr />
 
-					{#if !isImportedBooking(selectedBooking)}
+					{#if !isImportedBooking(selectedBooking) && !isAdminBlock}
 					<div class="detail-section">
 						<h4 class="section-title">Guest Details</h4>
 						<div class="detail-grid">

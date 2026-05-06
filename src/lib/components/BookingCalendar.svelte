@@ -254,7 +254,7 @@
 			<button
 				onclick={() => selectDate(date)}
 				onmouseenter={() => hoveredDate = date}
-				disabled={isPast(date) || isOutsideMonth(date) || (!isClickMode && !isAvailable(date))}
+				disabled={isPast(date) || (!isClickMode && (isOutsideMonth(date) || !isAvailable(date)))}
 				class={dayClass(date)}
 				aria-label={date.toLocaleDateString(lang, { weekday: 'long', month: 'long', day: 'numeric' })}
 				aria-selected={isInRange(date)}
@@ -315,8 +315,12 @@
 	}
 	.day.past { color: var(--color-text-muted); opacity: 0.3; cursor: default; background: transparent; }
 	/* Outside-month days — preview from prev/next month for visual continuity
-	   on bookings spanning month boundaries. Display-only, never clickable. */
-	.day.outside { opacity: 0.35; cursor: default; pointer-events: none; }
+	   on bookings spanning month boundaries. Dimmed but clickable in admin
+	   click-mode (so the admin can edit a tile right at the edge of the grid
+	   without flipping months); the disabled attribute on the button is what
+	   actually gates clicks in non-click-mode. */
+	.day.outside { opacity: 0.35; }
+	.day.outside:disabled { cursor: default; }
 	.day.outside.available { color: var(--color-text-muted); background: transparent; }
 	.day.selected-endpoint { background: var(--color-sage); color: var(--md-sys-color-on-primary); font-weight: 700; box-shadow: 0 2px 8px color-mix(in srgb, var(--color-sage) 40%, transparent); }
 	.day.selected-range { background: color-mix(in srgb, var(--color-sage) 25%, transparent); color: var(--color-text); }

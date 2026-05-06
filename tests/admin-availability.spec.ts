@@ -1,7 +1,10 @@
-// /admin/availability — owner-driven date blocks via synthetic
+// /api/admin/availability — owner-driven date blocks via synthetic
 // source='admin_block' bookings. Spec covers POST/DELETE round-trip, the
-// 409 collision rule, the source guard on DELETE, and that the page loads
-// with the new nav link.
+// 409 collision rule, the source guard on DELETE, and that admin_notes
+// supplied on POST is persisted on the synthetic booking row.
+//
+// (The standalone /admin/availability page was retired 2026-05-06 — the
+// flow now lives inline on the admin booking calendar's empty-day click.)
 
 import { test, expect } from '@playwright/test';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
@@ -53,18 +56,6 @@ test.describe('Admin availability — block create/delete', () => {
 		}
 	});
 
-	test('availability page loads with nav link active', async ({ page }) => {
-		await page.goto('/admin/login');
-		await page.fill('#email', TEST_EMAIL);
-		await page.fill('#password', TEST_PASSWORD);
-		await Promise.all([page.waitForURL(/\/admin/), page.click('button[type=submit]')]);
-
-		await page.goto('/admin/availability');
-		await expect(page).toHaveURL(/\/admin\/availability$/);
-		await expect(page.locator('a.nav-tab.active')).toHaveText('Availability');
-		await expect(page.getByRole('heading', { name: 'Availability' })).toBeVisible();
-	});
-
 	test('POST creates admin_block, DELETE releases, agent_events written', async ({ page, request }) => {
 		if (!admin || !createdUserId) test.skip();
 
@@ -87,10 +78,12 @@ test.describe('Admin availability — block create/delete', () => {
 			.eq('check_in_date', targetDate);
 		await admin!.from('availability').delete().eq('date', targetDate);
 
-		// 1. POST blocks the date.
+		// 1. POST blocks the date — with an admin_notes reason that should
+		// persist verbatim on the synthetic booking row.
+		const reason = 'Maintenance — boiler service';
 		const postRes = await request.post('/api/admin/availability', {
 			headers: { 'content-type': 'application/json', cookie: cookieHeader },
-			data: { date: targetDate }
+			data: { date: targetDate, admin_notes: reason }
 		});
 		expect(postRes.status()).toBe(200);
 		const postBody = await postRes.json();
@@ -99,17 +92,18 @@ test.describe('Admin availability — block create/delete', () => {
 		const blockId = postBody.id as string;
 		cleanupBookingIds.push(blockId);
 
-		// Booking row exists with admin_block source.
+		// Booking row exists with admin_block source + the supplied notes.
 		const { data: row } = await admin!
 			.from('bookings')
-			.select('id, source, status, total_cost, num_nights')
+			.select('id, source, status, total_cost, num_nights, admin_notes')
 			.eq('id', blockId)
 			.single();
 		expect(row).toMatchObject({
 			source: 'admin_block',
 			status: 'confirmed',
 			total_cost: 0,
-			num_nights: 1
+			num_nights: 1,
+			admin_notes: reason
 		});
 
 		// Availability row marked unavailable for the target date.

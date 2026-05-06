@@ -32,6 +32,12 @@ export const POST: RequestHandler = async ({ locals, request }) => {
 		return json({ error: 'Invalid date — expected YYYY-MM-DD' }, { status: 400 });
 	}
 
+	// Optional free-text reason persisted on the synthetic admin_block row's
+	// admin_notes field. Trimmed; empty/whitespace-only values are not sent so
+	// the column stays NULL and "blocks with notes" audits stay accurate.
+	const rawNotes = typeof body?.admin_notes === 'string' ? body.admin_notes.trim() : '';
+	const adminNotes = rawNotes.length > 0 ? rawNotes : undefined;
+
 	const checkIn = date;
 	const checkOut = nextDayISO(date);
 	const reference = generateBookingReference();
@@ -50,7 +56,8 @@ export const POST: RequestHandler = async ({ locals, request }) => {
 			total_cost: 0,
 			status: 'confirmed',
 			booking_reference: reference,
-			source: 'admin_block'
+			source: 'admin_block',
+			admin_notes: adminNotes
 		} as unknown as Parameters<typeof createBookingAtomic>[0]);
 
 		await logAdminEvent({
@@ -58,7 +65,11 @@ export const POST: RequestHandler = async ({ locals, request }) => {
 			action: 'availability.block.create',
 			target_type: 'booking',
 			target_id: result.id,
-			metadata: { date: checkIn, booking_reference: result.booking_reference }
+			metadata: {
+				date: checkIn,
+				booking_reference: result.booking_reference,
+				has_notes: adminNotes !== undefined
+			}
 		});
 
 		return json({ success: true, id: result.id, date: checkIn, booking_reference: result.booking_reference });
