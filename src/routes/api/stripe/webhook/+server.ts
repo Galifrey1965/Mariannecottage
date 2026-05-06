@@ -344,8 +344,8 @@ async function safeSend(
 
 async function findBookingForPaymentIntent(pi: Stripe.PaymentIntent) {
 	// Prefer lookup by payment_intent_id; fall back to metadata.booking_id.
-	// PR 3 contract: when /api/stripe/payment-intent (or checkout-session)
-	// creates the PaymentIntent it MUST set metadata.booking_id — otherwise
+	// PR 3 contract: when /api/stripe/payment-intent creates the
+	// PaymentIntent it MUST set metadata.booking_id — otherwise
 	// the brief window before the booking row's payment_intent_id column is
 	// populated has no way to associate the event with the booking.
 	const { data: byPi, error: piErr } = await adminClient

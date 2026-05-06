@@ -1,17 +1,21 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
+	import { onDestroy } from 'svelte';
+	import { env as publicEnv } from '$env/dynamic/public';
 	import { localePath, t, formatDate, formatCurrency, plural } from '$lib/i18n';
 	import BookingCalendar from '$lib/components/BookingCalendar.svelte';
 	import BookingSummary from '$lib/components/BookingSummary.svelte';
+	import BookingConfirmed from '$lib/components/BookingConfirmed.svelte';
 	import { MIN_NIGHTS, MIN_LEAD_HOURS, getEarliestCheckInDate } from '$lib/booking-policy';
 	import type { PageData } from './$types';
 	import type { RatePlan } from '$lib/server/supabase';
+	import type { Stripe, StripeElements, StripePaymentElement } from '@stripe/stripe-js';
 
 	let { data }: { data: PageData } = $props();
 	const lang = $derived(data.lang);
 	const messages = $derived(data.messages);
 
-	let step = $state<1 | 2 | 3>(1);
+	type Step = 1 | 2 | 3 | 4;
+	let step = $state<Step>(1);
 
 	let checkInDate: Date | undefined = $state();
 	let checkOutDate: Date | undefined = $state();
@@ -50,7 +54,6 @@
 	let specialRequests = $state('');
 	let eveningMeal = $state(false);
 
-	let submitting = $state(false);
 	let formError = $state('');
 	let fieldErrors = $state<Record<string, string>>({});
 	let calendarRef: { goToToday: () => void } | undefined = $state();
@@ -58,15 +61,32 @@
 	const realAvailability: Record<string, boolean> = data.availability || {};
 	const testBlockedDates: string[] = data.testBlockedDates || [];
 
+	function discardPendingBooking() {
+		// Called when the user changes dates after a booking row was already
+		// created, or steps back from Pay. The pending row stays in the DB
+		// until the next /api/book POST sweeps it; we just stop pointing at it.
+		bookingRef = null;
+		bookingTotal = null;
+		paymentElement?.unmount();
+		paymentElement = null;
+		elements = null;
+		stripe = null;
+		paymentReady = false;
+		formError = '';
+	}
+
 	const handleDateRangeSelect = (start: Date, end: Date) => {
+		const datesChanged =
+			!checkInDate ||
+			!checkOutDate ||
+			formatDateISO(start) !== formatDateISO(checkInDate) ||
+			formatDateISO(end) !== formatDateISO(checkOutDate);
+		if (bookingRef && datesChanged) discardPendingBooking();
 		checkInDate = start;
 		checkOutDate = end;
 		step = 2;
 	};
 
-	// Orphan day click — surfaces a "contact us" affordance because the
-	// minimum-stay rule prevents online booking of single-night gaps
-	// between existing bookings.
 	let orphanDate = $state<Date | null>(null);
 	const handleOrphanClick = (date: Date) => { orphanDate = date; };
 	const closeOrphanDialog = () => { orphanDate = null; };
@@ -85,6 +105,8 @@
 	);
 	const nightly_rate = $derived(matchingPlan ? rateFor(matchingPlan, guests) : 0);
 	const noRatePlan = $derived(Boolean(checkInDate) && !matchingPlan);
+	const totalCost = $derived(nights * nightly_rate);
+	const totalCostLabel = $derived(formatCurrency(lang, totalCost));
 
 	function validate(): boolean {
 		const errors: Record<string, string> = {};
@@ -96,119 +118,263 @@
 		return Object.keys(errors).length === 0;
 	}
 
-	function goToReview() {
-		if (validate()) step = 3;
-	}
+	// Booking + payment state for the wizard
+	let bookingRef = $state<string | null>(null);
+	let bookingTotal = $state<number | null>(null);
+	let preparingPayment = $state(false);
+	let submitting = $state(false);
+	let stripe = $state<Stripe | null>(null);
+	let elements = $state<StripeElements | null>(null);
+	let paymentElement = $state<StripePaymentElement | null>(null);
+	let paymentMountNode: HTMLDivElement | undefined = $state();
+	let paymentReady = $state(false);
+	let confirmedBooking = $state<{
+		booking_reference: string;
+		guest_name: string;
+		guest_email: string;
+		num_guests: number | string;
+		num_nights: number | string;
+		check_in_date: string;
+		check_out_date: string;
+		total_cost: number | string;
+		status: string;
+		paid_at?: string | null;
+	} | null>(null);
 
-	async function submitBooking() {
-		if (!validate() || !checkInDate || !checkOutDate) return;
+	async function goToPayment() {
+		if (!validate()) return;
+		if (!checkInDate || !checkOutDate) return;
 		if (noRatePlan) {
 			formError = t(messages, 'book.error_no_rate_plan');
 			return;
 		}
-		submitting = true;
+		preparingPayment = true;
 		formError = '';
 		try {
-			const res = await fetch('/api/book', {
+			// Create the pending booking row (or reuse if user is just re-entering
+			// step 3 — we keep bookingRef sticky so we don't double-insert).
+			if (!bookingRef) {
+				const res = await fetch('/api/book', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({
+						guest_name: guestName.trim(),
+						guest_email: guestEmail.trim(),
+						guest_phone: guestPhone.trim() || undefined,
+						guest_country: guestCountry.trim() || undefined,
+						num_guests: guests,
+						check_in_date: formatDateISO(checkInDate),
+						check_out_date: formatDateISO(checkOutDate),
+						special_requests:
+							(eveningMeal
+								? t(messages, 'rooms.evening_meal.request_line') +
+									(specialRequests.trim() ? '\n\n' + specialRequests.trim() : '')
+								: specialRequests.trim()) || undefined
+					})
+				});
+				const result = await res.json();
+				if (!result.success) {
+					switch (result.error_code) {
+						case 'min_nights':
+							formError = t(messages, 'book.error_min_nights', {
+								n: String(result.min_nights ?? MIN_NIGHTS)
+							});
+							break;
+						case 'lead_time':
+							formError = t(messages, 'book.error_lead_time', {
+								h: String(result.min_lead_hours ?? MIN_LEAD_HOURS)
+							});
+							break;
+						case 'dates_taken':
+							formError = t(messages, 'book.error_dates_taken');
+							break;
+						case 'no_rate_plan':
+							formError = t(messages, 'book.error_no_rate_plan');
+							break;
+						default:
+							formError = result.error || t(messages, 'book.error_booking_failed');
+					}
+					return;
+				}
+				bookingRef = result.booking.booking_reference;
+				bookingTotal = Number(result.booking.total_cost);
+			}
+
+			// Spin up (or fetch the existing) PaymentIntent.
+			const intentRes = await fetch('/api/stripe/payment-intent', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({
-					guest_name: guestName.trim(),
-					guest_email: guestEmail.trim(),
-					guest_phone: guestPhone.trim() || undefined,
-					guest_country: guestCountry.trim() || undefined,
-					num_guests: guests,
-					check_in_date: formatDateISO(checkInDate),
-					check_out_date: formatDateISO(checkOutDate),
-					special_requests:
-						(eveningMeal
-							? t(messages, 'rooms.evening_meal.request_line') +
-								(specialRequests.trim() ? '\n\n' + specialRequests.trim() : '')
-							: specialRequests.trim()) || undefined
-				})
+				body: JSON.stringify({ booking_reference: bookingRef })
 			});
-			const result = await res.json();
-			if (!result.success) {
-				// Map known error_codes to localised messages so a min-nights
-				// or lead-time rejection doesn't show the generic
-				// "those dates were just booked" line. Falls back to the
-				// raw error string from the API for anything unrecognised.
-				switch (result.error_code) {
-					case 'min_nights':
-						formError = t(messages, 'book.error_min_nights', {
-							n: String(result.min_nights ?? MIN_NIGHTS)
-						});
-						break;
-					case 'lead_time':
-						formError = t(messages, 'book.error_lead_time', {
-							h: String(result.min_lead_hours ?? MIN_LEAD_HOURS)
-						});
-						break;
-					case 'dates_taken':
-						formError = t(messages, 'book.error_dates_taken');
-						break;
-					case 'no_rate_plan':
-						formError = t(messages, 'book.error_no_rate_plan');
-						break;
-					default:
-						formError = result.error || t(messages, 'book.error_booking_failed');
-				}
+			const intent = await intentRes.json();
+			if (!intent.success || !intent.client_secret) {
+				formError = intent.error || t(messages, 'book.error_booking_failed');
 				return;
 			}
 
-			// Hand off to Stripe-hosted Checkout. The booking row is in
-			// pending_payment until the webhook confirms it post-payment.
-			const checkoutRes = await fetch('/api/stripe/checkout-session', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ booking_reference: result.booking.booking_reference })
-			});
-			const checkout = await checkoutRes.json();
-			if (!checkout.success || !checkout.url) {
-				formError = checkout.error || t(messages, 'book.error_booking_failed');
-				return;
-			}
-			window.location.href = checkout.url;
+			step = 3;
+			await mountPaymentElement(intent.client_secret);
 		} catch {
 			formError = t(messages, 'book.error_network');
+		} finally {
+			preparingPayment = false;
+		}
+	}
+
+	async function mountPaymentElement(clientSecret: string) {
+		const publishable = publicEnv.PUBLIC_STRIPE_PUBLISHABLE_KEY;
+		if (!publishable) {
+			formError = t(messages, 'book.error_booking_failed');
+			console.error('[book] PUBLIC_STRIPE_PUBLISHABLE_KEY missing');
+			return;
+		}
+		// Lazy-load stripe.js so step 1/2 don't pay the cost.
+		const { loadStripe } = await import('@stripe/stripe-js');
+		const s = await loadStripe(publishable);
+		if (!s) {
+			formError = t(messages, 'book.error_booking_failed');
+			return;
+		}
+		stripe = s;
+		const e = s.elements({
+			clientSecret,
+			// Match the cottage palette so the element doesn't look bolted on.
+			appearance: {
+				theme: 'flat',
+				variables: {
+					colorPrimary: '#7a8a6f',
+					colorBackground: '#ffffff',
+					colorText: '#2b2b2b',
+					colorDanger: '#b43c3c',
+					fontFamily: 'system-ui, -apple-system, sans-serif',
+					borderRadius: '8px'
+				}
+			}
+		});
+		elements = e;
+		const pe = e.create('payment', {
+			layout: 'tabs'
+		});
+		paymentElement = pe;
+		// Wait a microtask for the {#if step === 3} branch to render the mount node.
+		await waitForMountNode();
+		if (paymentMountNode) {
+			pe.mount(paymentMountNode);
+			pe.on('ready', () => { paymentReady = true; });
+		}
+	}
+
+	function waitForMountNode(): Promise<void> {
+		return new Promise((resolve) => {
+			let attempts = 0;
+			const check = () => {
+				if (paymentMountNode || attempts >= 20) {
+					resolve();
+				} else {
+					attempts += 1;
+					setTimeout(check, 25);
+				}
+			};
+			check();
+		});
+	}
+
+	async function submitPayment() {
+		if (!stripe || !elements || !bookingRef) return;
+		submitting = true;
+		formError = '';
+		try {
+			const returnUrl = new URL(
+				localePath(lang, '/book/confirm'),
+				window.location.origin
+			);
+			returnUrl.searchParams.set('ref', bookingRef);
+
+			const { error: stripeErr, paymentIntent } = await stripe.confirmPayment({
+				elements,
+				confirmParams: {
+					return_url: returnUrl.toString()
+				},
+				redirect: 'if_required'
+			});
+
+			if (stripeErr) {
+				formError = stripeErr.message ?? t(messages, 'book.pay_error_generic');
+				return;
+			}
+
+			if (paymentIntent && (paymentIntent.status === 'succeeded' || paymentIntent.status === 'processing')) {
+				// No redirect required — load the booking and advance to step 4
+				// where BookingConfirmed will keep polling until the webhook fires.
+				const res = await fetch(`/api/book/${encodeURIComponent(bookingRef)}`);
+				if (res.ok) {
+					const body = await res.json();
+					confirmedBooking = body.booking;
+				}
+				step = 4;
+			}
+		} catch (err) {
+			formError =
+				err instanceof Error && err.message
+					? err.message
+					: t(messages, 'book.pay_error_generic');
 		} finally {
 			submitting = false;
 		}
 	}
+
+	function handleConfirmedUpdate(b: typeof confirmedBooking) {
+		if (b) confirmedBooking = b;
+	}
+
+	onDestroy(() => {
+		paymentElement?.unmount();
+		paymentElement = null;
+		elements = null;
+	});
 </script>
 
 <section class="page-section">
 	<h1 class="page-title">{t(messages, 'book.title')}</h1>
 
-	<!-- Step indicator -->
-	<div class="steps" role="group" aria-label={t(messages, 'a11y.booking_steps')}>
-		{#each [{ n: 1, label: t(messages, 'book.step_dates') }, { n: 2, label: t(messages, 'book.step_details') }, { n: 3, label: t(messages, 'book.step_review') }] as s}
-			<button
-				onclick={() => {
-					if (s.n === 1) { step = 1; calendarRef?.goToToday(); }
-					else if (s.n === 2 && checkInDate && checkOutDate) step = 2;
-					else if (s.n === 3 && checkInDate && checkOutDate && guestName && guestEmail) step = 3;
-				}}
-				class="step-btn"
-				class:active={step === s.n}
-				class:done={step > s.n}
-				aria-current={step === s.n ? 'step' : undefined}
-				aria-label="{s.label} - {step > s.n ? t(messages, 'a11y.completed') : step === s.n ? t(messages, 'a11y.current') : t(messages, 'a11y.pending')}"
-			>
-				<span class="step-number" class:active={step === s.n} class:done={step > s.n} aria-hidden="true">
-					{#if step > s.n}✓{:else}{s.n}{/if}
-				</span>
-				<span class="step-label">{s.label}</span>
-			</button>
-			{#if s.n < 3}
-				<div class="step-connector" class:active={step > s.n}></div>
-			{/if}
-		{/each}
-	</div>
-
 	<div class="layout">
-		<!-- Main content -->
 		<div class="main-col">
+			<!-- Step indicator — sized to the calendar column, sticky on every step. -->
+			<div class="steps" role="group" aria-label={t(messages, 'a11y.booking_steps')}>
+				{#each [
+					{ n: 1, label: t(messages, 'book.step_dates') },
+					{ n: 2, label: t(messages, 'book.step_details') },
+					{ n: 3, label: t(messages, 'book.step_pay') },
+					{ n: 4, label: t(messages, 'book.step_confirmed') }
+				] as s}
+					<button
+						onclick={() => {
+							if (step === 4) return;
+							// Stepping back from Pay invalidates the in-flight Stripe
+							// intent — the next "Continue to Pay" must POST /api/book
+							// again so any edits to dates or guest details flow through.
+							if (s.n < step && step === 3) discardPendingBooking();
+							if (s.n === 1) { step = 1; calendarRef?.goToToday(); }
+							else if (s.n === 2 && checkInDate && checkOutDate) step = 2;
+							else if (s.n === 3 && checkInDate && checkOutDate && guestName && guestEmail && bookingRef) step = 3;
+						}}
+						class="step-btn"
+						class:active={step === s.n}
+						class:done={step > s.n}
+						disabled={step === 4}
+						aria-current={step === s.n ? 'step' : undefined}
+						aria-label="{s.label} - {step > s.n ? t(messages, 'a11y.completed') : step === s.n ? t(messages, 'a11y.current') : t(messages, 'a11y.pending')}"
+					>
+						<span class="step-number" class:active={step === s.n} class:done={step > s.n} aria-hidden="true">
+							{#if step > s.n}✓{:else}{s.n}{/if}
+						</span>
+						<span class="step-label">{s.label}</span>
+					</button>
+					{#if s.n < 4}
+						<div class="step-connector" class:active={step > s.n}></div>
+					{/if}
+				{/each}
+			</div>
 
 			{#if step === 1}
 				<div>
@@ -296,14 +462,22 @@
 							<textarea id="specialRequests" bind:value={specialRequests} class="field-input textarea" rows="3" placeholder={t(messages, 'book.placeholder_requests')}></textarea>
 						</div>
 
+						{#if formError}
+							<div class="error-box" role="alert">{formError}</div>
+						{/if}
+
 						<div class="actions">
-							<button onclick={() => step = 1} class="btn-outline">
+							<button onclick={() => { step = 1; discardPendingBooking(); }} class="btn-outline">
 								<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
 								{t(messages, 'book.back')}
 							</button>
-							<button onclick={goToReview} class="btn-primary flex-1">
-								<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
-								{t(messages, 'book.review_booking')}
+							<button onclick={goToPayment} disabled={preparingPayment} class="btn-primary flex-1">
+								{#if preparingPayment}
+									{t(messages, 'book.pay_loading')}
+								{:else}
+									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+									{t(messages, 'book.checkout')}
+								{/if}
 							</button>
 						</div>
 					</div>
@@ -312,7 +486,7 @@
 
 			{#if step === 3}
 				<div class="form-card">
-					<h2 class="section-heading">{t(messages, 'book.review_heading')}</h2>
+					<h2 class="section-heading">{t(messages, 'book.pay_heading')}</h2>
 
 					<div class="review-rows">
 						<div class="review-row"><span class="review-label">{t(messages, 'book.label_name')}</span><span class="review-value">{guestName}</span></div>
@@ -320,20 +494,13 @@
 						{#if guestPhone}
 							<div class="review-row"><span class="review-label">{t(messages, 'book.label_phone')}</span><span class="review-value">{guestPhone}</span></div>
 						{/if}
-						{#if guestCountry}
-							<div class="review-row"><span class="review-label">{t(messages, 'book.label_country')}</span><span class="review-value">{guestCountry}</span></div>
-						{/if}
 						{#if eveningMeal}
 							<div class="review-row"><span class="review-label">{t(messages, 'rooms.evening_meal.heading')}</span><span class="review-value">✓</span></div>
 						{/if}
-						{#if specialRequests}
-							<div class="review-block"><span class="review-label">{t(messages, 'book.label_special_requests')}</span><p class="review-value">{specialRequests}</p></div>
-						{/if}
 					</div>
 
-					<hr class="divider" />
-
 					{#if checkInDate && checkOutDate}
+						<hr class="divider" />
 						<div class="review-rows">
 							<div class="review-row">
 								<span class="review-label">{t(messages, 'book.label_checkin')}</span>
@@ -347,24 +514,38 @@
 								<span class="review-label">{t(messages, 'book.label_duration')}</span>
 								<span class="review-value">{plural(messages, 'book.night', 'book.nights', nights)}</span>
 							</div>
+							<div class="review-row total">
+								<span class="review-label">{t(messages, 'booking_summary.total')}</span>
+								<span class="review-value">{totalCostLabel}</span>
+							</div>
 						</div>
 					{/if}
+
+					<hr class="divider" />
+
+					<p class="pay-subhead">{t(messages, 'book.pay_subheading')}</p>
+
+					<div class="payment-mount" bind:this={paymentMountNode}>
+						{#if !paymentReady}
+							<p class="payment-loading">{t(messages, 'book.pay_loading')}</p>
+						{/if}
+					</div>
 
 					{#if formError}
 						<div class="error-box" role="alert">{formError}</div>
 					{/if}
 
 					<div class="actions">
-						<button onclick={() => step = 2} class="btn-outline">
+						<button onclick={() => { step = 2; discardPendingBooking(); }} disabled={submitting} class="btn-outline">
 							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
 							{t(messages, 'book.back')}
 						</button>
-						<button onclick={submitBooking} disabled={submitting} class="btn-primary flex-1">
+						<button onclick={submitPayment} disabled={submitting || !paymentReady} class="btn-primary flex-1">
 							{#if submitting}
-								{t(messages, 'book.submitting')}
+								{t(messages, 'book.pay_processing')}
 							{:else}
-								<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-								{t(messages, 'book.confirm_booking')}
+								<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+								{t(messages, 'book.pay_now', { amount: totalCostLabel })}
 							{/if}
 						</button>
 					</div>
@@ -372,9 +553,20 @@
 					<p class="cancel-note">{cancellationPolicy}</p>
 				</div>
 			{/if}
+
+			{#if step === 4 && confirmedBooking}
+				<div class="confirmed-wrap">
+					<BookingConfirmed
+						{messages}
+						{lang}
+						booking={confirmedBooking}
+						pollClientSide={true}
+						onBookingUpdate={handleConfirmedUpdate}
+					/>
+				</div>
+			{/if}
 		</div>
 
-		<!-- Sidebar Summary -->
 		<div class="sidebar">
 			{#if noRatePlan}
 				<div class="warning-banner" role="alert">
@@ -401,9 +593,6 @@
 			</div>
 		</div>
 
-		<!-- Support — inside the layout grid so the sticky sidebar's range
-		     extends through the support section. Spans both columns at
-		     desktop; falls back to a single-column row on mobile. -->
 		<div class="support-section">
 			<p class="support-text">{t(messages, 'book.need_help')}</p>
 			<a href={localePath(lang, '/contact')} class="btn-secondary">
@@ -445,14 +634,33 @@
 		margin: 0 0 0.5rem;
 	}
 
-	/* Steps — sticky under the main header (56px mobile / 64px ≥600px) so the
-	   wizard progress stays visible while the page scrolls. z-index sits below
-	   the header (40) and above page content. */
+	/* Layout — at desktop, support-section sits inside the grid as a
+	   second row, with the sidebar spanning both rows. The sticky
+	   sidebar therefore stays pinned for the entire booking-content
+	   area. */
+	.layout { display: grid; grid-template-columns: 1fr; gap: 2rem; margin-bottom: 3rem; }
+	@media (min-width: 960px) {
+		.layout {
+			grid-template-columns: 2fr 1fr;
+			grid-template-areas:
+				"main    sidebar"
+				"support sidebar";
+		}
+		.main-col { grid-area: main; min-height: calc(100vh - 8rem); }
+		.sidebar { grid-area: sidebar; }
+		.support-section { grid-area: support; margin-top: 0; }
+	}
+	.main-col { display: flex; flex-direction: column; gap: 1.5rem; position: relative; z-index: 1; min-width: 0; }
+	.sidebar { display: flex; flex-direction: column; gap: 1.5rem; }
+	@media (min-width: 960px) { .sidebar { position: sticky; top: 7.5rem; align-self: start; max-height: calc(100vh - 8rem); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; } }
+
+	/* Steps — sticky inside .main-col so the bar lines up with the calendar
+	   column (not the full page width). z-index sits below the main header. */
 	.steps {
 		display: flex; align-items: center; gap: 0.5rem;
 		position: sticky; top: 56px; z-index: 30;
 		background: var(--color-bg);
-		padding: 0.75rem 0; margin-bottom: 1.5rem;
+		padding: 0.75rem 0; margin: 0;
 		border-bottom: 1px solid var(--color-cream-dark);
 	}
 	@media (min-width: 600px) { .steps { top: 64px; } }
@@ -462,6 +670,7 @@
 		font-size: 0.875rem; font-weight: 500; border: none; cursor: pointer;
 		background: var(--color-cream); color: var(--color-text-muted); transition: all 0.2s;
 	}
+	.step-btn:disabled { cursor: default; }
 	.step-btn.active { background: var(--color-sage); color: white; }
 	.step-btn.done { background: color-mix(in srgb, var(--color-sage) 20%, transparent); color: var(--color-sage); }
 	.step-number {
@@ -477,41 +686,11 @@
 	.step-connector { flex: 1; height: 2px; background: var(--color-cream-dark); }
 	.step-connector.active { background: var(--color-sage); }
 
-	/* Layout — at desktop, support-section sits inside the grid as a
-	   second row, with the sidebar spanning both rows. This means the
-	   sidebar's sticky containing block extends from the top of the
-	   main column through the bottom of the support section. The sticky
-	   sidebar therefore stays pinned for the entire booking-content
-	   area instead of unsticking the moment the form/review (which can
-	   be shorter than the sidebar) ends. */
-	.layout { display: grid; grid-template-columns: 1fr; gap: 2rem; margin-bottom: 3rem; }
-	@media (min-width: 960px) {
-		.layout {
-			grid-template-columns: 2fr 1fr;
-			grid-template-areas:
-				"main    sidebar"
-				"support sidebar";
-		}
-		.main-col { grid-area: main; min-height: calc(100vh - 8rem); }
-		.sidebar { grid-area: sidebar; }
-		.support-section { grid-area: support; margin-top: 0; }
-	}
-	.main-col { display: flex; flex-direction: column; gap: 1.5rem; position: relative; z-index: 1; min-width: 0; }
-	.sidebar { display: flex; flex-direction: column; gap: 1.5rem; }
-	/* Sticky sidebar stops *below* the step bar, not behind it.
-	   Stack: header (64px) + steps bar (~50px including padding/border)
-	   ≈ 114px ≈ 7.1rem. 7.5rem gives a small visual gap. The calendar/form
-	   in the main column still scrolls under the steps as before. */
-	@media (min-width: 960px) { .sidebar { position: sticky; top: 7.5rem; align-self: start; max-height: calc(100vh - 8rem); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; } }
-
 	/* Form card */
 	.form-card { background: var(--color-cream); border-radius: var(--md-shape-corner-medium); padding: 1.5rem; }
 	.section-heading { font-family: 'Lora', serif; font-size: 1.25rem; font-weight: 600; color: var(--color-text); margin: 0 0 1.5rem; }
 	.stay-rules { margin: -1rem 0 1rem; font-size: 0.85rem; color: var(--color-text-muted); }
 
-	/* Orphan-day "contact us" overlay — appears when a guest clicks a date
-	   that is technically free but blocked from online booking by the
-	   minimum-stay rule (a single-night gap between two existing stays). */
 	.orphan-overlay {
 		position: fixed; inset: 0; z-index: 100;
 		display: flex; align-items: center; justify-content: center;
@@ -538,7 +717,6 @@
 	.orphan-contact { margin: 0 0 1.25rem; font-size: 0.9rem; color: var(--color-text-muted); }
 	.orphan-actions { display: flex; gap: 0.75rem; justify-content: flex-end; flex-wrap: wrap; }
 	.form-fields { display: flex; flex-direction: column; gap: 1.25rem; }
-	.field {}
 	.field-label { display: block; font-size: 0.875rem; font-weight: 500; color: var(--color-text); margin-bottom: 0.375rem; }
 	@media (max-width: 599px) { .field-label { font-size: 1rem; } }
 	.field-input {
@@ -577,13 +755,22 @@
 	/* Review */
 	.review-rows { display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1.5rem; }
 	.review-row { display: flex; justify-content: space-between; font-size: 0.875rem; }
-	.review-block { font-size: 0.875rem; }
+	.review-row.total { font-size: 1rem; font-weight: 600; padding-top: 0.5rem; border-top: 1px solid var(--color-cream-dark); }
+	.review-row.total .review-value { color: var(--color-sage); }
 	.review-label { color: var(--color-text-muted); }
 	.review-value { font-weight: 500; color: var(--color-text); margin: 0; }
 	.divider { border: none; border-top: 1px solid var(--color-cream-dark); margin: 0 0 1.5rem; }
 	.error-box { padding: 1rem; margin-bottom: 1rem; background: var(--color-error-bg); color: var(--color-error-text); border-radius: var(--md-shape-corner-small); font-size: 0.875rem; }
 	.warning-banner { padding: 0.875rem 1rem; background: var(--color-warning-bg); color: var(--color-warning-text); border-radius: var(--md-shape-corner-small); font-size: 0.8125rem; }
 	.cancel-note { font-size: 0.75rem; color: var(--color-text-muted); margin: 1rem 0 0; text-align: center; }
+
+	/* Payment Element */
+	.pay-subhead { margin: 0 0 1rem; font-size: 0.85rem; color: var(--color-text-muted); }
+	.payment-mount { min-height: 220px; margin-bottom: 1.25rem; }
+	.payment-loading { padding: 2rem 0; text-align: center; color: var(--color-text-muted); font-size: 0.875rem; }
+
+	/* Confirmed step — keeps the wizard chrome visible above. */
+	.confirmed-wrap { padding-top: 0.5rem; }
 
 	/* Buttons */
 	.actions { display: flex; gap: 0.75rem; padding-top: 0.5rem; }
@@ -600,6 +787,7 @@
 		color: white;
 		border-color: var(--color-sage);
 	}
+	.btn-outline:disabled { opacity: 0.5; cursor: not-allowed; }
 	.btn-primary {
 		display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
 		padding: 0.75rem 1.5rem; background: var(--color-sage); color: white;
@@ -622,8 +810,6 @@
 	/* Support */
 	.support-section { text-align: center; margin-top: 3rem; }
 	.support-text { color: var(--color-text-muted); margin: 0 0 1rem; }
-	/* Outlined sage pill — matches the `.cta-button` used on the home page so
-	   the page doesn't introduce a brown variant nothing else uses. */
 	.btn-secondary {
 		display: inline-flex; align-items: center; gap: 0.5rem;
 		padding: 0.85rem 2.25rem;
