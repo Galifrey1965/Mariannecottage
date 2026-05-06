@@ -173,6 +173,30 @@ export async function executeCancellation(input: ExecuteCancelInput): Promise<Ex
 		throw new CancelStateError(500, 'Booking update failed');
 	}
 
+	// Free the availability rows the cancelled booking owned. book_dates_atomic
+	// writes synced_from='manual' for every booking it creates, so we scope the
+	// free to that — BC-synced rows have their own lifecycle (the iCal sync
+	// owns them) and BC bookings cancel via a different path. Failure here is
+	// non-fatal: the booking is already cancelled, the dates just stay blocked
+	// on the public calendar until the next backfill / manual nudge.
+	const dates: string[] = [];
+	const cursor = new Date(booking.check_in_date + 'T00:00:00Z');
+	const end = new Date(booking.check_out_date + 'T00:00:00Z');
+	while (cursor < end) {
+		dates.push(cursor.toISOString().slice(0, 10));
+		cursor.setUTCDate(cursor.getUTCDate() + 1);
+	}
+	if (dates.length > 0) {
+		const { error: freeError } = await adminClient
+			.from('availability')
+			.update({ available: true, synced_at: new Date().toISOString() })
+			.in('date', dates)
+			.eq('synced_from', 'manual');
+		if (freeError) {
+			console.error('[cancel-execute] availability free failed:', freeError);
+		}
+	}
+
 	await logAdminEvent({
 		user_id: userId,
 		action: source === 'admin' ? 'admin_cancel_refund' : 'guest_cancel_refund',

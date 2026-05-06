@@ -8,7 +8,9 @@ const mockOr = vi.fn();
 const mockRange = vi.fn();
 const mockNeq = vi.fn();
 const mockGt = vi.fn();
+const mockIn = vi.fn();
 const mockUpdate = vi.fn();
+const mockDelete = vi.fn();
 const mockSingle = vi.fn();
 const mockMaybeSingle = vi.fn();
 
@@ -20,7 +22,9 @@ const chainable = () => ({
 	range: mockRange.mockReturnThis(),
 	neq: mockNeq.mockReturnThis(),
 	gt: mockGt.mockReturnThis(),
+	in: mockIn.mockReturnThis(),
 	update: mockUpdate.mockReturnThis(),
+	delete: mockDelete.mockReturnThis(),
 	single: mockSingle,
 	maybeSingle: mockMaybeSingle
 });
@@ -32,7 +36,7 @@ vi.mock('$lib/server/supabase', () => ({
 	logAdminEvent: vi.fn(async () => undefined)
 }));
 
-import { GET, PATCH } from './+server';
+import { GET, PATCH, DELETE } from './+server';
 import { adminClient, logAdminEvent } from '$lib/server/supabase';
 
 function makeLocals(authed = true) {
@@ -233,5 +237,119 @@ describe('PATCH /api/admin/bookings', () => {
 			})
 		} as any);
 		expect(res.status).toBe(200);
+	});
+});
+
+describe('DELETE /api/admin/bookings', () => {
+	function makeDeleteRequest(body: Record<string, unknown>) {
+		return {
+			locals: makeLocals(true),
+			request: new Request('http://localhost/api/admin/bookings', {
+				method: 'DELETE',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(body)
+			})
+		} as any;
+	}
+
+	it('401 without authenticated user', async () => {
+		const res = await DELETE({
+			locals: makeLocals(false),
+			request: new Request('http://localhost/api/admin/bookings', {
+				method: 'DELETE',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ id: '1' })
+			})
+		} as any);
+		expect(res.status).toBe(401);
+	});
+
+	it('400 when id missing', async () => {
+		const res = await DELETE(makeDeleteRequest({}));
+		expect(res.status).toBe(400);
+	});
+
+	it('404 when booking does not exist', async () => {
+		const lookupChain = chainable();
+		lookupChain.maybeSingle = vi.fn(() => ({ data: null, error: null })) as any;
+		vi.mocked(adminClient.from).mockReturnValueOnce(lookupChain as any);
+
+		const res = await DELETE(makeDeleteRequest({ id: 'nope' }));
+		expect(res.status).toBe(404);
+	});
+
+	it('409 for an active (confirmed) booking — admin must cancel first', async () => {
+		const lookupChain = chainable();
+		lookupChain.maybeSingle = vi.fn(() => ({
+			data: { id: '1', source: 'web', status: 'confirmed', check_in_date: '2026-09-01', check_out_date: '2026-09-03', booking_reference: 'MC-X' },
+			error: null
+		})) as any;
+		vi.mocked(adminClient.from).mockReturnValueOnce(lookupChain as any);
+
+		const res = await DELETE(makeDeleteRequest({ id: '1' }));
+		expect(res.status).toBe(409);
+		const body = await res.json();
+		expect(body.current_status).toBe('confirmed');
+		expect(logAdminEvent).not.toHaveBeenCalled();
+	});
+
+	it('409 for admin_block source — points to the availability endpoint instead', async () => {
+		const lookupChain = chainable();
+		lookupChain.maybeSingle = vi.fn(() => ({
+			data: { id: '1', source: 'admin_block', status: 'cancelled', check_in_date: '2026-09-01', check_out_date: '2026-09-02', booking_reference: 'MC-X' },
+			error: null
+		})) as any;
+		vi.mocked(adminClient.from).mockReturnValueOnce(lookupChain as any);
+
+		const res = await DELETE(makeDeleteRequest({ id: '1' }));
+		expect(res.status).toBe(409);
+	});
+
+	it('deletes a cancelled booking, frees its dates, writes audit log', async () => {
+		// Lookup → returns a cancelled booking covering 2 nights.
+		const lookupChain = chainable();
+		lookupChain.maybeSingle = vi.fn(() => ({
+			data: {
+				id: '1',
+				source: 'web',
+				status: 'cancelled',
+				check_in_date: '2026-09-01',
+				check_out_date: '2026-09-03',
+				booking_reference: 'MC-DEL'
+			},
+			error: null
+		})) as any;
+
+		// Availability free chain — terminates on .eq() returning {error:null}.
+		const availChain = chainable();
+		availChain.eq = vi.fn(() => ({ error: null })) as any;
+
+		// Booking delete chain — terminates on .eq() returning {error:null}.
+		const deleteChain = chainable();
+		deleteChain.eq = vi.fn(() => ({ error: null })) as any;
+
+		vi.mocked(adminClient.from)
+			.mockReturnValueOnce(lookupChain as any)
+			.mockReturnValueOnce(availChain as any)
+			.mockReturnValueOnce(deleteChain as any);
+
+		const res = await DELETE(makeDeleteRequest({ id: '1' }));
+		expect(res.status).toBe(200);
+		const body = await res.json();
+		expect(body.success).toBe(true);
+
+		// Audit log entry written with the prior status + the dates we freed.
+		expect(logAdminEvent).toHaveBeenCalledWith(
+			expect.objectContaining({
+				action: 'booking.delete',
+				target_id: '1',
+				metadata: expect.objectContaining({
+					prior_status: 'cancelled',
+					source: 'web',
+					booking_reference: 'MC-DEL',
+					dates: ['2026-09-01', '2026-09-02']
+				})
+			})
+		);
 	});
 });

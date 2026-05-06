@@ -607,6 +607,39 @@
 	// because there's no Stripe charge to refund. Calls the dedicated DELETE
 	// endpoint on /api/admin/availability so audit logging stays distinct
 	// (action=availability.block.delete vs admin.cancel).
+	// Hard-delete a terminal-state booking (cancelled / expired / refunded /
+	// refunded_overbooked / payment_failed). Frees the availability rows the
+	// booking owned. Active bookings have to be cancelled first — the
+	// /api/admin/bookings DELETE endpoint enforces that and returns 409
+	// otherwise. Audit logged as 'booking.delete'.
+	let deletingBooking = $state(false);
+	async function deleteBooking(b: Booking) {
+		const ref = b.booking_reference ?? b.id.slice(0, 8);
+		if (!confirm(
+			`Permanently delete booking ${ref}?\n\n` +
+			`This removes the booking row and frees its dates on the calendar. ` +
+			`Use this for test fixtures or finalised cancellations you no longer ` +
+			`need in the admin list. The audit log entry stays.`
+		)) return;
+		deletingBooking = true;
+		try {
+			const res = await fetch('/api/admin/bookings', {
+				method: 'DELETE',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ id: b.id })
+			});
+			const payload = await res.json().catch(() => ({}));
+			if (!res.ok || !payload.success) {
+				alert(payload?.error || `Delete failed (${res.status})`);
+				return;
+			}
+			selectedBooking = null;
+			await refetchAll();
+		} finally {
+			deletingBooking = false;
+		}
+	}
+
 	let releasingBlock = $state(false);
 	async function releaseBlock(b: Booking) {
 		if (!confirm('Release this admin block?\n\nThe date will become available again on the website and on the iCal feed to OTAs.')) return;
@@ -1126,6 +1159,16 @@
 						</div>
 						{#if isTerminalStatus(selectedBooking.status)}
 							<p class="sub-text" style="margin-top: 0.5rem;">{terminalStatusHint(selectedBooking.status)}</p>
+							{#if selectedBooking.source !== 'booking_com'}
+								<div class="status-buttons" style="margin-top: 0.75rem;">
+									<button
+										onclick={() => deleteBooking(selectedBooking!)}
+										disabled={deletingBooking}
+										class="status-toggle cancelled"
+										title="Permanently remove this booking row and free its dates"
+									>{deletingBooking ? 'Deleting…' : 'Delete booking'}</button>
+								</div>
+							{/if}
 						{:else if isAdminBlock}
 							<div class="status-buttons" style="margin-top: 0.5rem;">
 								<button

@@ -122,6 +122,111 @@ async function loadBookingStats() {
 	};
 }
 
+// Bookings deletable via DELETE /api/admin/bookings. Active bookings must be
+// cancelled first — that path captures the cancel reason in the audit log and
+// triggers the refund / email side-effects. Hard delete is reserved for
+// terminal-state rows where there's no in-flight side-effect to reverse.
+const DELETABLE_STATUSES: ReadonlySet<string> = new Set([
+	'cancelled',
+	'expired',
+	'refunded',
+	'refunded_overbooked',
+	'payment_failed'
+]);
+
+export const DELETE: RequestHandler = async ({ locals, request }) => {
+	if (!locals.user) {
+		return json({ error: 'Unauthorized' }, { status: 401 });
+	}
+
+	const body = await request.json().catch(() => null);
+	const id: string | undefined = body?.id;
+	if (!id) {
+		return json({ error: 'Missing booking id' }, { status: 400 });
+	}
+
+	const { data: booking, error: lookupError } = await adminClient
+		.from('bookings')
+		.select('id, source, status, check_in_date, check_out_date, booking_reference')
+		.eq('id', id)
+		.maybeSingle();
+
+	if (lookupError) {
+		console.error('admin/bookings DELETE lookup failed:', lookupError);
+		return json({ error: 'Lookup failed' }, { status: 500 });
+	}
+	if (!booking) {
+		return json({ error: 'Booking not found' }, { status: 404 });
+	}
+	if (booking.source === 'admin_block') {
+		return json(
+			{ error: 'Use /api/admin/availability for admin-block rows' },
+			{ status: 409 }
+		);
+	}
+	if (booking.source === 'booking_com') {
+		return json(
+			{ error: 'Booking.com rows are owned by the iCal sync — cancel locally instead' },
+			{ status: 409 }
+		);
+	}
+	if (!DELETABLE_STATUSES.has(booking.status as string)) {
+		return json(
+			{
+				error: `Cannot delete a booking in status '${booking.status}'. Cancel it first.`,
+				current_status: booking.status
+			},
+			{ status: 409 }
+		);
+	}
+
+	// Free availability rows owned by this booking before deleting it.
+	// Same scoping as cancel-execute: synced_from='manual' only, so a still-
+	// active BC overlap (defensive — shouldn't happen) is left intact.
+	const dates: string[] = [];
+	const cursor = new Date(booking.check_in_date + 'T00:00:00Z');
+	const end = new Date(booking.check_out_date + 'T00:00:00Z');
+	while (cursor < end) {
+		dates.push(cursor.toISOString().slice(0, 10));
+		cursor.setUTCDate(cursor.getUTCDate() + 1);
+	}
+	if (dates.length > 0) {
+		const { error: freeError } = await adminClient
+			.from('availability')
+			.update({ available: true, synced_at: new Date().toISOString() })
+			.in('date', dates)
+			.eq('synced_from', 'manual');
+		if (freeError) {
+			console.error('admin/bookings DELETE availability-free failed:', freeError);
+		}
+	}
+
+	const { error: deleteError } = await adminClient
+		.from('bookings')
+		.delete()
+		.eq('id', id);
+
+	if (deleteError) {
+		console.error('admin/bookings DELETE failed:', deleteError);
+		return json({ error: 'Delete failed' }, { status: 500 });
+	}
+
+	await logAdminEvent({
+		user_id: locals.user.id,
+		action: 'booking.delete',
+		target_type: 'booking',
+		target_id: id,
+		metadata: {
+			prior_status: booking.status,
+			source: booking.source,
+			booking_reference: booking.booking_reference,
+			dates
+		}
+	});
+
+	return json({ success: true });
+};
+
 // PATCH allowed status transitions, by state-machine rule.
 //   pending → confirmed             — admin manual confirm of a non-Stripe booking
 // Booking.com imports get an extra path:
