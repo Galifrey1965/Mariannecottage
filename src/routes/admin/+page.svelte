@@ -8,12 +8,39 @@
 
 	let { data }: { data: PageData } = $props();
 
-	let bookings = $state<Booking[]>([]);
+	let pageBookings = $state<Booking[]>([]);
+	let calendarBookings = $state<Booking[]>([]);
 	let totalBookings = $state(0);
 	let loading = $state(false);
+	let calendarLoading = $state(false);
 	let statusFilter = $state('all');
 	let searchQuery = $state('');
 	let viewMode = $state<'list' | 'calendar'>('list');
+
+	// Server-side pagination — page size matches /admin/audit-log conventions.
+	const PAGE_SIZE = 10;
+	let currentPage = $state(0);
+
+	// Aggregate stats fetched independently of the paged table so the dashboard
+	// cards reflect totals across the whole bookings table, not just the visible page.
+	type BookingStats = {
+		totalCount: number;
+		confirmedCount: number;
+		pendingCount: number;
+		upcomingCount: number;
+		bcActiveCount: number;
+		totalRevenue: number;
+		bcActiveDates: string[];
+	};
+	let stats = $state<BookingStats>({
+		totalCount: 0,
+		confirmedCount: 0,
+		pendingCount: 0,
+		upcomingCount: 0,
+		bcActiveCount: 0,
+		totalRevenue: 0,
+		bcActiveDates: []
+	});
 
 	// Edit form for Booking.com imports — Mark fills in details from BC's
 	// reservation email (BC's iCal feed never contains guest PII).
@@ -100,21 +127,42 @@
 	let cancelLinkCopied = $state(false);
 	let cancelLinkError = $state<string | null>(null);
 
-	async function fetchBookings() {
+	async function fetchBookings(opts: { withStats?: boolean } = {}) {
 		loading = true;
 		try {
 			const params = new URLSearchParams();
 			if (statusFilter !== 'all') params.set('status', statusFilter);
 			if (searchQuery) params.set('search', searchQuery);
+			params.set('page', String(currentPage));
+			params.set('pageSize', String(PAGE_SIZE));
+			if (opts.withStats) params.set('stats', '1');
 			const res = await fetch(`/api/admin/bookings?${params}`);
 			const result = await res.json();
-			bookings = result.bookings || [];
+			pageBookings = result.bookings || [];
 			totalBookings = result.total || 0;
+			if (result.stats) stats = result.stats;
 		} catch {
-			bookings = [];
+			pageBookings = [];
 		} finally {
 			loading = false;
 		}
+	}
+
+	async function fetchCalendarBookings() {
+		calendarLoading = true;
+		try {
+			const res = await fetch('/api/admin/bookings?mode=all');
+			const result = await res.json();
+			calendarBookings = result.bookings || [];
+		} catch {
+			calendarBookings = [];
+		} finally {
+			calendarLoading = false;
+		}
+	}
+
+	async function refetchAll() {
+		await Promise.all([fetchBookings({ withStats: true }), fetchCalendarBookings()]);
 	}
 
 	async function updateBookingStatus(id: string, status: string) {
@@ -127,7 +175,7 @@
 			});
 			const result = await res.json();
 			if (result.success) {
-				await fetchBookings();
+				await refetchAll();
 				if (selectedBooking?.id === id) selectedBooking = result.booking;
 			}
 		} finally {
@@ -157,7 +205,16 @@
 		// Empty string is allowed (clears the filter).
 		const q = searchQuery.trim();
 		if (q.length === 1) return;
-		searchTimeout = setTimeout(() => fetchBookings(), 300);
+		searchTimeout = setTimeout(() => {
+			currentPage = 0;
+			void fetchBookings();
+		}, 300);
+	}
+
+	function setStatusFilter(s: string) {
+		if (statusFilter === s) return;
+		statusFilter = s;
+		currentPage = 0;
 	}
 
 	function selectBooking(b: Booking) {
@@ -202,7 +259,7 @@
 				return;
 			}
 			selectedBooking = result.booking;
-			await fetchBookings();
+			await refetchAll();
 		} catch (err) {
 			importSaveError = err instanceof Error ? err.message : 'Unknown error';
 		} finally {
@@ -289,7 +346,7 @@
 				return;
 			}
 			// Refresh list + the dashboard absorbed-fee total.
-			await Promise.all([fetchBookings(), refreshAbsorbedFeeTotal()]);
+			await Promise.all([refetchAll(), refreshAbsorbedFeeTotal()]);
 			if (selectedBooking?.id === cancelPreview.booking.id && payload.booking) {
 				selectedBooking = payload.booking;
 			}
@@ -361,8 +418,18 @@
 		}
 	}
 
-	$effect(() => { fetchBookings(); });
-	$effect(() => { statusFilter; fetchBookings(); });
+	// Mount: fetch the table page, the aggregate stats, and the unpaged calendar
+	// set in one go. Subsequent filter/page changes refetch the table only.
+	let initialLoadDone = false;
+	$effect(() => {
+		statusFilter; currentPage;
+		if (!initialLoadDone) {
+			initialLoadDone = true;
+			void refetchAll();
+		} else {
+			void fetchBookings();
+		}
+	});
 
 
 	const formatDate = (iso: string) =>
@@ -377,28 +444,11 @@
 		return `in ${days}d`;
 	};
 
-	// Test seeds are always visible — distinguished by the TEST chip + amber stripes
-	// in the calendar. The previous "show test" hide-by-default toggle was removed.
-	const visibleBookings = $derived(bookings);
-	const confirmedBookings = $derived(visibleBookings.filter(b => b.status === 'confirmed'));
-	const pendingBookings = $derived(visibleBookings.filter(b => b.status === 'pending'));
-	const totalRevenue = $derived(confirmedBookings.reduce((sum, b) => sum + b.total_cost, 0));
-	const upcomingBookings = $derived(visibleBookings.filter(b => new Date(b.check_in_date) > new Date() && b.status !== 'cancelled'));
-	const bcBookings = $derived(visibleBookings.filter(b => b.source === 'booking_com' && b.status !== 'cancelled'));
-	// BC iCal dates that haven't been promoted to a booking row yet (between
-	// deploy and the next cron tick, or when the legacy synced rows pre-date
-	// the iCal-uid sync rewrite). One synthetic-id per date — collapse into
-	// distinct contiguous runs to count "pending reservations".
+	// Stats cards reflect totals across the whole bookings table — independent of
+	// the current page or status filter. BC pending-promotion is computed from
+	// the dates the server reports as covered by active BC bookings.
 	const bcPendingPromotionRuns = $derived.by(() => {
-		const realDates = new Set<string>();
-		for (const b of bcBookings) {
-			const d = new Date(b.check_in_date + 'T00:00:00Z');
-			const end = new Date(b.check_out_date + 'T00:00:00Z');
-			while (d < end) {
-				realDates.add(d.toISOString().slice(0, 10));
-				d.setUTCDate(d.getUTCDate() + 1);
-			}
-		}
+		const realDates = new Set(stats.bcActiveDates);
 		const sorted = blockedAvailability.map((r) => r.date).filter((d) => !realDates.has(d)).sort();
 		let runs = 0;
 		for (let i = 0; i < sorted.length; i++) {
@@ -424,12 +474,12 @@
 		return source;
 	}
 
-	// Calendar mode — flatten visible bookings into a date → BookingDayInfo map
-	// so the BookingCalendar can colour cells by status and route clicks back
+	// Calendar mode — flatten the unpaged calendar set into a date → BookingDayInfo
+	// map so the BookingCalendar can colour cells by status and route clicks back
 	// through selectBooking() to open the existing detail panel.
 	const adminBookingByDate = $derived.by(() => {
 		const out: Record<string, BookingDayInfo> = {};
-		for (const b of visibleBookings) {
+		for (const b of calendarBookings) {
 			const start = new Date(b.check_in_date + 'T00:00:00Z');
 			const end = new Date(b.check_out_date + 'T00:00:00Z');
 			const totalNights = Math.max(1, Math.round((end.getTime() - start.getTime()) / 86_400_000));
@@ -500,7 +550,8 @@
 			selectBooking(syntheticImportedBooking(row));
 			return;
 		}
-		const b = bookings.find(x => x.id === bookingId);
+		const b = calendarBookings.find(x => x.id === bookingId)
+			?? pageBookings.find(x => x.id === bookingId);
 		if (b) selectBooking(b);
 	}
 
@@ -526,7 +577,7 @@
 				return;
 			}
 			selectedBooking = result.booking;
-			await fetchBookings();
+			await refetchAll();
 		} finally {
 			cancellingBcBlock = false;
 		}
@@ -564,7 +615,7 @@
 			}
 			bcSyncMessage = `Synced ${result.inserted ?? 0} new, ${result.updated ?? 0} updated, ${result.cancelled ?? 0} cancelled.`;
 			lastBcSyncAt = new Date().toISOString();
-			await fetchBookings();
+			await refetchAll();
 		} catch (err) {
 			bcSyncMessage = err instanceof Error ? err.message : 'Unknown error';
 		} finally {
@@ -574,7 +625,17 @@
 	}
 
 	function setStatusShortcut(s: string) {
-		statusFilter = statusFilter === s ? 'all' : s;
+		setStatusFilter(statusFilter === s ? 'all' : s);
+	}
+
+	const lastPage = $derived(Math.max(0, Math.ceil(totalBookings / PAGE_SIZE) - 1));
+	const pageRangeStart = $derived(totalBookings === 0 ? 0 : currentPage * PAGE_SIZE + 1);
+	const pageRangeEnd = $derived(Math.min(totalBookings, (currentPage + 1) * PAGE_SIZE));
+
+	function gotoPage(p: number) {
+		const clamped = Math.max(0, Math.min(p, lastPage));
+		if (clamped === currentPage) return;
+		currentPage = clamped;
 	}
 </script>
 
@@ -582,7 +643,7 @@
 	<div class="dashboard-header">
 		<div>
 			<h2 class="page-title">Bookings</h2>
-			<p class="page-subtitle">{totalBookings} total bookings</p>
+			<p class="page-subtitle">{stats.totalCount} total bookings</p>
 		</div>
 	</div>
 
@@ -596,7 +657,7 @@
 			</div>
 			<div class="status-filters">
 				{#each ['all', 'pending', 'confirmed', 'cancelled'] as s}
-					<button onclick={() => statusFilter = s} class="filter-btn" class:active={statusFilter === s}>{s}</button>
+					<button onclick={() => setStatusFilter(s)} class="filter-btn" class:active={statusFilter === s}>{s}</button>
 				{/each}
 			</div>
 		</div>
@@ -604,19 +665,19 @@
 		<div class="stats-grid">
 			<button class="stat-card stat-card--clickable" class:active={statusFilter === 'confirmed'} onclick={() => setStatusShortcut('confirmed')} title="Filter to confirmed">
 				<p class="stat-label">Confirmed</p>
-				<p class="stat-value" style="color: var(--color-success-text);">{confirmedBookings.length}</p>
+				<p class="stat-value" style="color: var(--color-success-text);">{stats.confirmedCount}</p>
 			</button>
 			<button class="stat-card stat-card--clickable" class:active={statusFilter === 'pending'} onclick={() => setStatusShortcut('pending')} title="Filter to pending">
 				<p class="stat-label">Pending</p>
-				<p class="stat-value" style="color: var(--color-warning-text);">{pendingBookings.length}</p>
+				<p class="stat-value" style="color: var(--color-warning-text);">{stats.pendingCount}</p>
 			</button>
 			<div class="stat-card">
 				<p class="stat-label">Revenue</p>
-				<p class="stat-value" style="color: var(--color-sage);">{formatCurrency(totalRevenue)}</p>
+				<p class="stat-value" style="color: var(--color-sage);">{formatCurrency(stats.totalRevenue)}</p>
 			</div>
 			<div class="stat-card">
 				<p class="stat-label">Upcoming</p>
-				<p class="stat-value" style="color: var(--color-info-text);">{upcomingBookings.length}</p>
+				<p class="stat-value" style="color: var(--color-info-text);">{stats.upcomingCount}</p>
 			</div>
 			<div class="stat-card">
 				<p class="stat-label">Refund fees absorbed</p>
@@ -626,10 +687,10 @@
 			<div class="stat-card stat-card--bc">
 				<p class="stat-label"><span class="bc-logo">B.</span> Booking.com</p>
 				<p class="stat-value" style="color: #003580;">
-					{bcBookings.length}{#if bcPendingPromotionRuns > 0}<span class="bc-pending-badge">+{bcPendingPromotionRuns}</span>{/if}
+					{stats.bcActiveCount}{#if bcPendingPromotionRuns > 0}<span class="bc-pending-badge">+{bcPendingPromotionRuns}</span>{/if}
 				</p>
 				<p class="sub-text">
-					{bcBookings.length === 1 ? '1 active reservation' : `${bcBookings.length} active reservations`}{#if bcPendingPromotionRuns > 0} · {bcPendingPromotionRuns} pending sync{/if}
+					{stats.bcActiveCount === 1 ? '1 active reservation' : `${stats.bcActiveCount} active reservations`}{#if bcPendingPromotionRuns > 0} · {bcPendingPromotionRuns} pending sync{/if}
 				</p>
 				<div class="bc-sync-actions">
 					<button onclick={triggerBcSync} disabled={bcSyncing} class="bc-sync-btn" title="Pull the latest Booking.com iCal feed now">
@@ -668,7 +729,7 @@
 		<div class="table-container">
 			{#if loading}
 				<div class="empty-state">Loading...</div>
-			{:else if visibleBookings.length === 0}
+			{:else if pageBookings.length === 0}
 				<div class="empty-state">No bookings found</div>
 			{:else}
 				<div class="desktop-table">
@@ -686,7 +747,7 @@
 							</tr>
 						</thead>
 						<tbody>
-							{#each visibleBookings as booking}
+							{#each pageBookings as booking}
 								<tr onclick={() => selectBooking(booking)}>
 									<td class="mono">
 										{booking.booking_reference}
@@ -721,7 +782,7 @@
 				</div>
 
 				<div class="mobile-cards">
-					{#each visibleBookings as booking}
+					{#each pageBookings as booking}
 						<button onclick={() => selectBooking(booking)} class="mobile-card">
 							<div class="mobile-card-top">
 								<div>
@@ -745,6 +806,26 @@
 						</button>
 					{/each}
 				</div>
+			{/if}
+			{#if totalBookings > 0}
+				<nav class="pager" aria-label="Bookings pagination">
+					<button
+						type="button"
+						class="link-btn"
+						disabled={currentPage === 0 || loading}
+						onclick={() => gotoPage(currentPage - 1)}
+					>← Prev</button>
+					<span class="page-info">
+						{pageRangeStart}–{pageRangeEnd} of {totalBookings}
+						· Page {currentPage + 1} of {lastPage + 1}
+					</span>
+					<button
+						type="button"
+						class="link-btn"
+						disabled={currentPage >= lastPage || loading}
+						onclick={() => gotoPage(currentPage + 1)}
+					>Next →</button>
+				</nav>
 			{/if}
 		</div>
 		{/if}
@@ -1172,6 +1253,12 @@
 	.full-width { width: 100%; }
 	.link-btn { background: none; border: none; color: var(--color-sage); font-size: 0.75rem; cursor: pointer; }
 	.link-btn:hover { text-decoration: underline; }
+	.link-btn:disabled { opacity: 0.4; cursor: not-allowed; text-decoration: none; }
+
+	/* Bookings table pager — mirrors /admin/audit-log conventions */
+	.pager { display: flex; align-items: center; justify-content: center; gap: 1.5rem; padding: 0.75rem 1rem; border-top: 1px solid var(--color-cream-dark); }
+	.pager .link-btn { font-size: 0.875rem; }
+	.page-info { color: var(--color-text-muted); font-size: 0.8rem; }
 
 	/* Dashboard */
 	.dashboard { display: flex; flex-direction: column; gap: 1.5rem; }

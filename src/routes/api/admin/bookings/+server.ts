@@ -2,46 +2,125 @@ import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { adminClient, logAdminEvent } from '$lib/server/supabase';
 
+const DEFAULT_PAGE_SIZE = 10;
+const MAX_PAGE_SIZE = 100;
+
+// Escape commas/parens in user input so they don't break the PostgREST .or()
+// filter grammar. ilike values themselves don't need backslash-escaping for
+// Supabase wildcards (% _) — those just become literal matches.
+function escapeOrTerm(value: string): string {
+	return value.replace(/[(),]/g, '');
+}
+
 export const GET: RequestHandler = async ({ locals, url }) => {
 	if (!locals.user) {
 		return json({ error: 'Unauthorized' }, { status: 401 });
 	}
 
 	const status = url.searchParams.get('status');
-	const search = url.searchParams.get('search')?.toLowerCase();
+	const search = url.searchParams.get('search')?.trim();
+	const mode = url.searchParams.get('mode') ?? 'paged';
+	const includeStats = url.searchParams.get('stats') === '1';
 
-	let query = adminClient.from('bookings').select('*');
+	const pageRaw = Number(url.searchParams.get('page') ?? 0);
+	const pageSizeRaw = Number(url.searchParams.get('pageSize') ?? DEFAULT_PAGE_SIZE);
+	const page = Number.isFinite(pageRaw) ? Math.max(0, Math.floor(pageRaw)) : 0;
+	const pageSize = Number.isFinite(pageSizeRaw)
+		? Math.min(MAX_PAGE_SIZE, Math.max(1, Math.floor(pageSizeRaw)))
+		: DEFAULT_PAGE_SIZE;
+
+	let query = adminClient
+		.from('bookings')
+		.select('*', { count: 'exact' })
+		.order('check_in_date', { ascending: true });
 
 	if (status && status !== 'all') {
 		query = query.eq('status', status);
 	}
 
-	query = query.order('check_in_date', { ascending: true });
-
-	const { data: bookings, error } = await query;
-
-	if (error) {
-		console.error('Failed to fetch bookings:', error);
-		return json({ bookings: [], total: 0 });
-	}
-
-	let filtered = bookings || [];
-
-	// Client-side search filter (Supabase doesn't support OR ilike across multiple columns easily)
-	if (search) {
-		filtered = filtered.filter(b =>
-			b.guest_name?.toLowerCase().includes(search) ||
-			b.guest_email?.toLowerCase().includes(search) ||
-			b.booking_reference?.toLowerCase().includes(search)
+	if (search && search.length >= 2) {
+		const term = escapeOrTerm(search);
+		query = query.or(
+			`guest_name.ilike.%${term}%,guest_email.ilike.%${term}%,booking_reference.ilike.%${term}%`
 		);
 	}
 
-	const { count } = await adminClient
-		.from('bookings')
-		.select('*', { count: 'exact', head: true });
+	if (mode !== 'all') {
+		const start = page * pageSize;
+		query = query.range(start, start + pageSize - 1);
+	}
 
-	return json({ bookings: filtered, total: count || 0 });
+	const { data: bookings, error, count } = await query;
+
+	if (error) {
+		console.error('Failed to fetch bookings:', error);
+		return json({ bookings: [], total: 0, page, pageSize });
+	}
+
+	const response: Record<string, unknown> = {
+		bookings: bookings ?? [],
+		total: count ?? 0,
+		page,
+		pageSize
+	};
+
+	if (includeStats) {
+		response.stats = await loadBookingStats();
+	}
+
+	return json(response);
 };
+
+async function loadBookingStats() {
+	const todayIso = new Date().toISOString().slice(0, 10);
+
+	const [total, confirmed, pending, upcoming, bcActive, revenueRows, bcRanges] = await Promise.all([
+		adminClient.from('bookings').select('*', { count: 'exact', head: true }),
+		adminClient.from('bookings').select('*', { count: 'exact', head: true }).eq('status', 'confirmed'),
+		adminClient.from('bookings').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
+		adminClient
+			.from('bookings')
+			.select('*', { count: 'exact', head: true })
+			.gt('check_in_date', todayIso)
+			.neq('status', 'cancelled'),
+		adminClient
+			.from('bookings')
+			.select('*', { count: 'exact', head: true })
+			.eq('source', 'booking_com')
+			.neq('status', 'cancelled'),
+		adminClient.from('bookings').select('total_cost').eq('status', 'confirmed'),
+		adminClient
+			.from('bookings')
+			.select('check_in_date, check_out_date')
+			.eq('source', 'booking_com')
+			.neq('status', 'cancelled')
+	]);
+
+	const totalRevenue = (revenueRows.data ?? []).reduce(
+		(sum, row) => sum + (Number((row as { total_cost: number | null }).total_cost) || 0),
+		0
+	);
+
+	const bcActiveDates: string[] = [];
+	for (const row of (bcRanges.data ?? []) as { check_in_date: string; check_out_date: string }[]) {
+		const d = new Date(row.check_in_date + 'T00:00:00Z');
+		const end = new Date(row.check_out_date + 'T00:00:00Z');
+		while (d < end) {
+			bcActiveDates.push(d.toISOString().slice(0, 10));
+			d.setUTCDate(d.getUTCDate() + 1);
+		}
+	}
+
+	return {
+		totalCount: total.count ?? 0,
+		confirmedCount: confirmed.count ?? 0,
+		pendingCount: pending.count ?? 0,
+		upcomingCount: upcoming.count ?? 0,
+		bcActiveCount: bcActive.count ?? 0,
+		totalRevenue,
+		bcActiveDates
+	};
+}
 
 // PATCH allowed status transitions, by state-machine rule.
 //   pending → confirmed             — admin manual confirm of a non-Stripe booking

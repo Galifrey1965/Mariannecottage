@@ -4,6 +4,10 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 const mockSelect = vi.fn();
 const mockEq = vi.fn();
 const mockOrder = vi.fn();
+const mockOr = vi.fn();
+const mockRange = vi.fn();
+const mockNeq = vi.fn();
+const mockGt = vi.fn();
 const mockUpdate = vi.fn();
 const mockSingle = vi.fn();
 const mockMaybeSingle = vi.fn();
@@ -12,6 +16,10 @@ const chainable = () => ({
 	select: mockSelect.mockReturnThis(),
 	eq: mockEq.mockReturnThis(),
 	order: mockOrder.mockReturnThis(),
+	or: mockOr.mockReturnThis(),
+	range: mockRange.mockReturnThis(),
+	neq: mockNeq.mockReturnThis(),
+	gt: mockGt.mockReturnThis(),
 	update: mockUpdate.mockReturnThis(),
 	single: mockSingle,
 	maybeSingle: mockMaybeSingle
@@ -46,24 +54,63 @@ describe('GET /api/admin/bookings', () => {
 		expect(res.status).toBe(401);
 	});
 
-	it('returns bookings when authenticated', async () => {
+	it('returns paged bookings when authenticated', async () => {
 		const bookings = [{ id: '1', guest_name: 'Test' }];
-		const chain1 = chainable();
-		chain1.order = vi.fn(() => ({ data: bookings, error: null })) as any;
-		const chain2 = chainable();
-		chain2.select = vi.fn(() => ({ count: 1 })) as any;
+		// New shape: single chained query that ends in .range() and resolves to
+		// { data, error, count } via the awaitable PostgREST builder.
+		const chain = chainable();
+		chain.range = vi.fn(() => ({ data: bookings, error: null, count: 1 })) as any;
 
-		vi.mocked(adminClient.from)
-			.mockReturnValueOnce(chain1 as any)
-			.mockReturnValueOnce(chain2 as any);
+		vi.mocked(adminClient.from).mockReturnValueOnce(chain as any);
 
 		const res = await GET({
 			locals: makeLocals(true),
-			url: new URL('http://localhost/api/admin/bookings')
+			url: new URL('http://localhost/api/admin/bookings?page=0&pageSize=10')
 		} as any);
 		expect(res.status).toBe(200);
 		const data = await res.json();
 		expect(data.bookings).toHaveLength(1);
+		expect(data.total).toBe(1);
+		expect(data.page).toBe(0);
+		expect(data.pageSize).toBe(10);
+		// .range(start, end) was applied with page-0 / pageSize-10 bounds.
+		expect(chain.range).toHaveBeenCalledWith(0, 9);
+	});
+
+	it('mode=all skips .range() so the calendar gets the full set', async () => {
+		const bookings = [{ id: '1' }, { id: '2' }];
+		const chain = chainable();
+		// Without .range(), the awaitable terminal is .order() — return the
+		// resolved shape from there. The PostgREST builder is awaitable at any
+		// point so this models real behaviour closely enough for the test.
+		chain.order = vi.fn(() => ({ data: bookings, error: null, count: 2 })) as any;
+
+		vi.mocked(adminClient.from).mockReturnValueOnce(chain as any);
+
+		const res = await GET({
+			locals: makeLocals(true),
+			url: new URL('http://localhost/api/admin/bookings?mode=all')
+		} as any);
+		expect(res.status).toBe(200);
+		const data = await res.json();
+		expect(data.bookings).toHaveLength(2);
+		expect(chain.range).not.toHaveBeenCalled();
+	});
+
+	it('search term hits Supabase .or() with ilike across guest_name/email/reference', async () => {
+		const chain = chainable();
+		chain.range = vi.fn(() => ({ data: [], error: null, count: 0 })) as any;
+
+		vi.mocked(adminClient.from).mockReturnValueOnce(chain as any);
+
+		await GET({
+			locals: makeLocals(true),
+			url: new URL('http://localhost/api/admin/bookings?search=smith')
+		} as any);
+
+		expect(chain.or).toHaveBeenCalledWith(
+			'guest_name.ilike.%smith%,guest_email.ilike.%smith%,booking_reference.ilike.%smith%'
+		);
 	});
 });
 
