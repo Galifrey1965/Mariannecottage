@@ -229,7 +229,7 @@
 		"pay_processing": "Zahlung wird verarbeitet…",
 		"pay_loading": "Sichere Zahlung wird vorbereitet…",
 		"pay_error_generic": "Leider konnte die Zahlung nicht abgeschlossen werden. Bitte versuchen Sie es erneut oder verwenden Sie eine andere Karte.",
-		"terms_label_html": "Ich habe die <a href=\"/legal#terms\">Aufenthaltsbedingungen</a> und die <a href=\"/legal#cancellation\">Stornierungsrichtlinie</a> gelesen und akzeptiere sie.",
+		"terms_label_html": "Ich habe die <a href=\"/legal#terms\" target=\"_blank\" rel=\"noopener noreferrer\">Aufenthaltsbedingungen</a> und die <a href=\"/legal#cancellation\" target=\"_blank\" rel=\"noopener noreferrer\">Stornierungsrichtlinie</a> gelesen und akzeptiere sie.",
 		"terms_required": "Bitte aktivieren Sie das Kontrollkästchen, um die Bedingungen und die Stornierungsrichtlinie vor der Zahlung zu akzeptieren.",
 		"guest_details": "Gästedaten",
 		"full_name": "Vollständiger Name",

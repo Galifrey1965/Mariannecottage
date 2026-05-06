@@ -229,7 +229,7 @@
 		"pay_processing": "Processing payment…",
 		"pay_loading": "Preparing secure payment form…",
 		"pay_error_generic": "Sorry — that payment didn't go through. Please try again or use a different card.",
-		"terms_label_html": "I have read and accept the <a href=\"/legal#terms\">Terms of stay</a> and the <a href=\"/legal#cancellation\">Cancellation policy</a>.",
+		"terms_label_html": "I have read and accept the <a href=\"/legal#terms\" target=\"_blank\" rel=\"noopener noreferrer\">Terms of stay</a> and the <a href=\"/legal#cancellation\" target=\"_blank\" rel=\"noopener noreferrer\">Cancellation policy</a>.",
 		"terms_required": "Please tick the box to accept the Terms and Cancellation policy before paying.",
 		"guest_details": "Guest Details",
 		"full_name": "Full Name",

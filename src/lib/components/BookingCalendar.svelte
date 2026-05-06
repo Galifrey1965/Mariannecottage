@@ -513,13 +513,13 @@
 	.day.unavailable { background: transparent; color: var(--color-text-muted); opacity: 0.3; cursor: default; }
 	/* Checkout-only — the date is the check-in afternoon of an existing
 	   booking, so the cottage is taken from midday onwards but a new guest
-	   can still leave that morning. Half-shaded cell (left = booked, right
-	   = morning free) so the affordance reads at a glance: "you can end
-	   here, you can't start here". */
+	   can still leave that morning. Half-shaded cell (left = morning free,
+	   right = afternoon booked) reading LTR like a clock: the empty half is
+	   the time the cottage is actually available. */
 	.day.checkout-only {
 		background: linear-gradient(90deg,
-			color-mix(in srgb, var(--color-sage) 40%, var(--color-cream-dark)) 0 50%,
-			var(--md-sys-color-surface-container-lowest) 50% 100%);
+			var(--md-sys-color-surface-container-lowest) 0 50%,
+			color-mix(in srgb, var(--color-sage) 40%, var(--color-cream-dark)) 50% 100%);
 		color: var(--color-text);
 		cursor: pointer;
 		font-weight: 500;
@@ -537,9 +537,20 @@
 	   click-mode (so the admin can edit a tile right at the edge of the grid
 	   without flipping months); the disabled attribute on the button is what
 	   actually gates clicks in non-click-mode. */
-	.day.outside { opacity: 0.35; }
+	/* Outside-month days — preview rows from prev/next month so multi-night
+	   stays spanning the boundary read as one block. Free outside-month
+	   days keep a faded cream fill so they don't visually merge with
+	   "unavailable" cells (which used to share the same transparent look,
+	   confusing the owner into reading next-month's free padding as taken).
+	   They're still disabled in non-click-mode — the guest navigates to
+	   that month to actually pick them. */
+	.day.outside { opacity: 0.55; }
 	.day.outside:disabled { cursor: default; }
-	.day.outside.available { color: var(--color-text-muted); background: transparent; }
+	.day.outside.available {
+		color: var(--color-text-muted);
+		background: color-mix(in srgb, var(--md-sys-color-surface-container-lowest) 60%, transparent);
+	}
+	.day.outside.unavailable { background: transparent; opacity: 0.25; }
 	.day.selected-endpoint { background: var(--color-sage); color: var(--md-sys-color-on-primary); font-weight: 700; box-shadow: 0 2px 8px color-mix(in srgb, var(--color-sage) 40%, transparent); }
 	.day.selected-range { background: color-mix(in srgb, var(--color-sage) 25%, transparent); color: var(--color-text); }
 	.day.hover-range { background: color-mix(in srgb, var(--color-sage) 12%, transparent); color: var(--color-text); }
@@ -592,8 +603,8 @@
 	}
 	.legend-swatch.checkout-only {
 		background: linear-gradient(90deg,
-			color-mix(in srgb, var(--color-sage) 40%, var(--color-cream-dark)) 0 50%,
-			var(--md-sys-color-surface-container-lowest) 50% 100%);
+			var(--md-sys-color-surface-container-lowest) 0 50%,
+			color-mix(in srgb, var(--color-sage) 40%, var(--color-cream-dark)) 50% 100%);
 		border: 1px solid var(--color-cream-dark);
 	}
 

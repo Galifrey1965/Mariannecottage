@@ -229,7 +229,7 @@
 		"pay_processing": "Paiement en cours…",
 		"pay_loading": "Préparation du paiement sécurisé…",
 		"pay_error_generic": "Désolé — le paiement n'a pas pu aboutir. Veuillez réessayer ou utiliser une autre carte.",
-		"terms_label_html": "J'ai lu et j'accepte les <a href=\"/legal#terms\">Conditions de séjour</a> et la <a href=\"/legal#cancellation\">politique d'annulation</a>.",
+		"terms_label_html": "J'ai lu et j'accepte les <a href=\"/legal#terms\" target=\"_blank\" rel=\"noopener noreferrer\">Conditions de séjour</a> et la <a href=\"/legal#cancellation\" target=\"_blank\" rel=\"noopener noreferrer\">politique d'annulation</a>.",
 		"terms_required": "Veuillez cocher la case pour accepter les Conditions et la politique d'annulation avant de payer.",
 		"guest_details": "Détails du Client",
 		"full_name": "Nom Complet",
