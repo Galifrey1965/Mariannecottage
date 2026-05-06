@@ -3,26 +3,33 @@
 	import type { Messages } from '$lib/i18n';
 
 	interface GalleryImage {
-		src: string;
-		category: string;
+		thumb: string;
+		full: string;
 		alt: string;
+		category_slug: string;
+	}
+
+	interface GalleryCategory {
+		slug: string;
+		label: string;
 	}
 
 	interface Props {
 		messages: Messages;
 		images: GalleryImage[];
+		categories: GalleryCategory[];
 	}
 
-	let { messages, images }: Props = $props();
+	let { messages, images, categories }: Props = $props();
 
 	let selectedCategory = $state('all');
 	let selectedImageIndex = $state<number | null>(null);
 	let closeBtnEl: HTMLElement | undefined = $state();
 
-	const categories = ['all', 'exterior', 'rooms', 'bathroom', 'garden', 'breakfast', 'surroundings'];
-
 	const filteredImages = $derived(
-		selectedCategory === 'all' ? images : images.filter(img => img.category === selectedCategory)
+		selectedCategory === 'all'
+			? images
+			: images.filter((img) => img.category_slug === selectedCategory)
 	);
 
 	const currentImage = $derived(
@@ -47,26 +54,38 @@
 
 <div>
 	<div class="filters" role="group" aria-label={t(messages, 'gallery.filter_label')}>
+		<button
+			onclick={() => { selectedCategory = 'all'; selectedImageIndex = null; }}
+			class="filter-chip"
+			class:active={selectedCategory === 'all'}
+			aria-pressed={selectedCategory === 'all'}
+		>
+			{t(messages, 'gallery.categories.all')}
+		</button>
 		{#each categories as cat}
 			<button
-				onclick={() => { selectedCategory = cat; selectedImageIndex = null; }}
+				onclick={() => { selectedCategory = cat.slug; selectedImageIndex = null; }}
 				class="filter-chip"
-				class:active={selectedCategory === cat}
-				aria-pressed={selectedCategory === cat}
+				class:active={selectedCategory === cat.slug}
+				aria-pressed={selectedCategory === cat.slug}
 			>
-				{t(messages, `gallery.categories.${cat}`)}
+				{cat.label}
 			</button>
 		{/each}
 	</div>
 
-	<div class="gallery-grid" role="grid" aria-label={t(messages, 'gallery.title')}>
-		{#each filteredImages as image, i (image.src)}
-			<button onclick={() => (selectedImageIndex = i)} class="gallery-item" aria-label={image.alt}>
-				<img src={image.src} alt={image.alt} loading="lazy" decoding="async" />
-				<span class="gallery-caption">{image.alt}</span>
-			</button>
-		{/each}
-	</div>
+	{#if filteredImages.length === 0}
+		<p class="empty">{t(messages, 'gallery.empty')}</p>
+	{:else}
+		<div class="gallery-grid" role="grid" aria-label={t(messages, 'gallery.title')}>
+			{#each filteredImages as image, i (image.thumb)}
+				<button onclick={() => (selectedImageIndex = i)} class="gallery-item" aria-label={image.alt}>
+					<img src={image.thumb} alt={image.alt} loading="lazy" decoding="async" />
+					<span class="gallery-caption">{image.alt}</span>
+				</button>
+			{/each}
+		</div>
+	{/if}
 
 	{#if currentImage && selectedImageIndex !== null}
 		<div
@@ -77,7 +96,7 @@
 			aria-label={currentImage.alt}
 		>
 			<div class="lightbox-content" onclick={e => e.stopPropagation()}>
-				<img src={currentImage.src} alt={currentImage.alt} />
+				<img src={currentImage.full} alt={currentImage.alt} />
 				<p class="lightbox-caption">
 					<span class="lightbox-counter">{selectedImageIndex + 1} / {filteredImages.length}</span>
 					<span>{currentImage.alt}</span>
@@ -110,10 +129,6 @@
 </div>
 
 <style>
-	/* Toolbar wrapper matches the `/explore` POI filter bar — surface-coloured
-	   panel with thin border, so the two pages share the same chrome.
-	   Sticky under main header (56px mobile / 64px ≥600px); z-index below
-	   the header (40) and above page content. */
 	.filters {
 		display: flex;
 		flex-wrap: wrap;
@@ -162,6 +177,13 @@
 		background: var(--theme-accent-hover);
 		border-color: var(--theme-accent-hover);
 		color: var(--theme-bg);
+	}
+
+	.empty {
+		color: var(--theme-text-muted);
+		font-size: 0.95rem;
+		text-align: center;
+		padding: 3rem 1rem;
 	}
 
 	.gallery-grid {

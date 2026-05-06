@@ -5,36 +5,13 @@
 
 	let { data }: { data: PageData } = $props();
 	const messages = $derived(data.messages);
-
-	const images = [
-		// Exterior & garden (existing photos)
-		{ src: '/images/2024-08-15.jpg', category: 'exterior', alt: 'Cottage exterior' },
-		{ src: '/images/2024-12-15-(3).jpg', category: 'exterior', alt: 'Exterior detail' },
-		{ src: '/images/2024-12-15-(2).jpg', category: 'garden', alt: 'Garden view' },
-		{ src: '/images/2023-06-07.jpg', category: 'garden', alt: 'Garden area' },
-		{ src: '/images/2023-05-20.jpg', category: 'surroundings', alt: 'Surrounding countryside' },
-		// Rooms (new photos)
-		{ src: '/images/gallery/bedroom-double-wide.jpeg', category: 'rooms', alt: 'Double bedroom' },
-		{ src: '/images/gallery/bedroom-double-bed.jpeg', category: 'rooms', alt: 'Double bedroom bed' },
-		{ src: '/images/gallery/bedroom-twin-wide.jpeg', category: 'rooms', alt: 'Twin bedroom' },
-		{ src: '/images/gallery/bedroom-twin-full.jpeg', category: 'rooms', alt: 'Twin bedroom full view' },
-		{ src: '/images/gallery/living-dining-room.jpeg', category: 'rooms', alt: 'Living and dining room' },
-		{ src: '/images/gallery/room-amenities-a.jpeg', category: 'rooms', alt: 'Room amenities' },
-		{ src: '/images/gallery/room-amenities-b.jpeg', category: 'rooms', alt: 'Room dressing table' },
-		// Bathroom (new photo)
-		{ src: '/images/gallery/bathroom-main.jpeg', category: 'bathroom', alt: 'Bathroom' },
-		// Breakfast (new photos)
-		{ src: '/images/gallery/breakfast-table-set.jpeg', category: 'breakfast', alt: 'Breakfast table' },
-		{ src: '/images/gallery/breakfast-station-b.jpeg', category: 'breakfast', alt: 'Breakfast station' },
-		{ src: '/images/gallery/dining-table.jpeg', category: 'breakfast', alt: 'Dining table' },
-		// Surroundings
-		{ src: '/images/gallery/local-guides.jpeg', category: 'surroundings', alt: 'Local tourist guides' },
-	];
+	const images = $derived(data.images);
+	const categories = $derived(data.categories);
 </script>
 
 <section class="page-section">
 	<h1 class="page-title center">{t(messages, 'gallery.title')}</h1>
-	<PhotoGallery {messages} {images} />
+	<PhotoGallery {messages} {images} {categories} />
 </section>
 
 <style>

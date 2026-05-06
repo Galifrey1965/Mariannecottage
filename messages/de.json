@@ -163,14 +163,9 @@
 	"gallery": {
 		"title": "Fotogalerie",
 		"filter_label": "Fotos nach Kategorie filtern",
+		"empty": "Noch keine Fotos in dieser Kategorie.",
 		"categories": {
-			"all": "Alle",
-			"exterior": "Außen",
-			"rooms": "Zimmer",
-			"bathroom": "Badezimmer",
-			"garden": "Garten",
-			"breakfast": "Frühstück",
-			"surroundings": "Umgebung"
+			"all": "Alle"
 		}
 	},
 	"contact": {

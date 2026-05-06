@@ -21,7 +21,7 @@
 	}
 
 	const SITE_BASE = 'https://mariannecottage.fr';
-	const DEFAULT_OG_IMAGE = `${SITE_BASE}/images/2024-08-15.jpg`;
+	const DEFAULT_OG_IMAGE = `${SITE_BASE}/images/cottage-exterior-front.jpg`;
 
 	let {
 		messages,

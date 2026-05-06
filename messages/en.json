@@ -163,14 +163,9 @@
 	"gallery": {
 		"title": "Photo Gallery",
 		"filter_label": "Filter photos by category",
+		"empty": "No photos in this category yet.",
 		"categories": {
-			"all": "All",
-			"exterior": "Exterior",
-			"rooms": "Rooms",
-			"bathroom": "Bathroom",
-			"garden": "Garden",
-			"breakfast": "Breakfast",
-			"surroundings": "Surroundings"
+			"all": "All"
 		}
 	},
 	"contact": {
