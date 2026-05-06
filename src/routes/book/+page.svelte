@@ -358,7 +358,7 @@
 					{ n: 1, label: t(messages, 'book.step_dates') },
 					{ n: 2, label: t(messages, 'book.step_details') },
 					{ n: 3, label: t(messages, 'book.step_pay') },
-					{ n: 4, label: t(messages, 'book.step_confirmed') }
+					{ n: 4, label: t(messages, 'book.step_confirmation') }
 				] as s}
 					<button
 						onclick={() => {

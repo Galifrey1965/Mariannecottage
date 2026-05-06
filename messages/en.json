@@ -218,7 +218,7 @@
 		"step_dates": "Dates",
 		"step_details": "Details",
 		"step_pay": "Pay",
-		"step_confirmed": "Confirmed",
+		"step_confirmation": "Confirmation",
 		"pay_heading": "Review & Pay",
 		"pay_subheading": "Card details are handled securely by Stripe.",
 		"pay_now": "Pay {amount}",

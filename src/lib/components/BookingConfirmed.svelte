@@ -111,7 +111,7 @@
 			</p>
 		{:else if booking.status === 'pending_payment'}
 			<div class="success-icon pending">
-				<span>⋯</span>
+				<div class="spinner" aria-hidden="true"></div>
 			</div>
 			<h2 class="success-title">{t(messages, 'booking_confirm.confirming_payment')}</h2>
 			<p class="success-subtitle">
@@ -202,9 +202,18 @@
 	.success-icon span { font-size: 1.75rem; color: var(--color-sage); }
 	.success-icon.pending { background: color-mix(in srgb, var(--theme-warm) 20%, transparent); }
 	.success-icon.pending span { color: var(--theme-warm); animation: pulse 1.4s ease-in-out infinite; }
+	.spinner {
+		width: 1.75rem;
+		height: 1.75rem;
+		border: 3px solid color-mix(in srgb, var(--theme-warm) 30%, transparent);
+		border-top-color: var(--theme-warm);
+		border-radius: 50%;
+		animation: spin 0.9s linear infinite;
+	}
 	.success-icon.error { background: rgba(180, 60, 60, 0.15); }
 	.success-icon.error span { color: rgb(180, 60, 60); font-weight: 700; }
 	@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+	@keyframes spin { to { transform: rotate(360deg); } }
 	.success-title { font-family: 'Lora', serif; font-size: 2rem; font-weight: 700; color: var(--color-text); margin: 0 0 0.5rem; }
 	.success-subtitle { color: var(--color-text-muted); font-size: 1.125rem; margin: 0; }
 

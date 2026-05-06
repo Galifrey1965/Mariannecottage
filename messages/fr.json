@@ -218,7 +218,7 @@
 		"step_dates": "Dates",
 		"step_details": "Détails",
 		"step_pay": "Paiement",
-		"step_confirmed": "Confirmée",
+		"step_confirmation": "Confirmation",
 		"pay_heading": "Vérifier et Payer",
 		"pay_subheading": "Vos coordonnées bancaires sont traitées de manière sécurisée par Stripe.",
 		"pay_now": "Payer {amount}",

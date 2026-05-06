@@ -218,7 +218,7 @@
 		"step_dates": "Daten",
 		"step_details": "Details",
 		"step_pay": "Bezahlen",
-		"step_confirmed": "Bestätigt",
+		"step_confirmation": "Bestätigung",
 		"pay_heading": "Überprüfen & Bezahlen",
 		"pay_subheading": "Ihre Kartendaten werden sicher von Stripe verarbeitet.",
 		"pay_now": "{amount} bezahlen",
