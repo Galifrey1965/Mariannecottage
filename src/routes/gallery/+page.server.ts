@@ -1,13 +1,28 @@
 import type { PageServerLoad } from './$types';
-import { listImages, listCategories, type GalleryImage, type GalleryCategory } from '$lib/server/gallery';
+import {
+	listImages,
+	listCategories,
+	listRooms,
+	type GalleryImage,
+	type GalleryCategory,
+	type Room
+} from '$lib/server/gallery';
 
 type Locale = 'en' | 'fr' | 'de';
 
-function pickLabel(cat: GalleryCategory, lang: Locale): string {
+function pickCategoryLabel(cat: GalleryCategory, lang: Locale): string {
 	switch (lang) {
 		case 'fr': return cat.label_fr || cat.label_en;
 		case 'de': return cat.label_de || cat.label_en;
 		default:   return cat.label_en;
+	}
+}
+
+function pickRoomLabel(room: Room, lang: Locale): string {
+	switch (lang) {
+		case 'fr': return room.name_fr || room.name_en;
+		case 'de': return room.name_de || room.name_en;
+		default:   return room.name_en;
 	}
 }
 
@@ -22,23 +37,41 @@ function pickAlt(img: GalleryImage, lang: Locale): string {
 export const load: PageServerLoad = async ({ locals }) => {
 	const lang = (locals.lang ?? 'en') as Locale;
 
-	const [rawImages, rawCategories] = await Promise.all([listImages(), listCategories()]);
+	const [rawImages, rawCategories, rawRooms] = await Promise.all([
+		listImages(),
+		listCategories(),
+		listRooms()
+	]);
 
-	// Suppress empty categories from the filter bar — visitors shouldn't see
-	// "Bathroom (0)" if Mark hasn't uploaded any bathroom shots yet.
+	// Hide empty categories from the filter bar so visitors don't see
+	// "Bathroom (0)" while Mark hasn't uploaded any. Also hide the generic
+	// 'rooms' category — its photos are surfaced via the per-room chips
+	// below instead, so a separate Rooms chip would just duplicate them.
 	const usedCategoryIds = new Set(rawImages.map((i) => i.category_id));
 	const categories = rawCategories
-		.filter((c) => usedCategoryIds.has(c.id))
-		.map((c) => ({ slug: c.slug, label: pickLabel(c, lang) }));
+		.filter((c) => usedCategoryIds.has(c.id) && c.slug !== 'rooms')
+		.map((c) => ({ slug: c.slug, label: pickCategoryLabel(c, lang) }));
 
-	const slugById = new Map(rawCategories.map((c) => [c.id, c.slug]));
+	// Per-room chips: one per room that has at least one photo. Each room
+	// is a sellable unit, so visitors get to drill into a specific
+	// bedroom rather than seeing all room photos lumped together.
+	const usedRoomIds = new Set(
+		rawImages.filter((i) => i.room_id).map((i) => i.room_id as string)
+	);
+	const rooms = rawRooms
+		.filter((r) => usedRoomIds.has(r.id))
+		.map((r) => ({ slug: r.slug, label: pickRoomLabel(r, lang) }));
+
+	const categorySlugById = new Map(rawCategories.map((c) => [c.id, c.slug]));
+	const roomSlugById = new Map(rawRooms.map((r) => [r.id, r.slug]));
 
 	const images = rawImages.map((img) => ({
 		thumb: img.urls.thumb,
 		full: img.urls.full,
 		alt: pickAlt(img, lang),
-		category_slug: slugById.get(img.category_id) ?? 'unknown'
+		category_slug: categorySlugById.get(img.category_id) ?? 'unknown',
+		room_slug: img.room_id ? (roomSlugById.get(img.room_id) ?? null) : null
 	}));
 
-	return { images, categories };
+	return { images, categories, rooms };
 };

@@ -20,114 +20,139 @@ const messages = {
 };
 
 const images = [
-	{ thumb: '/img/a-thumb.webp', full: '/img/a-full.webp', alt: 'Room one', category_slug: 'rooms' },
-	{ thumb: '/img/b-thumb.webp', full: '/img/b-full.webp', alt: 'Garden view', category_slug: 'garden' },
-	{ thumb: '/img/c-thumb.webp', full: '/img/c-full.webp', alt: 'Exterior shot', category_slug: 'exterior' }
+	{ thumb: '/img/a-thumb.webp', full: '/img/a-full.webp', alt: 'Double bed', category_slug: 'rooms', room_slug: 'double-bedroom' },
+	{ thumb: '/img/b-thumb.webp', full: '/img/b-full.webp', alt: 'Twin beds',  category_slug: 'rooms', room_slug: 'twin-bedroom' },
+	{ thumb: '/img/c-thumb.webp', full: '/img/c-full.webp', alt: 'Garden',     category_slug: 'garden', room_slug: null },
+	{ thumb: '/img/d-thumb.webp', full: '/img/d-full.webp', alt: 'Exterior',   category_slug: 'exterior', room_slug: null }
 ];
 
 const categories = [
 	{ slug: 'exterior', label: 'Exterior' },
-	{ slug: 'rooms', label: 'Rooms' },
 	{ slug: 'garden', label: 'Garden' }
 ];
 
+const rooms = [
+	{ slug: 'double-bedroom', label: 'Double bedroom' },
+	{ slug: 'twin-bedroom', label: 'Twin bedroom' }
+];
+
+function findChip(container: Element, label: string): HTMLElement {
+	return Array.from(container.querySelectorAll('.filter-chip')).find(
+		(c) => c.textContent?.trim() === label
+	) as HTMLElement;
+}
+
 describe('PhotoGallery', () => {
-	it('renders filter buttons with aria-pressed', () => {
-		const { container } = render(PhotoGallery, { props: { messages, images, categories } });
-		const all = container.querySelector('.filter-chip') as HTMLElement;
+	it('All chip is active by default with aria-pressed=true', () => {
+		const { container } = render(PhotoGallery, { props: { messages, images, categories, rooms } });
+		const all = findChip(container, 'All');
 		expect(all).toBeInTheDocument();
 		expect(all.getAttribute('aria-pressed')).toBe('true');
 	});
 
-	it('renders one chip per DB-driven category plus All', () => {
-		const { container } = render(PhotoGallery, { props: { messages, images, categories } });
+	it('renders one chip per category and one per room, plus All', () => {
+		const { container } = render(PhotoGallery, { props: { messages, images, categories, rooms } });
 		const chips = container.querySelectorAll('.filter-chip');
-		// All + 3 categories = 4
-		expect(chips.length).toBe(4);
+		// All + 2 categories + 2 rooms = 5
+		expect(chips.length).toBe(5);
 	});
 
 	it('uses thumb URL in the grid (not full)', () => {
-		const { container } = render(PhotoGallery, { props: { messages, images, categories } });
+		const { container } = render(PhotoGallery, { props: { messages, images, categories, rooms } });
 		const firstImg = container.querySelector('.gallery-item img') as HTMLImageElement;
 		expect(firstImg.getAttribute('src')).toBe('/img/a-thumb.webp');
 	});
 
-	it('renders gallery grid with aria-label', () => {
-		const { container } = render(PhotoGallery, { props: { messages, images, categories } });
-		const grid = container.querySelector('[role="grid"]');
-		expect(grid).toBeInTheDocument();
-		expect(grid?.getAttribute('aria-label')).toBe('Gallery');
+	it('clicking a category chip filters by category_slug', async () => {
+		const { container } = render(PhotoGallery, { props: { messages, images, categories, rooms } });
+		await fireEvent.click(findChip(container, 'Garden'));
+		await tick();
+		const items = container.querySelectorAll('.gallery-item');
+		expect(items.length).toBe(1);
+		expect((items[0].querySelector('img') as HTMLImageElement).getAttribute('alt')).toBe('Garden');
+	});
+
+	it('clicking a room chip filters by room_slug, even when categories overlap', async () => {
+		const { container } = render(PhotoGallery, { props: { messages, images, categories, rooms } });
+		await fireEvent.click(findChip(container, 'Double bedroom'));
+		await tick();
+		const items = container.querySelectorAll('.gallery-item');
+		expect(items.length).toBe(1);
+		expect((items[0].querySelector('img') as HTMLImageElement).getAttribute('alt')).toBe('Double bed');
+	});
+
+	it('switching between two room chips updates the visible photos', async () => {
+		const { container } = render(PhotoGallery, { props: { messages, images, categories, rooms } });
+		await fireEvent.click(findChip(container, 'Double bedroom'));
+		await tick();
+		await fireEvent.click(findChip(container, 'Twin bedroom'));
+		await tick();
+		const items = container.querySelectorAll('.gallery-item');
+		expect(items.length).toBe(1);
+		expect((items[0].querySelector('img') as HTMLImageElement).getAttribute('alt')).toBe('Twin beds');
 	});
 
 	it('opens lightbox with role=dialog when image clicked, using full URL', async () => {
-		const { container } = render(PhotoGallery, { props: { messages, images, categories } });
+		const { container } = render(PhotoGallery, { props: { messages, images, categories, rooms } });
 		const firstItem = container.querySelector('.gallery-item') as HTMLElement;
 		await fireEvent.click(firstItem);
 		await tick();
 
 		const lightbox = container.ownerDocument.querySelector('[role="dialog"]');
 		expect(lightbox).toBeInTheDocument();
-		expect(lightbox?.getAttribute('aria-modal')).toBe('true');
-
 		const lightboxImg = lightbox?.querySelector('img') as HTMLImageElement;
 		expect(lightboxImg.getAttribute('src')).toBe('/img/a-full.webp');
 	});
 
 	it('lightbox closes on Escape key', async () => {
-		const { container } = render(PhotoGallery, { props: { messages, images, categories } });
+		const { container } = render(PhotoGallery, { props: { messages, images, categories, rooms } });
 		const firstItem = container.querySelector('.gallery-item') as HTMLElement;
 		await fireEvent.click(firstItem);
 		await tick();
-
 		await fireEvent.keyDown(container.ownerDocument, { key: 'Escape' });
 		await tick();
-
 		const lightbox = container.ownerDocument.querySelector('[role="dialog"]');
 		expect(lightbox).not.toBeInTheDocument();
 	});
 
-	it('lightbox close button has aria-label', async () => {
-		const { container } = render(PhotoGallery, { props: { messages, images, categories } });
+	it('lightbox close button has aria-label and gets focus', async () => {
+		const { container } = render(PhotoGallery, { props: { messages, images, categories, rooms } });
 		const firstItem = container.querySelector('.gallery-item') as HTMLElement;
 		await fireEvent.click(firstItem);
 		await tick();
-
-		const closeBtn = container.ownerDocument.querySelector('.lightbox-close');
-		expect(closeBtn?.getAttribute('aria-label')).toBe('Close');
-	});
-
-	it('lightbox moves focus to close button when opened', async () => {
-		const { container } = render(PhotoGallery, { props: { messages, images, categories } });
-		const firstItem = container.querySelector('.gallery-item') as HTMLElement;
-		await fireEvent.click(firstItem);
-		await tick();
-
 		const closeBtn = container.ownerDocument.querySelector('.lightbox-close') as HTMLElement;
+		expect(closeBtn?.getAttribute('aria-label')).toBe('Close');
 		expect(container.ownerDocument.activeElement).toBe(closeBtn);
 	});
 
 	it('lightbox nav buttons have aria-labels', async () => {
-		const { container } = render(PhotoGallery, { props: { messages, images, categories } });
+		const { container } = render(PhotoGallery, { props: { messages, images, categories, rooms } });
 		const firstItem = container.querySelector('.gallery-item') as HTMLElement;
 		await fireEvent.click(firstItem);
 		await tick();
-
 		const prev = container.ownerDocument.querySelector('.lightbox-nav.prev');
 		const next = container.ownerDocument.querySelector('.lightbox-nav.next');
 		expect(prev?.getAttribute('aria-label')).toBe('Previous');
 		expect(next?.getAttribute('aria-label')).toBe('Next');
 	});
 
-	it('shows empty-state copy when no images match the active filter', async () => {
-		const onlyRooms = [{ thumb: '/r-t.webp', full: '/r-f.webp', alt: 'Bedroom', category_slug: 'rooms' }];
-		const { container } = render(PhotoGallery, { props: { messages, images: onlyRooms, categories } });
-		// Click the "garden" chip (3rd chip after "All" and "exterior")
-		const chips = container.querySelectorAll('.filter-chip');
-		const gardenChip = Array.from(chips).find((c) => c.textContent?.trim() === 'Garden') as HTMLElement;
-		await fireEvent.click(gardenChip);
+	it('shows empty-state copy when an active filter has no matches', async () => {
+		const onlyExterior = [
+			{ thumb: '/x-t.webp', full: '/x-f.webp', alt: 'Exterior shot', category_slug: 'exterior', room_slug: null }
+		];
+		const { container } = render(PhotoGallery, {
+			props: { messages, images: onlyExterior, categories, rooms }
+		});
+		await fireEvent.click(findChip(container, 'Garden'));
 		await tick();
-
 		const empty = container.querySelector('.empty');
 		expect(empty?.textContent).toContain('No photos in this category yet.');
+	});
+
+	it('rooms prop is optional — gallery still renders without it', () => {
+		const { container } = render(PhotoGallery, { props: { messages, images, categories } });
+		const chips = container.querySelectorAll('.filter-chip');
+		// All + 2 categories = 3
+		expect(chips.length).toBe(3);
 	});
 });

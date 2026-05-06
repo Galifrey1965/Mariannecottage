@@ -7,11 +7,12 @@
 	const messages = $derived(data.messages);
 	const images = $derived(data.images);
 	const categories = $derived(data.categories);
+	const rooms = $derived(data.rooms);
 </script>
 
 <section class="page-section">
 	<h1 class="page-title center">{t(messages, 'gallery.title')}</h1>
-	<PhotoGallery {messages} {images} {categories} />
+	<PhotoGallery {messages} {images} {categories} {rooms} />
 </section>
 
 <style>

@@ -7,9 +7,10 @@
 		full: string;
 		alt: string;
 		category_slug: string;
+		room_slug: string | null;
 	}
 
-	interface GalleryCategory {
+	interface ChipItem {
 		slug: string;
 		label: string;
 	}
@@ -17,24 +18,43 @@
 	interface Props {
 		messages: Messages;
 		images: GalleryImage[];
-		categories: GalleryCategory[];
+		categories: ChipItem[];
+		rooms?: ChipItem[];
 	}
 
-	let { messages, images, categories }: Props = $props();
+	let { messages, images, categories, rooms = [] }: Props = $props();
 
-	let selectedCategory = $state('all');
+	type Filter =
+		| { kind: 'all' }
+		| { kind: 'category'; slug: string }
+		| { kind: 'room'; slug: string };
+
+	let filter = $state<Filter>({ kind: 'all' });
 	let selectedImageIndex = $state<number | null>(null);
 	let closeBtnEl: HTMLElement | undefined = $state();
 
 	const filteredImages = $derived(
-		selectedCategory === 'all'
+		filter.kind === 'all'
 			? images
-			: images.filter((img) => img.category_slug === selectedCategory)
+			: filter.kind === 'category'
+				? images.filter((img) => img.category_slug === filter.slug)
+				: images.filter((img) => img.room_slug === filter.slug)
 	);
 
 	const currentImage = $derived(
 		selectedImageIndex !== null ? filteredImages[selectedImageIndex] : null
 	);
+
+	function isActive(target: Filter): boolean {
+		if (filter.kind !== target.kind) return false;
+		if (filter.kind === 'all') return true;
+		return filter.slug === (target as { slug: string }).slug;
+	}
+
+	function setFilter(next: Filter) {
+		filter = next;
+		selectedImageIndex = null;
+	}
 
 	$effect(() => {
 		if (selectedImageIndex !== null && closeBtnEl) {
@@ -55,21 +75,31 @@
 <div>
 	<div class="filters" role="group" aria-label={t(messages, 'gallery.filter_label')}>
 		<button
-			onclick={() => { selectedCategory = 'all'; selectedImageIndex = null; }}
+			onclick={() => setFilter({ kind: 'all' })}
 			class="filter-chip"
-			class:active={selectedCategory === 'all'}
-			aria-pressed={selectedCategory === 'all'}
+			class:active={isActive({ kind: 'all' })}
+			aria-pressed={isActive({ kind: 'all' })}
 		>
 			{t(messages, 'gallery.categories.all')}
 		</button>
 		{#each categories as cat}
 			<button
-				onclick={() => { selectedCategory = cat.slug; selectedImageIndex = null; }}
+				onclick={() => setFilter({ kind: 'category', slug: cat.slug })}
 				class="filter-chip"
-				class:active={selectedCategory === cat.slug}
-				aria-pressed={selectedCategory === cat.slug}
+				class:active={isActive({ kind: 'category', slug: cat.slug })}
+				aria-pressed={isActive({ kind: 'category', slug: cat.slug })}
 			>
 				{cat.label}
+			</button>
+		{/each}
+		{#each rooms as room}
+			<button
+				onclick={() => setFilter({ kind: 'room', slug: room.slug })}
+				class="filter-chip room"
+				class:active={isActive({ kind: 'room', slug: room.slug })}
+				aria-pressed={isActive({ kind: 'room', slug: room.slug })}
+			>
+				{room.label}
 			</button>
 		{/each}
 	</div>
@@ -177,6 +207,15 @@
 		background: var(--theme-accent-hover);
 		border-color: var(--theme-accent-hover);
 		color: var(--theme-bg);
+	}
+	/* Subtle separator-like styling on room chips so visitors can tell at a
+	   glance that they're a different axis from the scene categories.
+	   Rendered with the same accent-on-active treatment; only inactive
+	   colour differs. */
+	.filter-chip.room {
+		color: var(--theme-warm);
+		border-color: var(--theme-warm);
+		background: var(--theme-surface);
 	}
 
 	.empty {
