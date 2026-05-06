@@ -81,7 +81,6 @@
 		font-size: 1.1rem;
 		margin: 0 0 2.5rem;
 		line-height: 1.7;
-		max-width: 78rem;
 		text-wrap: pretty;
 	}
 
