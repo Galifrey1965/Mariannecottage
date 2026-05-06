@@ -361,15 +361,17 @@
 				</div>
 			</div>
 		</div>
-	</div>
 
-	<!-- Support -->
-	<div class="support-section">
-		<p class="support-text">{t(messages, 'book.need_help')}</p>
-		<a href={localePath(lang, '/contact')} class="btn-secondary">
-			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-			{t(messages, 'book.contact_us')}
-		</a>
+		<!-- Support — inside the layout grid so the sticky sidebar's range
+		     extends through the support section. Spans both columns at
+		     desktop; falls back to a single-column row on mobile. -->
+		<div class="support-section">
+			<p class="support-text">{t(messages, 'book.need_help')}</p>
+			<a href={localePath(lang, '/contact')} class="btn-secondary">
+				<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+				{t(messages, 'book.contact_us')}
+			</a>
+		</div>
 	</div>
 </section>
 
@@ -417,21 +419,26 @@
 	.step-connector { flex: 1; height: 2px; background: var(--color-cream-dark); }
 	.step-connector.active { background: var(--color-sage); }
 
-	/* Layout */
+	/* Layout — at desktop, support-section sits inside the grid as a
+	   second row, with the sidebar spanning both rows. This means the
+	   sidebar's sticky containing block extends from the top of the
+	   main column through the bottom of the support section. The sticky
+	   sidebar therefore stays pinned for the entire booking-content
+	   area instead of unsticking the moment the form/review (which can
+	   be shorter than the sidebar) ends. */
 	.layout { display: grid; grid-template-columns: 1fr; gap: 2rem; margin-bottom: 3rem; }
-	@media (min-width: 960px) { .layout { grid-template-columns: 2fr 1fr; } }
+	@media (min-width: 960px) {
+		.layout {
+			grid-template-columns: 2fr 1fr;
+			grid-template-areas:
+				"main    sidebar"
+				"support sidebar";
+		}
+		.main-col { grid-area: main; min-height: calc(100vh - 8rem); }
+		.sidebar { grid-area: sidebar; }
+		.support-section { grid-area: support; margin-top: 0; }
+	}
 	.main-col { display: flex; flex-direction: column; gap: 1.5rem; position: relative; z-index: 1; min-width: 0; }
-	/* Sticky sidebar lives in the right grid cell. position: sticky only
-	   has headroom while its containing block (the grid row) is taller
-	   than the sidebar itself. Step 1's calendar is tall, so it works.
-	   Steps 2 + 3 (form + review) can be shorter than the sidebar, so the
-	   row collapses to ~the sidebar's height with no scroll headroom and
-	   sticky stops working — the sidebar drifts up behind the wizard.
-	   Min-height on the main column at desktop guarantees the grid is
-	   always at least as tall as the sidebar's max-height, so the sticky
-	   stop applies on every step. Trade-off: short forms leave whitespace
-	   below before the support section, which on cream is unobtrusive. */
-	@media (min-width: 960px) { .main-col { min-height: calc(100vh - 8rem); } }
 	.sidebar { display: flex; flex-direction: column; gap: 1.5rem; }
 	/* Sticky sidebar stops *below* the step bar, not behind it.
 	   Stack: header (64px) + steps bar (~50px including padding/border)
