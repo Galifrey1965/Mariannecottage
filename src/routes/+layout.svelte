@@ -2,6 +2,7 @@
 	import '../app.css';
 	import { page, navigating } from '$app/stores';
 	import { afterNavigate } from '$app/navigation';
+	import { onMount } from 'svelte';
 	import Header from '$lib/components/Header.svelte';
 	import Footer from '$lib/components/Footer.svelte';
 	import NavigationRail from '$lib/components/NavigationRail.svelte';
@@ -37,6 +38,18 @@
 		if (type !== 'popstate') {
 			window.scrollTo({ top: 0, behavior: 'instant' });
 		}
+	});
+
+	// Implicit-flow auth-link forwarder. Studio's invitation / password-recovery
+	// emails return tokens in the URL fragment (#access_token=…&refresh_token=…),
+	// pointing at the project's Site URL — usually the site root, not
+	// /auth/set-password. Detect the fragment and forward, preserving the
+	// hash so the set-password page can hand the tokens to /api/auth/set-session.
+	onMount(() => {
+		const hash = window.location.hash;
+		if (!hash || !hash.includes('access_token=')) return;
+		if (window.location.pathname === '/auth/set-password') return;
+		window.location.replace('/auth/set-password' + hash);
 	});
 
 	const navItems = $derived([

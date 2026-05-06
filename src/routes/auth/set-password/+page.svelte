@@ -1,8 +1,39 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import type { ActionData, PageData } from './$types';
 
 	let { data, form }: { data: PageData; form: ActionData } = $props();
 	let submitting = $state(false);
+	let exchanging = $state(false);
+
+	// Implicit-flow handler. Studio's "Send invitation" / "Send password
+	// recovery" emails return tokens in the URL fragment, which the server
+	// can't see. Detect, swap for cookies via /api/auth/set-session, then
+	// reload without the fragment so the server-side load picks up the
+	// session and renders the password form.
+	onMount(async () => {
+		const hash = window.location.hash;
+		if (!hash || !hash.startsWith('#')) return;
+		const params = new URLSearchParams(hash.slice(1));
+		const accessToken = params.get('access_token');
+		const refreshToken = params.get('refresh_token');
+		if (!accessToken || !refreshToken) return;
+		exchanging = true;
+		try {
+			const res = await fetch('/api/auth/set-session', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ access_token: accessToken, refresh_token: refreshToken })
+			});
+			if (res.ok) {
+				window.location.replace(window.location.pathname);
+				return;
+			}
+		} catch {
+			// fall through to error redirect
+		}
+		window.location.replace('/admin/login?invite_error=1');
+	});
 </script>
 
 <svelte:head>
@@ -11,6 +42,16 @@
 
 <div class="wrapper">
 	<div class="card">
+		{#if exchanging}
+			<p class="lede" style="text-align:center;">Verifying your invitation…</p>
+		{:else if !data.hasSession}
+			<h2 class="title">Link expired</h2>
+			<p class="lede">
+				This invitation or recovery link is no longer valid. Please request a fresh email
+				and click the new link within the hour.
+			</p>
+			<a href="/admin/login" class="btn-primary" style="display:block;text-align:center;text-decoration:none;">Go to sign in</a>
+		{:else}
 		<h2 class="title">Set your password</h2>
 		<p class="lede">
 			{#if data.email}
@@ -53,6 +94,7 @@
 				{submitting ? 'Saving…' : 'Save password'}
 			</button>
 		</form>
+		{/if}
 	</div>
 </div>
 

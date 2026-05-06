@@ -22,11 +22,14 @@ export const load: PageServerLoad = async ({ url, locals }) => {
 		throw redirect(303, '/auth/set-password');
 	}
 
-	if (!locals.user) {
-		throw redirect(303, '/admin/login');
-	}
+	// Don't redirect on missing session — Studio's email links can come back
+	// in implicit flow with tokens in the URL fragment, which the server
+	// can't see. The browser script in +page.svelte swaps those for cookies
+	// via /api/auth/set-session and reloads. If neither code nor fragment
+	// arrives, the page just shows a "link invalid or expired" state.
 	return {
-		email: locals.user.email ?? null
+		email: locals.user?.email ?? null,
+		hasSession: !!locals.user
 	};
 };
 
