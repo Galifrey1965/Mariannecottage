@@ -17,7 +17,7 @@
 <HeroSection
 	{lang}
 	{messages}
-	image="/images/2024-08-15.jpg"
+	image="/images/cottage-exterior-front.jpg"
 	title={t(messages, 'home.hero.tagline')}
 	cta={t(messages, 'home.hero.cta')}
 	ctaLink="/book"
