@@ -674,7 +674,7 @@
 			<p class="orphan-contact">{t(messages, 'book.contact_info')}</p>
 			<div class="orphan-actions">
 				<button onclick={closeOrphanDialog} class="btn-outline">Close</button>
-				<a href={localePath(lang, '/contact')} class="btn-primary">{t(messages, 'book.contact_us')}</a>
+				<a href="{localePath(lang, '/contact')}{orphanDate ? `?date=${formatDateISO(orphanDate)}` : ''}" class="btn-primary">{t(messages, 'book.contact_us')}</a>
 			</div>
 		</div>
 	</div>

@@ -74,26 +74,33 @@ export const GET: RequestHandler = async ({ locals, url }) => {
 async function loadBookingStats() {
 	const todayIso = new Date().toISOString().slice(0, 10);
 
+	// "Active" — bookings that are still on for the cottage, distinct from
+	// terminal states (cancelled / refunded* / expired / payment_failed).
+	// Used by both the pending and upcoming counters so refunded rows in the
+	// future don't get double-counted as upcoming.
+	const ACTIVE_STATUSES = ['confirmed', 'pending', 'pending_payment'];
+	const PENDING_STATUSES = ['pending', 'pending_payment'];
+
 	const [total, confirmed, pending, upcoming, bcActive, revenueRows, bcRanges] = await Promise.all([
 		adminClient.from('bookings').select('*', { count: 'exact', head: true }),
 		adminClient.from('bookings').select('*', { count: 'exact', head: true }).eq('status', 'confirmed'),
-		adminClient.from('bookings').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
+		adminClient.from('bookings').select('*', { count: 'exact', head: true }).in('status', PENDING_STATUSES),
 		adminClient
 			.from('bookings')
 			.select('*', { count: 'exact', head: true })
 			.gt('check_in_date', todayIso)
-			.neq('status', 'cancelled'),
+			.in('status', ACTIVE_STATUSES),
 		adminClient
 			.from('bookings')
 			.select('*', { count: 'exact', head: true })
 			.eq('source', 'booking_com')
-			.neq('status', 'cancelled'),
+			.in('status', ACTIVE_STATUSES),
 		adminClient.from('bookings').select('total_cost').eq('status', 'confirmed'),
 		adminClient
 			.from('bookings')
 			.select('check_in_date, check_out_date')
 			.eq('source', 'booking_com')
-			.neq('status', 'cancelled')
+			.in('status', ACTIVE_STATUSES)
 	]);
 
 	const totalRevenue = (revenueRows.data ?? []).reduce(

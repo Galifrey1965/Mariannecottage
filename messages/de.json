@@ -189,7 +189,8 @@
 			"message": "Nachricht",
 			"submit": "Senden",
 			"success": "Danke! Wir werden uns bald bei Ihnen melden.",
-			"error": "Fehler beim Senden der Nachricht. Bitte versuchen Sie es später noch einmal."
+			"error": "Fehler beim Senden der Nachricht. Bitte versuchen Sie es später noch einmal.",
+			"prefill_orphan": "Hallo — ich möchte gerne in der Nacht vom {date} übernachten. Der Online-Kalender zeigt, dass dieser Termin frei ist, aber zu kurz für die Mindestdauer. Könnten wir das direkt vereinbaren?"
 		},
 		"social": {
 			"heading": "Finden Sie uns Online",
@@ -323,7 +324,8 @@
 		"test_blocked": "Testbuchung",
 		"past_date": "Vergangen",
 		"selected": "Ausgewählt",
-		"select_checkout": "Wählen Sie Ihr Abreisedatum"
+		"select_checkout": "Wählen Sie Ihr Abreisedatum",
+		"by_arrangement": "Verfügbar — bitte kontaktieren"
 	},
 	"booking_summary": {
 		"title": "Buchungszusammenfassung",

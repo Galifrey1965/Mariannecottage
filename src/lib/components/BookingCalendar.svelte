@@ -374,6 +374,9 @@
 		<div class="legend">
 			<div class="legend-item"><div class="legend-swatch available"></div><span>{t(messages, 'calendar.available')}</span></div>
 			<div class="legend-item"><div class="legend-swatch unavailable"></div><span>{t(messages, 'calendar.unavailable')}</span></div>
+			{#if onOrphanClick}
+				<div class="legend-item"><div class="legend-swatch orphan"></div><span>{t(messages, 'calendar.by_arrangement')}</span></div>
+			{/if}
 			{#if testBlockedDates.length > 0}
 				<div class="legend-item"><div class="legend-swatch test-blocked"></div><span>{t(messages, 'calendar.test_blocked')}</span></div>
 			{/if}
@@ -423,7 +426,7 @@
 			var(--md-sys-color-surface-container-lowest) 0 5px,
 			var(--color-cream-dark) 5px 10px);
 		color: var(--color-brown, #8b6f47);
-		cursor: help;
+		cursor: pointer;
 		font-weight: 500;
 	}
 	.day.orphan:hover { filter: brightness(0.95); }
@@ -486,6 +489,12 @@
 	.legend-swatch.unavailable { background: var(--color-disabled); opacity: 0.3; }
 	.legend-swatch.past { background: var(--color-disabled); opacity: 0.3; }
 	.legend-swatch.test-blocked { background: repeating-linear-gradient(45deg, #f5b942, #f5b942 3px, #e89c1c 3px, #e89c1c 6px); }
+	.legend-swatch.orphan {
+		background: repeating-linear-gradient(135deg,
+			var(--md-sys-color-surface-container-lowest) 0 3px,
+			var(--color-cream-dark) 3px 6px);
+		border: 1px solid var(--color-cream-dark);
+	}
 
 	.selection-info {
 		margin-top: 1.5rem; padding: 0.75rem 1rem; background: color-mix(in srgb, var(--color-sage) 15%, transparent);

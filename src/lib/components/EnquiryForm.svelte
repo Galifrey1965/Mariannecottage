@@ -1,17 +1,38 @@
 <script lang="ts">
-	import { t } from '$lib/i18n';
-	import type { Messages } from '$lib/i18n';
+	import { onMount } from 'svelte';
+	import { page } from '$app/state';
+	import { t, formatDate } from '$lib/i18n';
+	import type { Messages, Locale } from '$lib/i18n';
 
 	interface Props {
 		messages: Messages;
+		lang?: Locale;
 	}
 
-	let { messages }: Props = $props();
+	let { messages, lang = 'en' }: Props = $props();
 
 	let formData = $state({ name: '', email: '', message: '' });
 	let isSubmitting = $state(false);
 	let submitted = $state(false);
 	let error = $state('');
+
+	// Pre-fill the message when arriving from an orphan-day click on the
+	// booking calendar. The /book page passes ?date=YYYY-MM-DD on the link
+	// so the guest doesn't have to retype which night they meant.
+	onMount(() => {
+		const dateParam = page.url.searchParams.get('date');
+		if (!dateParam) return;
+		const [y, m, d] = dateParam.split('-').map(Number);
+		if (!y || !m || !d) return;
+		const dateObj = new Date(y, m - 1, d);
+		const dateLabel = formatDate(lang, dateObj, {
+			weekday: 'long',
+			day: 'numeric',
+			month: 'long',
+			year: 'numeric'
+		});
+		formData.message = t(messages, 'contact.form.prefill_orphan', { date: dateLabel });
+	});
 
 	async function handleSubmit() {
 		if (!formData.name || !formData.email || !formData.message) {

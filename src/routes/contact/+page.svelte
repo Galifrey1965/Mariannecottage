@@ -72,7 +72,7 @@
 		<!-- Contact Form -->
 		<div>
 			<h3 class="form-heading">{t(messages, 'contact.form.heading')}</h3>
-			<EnquiryForm {messages} />
+			<EnquiryForm {messages} {lang} />
 		</div>
 	</div>
 
