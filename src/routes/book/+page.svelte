@@ -422,7 +422,11 @@
 	@media (min-width: 960px) { .layout { grid-template-columns: 2fr 1fr; } }
 	.main-col { display: flex; flex-direction: column; gap: 1.5rem; position: relative; z-index: 1; min-width: 0; }
 	.sidebar { display: flex; flex-direction: column; gap: 1.5rem; }
-	@media (min-width: 960px) { .sidebar { position: sticky; top: 5rem; align-self: start; max-height: calc(100vh - 5.5rem); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; } }
+	/* Sticky sidebar stops *below* the step bar, not behind it.
+	   Stack: header (64px) + steps bar (~50px including padding/border)
+	   ≈ 114px ≈ 7.1rem. 7.5rem gives a small visual gap. The calendar/form
+	   in the main column still scrolls under the steps as before. */
+	@media (min-width: 960px) { .sidebar { position: sticky; top: 7.5rem; align-self: start; max-height: calc(100vh - 8rem); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; } }
 
 	/* Form card */
 	.form-card { background: var(--color-cream); border-radius: var(--md-shape-corner-medium); padding: 1.5rem; }
