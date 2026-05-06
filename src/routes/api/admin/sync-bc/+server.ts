@@ -1,5 +1,6 @@
 import { json } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
+import { logAdminEvent } from '$lib/server/supabase';
 import type { RequestHandler } from './$types';
 
 // Admin-triggered Booking.com sync — convenience wrapper around the cron
@@ -20,5 +21,24 @@ export const POST: RequestHandler = async ({ locals, url }) => {
 		headers: { 'x-sync-secret': env.SYNC_SECRET }
 	});
 	const body = await res.json().catch(() => ({}));
+
+	await logAdminEvent({
+		user_id: locals.user.id,
+		action: 'sync_bc.manual_trigger',
+		target_type: 'sync',
+		target_id: null,
+		metadata: {
+			status: res.status,
+			ok: res.ok,
+			result_summary: typeof body === 'object' && body !== null
+				? Object.fromEntries(
+					Object.entries(body).filter(([k]) =>
+						['imported', 'updated', 'cancelled', 'success', 'error'].includes(k)
+					)
+				)
+				: null
+		}
+	});
+
 	return json(body, { status: res.status });
 };

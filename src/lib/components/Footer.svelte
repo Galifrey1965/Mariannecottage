@@ -7,7 +7,8 @@
 		messages: Messages;
 	}
 
-	let { messages }: Props = $props();
+	let { messages, lang }: Props = $props();
+	void lang; // reserved for future per-locale routing
 
 	const version: string = typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : '0.0.0';
 	const buildDate: string = typeof __BUILD_DATE__ !== 'undefined' ? __BUILD_DATE__ : new Date().toISOString().slice(0, 10);
@@ -28,6 +29,16 @@
 					<p>{t(messages, 'contact.email')}</p>
 					<p>{t(messages, 'contact.phone')}</p>
 				</div>
+			</div>
+
+			<div class="footer-info-block">
+				<h4 class="footer-heading">{t(messages, 'footer.guest_info')}</h4>
+				<ul class="footer-links">
+					<li><a href="/arrival">{t(messages, 'nav.arrival')}</a></li>
+					<li><a href="/house-rules">{t(messages, 'nav.house_rules')}</a></li>
+					<li><a href="/faq">{t(messages, 'nav.faq')}</a></li>
+					<li><a href="/legal">{t(messages, 'nav.legal')}</a></li>
+				</ul>
 			</div>
 
 			<div class="footer-meta-block">
@@ -105,10 +116,27 @@
 
 	@media (min-width: 720px) {
 		.footer-row {
-			grid-template-columns: 1.1fr 1fr auto;
+			grid-template-columns: 1.1fr 1fr 1fr auto;
 			gap: 2.5rem;
 		}
 	}
+
+	.footer-info-block { display: flex; flex-direction: column; gap: 0.5rem; }
+	.footer-links {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 0.3rem;
+		font-size: 0.875rem;
+	}
+	.footer-links a {
+		color: var(--color-footer-accent);
+		text-decoration: none;
+		transition: color 0.15s ease;
+	}
+	.footer-links a:hover { color: var(--color-footer-text); text-decoration: underline; }
 
 	.footer-brand {
 		font-family: var(--theme-font-display);

@@ -7,6 +7,8 @@
 		thumb: string;
 		full: string;
 		alt: string;
+		width?: number | null;
+		height?: number | null;
 		category_slug: string;
 		room_slug: string | null;
 	}
@@ -34,13 +36,12 @@
 	let selectedImageIndex = $state<number | null>(null);
 	let closeBtnEl: HTMLElement | undefined = $state();
 
-	const filteredImages = $derived(
-		filter.kind === 'all'
-			? images
-			: filter.kind === 'category'
-				? images.filter((img) => img.category_slug === filter.slug)
-				: images.filter((img) => img.room_slug === filter.slug)
-	);
+	const filteredImages = $derived.by(() => {
+		const f = filter;
+		if (f.kind === 'all') return images;
+		if (f.kind === 'category') return images.filter((img) => img.category_slug === f.slug);
+		return images.filter((img) => img.room_slug === f.slug);
+	});
 
 	const currentImage = $derived(
 		selectedImageIndex !== null ? filteredImages[selectedImageIndex] : null
@@ -129,7 +130,14 @@
 			use:modalA11y={{ onClose: () => (selectedImageIndex = null), skipInitialFocus: true }}
 		>
 			<div class="lightbox-content" onclick={e => e.stopPropagation()}>
-				<img src={currentImage.full} alt={currentImage.alt} />
+				<img
+					src={currentImage.full}
+					alt={currentImage.alt}
+					width={currentImage.width ?? undefined}
+					height={currentImage.height ?? undefined}
+					loading="lazy"
+					decoding="async"
+				/>
 				<p class="lightbox-caption">
 					<span class="lightbox-counter">{selectedImageIndex + 1} / {filteredImages.length}</span>
 					<span>{currentImage.alt}</span>

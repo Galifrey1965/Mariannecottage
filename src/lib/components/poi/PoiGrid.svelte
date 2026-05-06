@@ -52,7 +52,7 @@
 		<p>{t(messages, 'poi.grid.no_results')}</p>
 	</div>
 {:else}
-	<div class="poi-grid" role="list" aria-label={t(messages, 'poi.grid.results', { count: pois.length })}>
+	<div class="poi-grid" role="list" aria-label={t(messages, 'poi.grid.results', { count: String(pois.length) })}>
 		{#each pois as poi (poi.id)}
 			<div class="poi-grid__item" role="listitem">
 				<PoiCard {poi} {messages} {lang} />

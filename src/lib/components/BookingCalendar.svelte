@@ -331,7 +331,18 @@
 	}
 </script>
 
-<div class="calendar" onmouseleave={() => hoveredDate = null}>
+<div
+	class="calendar"
+	role="grid"
+	aria-label={monthName}
+	onmouseleave={() => hoveredDate = null}
+	onfocusout={(e) => {
+		// Clear the hover preview when keyboard focus leaves the calendar grid,
+		// matching the mouseleave behaviour for keyboard users.
+		const next = e.relatedTarget as Node | null;
+		if (!next || !e.currentTarget.contains(next)) hoveredDate = null;
+	}}
+>
 	<div class="cal-header">
 		<button onclick={prevMonth} class="nav-btn" aria-label={t(messages, 'calendar.prev_month')} disabled={!canGoPrev}>
 			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>

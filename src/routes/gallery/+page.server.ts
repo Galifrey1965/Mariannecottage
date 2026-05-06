@@ -69,6 +69,8 @@ export const load: PageServerLoad = async ({ locals }) => {
 		thumb: img.urls.thumb,
 		full: img.urls.full,
 		alt: pickAlt(img, lang),
+		width: img.width ?? null,
+		height: img.height ?? null,
 		category_slug: categorySlugById.get(img.category_id) ?? 'unknown',
 		room_slug: img.room_id ? (roomSlugById.get(img.room_id) ?? null) : null
 	}));

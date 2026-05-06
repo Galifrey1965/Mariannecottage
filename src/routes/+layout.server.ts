@@ -8,9 +8,23 @@ import type { LayoutServerLoad } from './$types';
 
 const allMessages = { en, fr, de };
 
+interface GoogleReview {
+	authorName: string;
+	authorPhoto: string | null;
+	rating: number;
+	text: string;
+	languageCode: string;
+	publishTime: string | null;
+	relativeTime: string;
+}
+
 interface GoogleRating {
 	ratingValue: number;
 	ratingCount: number;
+	googleMapsUri: string | null;
+	reviews: GoogleReview[];
+	placeId?: string;
+	name?: string;
 	fetchedAt?: string;
 }
 

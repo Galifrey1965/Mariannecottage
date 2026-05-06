@@ -5,10 +5,11 @@ import type { SupabaseClient, Session, User } from '@supabase/supabase-js';
 import type { UserProfile } from '$lib/server/supabase';
 import type { Locale } from '$lib/i18n';
 
-declare const __APP_VERSION__: string;
-declare const __BUILD_DATE__: string;
-
 declare global {
+	// Vite injects these at build time via the `define` block in vite.config.ts.
+	const __APP_VERSION__: string;
+	const __BUILD_DATE__: string;
+
 	namespace App {
 		// interface Error {}
 		interface Locals {

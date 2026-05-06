@@ -14,6 +14,14 @@ to = "https://mariannecottage.fr/:splat"
 status = 301
 force = true
 
+# Legacy /explore-classic was a parallel variant during the visual-direction
+# bake-off. Removed once /explore became canonical; redirect any stray
+# bookmarks rather than 404'ing them.
+[[redirects]]
+from = "/explore-classic"
+to = "/explore"
+status = 301
+
 # Headers for security
 #
 # CSP is pragmatic — allows 'unsafe-inline' for scripts and styles because

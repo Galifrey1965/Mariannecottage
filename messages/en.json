@@ -38,7 +38,10 @@
 		"explore": "Explore",
 		"contact": "Contact",
 		"book": "Book",
-		"legal": "Legal"
+		"legal": "Legal",
+		"arrival": "Arrival info",
+		"house_rules": "House rules",
+		"faq": "FAQ"
 	},
 	"lang": {
 		"en": "English",
@@ -422,9 +425,58 @@
 		"odr_heading": "Online dispute resolution (EU)",
 		"odr_body": "In accordance with EU regulation, if Marianne Cottage is operated as a registered business you may use the European online dispute resolution platform:"
 	},
+	"arrival": {
+		"title": "Arrival information",
+		"subtitle": "Everything you need to find us, get in, and settle in. Detailed instructions are sent with your booking confirmation email.",
+		"pending": "Pending — to be confirmed before launch",
+		"check_in_heading": "Check-in",
+		"check_in_body": "Check-in is from 16:00 on the day of arrival. Earlier arrival can sometimes be accommodated — please email us in advance.",
+		"check_out_heading": "Check-out",
+		"check_out_body": "Check-out is by 11:00 on the day of departure.",
+		"address_heading": "Finding the cottage",
+		"address_body": "Couvains, Manche, Normandy. Full street address and what3words location are included in the confirmation email.",
+		"parking_heading": "Parking",
+		"key_heading": "Keys & access",
+		"wifi_heading": "Wi-Fi",
+		"wifi_body": "Network name and password are inside the cottage. We email them with your booking confirmation as well.",
+		"contact_heading": "If you're stuck on arrival",
+		"contact_body": "Email or phone us — contact details are on the confirmation email and the contact page."
+	},
+	"house_rules": {
+		"title": "House rules",
+		"subtitle": "A short list to keep things easy for everyone — guests and neighbours alike.",
+		"pending": "Pending — to be confirmed before launch",
+		"smoking_heading": "No smoking inside",
+		"smoking_body": "Please don't smoke anywhere inside the cottage. The garden is fine if you're discreet.",
+		"pets_heading": "Pets",
+		"guests_heading": "Number of guests",
+		"guests_body": "Stick to the maximum number listed on your booking. Extra guests beyond that need to be agreed in advance.",
+		"quiet_heading": "Quiet hours",
+		"quiet_body": "Please be considerate of neighbours, especially between 22:00 and 08:00.",
+		"events_heading": "Events & parties",
+		"rubbish_heading": "Rubbish & recycling",
+		"damages_heading": "Damages"
+	},
+	"faq": {
+		"title": "Frequently asked questions",
+		"subtitle": "If your question isn't here, drop us a line via the contact page.",
+		"pending": "Pending — to be confirmed before launch",
+		"q1": "What's included in the price?",
+		"q2": "Can I cancel my booking?",
+		"a2": "Yes — see the cancellation policy on the Legal page. In brief: full refund if you cancel 14 or more days before check-in, 50% if 7–13 days out, no refund within 7 days. Refunds go back to the original card via Stripe.",
+		"q3": "Do you accept pets?",
+		"q4": "How many people can stay?",
+		"q5": "Is breakfast or evening meal included?",
+		"q6": "How do I pay?",
+		"a6": "Online by card via Stripe — Visa, Mastercard, American Express, Apple Pay and Google Pay all work. Bank transfer or cash on arrival can be arranged on request — get in touch via the contact page.",
+		"q7": "Where is the cottage exactly?",
+		"a7": "Couvains, in the Norman countryside near Bayeux and the D-Day beaches. The full address is sent with your booking confirmation.",
+		"q8": "Is the cottage accessible?"
+	},
 	"footer": {
 		"tagline": "A haven of peace in the heart of Normandy",
 		"contact": "Contact",
+		"guest_info": "Guest info",
 		"social": "Follow Us",
 		"copyright": "© 2024 Marianne Cottage. All rights reserved.",
 		"version": "Version"

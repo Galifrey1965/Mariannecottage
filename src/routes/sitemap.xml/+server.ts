@@ -3,7 +3,18 @@ import { LOCALES } from '$lib/i18n';
 
 const BASE_URL = 'https://mariannecottage.fr';
 
-const PATHS = ['/', '/rooms', '/gallery', '/explore', '/contact', '/book', '/legal'];
+const PATHS = [
+	'/',
+	'/rooms',
+	'/gallery',
+	'/explore',
+	'/contact',
+	'/book',
+	'/arrival',
+	'/house-rules',
+	'/faq',
+	'/legal'
+];
 
 function urlFor(path: string, lang: string): string {
 	if (lang === 'en') return `${BASE_URL}${path}`;

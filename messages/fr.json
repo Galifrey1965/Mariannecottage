@@ -38,7 +38,10 @@
 		"explore": "Découvrir",
 		"contact": "Contact",
 		"book": "Réserver",
-		"legal": "Mentions Légales"
+		"legal": "Mentions Légales",
+		"arrival": "Infos d'arrivée",
+		"house_rules": "Règlement intérieur",
+		"faq": "FAQ"
 	},
 	"lang": {
 		"en": "English",
@@ -422,9 +425,58 @@
 		"odr_heading": "Règlement en ligne des litiges (UE)",
 		"odr_body": "Conformément à la réglementation européenne, si Marianne Cottage est exploité en tant qu'entreprise enregistrée vous pouvez recourir à la plateforme européenne de règlement en ligne des litiges :"
 	},
+	"arrival": {
+		"title": "Informations d'arrivée",
+		"subtitle": "Tout ce qu'il vous faut pour nous trouver, entrer et vous installer. Les instructions détaillées vous sont envoyées avec l'e-mail de confirmation.",
+		"pending": "À compléter — à confirmer avant la mise en ligne",
+		"check_in_heading": "Arrivée",
+		"check_in_body": "Arrivée à partir de 16h00 le jour d'arrivée. Une arrivée plus tôt est parfois possible — merci de nous écrire à l'avance.",
+		"check_out_heading": "Départ",
+		"check_out_body": "Départ avant 11h00 le jour du départ.",
+		"address_heading": "Trouver le cottage",
+		"address_body": "Couvains, Manche, Normandie. L'adresse complète et la localisation what3words sont incluses dans l'e-mail de confirmation.",
+		"parking_heading": "Stationnement",
+		"key_heading": "Clés et accès",
+		"wifi_heading": "Wi-Fi",
+		"wifi_body": "Le nom du réseau et le mot de passe sont affichés dans le cottage. Ils sont également envoyés avec l'e-mail de confirmation.",
+		"contact_heading": "En cas de problème à l'arrivée",
+		"contact_body": "Contactez-nous par e-mail ou téléphone — coordonnées dans l'e-mail de confirmation et sur la page Contact."
+	},
+	"house_rules": {
+		"title": "Règlement intérieur",
+		"subtitle": "Quelques règles simples pour que tout se passe bien — pour vous comme pour les voisins.",
+		"pending": "À compléter — à confirmer avant la mise en ligne",
+		"smoking_heading": "Non-fumeur à l'intérieur",
+		"smoking_body": "Merci de ne pas fumer à l'intérieur du cottage. Le jardin convient parfaitement, avec discrétion.",
+		"pets_heading": "Animaux",
+		"guests_heading": "Nombre d'occupants",
+		"guests_body": "Merci de respecter le nombre maximum indiqué sur votre réservation. Toute personne supplémentaire doit être accordée à l'avance.",
+		"quiet_heading": "Heures calmes",
+		"quiet_body": "Merci d'être attentif au voisinage, en particulier entre 22h00 et 08h00.",
+		"events_heading": "Événements et fêtes",
+		"rubbish_heading": "Ordures et recyclage",
+		"damages_heading": "Dégâts"
+	},
+	"faq": {
+		"title": "Questions fréquentes",
+		"subtitle": "Si votre question n'est pas listée ici, contactez-nous via la page Contact.",
+		"pending": "À compléter — à confirmer avant la mise en ligne",
+		"q1": "Qu'est-ce qui est inclus dans le prix ?",
+		"q2": "Puis-je annuler ma réservation ?",
+		"a2": "Oui — consultez la politique d'annulation sur la page Mentions légales. En résumé : remboursement à 100 % si vous annulez 14 jours ou plus avant l'arrivée, 50 % entre 7 et 13 jours, aucun remboursement à moins de 7 jours. Les remboursements sont effectués sur la carte d'origine via Stripe.",
+		"q3": "Acceptez-vous les animaux ?",
+		"q4": "Combien de personnes peuvent séjourner ?",
+		"q5": "Le petit-déjeuner ou le dîner sont-ils inclus ?",
+		"q6": "Comment payer ?",
+		"a6": "En ligne par carte via Stripe — Visa, Mastercard, American Express, Apple Pay et Google Pay sont acceptés. Virement bancaire ou paiement en espèces à l'arrivée possibles sur demande — contactez-nous via la page Contact.",
+		"q7": "Où se trouve exactement le cottage ?",
+		"a7": "À Couvains, dans la campagne normande près de Bayeux et des plages du Débarquement. L'adresse complète est envoyée avec la confirmation de réservation.",
+		"q8": "Le cottage est-il accessible ?"
+	},
 	"footer": {
 		"tagline": "Un havre de paix au cœur de la Normandie",
 		"contact": "Contact",
+		"guest_info": "Infos voyageurs",
 		"social": "Nous Suivre",
 		"copyright": "© 2024 Marianne Cottage. Tous droits réservés.",
 		"version": "Version"
