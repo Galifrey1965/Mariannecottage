@@ -10,6 +10,8 @@ vi.mock('$lib/server/supabase', () => {
 		}
 	}
 	return {
+		// adminClient is used by the pre-book expire_pending_bookings sweep.
+		adminClient: { rpc: vi.fn(async () => ({ error: null })) },
 		createBookingAtomic: vi.fn(),
 		BookingDatesTakenError: FakeBookingDatesTakenError,
 		generateBookingReference: vi.fn(() => 'MC-20260323-TEST'),
@@ -36,7 +38,7 @@ vi.mock('$lib/server/supabase', () => {
 });
 
 import { POST } from './+server';
-import { createBookingAtomic, BookingDatesTakenError, getRateForBooking } from '$lib/server/supabase';
+import { adminClient, createBookingAtomic, BookingDatesTakenError, getRateForBooking } from '$lib/server/supabase';
 
 function makeRequest(body: Record<string, unknown>) {
 	return {
@@ -200,6 +202,25 @@ describe('POST /api/book', () => {
 		const data = await res.json();
 		expect(data.success).toBe(true);
 		expect(data.booking.booking_reference).toBe('MC-20260323-TEST');
+	});
+
+	it('sweeps expired pending_payment rows before attempting the booking', async () => {
+		// Without the pre-book sweep, a guest who clicked Confirm a few
+		// minutes ago and bounced would have a stuck pending_payment row
+		// blocking their own retry inside the 20-min TTL window.
+		vi.mocked(createBookingAtomic).mockResolvedValueOnce({ id: '1', booking_reference: 'MC-X' } as any);
+		await POST(makeRequest(makeValidBody()));
+		expect(vi.mocked(adminClient.rpc)).toHaveBeenCalledWith('expire_pending_bookings');
+	});
+
+	it('attempts the booking even if the pre-book sweep itself fails', async () => {
+		// Sweep failure shouldn't take down the whole flow — we log and
+		// continue. The atomic RPC still gets a chance.
+		vi.mocked(adminClient.rpc).mockRejectedValueOnce(new Error('rpc broken'));
+		vi.mocked(createBookingAtomic).mockResolvedValueOnce({ id: '1', booking_reference: 'MC-Y' } as any);
+		const res = await POST(makeRequest(makeValidBody()));
+		expect(res.status).toBe(200);
+		expect(createBookingAtomic).toHaveBeenCalled();
 	});
 
 	it('returns 409 with dates_taken error_code when BookingDatesTakenError thrown', async () => {

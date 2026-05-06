@@ -1,6 +1,7 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import {
+	adminClient,
 	createBookingAtomic,
 	BookingDatesTakenError,
 	generateBookingReference,
@@ -11,6 +12,21 @@ import { MIN_NIGHTS, MIN_LEAD_HOURS, getEarliestCheckInDate } from '$lib/booking
 
 export const POST: RequestHandler = async ({ request }) => {
 	const body = await request.json();
+
+	// Synchronous expired-pending-payment sweep before we attempt the
+	// atomic booking. Without this, a guest who clicked Confirm a few
+	// minutes ago and bounced (e.g. lost the Stripe redirect) would have
+	// a stuck pending_payment row holding their dates blocked, and the
+	// retry would hit DATES_TAKEN against their own previous attempt.
+	// /book page-load runs the same RPC fire-and-forget, so this catches
+	// the rest. Best-effort — if the sweep itself fails we still attempt
+	// the booking; the worst case is the user sees DATES_TAKEN and tries
+	// again after the daily cron runs.
+	try {
+		await adminClient.rpc('expire_pending_bookings');
+	} catch (err) {
+		console.error('[/api/book] expire_pending_bookings sweep failed:', err);
+	}
 
 	const required = ['guest_name', 'guest_email', 'num_guests', 'check_in_date', 'check_out_date'];
 	for (const field of required) {
