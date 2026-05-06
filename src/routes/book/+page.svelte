@@ -421,6 +421,17 @@
 	.layout { display: grid; grid-template-columns: 1fr; gap: 2rem; margin-bottom: 3rem; }
 	@media (min-width: 960px) { .layout { grid-template-columns: 2fr 1fr; } }
 	.main-col { display: flex; flex-direction: column; gap: 1.5rem; position: relative; z-index: 1; min-width: 0; }
+	/* Sticky sidebar lives in the right grid cell. position: sticky only
+	   has headroom while its containing block (the grid row) is taller
+	   than the sidebar itself. Step 1's calendar is tall, so it works.
+	   Steps 2 + 3 (form + review) can be shorter than the sidebar, so the
+	   row collapses to ~the sidebar's height with no scroll headroom and
+	   sticky stops working — the sidebar drifts up behind the wizard.
+	   Min-height on the main column at desktop guarantees the grid is
+	   always at least as tall as the sidebar's max-height, so the sticky
+	   stop applies on every step. Trade-off: short forms leave whitespace
+	   below before the support section, which on cream is unobtrusive. */
+	@media (min-width: 960px) { .main-col { min-height: calc(100vh - 8rem); } }
 	.sidebar { display: flex; flex-direction: column; gap: 1.5rem; }
 	/* Sticky sidebar stops *below* the step bar, not behind it.
 	   Stack: header (64px) + steps bar (~50px including padding/border)
