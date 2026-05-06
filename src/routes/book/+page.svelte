@@ -258,7 +258,10 @@
 						</div>
 
 						<div class="actions">
-							<button onclick={() => step = 1} class="btn-outline">{t(messages, 'book.back')}</button>
+							<button onclick={() => step = 1} class="btn-outline">
+								<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+								{t(messages, 'book.back')}
+							</button>
 							<button onclick={goToReview} class="btn-primary flex-1">
 								<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
 								{t(messages, 'book.review_booking')}
@@ -313,7 +316,10 @@
 					{/if}
 
 					<div class="actions">
-						<button onclick={() => step = 2} class="btn-outline">{t(messages, 'book.back')}</button>
+						<button onclick={() => step = 2} class="btn-outline">
+							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+							{t(messages, 'book.back')}
+						</button>
 						<button onclick={submitBooking} disabled={submitting} class="btn-primary flex-1">
 							{#if submitting}
 								{t(messages, 'book.submitting')}
@@ -472,11 +478,18 @@
 	/* Buttons */
 	.actions { display: flex; gap: 0.75rem; padding-top: 0.5rem; }
 	.btn-outline {
-		padding: 0.75rem 1.5rem; border: 1px solid var(--color-cream-dark);
-		color: var(--color-text); border-radius: 9999px; background: transparent;
-		cursor: pointer; transition: background 0.2s; font-size: 0.875rem;
+		display: inline-flex; align-items: center; gap: 0.5rem;
+		padding: 0.75rem 1.25rem; border: 1px solid var(--color-sage);
+		color: var(--color-sage); border-radius: 9999px; background: #fff;
+		cursor: pointer; font-weight: 600;
+		transition: background 0.2s, color 0.2s, border-color 0.2s;
+		font-size: 0.875rem;
 	}
-	.btn-outline:hover { background: var(--color-cream-dark); }
+	.btn-outline:hover {
+		background: var(--color-sage);
+		color: white;
+		border-color: var(--color-sage);
+	}
 	.btn-primary {
 		display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
 		padding: 0.75rem 1.5rem; background: var(--color-sage); color: white;
