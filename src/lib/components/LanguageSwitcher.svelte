@@ -70,7 +70,7 @@
 		border-radius: var(--theme-radius-pill);
 		padding: 2px;
 		gap: 2px;
-		background: var(--theme-bg);
+		background: #fff;
 	}
 
 	.flag-btn {
@@ -94,9 +94,9 @@
 	}
 
 	.flag-btn.active {
-		background: var(--theme-accent);
+		background: var(--color-sage);
 	}
 	.flag-btn.active:hover {
-		background: var(--theme-accent-hover, var(--theme-accent));
+		background: var(--color-sage-hover, var(--color-sage));
 	}
 </style>
