@@ -129,7 +129,30 @@
 			});
 			const result = await res.json();
 			if (!result.success) {
-				formError = result.error || t(messages, 'book.error_booking_failed');
+				// Map known error_codes to localised messages so a min-nights
+				// or lead-time rejection doesn't show the generic
+				// "those dates were just booked" line. Falls back to the
+				// raw error string from the API for anything unrecognised.
+				switch (result.error_code) {
+					case 'min_nights':
+						formError = t(messages, 'book.error_min_nights', {
+							n: String(result.min_nights ?? MIN_NIGHTS)
+						});
+						break;
+					case 'lead_time':
+						formError = t(messages, 'book.error_lead_time', {
+							h: String(result.min_lead_hours ?? MIN_LEAD_HOURS)
+						});
+						break;
+					case 'dates_taken':
+						formError = t(messages, 'book.error_dates_taken');
+						break;
+					case 'no_rate_plan':
+						formError = t(messages, 'book.error_no_rate_plan');
+						break;
+					default:
+						formError = result.error || t(messages, 'book.error_booking_failed');
+				}
 				return;
 			}
 

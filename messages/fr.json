@@ -271,6 +271,8 @@
 		"error_network": "Erreur réseau. Veuillez réessayer.",
 		"error_dates_taken": "Ces dates viennent d'être réservées. Veuillez choisir d'autres dates.",
 		"error_no_rate_plan": "Aucun tarif ne couvre ces dates. Veuillez choisir d'autres dates ou nous contacter.",
+		"error_min_nights": "Séjour minimum de {n} nuits. Veuillez choisir une période plus longue.",
+		"error_lead_time": "Les réservations nécessitent un préavis de {h} heures. Veuillez choisir une date d'arrivée ultérieure.",
 		"savings_hint": "Économisez 5% vs Booking.com"
 	},
 	"booking_confirm": {

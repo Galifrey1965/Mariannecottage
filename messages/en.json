@@ -271,6 +271,8 @@
 		"error_network": "Network error. Please try again.",
 		"error_dates_taken": "Those dates were just booked. Please pick different dates.",
 		"error_no_rate_plan": "No rate plan covers those dates. Please choose different dates or contact us.",
+		"error_min_nights": "{n}-night minimum stay. Please pick a longer range.",
+		"error_lead_time": "Bookings need at least {h} hours notice. Please pick a later check-in date.",
 		"savings_hint": "Save 5% vs Booking.com"
 	},
 	"booking_confirm": {

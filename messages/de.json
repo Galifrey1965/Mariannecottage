@@ -271,6 +271,8 @@
 		"error_network": "Netzwerkfehler. Bitte versuchen Sie es erneut.",
 		"error_dates_taken": "Diese Daten wurden soeben gebucht. Bitte wählen Sie andere Daten.",
 		"error_no_rate_plan": "Für diese Daten gibt es keinen Tarif. Bitte wählen Sie andere Daten oder kontaktieren Sie uns.",
+		"error_min_nights": "Mindestaufenthalt {n} Nächte. Bitte wählen Sie einen längeren Zeitraum.",
+		"error_lead_time": "Buchungen erfordern eine Vorankündigung von {h} Stunden. Bitte wählen Sie ein späteres Anreisedatum.",
 		"savings_hint": "5% sparen gegenüber Booking.com"
 	},
 	"booking_confirm": {

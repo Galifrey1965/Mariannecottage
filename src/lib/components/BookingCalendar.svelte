@@ -160,7 +160,12 @@
 			onDayClick(info?.id ?? null, date);
 			return;
 		}
-		if (isPast(date) || !isAvailable(date)) return;
+		// `isFree` covers all three barriers (past / availability=false / in
+		// the test-blocked set). The test-blocked check is what stops a
+		// guest selecting a date that's available in the `availability`
+		// table but actually held by a source='test' booking — without it
+		// the click goes through and the API throws DATES_TAKEN.
+		if (!isFree(date)) return;
 
 		// Orphan day → can't form a valid minimum-stay range. Hand off to
 		// the parent so it can show "contact us" affordance, then bail
@@ -292,7 +297,12 @@
 			}
 			return 'day available' + outside;
 		}
-		if (!isAvailable(date)) return (isTestBlocked(date) ? 'day test-blocked' : 'day unavailable') + outside;
+		// Test-blocked takes precedence — even if the availability table
+		// hasn't been written for this date (the test fixture seeds bookings
+		// directly without touching availability), we want the orange
+		// striped style and a non-clickable cell.
+		if (isTestBlocked(date)) return 'day test-blocked' + outside;
+		if (!isAvailable(date)) return 'day unavailable' + outside;
 		if (isStart(date) || isEnd(date)) return 'day selected-endpoint' + outside;
 		if (isInRange(date) && !previewValid) return 'day preview-invalid' + outside;
 		if (isInRange(date) && isHoverPreview) return 'day hover-range' + outside;
@@ -333,7 +343,7 @@
 			<button
 				onclick={() => selectDate(date)}
 				onmouseenter={() => hoveredDate = date}
-				disabled={isPast(date) || (!isClickMode && (isOutsideMonth(date) || !isAvailable(date)))}
+				disabled={isPast(date) || (!isClickMode && (isOutsideMonth(date) || !isFree(date)))}
 				class={dayClass(date)}
 				aria-label={date.toLocaleDateString(lang, { weekday: 'long', month: 'long', day: 'numeric' })}
 				aria-selected={isInRange(date)}
