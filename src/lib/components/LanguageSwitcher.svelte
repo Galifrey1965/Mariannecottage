@@ -94,9 +94,9 @@
 	}
 
 	.flag-btn.active {
-		background: var(--color-sage);
+		background: var(--theme-bg);
 	}
 	.flag-btn.active:hover {
-		background: var(--color-sage-hover, var(--color-sage));
+		background: var(--theme-bg);
 	}
 </style>
