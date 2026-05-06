@@ -32,7 +32,7 @@
 	{#if checkInDate && checkOutDate}
 		<div class="summary-rows">
 			<div class="row"><span class="label">{t(messages, 'booking_summary.checkin')}</span><span class="value">{formatDate(lang, checkInDate, { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })}</span></div>
-			<div class="row"><span class="label">{t(messages, 'booking_summary.checkout')}</span><span class="value">{formatDate(lang, checkOutDate, { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })}</span></div>
+			<div class="row"><span class="label">{t(messages, 'booking_summary.checkout')}</span><span class="value">{formatDate(lang, checkOutDate, { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })} <span class="morning-tag">({t(messages, 'booking_summary.morning')})</span></span></div>
 			<div class="row"><span class="label">{t(messages, 'booking_summary.nights')}</span><span class="value">{nights}</span></div>
 			<div class="row"><span class="label">{t(messages, 'booking_summary.guests')}</span><span class="value">{guests}</span></div>
 		</div>
@@ -67,6 +67,7 @@
 	.row { display: flex; justify-content: space-between; font-size: 0.875rem; }
 	.label { color: var(--color-text-muted); }
 	.value { font-weight: 500; }
+	.morning-tag { font-weight: 400; font-size: 0.8em; color: var(--color-text-muted); }
 	hr { border: none; border-top: 1px solid var(--color-cream-dark); margin: 0; }
 	.total-row { display: flex; justify-content: space-between; align-items: center; }
 	.total-row span:first-child { font-family: 'Lora', serif; font-size: 1.125rem; font-weight: 600; }

@@ -331,12 +331,15 @@
 		"selected": "Ausgewählt",
 		"select_checkout": "Wählen Sie Ihr Abreisedatum",
 		"by_arrangement": "Verfügbar — bitte kontaktieren",
-		"checkout_only": "Nur Abreisetag (vormittags)"
+		"checkout_only": "Nur Abreisetag (vormittags)",
+		"pick_dates_hint": "Wählen Sie Ihr Anreisedatum und dann Ihren Abreisemorgen. Ihr Aufenthalt umfasst die Nächte dazwischen.",
+		"checkout_morning_caption": "Abreise am Morgen des {date}."
 	},
 	"booking_summary": {
 		"title": "Buchungszusammenfassung",
 		"checkin": "Anreise:",
 		"checkout": "Abreise:",
+		"morning": "vormittags",
 		"nights": "Nächte:",
 		"guests": "Gäste:",
 		"tax": "Kurtaxe",

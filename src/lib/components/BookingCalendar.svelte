@@ -405,6 +405,9 @@
 		</button>
 	</div>
 
+	{#if !isClickMode && !selectedStart}
+		<div class="explainer">{t(messages, 'calendar.pick_dates_hint')}</div>
+	{/if}
 	{#if selectedStart && !selectedEnd}
 		<div class="hint">{t(messages, 'calendar.select_checkout')}</div>
 	{/if}
@@ -456,6 +459,15 @@
 				{previewNights} {previewNights > 1 ? t(messages, 'book.nights') : t(messages, 'book.night')}
 			</span>
 		</div>
+		<!-- Anti-confusion line — without it, owners testing the flow read
+		     "1 night" after picking 14 + 15 and expect 2 (one cell each). The
+		     model is OTA-standard (sleeps, not selected cells), so we explain
+		     it explicitly: which night you sleep, which morning you leave. -->
+		<p class="checkout-explainer" aria-live="polite">
+			{t(messages, 'calendar.checkout_morning_caption', {
+				date: formatDate(lang, displayEnd as Date, { weekday: 'long', month: 'long', day: 'numeric' })
+			})}
+		</p>
 	{/if}
 </div>
 
@@ -470,6 +482,8 @@
 	.month-title { font-family: 'Lora', serif; font-size: 1.375rem; font-weight: 600; margin: 0; }
 
 	.hint { text-align: center; font-size: 0.8rem; color: var(--color-sage); font-weight: 500; margin-bottom: 0.75rem; animation: fadeIn 0.2s ease; }
+	.explainer { text-align: center; font-size: 0.8rem; color: var(--color-text-muted); margin: 0 0 0.75rem; line-height: 1.4; }
+	.checkout-explainer { margin: 0.5rem 0 0; font-size: 0.78rem; color: var(--color-text-muted); text-align: center; line-height: 1.4; }
 
 	.weekdays { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.5rem; }
 	.days-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.25rem; }

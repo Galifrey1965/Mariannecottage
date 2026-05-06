@@ -331,12 +331,15 @@
 		"selected": "Sélectionné",
 		"select_checkout": "Sélectionnez votre date de départ",
 		"by_arrangement": "Disponible — nous contacter",
-		"checkout_only": "Départ le matin uniquement"
+		"checkout_only": "Départ le matin uniquement",
+		"pick_dates_hint": "Choisissez votre date d'arrivée, puis votre matinée de départ. Votre séjour couvre les nuits entre les deux.",
+		"checkout_morning_caption": "Vous partez le matin du {date}."
 	},
 	"booking_summary": {
 		"title": "Résumé de la Réservation",
 		"checkin": "Arrivée :",
 		"checkout": "Départ :",
+		"morning": "matin",
 		"nights": "Nuits :",
 		"guests": "Clients :",
 		"tax": "Taxe de séjour",

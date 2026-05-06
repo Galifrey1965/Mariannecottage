@@ -331,12 +331,15 @@
 		"selected": "Selected",
 		"select_checkout": "Select your check-out date",
 		"by_arrangement": "Available — contact us",
-		"checkout_only": "Check-out morning only"
+		"checkout_only": "Check-out morning only",
+		"pick_dates_hint": "Pick your check-in date, then your check-out morning. Your stay covers the nights in between.",
+		"checkout_morning_caption": "You check out the morning of {date}."
 	},
 	"booking_summary": {
 		"title": "Booking Summary",
 		"checkin": "Check-in:",
 		"checkout": "Check-out:",
+		"morning": "morning",
 		"nights": "Nights:",
 		"guests": "Guests:",
 		"tax": "Tourist tax",
