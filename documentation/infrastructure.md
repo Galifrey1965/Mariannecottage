@@ -35,7 +35,7 @@ Updated as services are added or changed.
 |---|---|
 | **Provider** | Supabase |
 | **Plan** | Free tier |
-| **What we use** | Postgres database (~5% of Supabase's bundled features). Tables: `bookings`, `availability`, `rate_plans` (+ planned `subscribers`) |
+| **What we use** | Postgres database + Storage bucket. Tables: `bookings`, `availability`, `rate_plans`, `site_banners`, `gallery_categories`, `rooms`, `gallery_images` (+ planned `subscribers`). Storage bucket: `gallery` (public read, service-role write; 10 MB per-object limit; JPEG/PNG/WebP only). |
 | **Limits** | 500 MB DB · 1 GB file storage · 5 GB egress/month |
 | **Account owner** | Mark |
 | **Region** | _check Supabase dashboard — should be EU for GDPR alignment_ |
@@ -189,6 +189,23 @@ _Not yet provisioned. Planned: **Stripe** in test mode, then live mode once GDPR
 
 ---
 
+## Translation (Google Cloud Translation v2)
+
+| Field | Value |
+|---|---|
+| **Provider** | Google Cloud — Cloud Translation API v2 |
+| **Plan** | Pay-per-use ($20 / 1M characters); cottage usage is pennies/year |
+| **Account owner** | Mark — same GCP project as Maps + Places keys |
+| **API key env var** | `GOOGLE_TRANSLATE_API_KEY` (Netlify env, marked secret) |
+| **Wired in** | 2026-05-06 — `src/lib/server/translate.ts` helper, used by `/admin/gallery` (alt text) and (planned) `/admin/banners` (banner copy) to auto-fill FR/DE from English |
+| **API restrictions** | None at the time of provisioning — the key is unrestricted across enabled APIs in the project. Worth tightening later via key restrictions if exposure widens. |
+| **Cost** | ~£0/month at cottage volume (a few hundred short strings ever) |
+| **Alternatives if we ever need to move** | DeepL Free (500k chars/month), LibreTranslate self-hosted, MyMemory free tier |
+
+**Notes:** Helper swallows errors and returns `''` so the admin form falls back to manual entry on failure rather than blowing up. The `Translate` button in admin pages is opt-in per row — not auto-on-blur — to keep API calls visible to the editor.
+
+---
+
 ## Analytics
 
 _Not yet provisioned. Planned: **Plausible** (self-hosted free, or £6/mo hosted) — to be confirmed during modular-stack walkthrough._
@@ -209,6 +226,7 @@ All third-party service accounts (Supabase, Netlify, etc.) are owned by **Mark**
 | ImprovMX account login | Mark's password manager (signed up under his personal Gmail) | Mark |
 | Brevo account login | Mark's password manager (signed up as `mariannecottage@gmail.com`) | Mark |
 | Brevo SMTP key | Local note / password manager (login `aa2b7c001@smtp-brevo.com`, server `smtp-relay.brevo.com:587`) — used in cottage Gmail's "Send mail as" SMTP config. Regeneratable at any time from Brevo dashboard. | Mark |
+| Google Translate API key | Netlify env (`GOOGLE_TRANSLATE_API_KEY`) — same GCP project as Maps/Places | Mark |
 | Future: Stripe keys | Netlify env | Mark |
 | Future: Brevo API key (if used for app-side transactional) | Netlify env | Mark |
 
@@ -222,7 +240,7 @@ All third-party service accounts (Supabase, Netlify, etc.) are owned by **Mark**
 |---|---|---|
 | Database | Supabase free tier includes daily PITR for 1 day. For longer history, a nightly `pg_dump` to S3-equivalent or to git-lfs would suffice at this volume. | ⚠️ Not configured |
 | Code | GitHub (`Galifrey1965/Mariannecottage` + Rob's local clone) | ✅ |
-| Static assets (cottage photos) | Currently in repo under `static/images/`. If we move them to Supabase Storage, also need backup. | ✅ (in repo) |
+| Static assets (cottage photos) | Source originals committed to `images/originals/` as a disaster-recovery backup. Live serving moved to Supabase Storage bucket `gallery` (PR1, 2026-05-06). `scripts/restore-gallery-from-originals.mjs` re-uploads everything in the originals dir if the Storage bucket is ever lost. New admin uploads land only in Storage; periodic Storage→git mirror script is planned but not yet built. | ✅ (originals in repo, live in Storage) |
 
 **Action:** flag a database backup script as an issue once we have real bookings flowing.
 

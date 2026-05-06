@@ -15,6 +15,7 @@
 		{ href: '/admin/rate-plans',            label: 'Rate plans' },
 		{ href: '/admin/cancellation-policies', label: 'Policies' },
 		{ href: '/admin/banners',               label: 'Banners' },
+		{ href: '/admin/gallery',               label: 'Gallery' },
 		{ href: '/admin/emails',                label: 'Emails' },
 		{ href: '/admin/audit-log',             label: 'Audit log' }
 	];

@@ -1,0 +1,11 @@
+# Disaster-recovery backup of cottage gallery originals.
+#
+# Each file here corresponds 1:1 to a row in the `gallery_images` Supabase
+# table via the `original_filename` column. If Supabase Storage is ever lost,
+# `scripts/restore-gallery-from-originals.mjs` re-uploads everything in this
+# directory and regenerates the full + thumb variants.
+#
+# Add new originals here when seeding the gallery; admin uploads after the
+# initial seed don't auto-mirror back here (would need a GitHub PAT). For
+# long-term mirroring, run `scripts/sync-originals-from-supabase.mjs`
+# (planned, not yet built).
