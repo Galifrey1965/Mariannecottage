@@ -86,11 +86,13 @@
 	};
 	const isAvailable = (date: Date) => availability[toISODate(date)] !== false;
 	const isPast = (date: Date) => date < minDate;
-	// A date is "free" (selectable for a booking) when it's not past, the
-	// availability map says it's open, and no test fixture is blocking it.
-	// Used by the orphan detector to count contiguous bookable runs.
+	const isAfterMax = (date: Date) => maxDate !== undefined && date > maxDate;
+	// A date is "free" (selectable for a booking) when it's not past, not past
+	// the configured max (e.g. last covered rate-plan day), the availability
+	// map says it's open, and no test fixture is blocking it. Used by the
+	// orphan detector to count contiguous bookable runs.
 	const isFree = (date: Date) =>
-		!isPast(date) && isAvailable(date) && !testBlockedSet.has(toISODate(date));
+		!isPast(date) && !isAfterMax(date) && isAvailable(date) && !testBlockedSet.has(toISODate(date));
 
 	// Orphan day: a free day where no run of `minNights` consecutive free
 	// days containing it exists, so the minimum-stay rule blocks every
@@ -182,6 +184,14 @@
 			return;
 		}
 
+		// Re-clicking the start date with no end yet → deselect. Without this,
+		// a guest who picks a start where the surrounding availability can't
+		// form a valid range is stuck (can't undo, can't extend).
+		if (!selectedEnd && toISODate(selectedStart) === toISODate(date)) {
+			selectedStart = null;
+			return;
+		}
+
 		// Already have a confirmed range — restart
 		if (selectedEnd) {
 			selectedStart = date;
@@ -253,6 +263,13 @@
 		return currentMonthStart > minMonthStart;
 	});
 
+	const canGoNext = $derived.by(() => {
+		if (!maxDate) return true;
+		const maxMonthStart = new Date(maxDate.getFullYear(), maxDate.getMonth(), 1);
+		const currentMonthStart = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
+		return currentMonthStart < maxMonthStart;
+	});
+
 	const monthName = $derived(formatDate(lang, currentMonth, { month: 'long', year: 'numeric' }));
 
 	const previewNights = $derived(
@@ -280,7 +297,7 @@
 
 	function dayClass(date: Date): string {
 		const outside = isOutsideMonth(date) ? ' outside' : '';
-		if (isPast(date)) return 'day past' + outside;
+		if (isPast(date) || isAfterMax(date)) return 'day past' + outside;
 		if (isClickMode) {
 			const info = bookingByDate[toISODate(date)];
 			if (info) {
@@ -320,7 +337,7 @@
 			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
 		</button>
 		<h2 class="month-title">{monthName}</h2>
-		<button onclick={nextMonth} class="nav-btn" aria-label={t(messages, 'calendar.next_month')}>
+		<button onclick={nextMonth} class="nav-btn" aria-label={t(messages, 'calendar.next_month')} disabled={!canGoNext}>
 			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M10 6 8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
 		</button>
 	</div>

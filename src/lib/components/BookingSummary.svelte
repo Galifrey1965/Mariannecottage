@@ -31,8 +31,8 @@
 
 	{#if checkInDate && checkOutDate}
 		<div class="summary-rows">
-			<div class="row"><span class="label">{t(messages, 'booking_summary.checkin')}</span><span class="value">{formatDate(lang, checkInDate, { weekday: 'short', month: 'short', day: 'numeric' })}</span></div>
-			<div class="row"><span class="label">{t(messages, 'booking_summary.checkout')}</span><span class="value">{formatDate(lang, checkOutDate, { weekday: 'short', month: 'short', day: 'numeric' })}</span></div>
+			<div class="row"><span class="label">{t(messages, 'booking_summary.checkin')}</span><span class="value">{formatDate(lang, checkInDate, { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })}</span></div>
+			<div class="row"><span class="label">{t(messages, 'booking_summary.checkout')}</span><span class="value">{formatDate(lang, checkOutDate, { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })}</span></div>
 			<div class="row"><span class="label">{t(messages, 'booking_summary.nights')}</span><span class="value">{nights}</span></div>
 			<div class="row"><span class="label">{t(messages, 'booking_summary.guests')}</span><span class="value">{guests}</span></div>
 		</div>

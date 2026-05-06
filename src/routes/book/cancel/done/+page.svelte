@@ -15,7 +15,7 @@
 		{/if}
 		<p>Your booking has been cancelled. If a refund applies under the cancellation policy, it has been issued to your original card and typically takes 5–10 working days to appear.</p>
 		<p>We're sorry your stay didn't work out — we hope to welcome you another time.</p>
-		<p class="muted">A confirmation email will follow once email infrastructure is live. In the meantime, if you have questions please get in touch at <a href="mailto:bookings@mariannecottage.fr">bookings@mariannecottage.fr</a>.</p>
+		<p class="muted">A confirmation email is on its way. If you have any questions, please get in touch at <a href="mailto:bookings@mariannecottage.fr">bookings@mariannecottage.fr</a>.</p>
 		<a href="/" class="btn-link">← Return to home</a>
 	</div>
 </main>

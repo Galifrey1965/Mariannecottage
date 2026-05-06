@@ -948,7 +948,7 @@
 					<div class="detail-header">
 						<div>
 							<h3 class="detail-title">Guest cancel link</h3>
-							<p class="sub-text">Send to the guest by email until transactional email is wired up.</p>
+							<p class="sub-text">Share with the guest if they'd like to cancel the booking themselves.</p>
 						</div>
 						<button onclick={closeCancelLinkDialog} class="close-btn">✕</button>
 					</div>

@@ -91,6 +91,10 @@
 		if (bookingRef && datesChanged) discardPendingBooking();
 		checkInDate = start;
 		checkOutDate = end;
+		// Picking new dates clears any prior validation error — without this,
+		// a stale "no rate plan covers those dates" message lingers after the
+		// guest picks valid dates.
+		formError = '';
 		step = 2;
 	};
 
@@ -106,6 +110,18 @@
 			? Math.ceil((checkOutDate.getTime() - checkInDate.getTime()) / (1000 * 60 * 60 * 24))
 			: 0
 	);
+
+	// Cap the calendar at the last covered rate plan so guests can't wander
+	// into months with no rate (which silently rejects at the Continue button
+	// with "no rate plan covers those dates"). Picks the latest valid_until
+	// across active plans; absent any active plan, leaves the cap unset.
+	const maxBookableDate = $derived.by<Date | undefined>(() => {
+		const active = (ratePlans ?? []).filter((p) => p.is_active);
+		if (active.length === 0) return undefined;
+		const latest = active.reduce((acc, p) => (p.valid_until > acc ? p.valid_until : acc), active[0].valid_until);
+		const [y, m, d] = latest.split('-').map(Number);
+		return new Date(y, m - 1, d);
+	});
 
 	const matchingPlan = $derived(
 		checkInDate ? findRatePlan(ratePlans, formatDateISO(checkInDate)) : null
@@ -319,11 +335,35 @@
 			if (paymentIntent && (paymentIntent.status === 'succeeded' || paymentIntent.status === 'processing')) {
 				// No redirect required — load the booking and advance to step 4
 				// where BookingConfirmed will keep polling until the webhook fires.
-				const res = await fetch(`/api/book/${encodeURIComponent(bookingRef)}`);
-				if (res.ok) {
-					const body = await res.json();
-					confirmedBooking = body.booking;
+				// If the lookup fails (network blip, transient 5xx), fall back to
+				// a synthesized row from local wizard state so step 4 still has
+				// something to render — the polling in BookingConfirmed will
+				// reconcile against the canonical row as soon as it can.
+				let loaded: typeof confirmedBooking = null;
+				try {
+					const res = await fetch(`/api/book/${encodeURIComponent(bookingRef)}`);
+					if (res.ok) {
+						const body = await res.json();
+						loaded = body.booking ?? null;
+					}
+				} catch {
+					// fall through to fallback synthesis
 				}
+				if (!loaded && checkInDate && checkOutDate) {
+					loaded = {
+						booking_reference: bookingRef,
+						guest_name: guestName,
+						guest_email: guestEmail,
+						num_guests: guests,
+						num_nights: nights,
+						check_in_date: formatDateISO(checkInDate),
+						check_out_date: formatDateISO(checkOutDate),
+						total_cost: bookingTotal ?? totalCost,
+						status: 'pending_payment',
+						paid_at: null
+					};
+				}
+				confirmedBooking = loaded;
 				step = 4;
 			}
 		} catch (err) {
@@ -367,7 +407,11 @@
 							// intent — the next "Continue to Pay" must POST /api/book
 							// again so any edits to dates or guest details flow through.
 							if (s.n < step && step === 3) discardPendingBooking();
-							if (s.n === 1) { step = 1; calendarRef?.goToToday(); }
+							// Step back to Dates without snapping the calendar to today —
+							// the guest keeps the month they were viewing so they can
+							// adjust their picks in context. Calendar's selectedStart /
+							// selectedEnd state survives the back-step too.
+							if (s.n === 1) step = 1;
 							else if (s.n === 2 && checkInDate && checkOutDate) step = 2;
 							else if (s.n === 3 && checkInDate && checkOutDate && guestName && guestEmail && bookingRef) step = 3;
 						}}
@@ -404,6 +448,7 @@
 						onDateRangeSelect={handleDateRangeSelect}
 						onOrphanClick={handleOrphanClick}
 						minDate={getEarliestCheckInDate()}
+						maxDate={maxBookableDate}
 						minNights={MIN_NIGHTS}
 						disablePastMonths
 					/>
