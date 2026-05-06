@@ -246,6 +246,8 @@
 		const e = s.elements({
 			clientSecret,
 			// Match the cottage palette so the element doesn't look bolted on.
+			// .Input padding gives the card-brand icons inside the card number
+			// field room to render at full size instead of being squished.
 			appearance: {
 				theme: 'flat',
 				variables: {
@@ -255,6 +257,10 @@
 					colorDanger: '#b43c3c',
 					fontFamily: 'system-ui, -apple-system, sans-serif',
 					borderRadius: '8px'
+				},
+				rules: {
+					'.Input': { padding: '12px 14px' },
+					'.Tab': { padding: '14px 16px' }
 				}
 			}
 		});
