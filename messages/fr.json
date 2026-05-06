@@ -190,7 +190,7 @@
 			"submit": "Envoyer",
 			"success": "Merci! Nous vous répondrons bientôt.",
 			"error": "Erreur lors de l'envoi du message. Veuillez réessayer.",
-			"prefill_orphan": "Bonjour — je souhaiterais réserver la nuit du {date}. Le calendrier en ligne indique qu'elle est libre mais trop courte pour la durée minimum. Serait-il possible de nous arranger directement ?"
+			"prefill_orphan": "Demande pour le {date} : "
 		},
 		"social": {
 			"heading": "Trouvez-nous en Ligne",

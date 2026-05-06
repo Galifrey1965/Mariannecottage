@@ -190,7 +190,7 @@
 			"submit": "Send",
 			"success": "Thank you! We'll get back to you soon.",
 			"error": "Error sending message. Please try again.",
-			"prefill_orphan": "Hi — I'd like to enquire about staying on {date}. The online calendar shows it's free but too short for the minimum stay. Could we arrange this directly?"
+			"prefill_orphan": "Enquiry about {date}: "
 		},
 		"social": {
 			"heading": "Find Us Online",

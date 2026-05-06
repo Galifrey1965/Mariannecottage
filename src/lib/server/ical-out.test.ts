@@ -89,4 +89,16 @@ describe('buildIcalFeed', () => {
 		const out = buildIcalFeed([], { now: fixedNow });
 		expect(out).not.toContain('BEGIN:VEVENT');
 	});
+
+	it('emits STATUS:TENTATIVE for pending_payment rows', () => {
+		const out = buildIcalFeed([booking({ status: 'pending_payment' })], { now: fixedNow });
+		expect(out).toContain('STATUS:TENTATIVE\r\n');
+		expect(out).toContain('SUMMARY:Pending - MC-20260323-AAAA\r\n');
+	});
+
+	it('emits STATUS:CONFIRMED for confirmed rows', () => {
+		const out = buildIcalFeed([booking({ status: 'confirmed' })], { now: fixedNow });
+		expect(out).toContain('STATUS:CONFIRMED\r\n');
+		expect(out).toContain('SUMMARY:Booked - MC-20260323-AAAA\r\n');
+	});
 });

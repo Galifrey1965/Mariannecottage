@@ -13,6 +13,13 @@ export interface IcalFeedBooking {
 	check_in_date: string;  // YYYY-MM-DD
 	check_out_date: string; // YYYY-MM-DD (exclusive — matches RFC 5545 DTEND)
 	updated_at?: string;    // ISO 8601 timestamp
+	// Booking status from the DB. Maps to RFC 5545 STATUS:
+	//   'confirmed'                    → STATUS:CONFIRMED
+	//   'pending' / 'pending_payment'  → STATUS:TENTATIVE
+	// Booking.com's iCal importer treats both as blocked. Airbnb honours
+	// TENTATIVE as a softer hold — guests aren't shown a hard "unavailable"
+	// for a date that's still in checkout. Costs us nothing to be correct.
+	status?: string;
 }
 
 interface BuildOptions {
@@ -65,13 +72,15 @@ export function buildIcalFeed(
 			? formatDateTimeUtc(new Date(b.updated_at))
 			: formatDateTimeUtc(now);
 
+		const isTentative = b.status === 'pending' || b.status === 'pending_payment';
 		lines.push(
 			'BEGIN:VEVENT',
 			`UID:${b.booking_reference}@${UID_DOMAIN}`,
 			`DTSTAMP:${dtstamp}`,
 			`DTSTART;VALUE=DATE:${formatDateOnly(b.check_in_date)}`,
 			`DTEND;VALUE=DATE:${formatDateOnly(b.check_out_date)}`,
-			`SUMMARY:Booked - ${b.booking_reference}`,
+			`SUMMARY:${isTentative ? 'Pending' : 'Booked'} - ${b.booking_reference}`,
+			`STATUS:${isTentative ? 'TENTATIVE' : 'CONFIRMED'}`,
 			'TRANSP:OPAQUE',
 			'END:VEVENT'
 		);

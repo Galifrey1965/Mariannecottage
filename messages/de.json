@@ -190,7 +190,7 @@
 			"submit": "Senden",
 			"success": "Danke! Wir werden uns bald bei Ihnen melden.",
 			"error": "Fehler beim Senden der Nachricht. Bitte versuchen Sie es später noch einmal.",
-			"prefill_orphan": "Hallo — ich möchte gerne in der Nacht vom {date} übernachten. Der Online-Kalender zeigt, dass dieser Termin frei ist, aber zu kurz für die Mindestdauer. Könnten wir das direkt vereinbaren?"
+			"prefill_orphan": "Anfrage zum {date}: "
 		},
 		"social": {
 			"heading": "Finden Sie uns Online",
