@@ -67,6 +67,7 @@
 
 	const realAvailability: Record<string, boolean> = data.availability || {};
 	const testBlockedDates: string[] = data.testBlockedDates || [];
+	const checkoutOnlyDates: string[] = data.checkoutOnlyDates || [];
 
 	function discardPendingBooking() {
 		// Called when the user changes dates after a booking row was already
@@ -473,6 +474,7 @@
 						{lang}
 						availability={realAvailability}
 						{testBlockedDates}
+						{checkoutOnlyDates}
 						onDateRangeSelect={handleDateRangeSelect}
 						onOrphanClick={handleOrphanClick}
 						minDate={getEarliestCheckInDate()}

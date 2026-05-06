@@ -310,6 +310,27 @@ export async function getTestBlockedDates(today: string): Promise<string[]> {
 	return [...out];
 }
 
+// Returns ISO check-in dates for active bookings whose check-out is on or
+// after `today`. The booking calendar uses this to flag those dates as
+// "checkout-only" — bookable as the morning end of a *new* stay (industry-
+// standard same-day turnover), but never as a check-in or middle night.
+// Statuses mirror getTestBlockedDates so we cover the same inventory-
+// holding rows: confirmed reservations plus live soft-reserves.
+export async function getCheckInDates(today: string): Promise<string[]> {
+	const { data, error } = await adminClient
+		.from('bookings')
+		.select('check_in_date')
+		.in('status', ['pending', 'pending_payment', 'confirmed'])
+		.gte('check_out_date', today);
+
+	if (error) throw error;
+	const out = new Set<string>();
+	for (const row of (data ?? []) as Array<{ check_in_date: string }>) {
+		out.add(row.check_in_date);
+	}
+	return [...out];
+}
+
 // Availability operations
 export async function getAvailability(startDate: string, endDate: string) {
 	const { data, error } = await anonClient

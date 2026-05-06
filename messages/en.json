@@ -330,7 +330,8 @@
 		"past_date": "Past Date",
 		"selected": "Selected",
 		"select_checkout": "Select your check-out date",
-		"by_arrangement": "Available — contact us"
+		"by_arrangement": "Available — contact us",
+		"checkout_only": "Check-out morning only"
 	},
 	"booking_summary": {
 		"title": "Booking Summary",

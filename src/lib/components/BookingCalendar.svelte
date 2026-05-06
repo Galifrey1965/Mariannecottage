@@ -17,6 +17,13 @@
 		lang: Locale;
 		availability?: Record<string, boolean>;
 		testBlockedDates?: string[];
+		// Dates that are "checkout-only": the calendar marks them unavailable
+		// because they're the check-in (afternoon) of an existing booking,
+		// but a *new* booking can still end on the morning of one. Industry-
+		// standard same-day turnover — without this we silently block a
+		// bookable range and lose the booking. Visualised with a half-shaded
+		// cell so guests see the morning-only affordance.
+		checkoutOnlyDates?: string[];
 		onDateRangeSelect?: (checkIn: Date, checkOut: Date) => void;
 		minDate?: Date;
 		maxDate?: Date;
@@ -50,6 +57,7 @@
 		lang,
 		availability = {},
 		testBlockedDates = [],
+		checkoutOnlyDates = [],
 		onDateRangeSelect,
 		minDate = new Date(),
 		maxDate,
@@ -65,6 +73,14 @@
 
 	const testBlockedSet = $derived(new Set(testBlockedDates));
 	const isTestBlocked = (date: Date) => testBlockedSet.has(toISODate(date));
+
+	const checkoutOnlySet = $derived(new Set(checkoutOnlyDates));
+	// A date is "checkout-only" when it's the check-in afternoon of an
+	// existing booking. Selectable as the END of a new range (the new
+	// guest leaves that morning), never as start or middle. Mirrors the
+	// server's exclusive-end clash check inside book_dates_atomic, so
+	// what the calendar offers matches what the API will accept.
+	const isCheckoutOnly = (date: Date) => checkoutOnlySet.has(toISODate(date));
 
 	const mondayStart = $derived(lang === 'fr' || lang === 'de');
 
@@ -125,13 +141,21 @@
 		return true;
 	};
 
-	/** Check if every date in the range [a, b] is available */
+	/**
+	 * Check if every *night* in the range [a, b) is bookable. Exclusive of
+	 * the end date because that day is the check-out morning, not a slept-
+	 * in night — same convention as the `book_dates_atomic` RPC. Without
+	 * the exclusive end, a new booking that ends on the morning of an
+	 * existing booking's check-in (industry-standard same-day turnover)
+	 * would be blocked even though the cottage is genuinely free those
+	 * nights.
+	 */
 	const isRangeAvailable = (a: Date, b: Date): boolean => {
 		const start = a < b ? a : b;
 		const end = a < b ? b : a;
 		const d = new Date(start);
-		while (d <= end) {
-			if (!isAvailable(d) || isPast(d)) return false;
+		while (d < end) {
+			if (!isAvailable(d) || isPast(d) || testBlockedSet.has(toISODate(d)) || isCheckoutOnly(d)) return false;
 			d.setDate(d.getDate() + 1);
 		}
 		return true;
@@ -140,8 +164,10 @@
 	const nightsBetween = (a: Date, b: Date) =>
 		Math.round(Math.abs(b.getTime() - a.getTime()) / (1000 * 60 * 60 * 24));
 
-	/** The effective end for display — either confirmed end or hover preview */
-	const displayEnd: Date | null = $derived(selectedEnd ?? (selectedStart && hoveredDate && !isPast(hoveredDate) && isAvailable(hoveredDate) ? hoveredDate : null));
+	/** The effective end for display — either confirmed end or hover preview.
+	 * Hover preview accepts checkout-only days too, since they're a valid
+	 * end-of-range target (just not a start or middle). */
+	const displayEnd: Date | null = $derived(selectedEnd ?? (selectedStart && hoveredDate && !isPast(hoveredDate) && (isAvailable(hoveredDate) || isCheckoutOnly(hoveredDate)) ? hoveredDate : null));
 
 	const isInRange = (date: Date) => {
 		if (!selectedStart || !displayEnd) return false;
@@ -167,7 +193,10 @@
 		// guest selecting a date that's available in the `availability`
 		// table but actually held by a source='test' booking — without it
 		// the click goes through and the API throws DATES_TAKEN.
-		if (!isFree(date)) return;
+		// Exception: a checkout-only date can be clicked once a start is
+		// already selected, so the click can land as the range END.
+		const candidateCheckoutOnly = isCheckoutOnly(date);
+		if (!isFree(date) && !(selectedStart && candidateCheckoutOnly)) return;
 
 		// Orphan day → can't form a valid minimum-stay range. Hand off to
 		// the parent so it can show "contact us" affordance, then bail
@@ -199,10 +228,21 @@
 			return;
 		}
 
-		// Have start, picking end — order them and validate range
+		// Have start, picking end — order them and validate range. A
+		// checkout-only date is special: it can only ever be the end (the
+		// new guest is leaving the morning the existing guest arrives), so
+		// we don't swap if the click landed on one. If the click happens to
+		// be earlier than the existing start, treat it as a no-op rather
+		// than silently moving the start forward into a non-bookable day.
 		let s = selectedStart;
 		let e = date;
-		if (e < s) { const tmp = s; s = e; e = tmp; }
+		if (candidateCheckoutOnly) {
+			if (e <= s) return;
+		} else if (e < s) {
+			const tmp = s;
+			s = e;
+			e = tmp;
+		}
 
 		// Same-date second click. With a 1-night minimum we auto-promote to a
 		// 1-night stay (checkout = checkin + 1) for convenience. With a 2+-night
@@ -212,7 +252,11 @@
 		if (toISODate(s) === toISODate(e)) {
 			if (minNights > 1) return;
 			e = new Date(s.getFullYear(), s.getMonth(), s.getDate() + 1);
-			if (!isAvailable(e)) return; // next day unavailable — can't form a 1-night stay
+			// Auto-promoted end day must be either free or a checkout-only
+			// (next morning is fine to leave on). Without the second branch
+			// the 1-night-stay shortcut would refuse legitimate same-day
+			// turnover endings.
+			if (!isAvailable(e) && !isCheckoutOnly(e)) return;
 		}
 
 		if (!isRangeAvailable(s, e)) return; // block if unavailable dates in range
@@ -319,11 +363,19 @@
 		// directly without touching availability), we want the orange
 		// striped style and a non-clickable cell.
 		if (isTestBlocked(date)) return 'day test-blocked' + outside;
-		if (!isAvailable(date)) return 'day unavailable' + outside;
+		// Selected-endpoint must outrank "unavailable" — a checkout-only
+		// date is unavailable in the availability map but legal as a
+		// confirmed range end, and we want the green endpoint chip not the
+		// faded "unavailable" look.
 		if (isStart(date) || isEnd(date)) return 'day selected-endpoint' + outside;
+		const checkoutOnly = isCheckoutOnly(date);
+		// Range-state classes apply equally to checkout-only ends so the
+		// hover preview reads correctly when the guest sweeps to one.
 		if (isInRange(date) && !previewValid) return 'day preview-invalid' + outside;
 		if (isInRange(date) && isHoverPreview) return 'day hover-range' + outside;
 		if (isInRange(date)) return 'day selected-range' + outside;
+		if (checkoutOnly) return 'day checkout-only' + outside;
+		if (!isAvailable(date)) return 'day unavailable' + outside;
 		// Orphan must outrank "available" so the guest sees the by-arrangement
 		// styling rather than mistaking it for a clickable start date.
 		if (isOrphan(date)) return 'day orphan' + outside;
@@ -371,7 +423,7 @@
 			<button
 				onclick={() => selectDate(date)}
 				onmouseenter={() => hoveredDate = date}
-				disabled={isPast(date) || (!isClickMode && (isOutsideMonth(date) || !isFree(date)))}
+				disabled={isPast(date) || (!isClickMode && (isOutsideMonth(date) || (!isFree(date) && !(selectedStart && isCheckoutOnly(date)))))}
 				class={dayClass(date)}
 				aria-label={date.toLocaleDateString(lang, { weekday: 'long', month: 'long', day: 'numeric' })}
 				aria-selected={isInRange(date)}
@@ -387,6 +439,9 @@
 			<div class="legend-item"><div class="legend-swatch unavailable"></div><span>{t(messages, 'calendar.unavailable')}</span></div>
 			{#if onOrphanClick}
 				<div class="legend-item"><div class="legend-swatch orphan"></div><span>{t(messages, 'calendar.by_arrangement')}</span></div>
+			{/if}
+			{#if checkoutOnlyDates.length > 0}
+				<div class="legend-item"><div class="legend-swatch checkout-only"></div><span>{t(messages, 'calendar.checkout_only')}</span></div>
 			{/if}
 			{#if testBlockedDates.length > 0}
 				<div class="legend-item"><div class="legend-swatch test-blocked"></div><span>{t(messages, 'calendar.test_blocked')}</span></div>
@@ -442,6 +497,21 @@
 	}
 	.day.orphan:hover { filter: brightness(0.95); }
 	.day.unavailable { background: transparent; color: var(--color-text-muted); opacity: 0.3; cursor: default; }
+	/* Checkout-only — the date is the check-in afternoon of an existing
+	   booking, so the cottage is taken from midday onwards but a new guest
+	   can still leave that morning. Half-shaded cell (left = booked, right
+	   = morning free) so the affordance reads at a glance: "you can end
+	   here, you can't start here". */
+	.day.checkout-only {
+		background: linear-gradient(90deg,
+			color-mix(in srgb, var(--color-sage) 40%, var(--color-cream-dark)) 0 50%,
+			var(--md-sys-color-surface-container-lowest) 50% 100%);
+		color: var(--color-text);
+		cursor: pointer;
+		font-weight: 500;
+	}
+	.day.checkout-only:disabled { cursor: default; opacity: 0.55; }
+	.day.checkout-only:not(:disabled):hover { filter: brightness(0.97); }
 	.day.test-blocked {
 		background: repeating-linear-gradient(45deg, #f5b942, #f5b942 4px, #e89c1c 4px, #e89c1c 8px);
 		color: #4a3300;
@@ -504,6 +574,12 @@
 		background: repeating-linear-gradient(135deg,
 			var(--md-sys-color-surface-container-lowest) 0 3px,
 			var(--color-cream-dark) 3px 6px);
+		border: 1px solid var(--color-cream-dark);
+	}
+	.legend-swatch.checkout-only {
+		background: linear-gradient(90deg,
+			color-mix(in srgb, var(--color-sage) 40%, var(--color-cream-dark)) 0 50%,
+			var(--md-sys-color-surface-container-lowest) 50% 100%);
 		border: 1px solid var(--color-cream-dark);
 	}
 

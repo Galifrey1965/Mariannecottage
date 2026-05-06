@@ -4,7 +4,8 @@ import {
 	MIN_NIGHTS,
 	MIN_LEAD_HOURS,
 	getEarliestCheckInDate,
-	nightsBetween
+	nightsBetween,
+	rangesOverlap
 } from './booking-policy';
 
 describe('booking-policy constants', () => {
@@ -64,5 +65,46 @@ describe('nightsBetween', () => {
 
 	it('handles month rollover', () => {
 		expect(nightsBetween('2026-05-30', '2026-06-02')).toBe(3);
+	});
+});
+
+describe('rangesOverlap (same-day turnover)', () => {
+	it('does NOT overlap when one booking ends the morning the next begins', () => {
+		// Industry-standard turnover: A leaves morning of 13 May, B arrives
+		// afternoon of 13 May. Same calendar date, different halves of the
+		// day, no conflict. This is the lost-revenue case the calendar must
+		// not block.
+		expect(rangesOverlap('2026-05-10', '2026-05-13', '2026-05-13', '2026-05-16')).toBe(false);
+	});
+
+	it('does NOT overlap when the new check-out morning equals an existing check-in afternoon', () => {
+		// Mirror of the above — the 14→16 booking ends the morning of 16,
+		// existing booking checks in afternoon of 16. Should be allowed.
+		expect(rangesOverlap('2026-05-14', '2026-05-16', '2026-05-16', '2026-05-19')).toBe(false);
+	});
+
+	it('overlaps when a new booking middle night falls on an existing check-in', () => {
+		// New booking 14→17 wants to sleep nights 14, 15, 16. Existing
+		// booking starts 16. Night of 16 belongs to the existing booking,
+		// so this is a real conflict.
+		expect(rangesOverlap('2026-05-14', '2026-05-17', '2026-05-16', '2026-05-19')).toBe(true);
+	});
+
+	it('overlaps when a new booking starts on an existing check-in', () => {
+		expect(rangesOverlap('2026-05-16', '2026-05-19', '2026-05-16', '2026-05-19')).toBe(true);
+	});
+
+	it('overlaps on a fully contained range', () => {
+		expect(rangesOverlap('2026-05-15', '2026-05-17', '2026-05-10', '2026-05-20')).toBe(true);
+	});
+
+	it('does NOT overlap when ranges are entirely disjoint', () => {
+		expect(rangesOverlap('2026-05-10', '2026-05-12', '2026-05-20', '2026-05-22')).toBe(false);
+	});
+
+	it('is symmetric', () => {
+		const a = rangesOverlap('2026-05-14', '2026-05-16', '2026-05-16', '2026-05-19');
+		const b = rangesOverlap('2026-05-16', '2026-05-19', '2026-05-14', '2026-05-16');
+		expect(a).toBe(b);
 	});
 });

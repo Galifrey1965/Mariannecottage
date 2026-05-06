@@ -43,3 +43,22 @@ export function nightsBetween(checkInISO: string, checkOutISO: string): number {
 	const outMs = new Date(checkOutISO + 'T00:00:00Z').getTime();
 	return Math.round((outMs - inMs) / (1000 * 60 * 60 * 24));
 }
+
+/**
+ * Whether two bookings — each [check-in, check-out) — actually conflict.
+ *
+ * Half-open intervals are intentional: the check-out morning and the next
+ * guest's check-in afternoon share a calendar date but never the cottage,
+ * so [10, 13) and [13, 16) are *not* a conflict (industry-standard same-
+ * day turnover). Mirrors the `date >= check_in AND date < check_out`
+ * guard inside `book_dates_atomic`, kept in sync so client-side previews
+ * agree with the server's accept/reject decision.
+ */
+export function rangesOverlap(
+	aCheckInISO: string,
+	aCheckOutISO: string,
+	bCheckInISO: string,
+	bCheckOutISO: string
+): boolean {
+	return aCheckInISO < bCheckOutISO && bCheckInISO < aCheckOutISO;
+}
