@@ -1,6 +1,8 @@
 // Server-side proxy for the Google Translate v2 helper. Keeps the API key
-// off the browser. Used by the gallery and (future) banners admin pages
-// to auto-fill FR/DE from English.
+// off the browser. Generic across admin pages — currently used by the
+// gallery (image alt text + category labels) and banners admin (banner
+// message). Any future admin form needing FR/DE auto-fill from English
+// can hit this endpoint.
 //
 // POST body: { text: string, targets?: ('fr' | 'de')[] }
 // Returns: { fr: string, de: string }  — empty string per locale on failure.

@@ -29,7 +29,7 @@
 		if (!editing?.label_en?.trim()) return;
 		translating = true;
 		try {
-			const res = await fetch('/api/admin/gallery/translate', {
+			const res = await fetch('/api/admin/translate', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ text: editing.label_en })

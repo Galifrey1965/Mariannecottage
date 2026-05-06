@@ -19,6 +19,7 @@
 	let saveError = $state('');
 	let deleting = $state<string | null>(null);
 	let previewing = $state<Partial<SiteBanner> | null>(null);
+	let translating = $state(false);
 
 	const EFFECTS: SiteBannerEffect[] = ['none', 'fireworks', 'snow', 'sparkles', 'hearts', 'confetti'];
 	const INTENSITIES: SiteBannerEffectIntensity[] = ['continuous', 'burst-idle', 'load-only'];
@@ -101,6 +102,25 @@
 		editing = null;
 		saveError = '';
 		saving = false;
+	}
+
+	async function translateMessage() {
+		if (!editing) return;
+		const text = (editing.message_en ?? '').trim();
+		if (!text) return;
+		translating = true;
+		try {
+			const res = await fetch('/api/admin/translate', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ text })
+			});
+			const out = await res.json();
+			if (out.fr) editing.message_fr = out.fr;
+			if (out.de) editing.message_de = out.de;
+		} finally {
+			translating = false;
+		}
 	}
 
 	function toLocalInput(iso: string | null | undefined): string {
@@ -333,7 +353,18 @@
 				<span>{(editing.message_en ?? '').trim() || 'Live look — your message appears here'}</span>
 			</div>
 
-			<label class="form-label" for="b-en">Message (English) *</label>
+			<div class="label-row">
+				<label class="form-label" for="b-en">Message (English) *</label>
+				<button
+					type="button"
+					class="translate-btn"
+					onclick={translateMessage}
+					disabled={!(editing.message_en ?? '').trim() || translating}
+					title="Auto-fill French and German via Google Translate"
+				>
+					{translating ? 'Translating…' : '↻ Translate'}
+				</button>
+			</div>
 			<input id="b-en" type="text" class="form-input" bind:value={editing.message_en} maxlength="240" />
 
 			<label class="form-label" for="b-fr">Message (French)</label>
@@ -342,7 +373,7 @@
 			<label class="form-label" for="b-de">Message (German)</label>
 			<input id="b-de" type="text" class="form-input" bind:value={editing.message_de} maxlength="240" />
 
-			<p class="hint">EN is shown if the visitor's locale isn't translated.</p>
+			<p class="hint">EN is shown if the visitor's locale isn't translated. ↻ Translate uses Google Translate to fill FR + DE — both fields stay editable.</p>
 
 			<div class="row-2">
 				<div>
@@ -458,6 +489,15 @@
 	.page-subtitle { font-size: 0.875rem; color: var(--color-text-muted); margin: 0.25rem 0 0; }
 	.empty { color: var(--color-text-muted); font-size: 0.875rem; margin: 0; }
 	.hint { font-size: 0.8125rem; color: var(--color-text-muted); margin: 0.25rem 0 0; }
+
+	.label-row { display: flex; align-items: baseline; justify-content: space-between; gap: 0.5rem; }
+	.translate-btn {
+		background: none; border: none; padding: 0;
+		color: var(--color-sage); cursor: pointer; font-size: 0.8125rem;
+		font-family: inherit; font-weight: 500;
+	}
+	.translate-btn:hover { text-decoration: underline; }
+	.translate-btn:disabled { opacity: 0.5; cursor: not-allowed; text-decoration: none; }
 
 	.table-wrap { background: var(--color-bg); border: 1px solid var(--color-cream-dark); border-radius: 12px; overflow: hidden; overflow-x: auto; }
 	table { width: 100%; font-size: 0.875rem; border-collapse: collapse; }

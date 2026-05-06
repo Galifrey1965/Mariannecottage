@@ -89,7 +89,7 @@
 		if (!text) return;
 		translatingNew = true;
 		try {
-			const res = await fetch('/api/admin/gallery/translate', {
+			const res = await fetch('/api/admin/translate', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ text })
@@ -172,7 +172,7 @@
 		if (!text) return;
 		translatingEdit = true;
 		try {
-			const res = await fetch('/api/admin/gallery/translate', {
+			const res = await fetch('/api/admin/translate', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ text })
