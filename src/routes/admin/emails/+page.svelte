@@ -130,7 +130,7 @@
 <style>
 	.page { display: flex; flex-direction: column; gap: 1.25rem; }
 	.page-title { font-family: 'Lora', serif; font-size: 1.75rem; margin: 0; }
-	.page-subtitle { font-size: 0.875rem; color: var(--color-text-muted); margin: 0.25rem 0 0; max-width: 70ch; }
+	.page-subtitle { font-size: 0.875rem; color: var(--color-text-muted); margin: 0.25rem 0 0; }
 
 	.layout { display: grid; grid-template-columns: 280px 1fr; gap: 1.25rem; align-items: start; }
 	@media (max-width: 800px) { .layout { grid-template-columns: 1fr; } }
