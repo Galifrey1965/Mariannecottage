@@ -11,14 +11,18 @@
 
 	let { src, depth, alt, strength = 0.1, easing = 0.2 }: Props = $props();
 
-	let container: HTMLDivElement;
+	let imgEl: HTMLImageElement;
 
 	onMount(() => {
+		if (!imgEl) return;
+		const container = imgEl.parentElement;
+		if (!container) return;
+
 		const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 		const canvas = document.createElement('canvas');
-		canvas.className = 'parallax-canvas';
-		canvas.setAttribute('aria-label', alt);
+		canvas.style.cssText = 'display:block;width:100%;height:100%';
+		canvas.setAttribute('aria-hidden', 'true');
 
 		const gl = canvas.getContext('webgl2') || canvas.getContext('webgl');
 		if (!gl) return;
@@ -107,6 +111,7 @@
 		let aborted = false;
 		let rafId = 0;
 		let isAnimating = false;
+		let canvasInserted = false;
 		let targetX = 0, targetY = 0;
 		let currentX = 0, currentY = 0;
 
@@ -138,9 +143,9 @@
 		}
 
 		function resize() {
-			if (!gl || aborted) return;
+			if (!gl || aborted || !canvasInserted) return;
 			const dpr = Math.min(window.devicePixelRatio || 1, 2);
-			const rect = container.getBoundingClientRect();
+			const rect = container!.getBoundingClientRect();
 			canvas.width = Math.round(rect.width * dpr);
 			canvas.height = Math.round(rect.height * dpr);
 			gl.viewport(0, 0, canvas.width, canvas.height);
@@ -153,23 +158,22 @@
 			imgH = photo.naturalHeight;
 
 			makeTex(0);
-			gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, photo);
+			gl!.texImage2D(gl!.TEXTURE_2D, 0, gl!.RGB, gl!.RGB, gl!.UNSIGNED_BYTE, photo);
 			makeTex(1);
-			gl.texImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE, gl.LUMINANCE, gl.UNSIGNED_BYTE, depthImg);
+			gl!.texImage2D(gl!.TEXTURE_2D, 0, gl!.LUMINANCE, gl!.LUMINANCE, gl!.UNSIGNED_BYTE, depthImg);
 
-			gl.uniform1i(uImage, 0);
-			gl.uniform1i(uDepth, 1);
-			gl.uniform1f(uStrength, strength);
+			gl!.uniform1i(uImage, 0);
+			gl!.uniform1i(uDepth, 1);
+			gl!.uniform1f(uStrength, strength);
 
-			// Replace static <img> with the canvas now that textures are ready.
-			const staticImg = container.querySelector('.parallax-static');
-			staticImg?.remove();
-			container.appendChild(canvas);
+			// Hide the static <img> and insert the canvas.
+			imgEl.style.display = 'none';
+			container!.appendChild(canvas);
+			canvasInserted = true;
 
 			resize();
-			// One initial draw so the canvas isn't blank; loop only runs on input.
-			gl.uniform2f(uMouse, 0, 0);
-			gl.drawArrays(gl.TRIANGLES, 0, 6);
+			gl!.uniform2f(uMouse, 0, 0);
+			gl!.drawArrays(gl!.TRIANGLES, 0, 6);
 		}).catch((e) => {
 			console.warn('[ParallaxImage] texture load failed, keeping static image', e);
 			aborted = true;
@@ -200,19 +204,19 @@
 		}
 
 		function onPointerMove(e: PointerEvent) {
-			if (reducedMotion) return;
-			const rect = container.getBoundingClientRect();
+			if (reducedMotion || !canvasInserted) return;
+			const rect = container!.getBoundingClientRect();
 			targetX = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
 			targetY = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
 			requestFrame();
 		}
 		function onPointerLeave() {
-			if (reducedMotion) return;
+			if (reducedMotion || !canvasInserted) return;
 			targetX = 0; targetY = 0;
 			requestFrame();
 		}
 		function onOrientation(e: DeviceOrientationEvent) {
-			if (reducedMotion) return;
+			if (reducedMotion || !canvasInserted) return;
 			if (e.beta == null || e.gamma == null) return;
 			targetX = Math.max(-1, Math.min(1, (e.gamma || 0) / 30));
 			targetY = Math.max(-1, Math.min(1, ((e.beta || 0) - 45) / 30));
@@ -233,6 +237,7 @@
 		return () => {
 			aborted = true;
 			cancelAnimationFrame(rafId);
+			if (canvasInserted) canvas.remove();
 			container?.removeEventListener('pointermove', onPointerMove);
 			container?.removeEventListener('pointerleave', onPointerLeave);
 			window.removeEventListener('deviceorientation', onOrientation);
@@ -241,24 +246,4 @@
 	});
 </script>
 
-<div class="parallax" bind:this={container}>
-	<img {src} {alt} class="parallax-static" />
-</div>
-
-<style>
-	.parallax {
-		position: relative;
-		width: 100%;
-		height: 100%;
-		overflow: hidden;
-	}
-	.parallax :global(.parallax-static),
-	.parallax :global(.parallax-canvas) {
-		display: block;
-		width: 100%;
-		height: 100%;
-	}
-	.parallax :global(.parallax-static) {
-		object-fit: cover;
-	}
-</style>
+<img bind:this={imgEl} {src} {alt} style="display:block;width:100%;height:100%;object-fit:cover" />
