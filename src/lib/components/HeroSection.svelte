@@ -1,11 +1,13 @@
 <script lang="ts">
 	import { localePath, t } from '$lib/i18n';
 	import type { Messages, Locale } from '$lib/i18n';
+	import ParallaxImage from './ParallaxImage.svelte';
 
 	interface Props {
 		lang: Locale;
 		messages: Messages;
 		image: string;
+		depthImage?: string;
 		title: string;
 		description?: string;
 		cta?: string;
@@ -13,11 +15,17 @@
 		savingsHint?: string;
 	}
 
-	let { lang, messages, image, title, description, cta, ctaLink, savingsHint }: Props = $props();
+	let { lang, messages, image, depthImage, title, description, cta, ctaLink, savingsHint }: Props = $props();
 </script>
 
 <div class="hero">
-	<img src={image} alt={title} class="hero-image" />
+	{#if depthImage}
+		<div class="hero-image">
+			<ParallaxImage src={image} depth={depthImage} alt={title} />
+		</div>
+	{:else}
+		<img src={image} alt={title} class="hero-image" />
+	{/if}
 	<div class="hero-gradient"></div>
 	<div class="hero-content">
 		<h1 class="hero-title">{title}</h1>

@@ -369,8 +369,16 @@
 			scaleX = canvasAspect / imgAspect;
 			offX = (1 - scaleX) / 2;
 		}
-		gl.uniform2f(uTexScale, scaleX, scaleY);
-		gl.uniform2f(uTexOffset, offX, offY);
+		// Headroom: shrink the visible window by `strength` (the max possible
+		// displacement, since max depth = 1.0). Re-center. Displacement now
+		// always samples within the actual image — no edge clamping.
+		const pad = strength;
+		const innerScaleX = scaleX * (1 - 2 * pad);
+		const innerScaleY = scaleY * (1 - 2 * pad);
+		const innerOffX = offX + scaleX * pad;
+		const innerOffY = offY + scaleY * pad;
+		gl.uniform2f(uTexScale, innerScaleX, innerScaleY);
+		gl.uniform2f(uTexOffset, innerOffX, innerOffY);
 	}
 
 	Promise.all([loadImage(photoUrl), loadImage(depthUrl)]).then(([photo, depth]) => {
@@ -431,10 +439,15 @@
 	}
 
 	// controls
+	function refreshCover() {
+		const rect = heroEl.getBoundingClientRect();
+		updateCoverTransform(rect.width, rect.height);
+	}
 	strengthInput.addEventListener('input', () => {
 		strength = parseFloat(strengthInput.value);
 		strengthValue.textContent = strength.toFixed(3);
 		clearActivePreset();
+		refreshCover();
 	});
 	easingInput.addEventListener('input', () => {
 		easing = parseFloat(easingInput.value);
@@ -455,6 +468,7 @@
 		easingValue.textContent = easing.toFixed(2);
 		clearActivePreset();
 		btn.classList.add('active');
+		refreshCover();
 	});
 
 	aspectToggle.addEventListener('click', (e) => {
