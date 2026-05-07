@@ -223,10 +223,19 @@
 			return;
 		}
 
+		// Snap currentMonth onto a clicked outside-month date so the user
+		// sees their selection in context — without this, picking June 1
+		// from the May view leaves the highlight stranded in May's
+		// trailing pad.
+		const snapToMonth = (d: Date) => {
+			if (isOutsideMonth(d)) currentMonth = new Date(d.getFullYear(), d.getMonth(), 1);
+		};
+
 		// No start yet — set it
 		if (!selectedStart) {
 			selectedStart = date;
 			selectedEnd = null;
+			snapToMonth(date);
 			return;
 		}
 
@@ -242,6 +251,7 @@
 		if (selectedEnd) {
 			selectedStart = date;
 			selectedEnd = null;
+			snapToMonth(date);
 			return;
 		}
 
@@ -281,6 +291,7 @@
 
 		selectedStart = s;
 		selectedEnd = e;
+		snapToMonth(e);
 		if (onDateRangeSelect) onDateRangeSelect(s, e);
 	};
 
@@ -445,7 +456,7 @@
 			<button
 				onclick={() => selectDate(date)}
 				onmouseenter={() => hoveredDate = date}
-				disabled={isPast(date) || (!isClickMode && (isOutsideMonth(date) || (!isFree(date) && !(selectedStart && isCheckoutOnly(date)))))}
+				disabled={isPast(date) || (!isClickMode && !isFree(date) && !(selectedStart && isCheckoutOnly(date)))}
 				class={dayClass(date)}
 				aria-label={date.toLocaleDateString(lang, { weekday: 'long', month: 'long', day: 'numeric' })}
 				aria-selected={isInRange(date)}
@@ -570,19 +581,18 @@
 	   without flipping months); the disabled attribute on the button is what
 	   actually gates clicks in non-click-mode. */
 	/* Outside-month days — preview rows from prev/next month so multi-night
-	   stays spanning the boundary read as one block. Free outside-month
-	   days keep a faded cream fill so they don't visually merge with
-	   "unavailable" cells (which used to share the same transparent look,
-	   confusing the owner into reading next-month's free padding as taken).
-	   They're still disabled in non-click-mode — the guest navigates to
-	   that month to actually pick them. */
-	.day.outside { opacity: 0.55; }
+	   stays spanning the boundary read as one block. They are fully
+	   bookable when free; the reduced opacity is just a visual cue that
+	   the cell belongs to the adjacent month. Clicking one snaps the
+	   calendar to that month (see snapToMonth in selectDate) so the
+	   selection lands in context. */
+	.day.outside { opacity: 0.5; }
 	.day.outside:disabled { cursor: default; }
 	.day.outside.available {
 		color: var(--color-text-muted);
 		background: color-mix(in srgb, var(--md-sys-color-surface-container-lowest) 60%, transparent);
 	}
-	.day.outside.unavailable { background: transparent; opacity: 0.25; }
+	.day.outside.unavailable { background: transparent; opacity: 0.3; }
 	.day.selected-endpoint { background: var(--color-sage); color: var(--md-sys-color-on-primary); font-weight: 700; box-shadow: 0 2px 8px color-mix(in srgb, var(--color-sage) 40%, transparent); }
 	.day.selected-range { background: color-mix(in srgb, var(--color-sage) 25%, transparent); color: var(--color-text); }
 	.day.hover-range { background: color-mix(in srgb, var(--color-sage) 12%, transparent); color: var(--color-text); }
