@@ -469,21 +469,19 @@
 	},
 	"arrival": {
 		"title": "Anreise-Informationen",
-		"subtitle": "Alles, was Sie brauchen, um uns zu finden, hineinzukommen und sich einzurichten. Detaillierte Anweisungen werden mit der Buchungsbestätigung per E-Mail versendet.",
+		"subtitle": "Alles, was Sie brauchen, um uns zu finden, hineinzukommen und sich einzurichten.",
 		"check_in_heading": "Anreise",
 		"check_in_body": "Anreise ab 16:00 Uhr am Anreisetag. Eine frühere Anreise ist manchmal möglich — bitte schreiben Sie uns vorher.",
 		"check_out_heading": "Abreise",
 		"check_out_body": "Abreise bis 11:00 Uhr am Abreisetag.",
 		"address_heading": "Das Cottage finden",
-		"address_body": "Couvains, Département Manche, Normandie. Die vollständige Adresse und die what3words-Position sind in der Bestätigungs-E-Mail enthalten.",
+		"address_body": "In Couvains, Département Manche, Normandie — an einer ruhigen Straße in der ländlichen Normandie.",
 		"parking_heading": "Parken",
-		"parking_body": "Kostenlose Parkplätze direkt am Cottage. Die Bestätigungs-E-Mail enthält eine kurze Beschreibung, wo Sie Ihr Auto abstellen.",
-		"key_heading": "Schlüssel und Zugang",
-		"key_body": "Die Zugangsdetails — Schlüsselübergabe oder Schlüsselsafe-Code — werden einige Tage vor Ihrer Anreise mit der Buchungsbestätigung versendet.",
+		"parking_body": "Kostenlose Parkplätze direkt am Cottage.",
 		"wifi_heading": "WLAN",
-		"wifi_body": "Netzwerkname und Passwort sind im Cottage ausgehängt. Sie werden auch mit der Buchungsbestätigung per E-Mail versendet.",
+		"wifi_body": "Netzwerkname und Passwort sind im Cottage ausgehängt.",
 		"contact_heading": "Wenn es bei der Anreise hakt",
-		"contact_body": "Schreiben Sie uns oder rufen Sie an — die Kontaktdaten finden Sie in der Bestätigungs-E-Mail und auf der Kontaktseite."
+		"contact_body": "Schreiben Sie uns oder rufen Sie an — die Kontaktdaten finden Sie auf der Kontaktseite."
 	},
 	"house_rules": {
 		"title": "Hausordnung",

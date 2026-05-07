@@ -469,21 +469,19 @@
 	},
 	"arrival": {
 		"title": "Arrival information",
-		"subtitle": "Everything you need to find us, get in, and settle in. Detailed instructions are sent with your booking confirmation email.",
+		"subtitle": "Everything you need to find us, get in, and settle in.",
 		"check_in_heading": "Check-in",
 		"check_in_body": "Check-in is from 16:00 on the day of arrival. Earlier arrival can sometimes be accommodated — please email us in advance.",
 		"check_out_heading": "Check-out",
 		"check_out_body": "Check-out is by 11:00 on the day of departure.",
 		"address_heading": "Finding the cottage",
-		"address_body": "Couvains, Manche, Normandy. Full street address and what3words location are included in the confirmation email.",
+		"address_body": "In Couvains, Manche, Normandy — a quiet lane in the Norman countryside.",
 		"parking_heading": "Parking",
-		"parking_body": "Free parking is on-site at the cottage. The confirmation email includes a short description of where to leave the car.",
-		"key_heading": "Keys & access",
-		"key_body": "Access details — key collection or lockbox code — are sent with your booking confirmation a few days before arrival.",
+		"parking_body": "Free parking is on-site at the cottage.",
 		"wifi_heading": "Wi-Fi",
-		"wifi_body": "Network name and password are inside the cottage. We email them with your booking confirmation as well.",
+		"wifi_body": "The network name and password are displayed inside the cottage.",
 		"contact_heading": "If you're stuck on arrival",
-		"contact_body": "Email or phone us — contact details are on the confirmation email and the contact page."
+		"contact_body": "Email or phone us — contact details are on the contact page."
 	},
 	"house_rules": {
 		"title": "House rules",

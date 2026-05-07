@@ -469,21 +469,19 @@
 	},
 	"arrival": {
 		"title": "Informations d'arrivée",
-		"subtitle": "Tout ce qu'il vous faut pour nous trouver, entrer et vous installer. Les instructions détaillées vous sont envoyées avec l'e-mail de confirmation.",
+		"subtitle": "Tout ce qu'il vous faut pour nous trouver, entrer et vous installer.",
 		"check_in_heading": "Arrivée",
 		"check_in_body": "Arrivée à partir de 16h00 le jour d'arrivée. Une arrivée plus tôt est parfois possible — merci de nous écrire à l'avance.",
 		"check_out_heading": "Départ",
 		"check_out_body": "Départ avant 11h00 le jour du départ.",
 		"address_heading": "Trouver le cottage",
-		"address_body": "Couvains, Manche, Normandie. L'adresse complète et la localisation what3words sont incluses dans l'e-mail de confirmation.",
+		"address_body": "À Couvains, Manche, Normandie — sur une route tranquille dans la campagne normande.",
 		"parking_heading": "Stationnement",
-		"parking_body": "Stationnement gratuit sur place au gîte. L'e-mail de confirmation comprend une description de l'emplacement.",
-		"key_heading": "Clés et accès",
-		"key_body": "Les modalités d'accès — remise des clés ou code de boîte à clé — sont envoyées avec la confirmation de réservation quelques jours avant votre arrivée.",
+		"parking_body": "Stationnement gratuit sur place au gîte.",
 		"wifi_heading": "Wi-Fi",
-		"wifi_body": "Le nom du réseau et le mot de passe sont affichés dans le cottage. Ils sont également envoyés avec l'e-mail de confirmation.",
+		"wifi_body": "Le nom du réseau et le mot de passe sont affichés dans le gîte.",
 		"contact_heading": "En cas de problème à l'arrivée",
-		"contact_body": "Contactez-nous par e-mail ou téléphone — coordonnées dans l'e-mail de confirmation et sur la page Contact."
+		"contact_body": "Contactez-nous par e-mail ou téléphone — coordonnées sur la page Contact."
 	},
 	"house_rules": {
 		"title": "Règlement intérieur",

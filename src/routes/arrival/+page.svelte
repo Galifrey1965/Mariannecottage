@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { t } from '$lib/i18n';
+	import { COTTAGE } from '$lib/data/cottage';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -24,17 +25,13 @@
 
 	<article class="info-block">
 		<h2>{t(messages, 'arrival.address_heading')}</h2>
-		<p>{t(messages, 'arrival.address_body')}</p>
+		<p>{COTTAGE.address.formattedSingleLine}</p>
+		<p class="muted">{t(messages, 'arrival.address_body')}</p>
 	</article>
 
 	<article class="info-block">
 		<h2>{t(messages, 'arrival.parking_heading')}</h2>
 		<p>{t(messages, 'arrival.parking_body')}</p>
-	</article>
-
-	<article class="info-block">
-		<h2>{t(messages, 'arrival.key_heading')}</h2>
-		<p>{t(messages, 'arrival.key_body')}</p>
 	</article>
 
 	<article class="info-block">
@@ -84,4 +81,6 @@
 		margin: 0 0 0.6rem;
 	}
 	.info-block p { margin: 0; }
+	.info-block p + p { margin-top: 0.4rem; }
+	.info-block .muted { font-size: 0.875rem; opacity: 0.85; }
 </style>
