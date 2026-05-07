@@ -1,0 +1,473 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Hero parallax prototype — Marianne Cottage</title>
+	<style>
+		* { box-sizing: border-box; }
+		html, body { margin: 0; padding: 0; }
+		body {
+			font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+			background: #1a1a1a;
+			color: #e8e8e8;
+			line-height: 1.5;
+			padding: 2rem 1rem;
+		}
+		main { max-width: 1100px; margin: 0 auto; }
+		h1 { font-family: 'Lora', Georgia, serif; font-weight: 400; margin: 0 0 0.5rem; }
+		.lede { color: #aaa; margin: 0 0 1.5rem; }
+
+		.hero {
+			position: relative;
+			width: 100%;
+			aspect-ratio: 16 / 7;
+			border-radius: 12px;
+			overflow: hidden;
+			background: #000;
+			box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+			cursor: crosshair;
+		}
+		canvas { display: block; width: 100%; height: 100%; }
+
+		.hero-overlay {
+			position: absolute;
+			inset: 0;
+			pointer-events: none;
+			background: linear-gradient(to bottom, transparent, transparent 50%, rgba(0,0,0,0.55));
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			text-align: center;
+			color: white;
+			padding: 2rem 1rem;
+			gap: 1rem;
+		}
+		.hero-title {
+			font-family: 'Lora', Georgia, serif;
+			font-weight: 400;
+			font-size: clamp(1.5rem, 4vw, 3rem);
+			margin: 0;
+			text-shadow: 0 2px 12px rgba(0,0,0,0.6);
+			max-width: 50rem;
+		}
+		.hero-cta {
+			display: inline-block;
+			background: #6b8e6b;
+			color: white;
+			padding: 0.7rem 1.5rem;
+			border-radius: 999px;
+			font-weight: 600;
+			text-decoration: none;
+			pointer-events: auto;
+			font-size: 0.95rem;
+		}
+
+		.controls {
+			display: grid;
+			grid-template-columns: 1fr;
+			gap: 1rem;
+			margin: 1.5rem 0;
+			padding: 1rem 1.25rem;
+			background: #242424;
+			border: 1px solid #333;
+			border-radius: 8px;
+		}
+		@media (min-width: 640px) {
+			.controls { grid-template-columns: 1fr 1fr; }
+			.controls-row-full { grid-column: 1 / -1; }
+		}
+		.control { display: flex; flex-direction: column; gap: 0.4rem; font-size: 0.9rem; }
+		.control label { display: flex; justify-content: space-between; align-items: center; color: #ccc; }
+		.control label span { color: #6b8e6b; font-variant-numeric: tabular-nums; font-weight: 600; }
+		.control input[type="range"] {
+			width: 100%;
+			accent-color: #6b8e6b;
+		}
+		.control-help { font-size: 0.78rem; color: #888; margin: 0; }
+
+		.preset-buttons { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+		.preset-buttons button {
+			background: #333;
+			color: #e8e8e8;
+			border: 1px solid #444;
+			padding: 0.4rem 0.9rem;
+			border-radius: 6px;
+			cursor: pointer;
+			font-size: 0.85rem;
+			font-family: inherit;
+		}
+		.preset-buttons button:hover { background: #404040; }
+		.preset-buttons button.active { background: #6b8e6b; border-color: #6b8e6b; color: white; }
+
+		.notice {
+			padding: 0.75rem 1rem;
+			border-radius: 6px;
+			font-size: 0.88rem;
+			margin: 1rem 0;
+		}
+		.notice-warn { background: #3d2e1a; border: 1px solid #6b5527; color: #f4d99e; }
+		.notice-info { background: #1e2e3d; border: 1px solid #2c4a6b; color: #a8cae8; }
+
+		details {
+			margin: 1.5rem 0;
+			padding: 1rem 1.25rem;
+			background: #222;
+			border: 1px solid #333;
+			border-radius: 8px;
+		}
+		details summary { cursor: pointer; font-weight: 600; color: #ccc; }
+		details ul { margin: 0.75rem 0 0; padding-left: 1.5rem; }
+		details li { margin: 0.4rem 0; color: #aaa; font-size: 0.9rem; }
+
+		.aspect-toggle { display: flex; gap: 0.5rem; margin: 1rem 0; flex-wrap: wrap; }
+		.aspect-toggle button {
+			background: #2a2a2a;
+			color: #ccc;
+			border: 1px solid #3a3a3a;
+			padding: 0.35rem 0.8rem;
+			border-radius: 6px;
+			cursor: pointer;
+			font-size: 0.82rem;
+			font-family: inherit;
+		}
+		.aspect-toggle button.active { background: #444; color: white; border-color: #555; }
+	</style>
+</head>
+<body>
+<main>
+	<h1>Cottage hero — depth parallax prototype</h1>
+	<p class="lede">Move your mouse over the image. On a phone or tablet, tilt the device.</p>
+
+	<div class="aspect-toggle" id="aspectToggle">
+		<button data-ratio="16/7" class="active">Hero ratio (live page)</button>
+		<button data-ratio="3/2">Wider (3:2)</button>
+		<button data-ratio="4/3">Native photo (4:3)</button>
+	</div>
+
+	<div class="hero" id="hero">
+		<canvas id="canvas"></canvas>
+		<div class="hero-overlay">
+			<h2 class="hero-title">A quiet corner of Brittany</h2>
+			<a href="#" class="hero-cta">Check availability</a>
+		</div>
+	</div>
+
+	<div class="controls">
+		<div class="control">
+			<label>Strength <span id="strengthValue">0.040</span></label>
+			<input type="range" id="strength" min="0" max="0.15" step="0.005" value="0.04">
+			<p class="control-help">How far layers shift. Higher = more 3D, more obvious.</p>
+		</div>
+		<div class="control">
+			<label>Smoothing <span id="easingValue">0.08</span></label>
+			<input type="range" id="easing" min="0.02" max="0.5" step="0.01" value="0.08">
+			<p class="control-help">Lower = laggy/dreamy. Higher = snaps to mouse.</p>
+		</div>
+		<div class="control controls-row-full">
+			<label>Presets</label>
+			<div class="preset-buttons" id="presets">
+				<button data-strength="0.020" data-easing="0.06">Whisper</button>
+				<button data-strength="0.040" data-easing="0.08" class="active">Subtle</button>
+				<button data-strength="0.075" data-easing="0.12">Noticeable</button>
+				<button data-strength="0.120" data-easing="0.18">Trippy</button>
+			</div>
+			<p class="control-help">"Subtle" is what I'd recommend for a holiday cottage. The others are for comparison.</p>
+		</div>
+	</div>
+
+	<div class="notice notice-info" id="rmNotice" hidden>
+		<strong>Reduced motion is active.</strong> The image is shown static — this is the correct behaviour for users who prefer reduced motion.
+	</div>
+
+	<div class="notice notice-warn" id="webglNotice" hidden>
+		<strong>WebGL not available.</strong> Falling back to the static photo. Production would do the same.
+	</div>
+
+	<details>
+		<summary>Where this is served</summary>
+		<ul>
+			<li>Live (Netlify): <code>/prototypes/hero-parallax.html</code> on the deployed site.</li>
+			<li>Local dev: <code>npm run dev</code> → <a href="http://localhost:5173/prototypes/hero-parallax.html">http://localhost:5173/prototypes/hero-parallax.html</a></li>
+			<li>Don't double-click to open from disk — browsers block WebGL texture uploads from <code>file://</code> URLs.</li>
+		</ul>
+	</details>
+
+	<details>
+		<summary>How this works</summary>
+		<ul>
+			<li>Two textures: the photo and a grayscale depth map (white = close, black = far) generated by Depth-Anything-V2 via Immersity.</li>
+			<li>Fragment shader samples the depth at each pixel and offsets the photo's UV coordinates by <code>mouse × depth × strength</code>. Closer pixels shift more, far pixels shift less — fake 3D.</li>
+			<li>Mouse position lerps toward the actual cursor each frame for organic motion (the "smoothing" slider).</li>
+			<li>On touch devices the browser's <code>DeviceOrientation</code> event drives the same parameter (tilt = mouse).</li>
+			<li>Honours <code>prefers-reduced-motion</code>: if you've turned it on at the OS level, the image is static.</li>
+			<li>If WebGL isn't available, the photo just shows static. Same outcome as the live site.</li>
+		</ul>
+	</details>
+
+	<details>
+		<summary>What would change in the real site</summary>
+		<ul>
+			<li><code>HeroSection.svelte</code> swaps its <code>&lt;img&gt;</code> for a <code>&lt;canvas&gt;</code> with this shader, and accepts an optional <code>depthImage</code> prop.</li>
+			<li>If <code>depthImage</code> is missing or fails to load, falls back to the existing <code>&lt;img&gt;</code>. So no risk to other hero usages.</li>
+			<li>Each homepage hero photo would need its depth map generated once — same workflow you just used (Immersity → download greyscale PNG).</li>
+			<li>Cost: ~80 KB extra over the existing photo for the depth map. Small.</li>
+		</ul>
+	</details>
+</main>
+
+<script>
+(() => {
+	const photoUrl = 'cottage-exterior-front.jpg';
+	const depthUrl = 'cottage-exterior-front-depth.png';
+
+	const canvas = document.getElementById('canvas');
+	const heroEl = document.getElementById('hero');
+	const strengthInput = document.getElementById('strength');
+	const easingInput = document.getElementById('easing');
+	const strengthValue = document.getElementById('strengthValue');
+	const easingValue = document.getElementById('easingValue');
+	const presetsEl = document.getElementById('presets');
+	const aspectToggle = document.getElementById('aspectToggle');
+	const rmNotice = document.getElementById('rmNotice');
+	const webglNotice = document.getElementById('webglNotice');
+
+	const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+	if (reducedMotion) rmNotice.hidden = false;
+
+	let strength = parseFloat(strengthInput.value);
+	let easing = parseFloat(easingInput.value);
+
+	let targetX = 0, targetY = 0;
+	let currentX = 0, currentY = 0;
+
+	const gl = canvas.getContext('webgl2') || canvas.getContext('webgl');
+	if (!gl) {
+		showStaticFallback('WebGL not available.');
+		return;
+	}
+
+	const vsSrc = `
+		attribute vec2 aPos;
+		varying vec2 vUv;
+		void main() {
+			vUv = aPos * 0.5 + 0.5;
+			gl_Position = vec4(aPos, 0.0, 1.0);
+		}
+	`;
+	const fsSrc = `
+		precision highp float;
+		uniform sampler2D uImage;
+		uniform sampler2D uDepth;
+		uniform vec2 uMouse;
+		uniform float uStrength;
+		uniform vec2 uTexScale;
+		uniform vec2 uTexOffset;
+		varying vec2 vUv;
+
+		void main() {
+			vec2 baseUv = vUv * uTexScale + uTexOffset;
+			float depth = texture2D(uDepth, baseUv).r;
+			vec2 sampleUv = baseUv - uMouse * depth * uStrength;
+			gl_FragColor = texture2D(uImage, sampleUv);
+		}
+	`;
+
+	function compile(type, src) {
+		const sh = gl.createShader(type);
+		gl.shaderSource(sh, src);
+		gl.compileShader(sh);
+		if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) {
+			console.error(gl.getShaderInfoLog(sh));
+			return null;
+		}
+		return sh;
+	}
+	const vs = compile(gl.VERTEX_SHADER, vsSrc);
+	const fs = compile(gl.FRAGMENT_SHADER, fsSrc);
+	const prog = gl.createProgram();
+	gl.attachShader(prog, vs);
+	gl.attachShader(prog, fs);
+	gl.linkProgram(prog);
+	gl.useProgram(prog);
+
+	const quad = new Float32Array([-1,-1, 1,-1, -1,1, -1,1, 1,-1, 1,1]);
+	const buf = gl.createBuffer();
+	gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+	gl.bufferData(gl.ARRAY_BUFFER, quad, gl.STATIC_DRAW);
+	const aPos = gl.getAttribLocation(prog, 'aPos');
+	gl.enableVertexAttribArray(aPos);
+	gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
+
+	const uImage = gl.getUniformLocation(prog, 'uImage');
+	const uDepth = gl.getUniformLocation(prog, 'uDepth');
+	const uMouse = gl.getUniformLocation(prog, 'uMouse');
+	const uStrength = gl.getUniformLocation(prog, 'uStrength');
+	const uTexScale = gl.getUniformLocation(prog, 'uTexScale');
+	const uTexOffset = gl.getUniformLocation(prog, 'uTexOffset');
+
+	function makeTex(unit) {
+		const t = gl.createTexture();
+		gl.activeTexture(gl.TEXTURE0 + unit);
+		gl.bindTexture(gl.TEXTURE_2D, t);
+		gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+		return t;
+	}
+
+	function loadImage(url) {
+		return new Promise((res, rej) => {
+			const img = new Image();
+			img.onload = () => res(img);
+			img.onerror = () => rej(new Error('failed to load ' + url));
+			img.src = url;
+		});
+	}
+
+	function showStaticFallback(message) {
+		webglNotice.hidden = false;
+		webglNotice.querySelector('strong').textContent = message;
+		const fb = new Image();
+		fb.src = photoUrl;
+		fb.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block';
+		fb.onerror = () => {
+			fb.replaceWith(Object.assign(document.createElement('div'), {
+				textContent: 'Image could not be loaded. Serve this file over HTTP — see notes below.',
+				style: 'color:#aaa;display:flex;align-items:center;justify-content:center;height:100%;padding:1rem;text-align:center'
+			}));
+		};
+		canvas.replaceWith(fb);
+	}
+
+	let imgW = 0, imgH = 0;
+	let aborted = false;
+
+	function resize() {
+		const dpr = Math.min(window.devicePixelRatio || 1, 2);
+		const rect = heroEl.getBoundingClientRect();
+		canvas.width = Math.round(rect.width * dpr);
+		canvas.height = Math.round(rect.height * dpr);
+		gl.viewport(0, 0, canvas.width, canvas.height);
+		updateCoverTransform(rect.width, rect.height);
+	}
+
+	function updateCoverTransform(canvasW, canvasH) {
+		if (!imgW || !imgH) return;
+		const canvasAspect = canvasW / canvasH;
+		const imgAspect = imgW / imgH;
+		let scaleX = 1, scaleY = 1, offX = 0, offY = 0;
+		if (canvasAspect > imgAspect) {
+			// canvas wider — crop top/bottom
+			scaleY = imgAspect / canvasAspect;
+			offY = (1 - scaleY) / 2;
+		} else {
+			// canvas narrower — crop sides
+			scaleX = canvasAspect / imgAspect;
+			offX = (1 - scaleX) / 2;
+		}
+		gl.uniform2f(uTexScale, scaleX, scaleY);
+		gl.uniform2f(uTexOffset, offX, offY);
+	}
+
+	Promise.all([loadImage(photoUrl), loadImage(depthUrl)]).then(([photo, depth]) => {
+		imgW = photo.naturalWidth;
+		imgH = photo.naturalHeight;
+
+		const photoTex = makeTex(0);
+		gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, photo);
+		const depthTex = makeTex(1);
+		gl.texImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE, gl.LUMINANCE, gl.UNSIGNED_BYTE, depth);
+
+		gl.uniform1i(uImage, 0);
+		gl.uniform1i(uDepth, 1);
+
+		resize();
+		requestAnimationFrame(loop);
+	}).catch((e) => {
+		console.error('Image / texture load failed', e);
+		aborted = true;
+		showStaticFallback('Image could not be loaded into WebGL.');
+	});
+
+	function loop() {
+		if (aborted) return;
+		// lerp current toward target
+		if (reducedMotion) {
+			currentX = 0; currentY = 0;
+		} else {
+			currentX += (targetX - currentX) * easing;
+			currentY += (targetY - currentY) * easing;
+		}
+		gl.uniform2f(uMouse, currentX, currentY);
+		gl.uniform1f(uStrength, strength);
+		gl.drawArrays(gl.TRIANGLES, 0, 6);
+		requestAnimationFrame(loop);
+	}
+
+	// pointer
+	heroEl.addEventListener('pointermove', (e) => {
+		const rect = heroEl.getBoundingClientRect();
+		const x = (e.clientX - rect.left) / rect.width;   // 0..1
+		const y = (e.clientY - rect.top) / rect.height;   // 0..1
+		targetX = (x - 0.5) * 2;   // -1..1
+		targetY = (y - 0.5) * 2;
+	});
+	heroEl.addEventListener('pointerleave', () => {
+		targetX = 0; targetY = 0;
+	});
+
+	// gyro on mobile
+	if (window.DeviceOrientationEvent) {
+		window.addEventListener('deviceorientation', (e) => {
+			if (e.beta == null || e.gamma == null) return;
+			// gamma = left/right tilt (-90 to 90), beta = front/back (-180 to 180)
+			targetX = Math.max(-1, Math.min(1, (e.gamma || 0) / 30));
+			targetY = Math.max(-1, Math.min(1, ((e.beta || 0) - 45) / 30));
+		});
+	}
+
+	// controls
+	strengthInput.addEventListener('input', () => {
+		strength = parseFloat(strengthInput.value);
+		strengthValue.textContent = strength.toFixed(3);
+		clearActivePreset();
+	});
+	easingInput.addEventListener('input', () => {
+		easing = parseFloat(easingInput.value);
+		easingValue.textContent = easing.toFixed(2);
+		clearActivePreset();
+	});
+	function clearActivePreset() {
+		presetsEl.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+	}
+	presetsEl.addEventListener('click', (e) => {
+		const btn = e.target.closest('button');
+		if (!btn) return;
+		strength = parseFloat(btn.dataset.strength);
+		easing = parseFloat(btn.dataset.easing);
+		strengthInput.value = strength;
+		easingInput.value = easing;
+		strengthValue.textContent = strength.toFixed(3);
+		easingValue.textContent = easing.toFixed(2);
+		clearActivePreset();
+		btn.classList.add('active');
+	});
+
+	aspectToggle.addEventListener('click', (e) => {
+		const btn = e.target.closest('button');
+		if (!btn) return;
+		aspectToggle.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+		btn.classList.add('active');
+		heroEl.style.aspectRatio = btn.dataset.ratio.replace('/', ' / ');
+		requestAnimationFrame(resize);
+	});
+
+	window.addEventListener('resize', resize);
+})();
+</script>
+</body>
+</html>
