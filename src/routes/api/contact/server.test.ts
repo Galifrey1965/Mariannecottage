@@ -10,13 +10,19 @@ vi.mock('$lib/server/email', () => ({
 import { POST } from './+server';
 import { emailService } from '$lib/server/email';
 
+// Unique IP per call so the in-memory rate limiter (5/min/IP) doesn't
+// 429 the later tests in the suite.
+let ipCounter = 0;
 function makeRequest(body: Record<string, unknown>) {
+	const ip = `10.0.${Math.floor(ipCounter / 256)}.${ipCounter % 256}`;
+	ipCounter += 1;
 	return {
 		request: new Request('http://localhost/api/contact', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify(body)
-		})
+		}),
+		getClientAddress: () => ip
 	} as any;
 }
 

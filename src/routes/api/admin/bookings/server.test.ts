@@ -156,10 +156,13 @@ describe('PATCH /api/admin/bookings', () => {
 		const data = await res.json();
 		expect(data.success).toBe(true);
 
+		// pending → confirmed is now classed as a manual confirm (see
+		// bf85063 admin pre-launch polish), so the audit action is
+		// 'booking.manual_confirm' rather than the generic 'booking.update'.
 		expect(logAdminEvent).toHaveBeenCalledWith(
 			expect.objectContaining({
 				user_id: 'user-123',
-				action: 'booking.update',
+				action: 'booking.manual_confirm',
 				target_type: 'booking',
 				target_id: '1'
 			})
