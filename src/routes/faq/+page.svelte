@@ -13,7 +13,7 @@
 	const items: Faq[] = [
 		{ qKey: 'faq.q1', pending: true },
 		{ qKey: 'faq.q2', aKey: 'faq.a2' },
-		{ qKey: 'faq.q3', pending: true },
+		{ qKey: 'faq.q3', aKey: 'faq.a3' },
 		{ qKey: 'faq.q4', pending: true },
 		{ qKey: 'faq.q5', pending: true },
 		{ qKey: 'faq.q6', aKey: 'faq.a6' },

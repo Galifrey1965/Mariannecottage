@@ -19,7 +19,7 @@
 
 	<article class="info-block">
 		<h2>{t(messages, 'house_rules.pets_heading')}</h2>
-		<p><span class="pending">{t(messages, 'house_rules.pending')}</span></p>
+		<p>{t(messages, 'house_rules.pets_body')}</p>
 	</article>
 
 	<article class="info-block">
@@ -44,7 +44,7 @@
 
 	<article class="info-block">
 		<h2>{t(messages, 'house_rules.damages_heading')}</h2>
-		<p><span class="pending">{t(messages, 'house_rules.pending')}</span></p>
+		<p>{t(messages, 'house_rules.damages_body')}</p>
 	</article>
 </section>
 

@@ -1,14 +1,15 @@
 <script lang="ts">
 	import { t } from '$lib/i18n';
+	import { COTTAGE } from '$lib/data/cottage';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
 	const messages = $derived(data.messages);
 
-	// Pending values are awaiting Mark's confirmation per
-	// documentation/specs/legal-page-inputs.md. They render as a visible
-	// pending pill so we don't ship blank legal text by accident.
-	const pending = (key: string) => `${t(messages, key)}`;
+	// Mark's SIRET is registered against "1 Impasse de la Haye" — keep it
+	// here verbatim for the legal mentions, separate from cottage.ts which
+	// holds the postal-mailing form ("1 La Haye"). Same physical address.
+	const registeredAddress = '1 Impasse de la Haye, 50680 Couvains, France';
 
 	const sections = [
 		{ id: 'mentions', key: 'mentions_heading' },
@@ -27,7 +28,7 @@
 		<p class="page-intro">{t(messages, 'legal.intro')}</p>
 		<p class="page-meta">
 			<span class="meta-label">{t(messages, 'legal.last_updated')}:</span>
-			<time datetime="2026-05-06">2026-05-06</time>
+			<time datetime="2026-05-07">2026-05-07</time>
 		</p>
 	</header>
 
@@ -46,31 +47,31 @@
 		<p class="block-intro">{t(messages, 'legal.mentions_intro')}</p>
 		<dl class="kv">
 			<dt>{t(messages, 'legal.mentions_legal_form')}</dt>
-			<dd><span class="pending">{pending('legal.pending')}</span></dd>
+			<dd>Auto-entrepreneur</dd>
 
 			<dt>{t(messages, 'legal.mentions_business_name')}</dt>
-			<dd><span class="pending">{pending('legal.pending')}</span></dd>
+			<dd>{COTTAGE.name}</dd>
 
 			<dt>{t(messages, 'legal.mentions_siret')}</dt>
-			<dd><span class="pending">{pending('legal.pending')}</span></dd>
+			<dd>954 040 804 00013</dd>
 
 			<dt>{t(messages, 'legal.mentions_ape')}</dt>
-			<dd><span class="pending">{pending('legal.pending')}</span></dd>
+			<dd>55.20Z</dd>
 
 			<dt>{t(messages, 'legal.mentions_vat')}</dt>
-			<dd><span class="pending">{pending('legal.pending')}</span></dd>
+			<dd>{t(messages, 'legal.not_applicable')}</dd>
 
 			<dt>{t(messages, 'legal.mentions_address')}</dt>
-			<dd><span class="pending">{pending('legal.pending')}</span></dd>
+			<dd>{registeredAddress}</dd>
 
 			<dt>{t(messages, 'legal.mentions_director')}</dt>
-			<dd><span class="pending">{pending('legal.pending')}</span></dd>
+			<dd>Mark Faulkner</dd>
 
 			<dt>{t(messages, 'legal.mentions_email')}</dt>
-			<dd>booking@mariannecottage.fr</dd>
+			<dd><a href="mailto:{COTTAGE.contact.email}">{COTTAGE.contact.email}</a></dd>
 
 			<dt>{t(messages, 'legal.mentions_phone')}</dt>
-			<dd><span class="pending">{pending('legal.pending')}</span></dd>
+			<dd>{COTTAGE.contact.telephone}</dd>
 		</dl>
 	</article>
 
@@ -85,7 +86,7 @@
 		<h2>{t(messages, 'legal.gdpr_heading')}</h2>
 
 		<h3>{t(messages, 'legal.gdpr_controller_heading')}</h3>
-		<p><span class="pending">{pending('legal.pending')}</span></p>
+		<p>{t(messages, 'legal.gdpr_controller_body')}</p>
 
 		<h3>{t(messages, 'legal.gdpr_processing_heading')}</h3>
 		<ul class="prose-list">
@@ -126,11 +127,11 @@
 			<li>{t(messages, 'legal.terms_quiet_hours')}</li>
 			<li>
 				<strong>{t(messages, 'legal.terms_pets_label')}:</strong>
-				<span class="pending">{pending('legal.pending')}</span>
+				{t(messages, 'legal.terms_pets_body')}
 			</li>
 			<li>
 				<strong>{t(messages, 'legal.terms_damages_label')}:</strong>
-				<span class="pending">{pending('legal.pending')}</span>
+				{t(messages, 'legal.terms_damages_body')}
 			</li>
 		</ul>
 
@@ -239,6 +240,7 @@
 	.legal-block p:last-child { margin-bottom: 0; }
 	.legal-block .block-intro { font-style: italic; }
 	.legal-block .muted { font-size: 0.875rem; opacity: 0.85; }
+	.legal-block a { color: var(--theme-accent); }
 
 	.prose-list {
 		list-style: disc;
@@ -261,19 +263,5 @@
 	}
 	.kv dd {
 		margin: 0;
-	}
-
-	.pending {
-		display: inline-block;
-		font-size: 0.75rem;
-		font-weight: 600;
-		letter-spacing: 0.04em;
-		text-transform: uppercase;
-		color: #8a5a00;
-		background: #fff4d6;
-		border: 1px solid #f5b942;
-		border-radius: 9999px;
-		padding: 0.1rem 0.55rem;
-		vertical-align: middle;
 	}
 </style>
