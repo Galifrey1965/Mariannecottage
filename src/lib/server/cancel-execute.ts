@@ -67,7 +67,15 @@ export async function loadBookingForCancel(bookingId: string): Promise<BookingPr
 export interface ExecuteCancelInput {
 	booking: Booking;
 	quote: RefundQuote | null;
-	refundChoice: 'auto' | 'none';
+	refundChoice: 'auto' | 'none' | 'override';
+	/**
+	 * Custom refund amount in EUR (not cents). Required when
+	 * refundChoice === 'override'. Used for goodwill refunds on
+	 * non-refundable bookings, partial-refund settlements, etc.
+	 * Always paired with a non-empty `reason` so the audit trail
+	 * captures why the policy was overridden.
+	 */
+	overrideAmount?: number;
 	reason?: string;
 	source: 'admin' | 'guest';
 	/**
@@ -96,14 +104,39 @@ export class CancelStateError extends Error {
 }
 
 export async function executeCancellation(input: ExecuteCancelInput): Promise<ExecuteCancelResult> {
-	const { booking, quote, refundChoice, reason, source, userId, markTokenUsed } = input;
+	const { booking, quote, refundChoice, overrideAmount, reason, source, userId, markTokenUsed } = input;
 
 	if (!CANCELLABLE_STATUSES.has(booking.status)) {
 		throw new CancelStateError(409, `Cannot cancel a booking in status '${booking.status}'`);
 	}
 
-	let stripeRefundId: string | null = null;
+	// Override gates: validate up-front so we don't half-cancel before
+	// realising the input was malformed. Override is admin-only territory
+	// (the guest magic-link path always passes 'auto'), so loose validation
+	// here is fine — the API layer also re-validates.
+	if (refundChoice === 'override') {
+		if (typeof overrideAmount !== 'number' || !Number.isFinite(overrideAmount) || overrideAmount <= 0) {
+			throw new CancelStateError(400, 'Override refund requires a positive amount');
+		}
+		if (overrideAmount > booking.total_cost) {
+			throw new CancelStateError(400, 'Override refund cannot exceed the booking total');
+		}
+		if (!booking.payment_intent_id) {
+			throw new CancelStateError(400, 'Cannot refund — no payment_intent_id on this booking');
+		}
+		if (booking.status !== 'confirmed') {
+			throw new CancelStateError(400, 'Override refund only valid for confirmed bookings');
+		}
+		if (!reason || !reason.trim()) {
+			throw new CancelStateError(400, 'Override refund requires a reason');
+		}
+	}
 
+	// Resolve the effective refund amount based on the choice. Auto follows
+	// the snapshot policy quote; override uses the admin-supplied amount;
+	// none refunds nothing.
+	let effectiveAmount = 0;
+	const isOverride = refundChoice === 'override';
 	if (
 		refundChoice === 'auto' &&
 		booking.payment_intent_id &&
@@ -111,12 +144,19 @@ export async function executeCancellation(input: ExecuteCancelInput): Promise<Ex
 		quote &&
 		quote.refund_amount > 0
 	) {
+		effectiveAmount = quote.refund_amount;
+	} else if (isOverride) {
+		effectiveAmount = overrideAmount as number;
+	}
+
+	let stripeRefundId: string | null = null;
+	if (effectiveAmount > 0 && booking.payment_intent_id) {
 		const stripe = getStripe();
 		if (!stripe) {
 			throw new CancelStateError(503, 'Stripe not configured; cannot process refund');
 		}
 		try {
-			const amountCents = Math.round(quote.refund_amount * 100);
+			const amountCents = Math.round(effectiveAmount * 100);
 			const refund = await stripe.refunds.create(
 				{
 					payment_intent: booking.payment_intent_id,
@@ -125,7 +165,8 @@ export async function executeCancellation(input: ExecuteCancelInput): Promise<Ex
 					metadata: {
 						booking_id: booking.id,
 						booking_reference: booking.booking_reference,
-						refund_pct: String(quote.refund_pct),
+						refund_pct: isOverride ? 'override' : String(quote?.refund_pct ?? 0),
+						policy_overridden: isOverride ? 'true' : 'false',
 						source,
 						initiator_user_id: userId ?? '',
 						guest_or_admin_reason: reason ?? ''
@@ -205,10 +246,16 @@ export async function executeCancellation(input: ExecuteCancelInput): Promise<Ex
 		metadata: {
 			source,
 			refund_choice: refundChoice,
+			policy_overridden: isOverride,
 			reason: reason ?? null,
 			prior_status: booking.status,
-			refund_amount: quote?.refund_amount ?? 0,
-			refund_pct: quote?.refund_pct ?? 0,
+			// For an override, the effective amount drives the audit log; the
+			// quote (still computed against the snapshot policy) is recorded
+			// alongside as `policy_quoted_amount` so reviewers can see how far
+			// the override deviated from policy.
+			refund_amount: effectiveAmount,
+			policy_quoted_amount: quote?.refund_amount ?? 0,
+			refund_pct: isOverride ? null : (quote?.refund_pct ?? 0),
 			absorbed_fee_estimate: quote?.absorbed_fee_estimate ?? 0,
 			policy_name: quote?.policy_name ?? null,
 			payment_intent_id: booking.payment_intent_id ?? null,
@@ -226,12 +273,17 @@ export async function executeCancellation(input: ExecuteCancelInput): Promise<Ex
 	// once Stripe actually clears the refund.
 	if (updatedBooking.guest_email) {
 		try {
+			// Email summary tracks what the guest actually got refunded
+			// (effectiveAmount) — for an override that's the admin's number,
+			// not the policy quote. policyName flips to 'Goodwill override'
+			// so the guest doesn't read "Non-refundable" alongside a
+			// non-zero refund and get confused.
 			const refundSummary =
-				stripeRefundId && quote && quote.refund_amount > 0
+				stripeRefundId && effectiveAmount > 0
 					? {
-							refundAmount: quote.refund_amount,
-							refundPct: quote.refund_pct,
-							policyName: quote.policy_name
+							refundAmount: effectiveAmount,
+							refundPct: isOverride ? 0 : (quote?.refund_pct ?? 0),
+							policyName: isOverride ? 'Goodwill override' : (quote?.policy_name ?? '')
 					  }
 					: null;
 			await emailService.sendBookingCancelled(

@@ -78,7 +78,8 @@ export const GET: RequestHandler = async ({ locals, url }) => {
 interface CancelPostBody {
 	id: string;
 	reason?: string;
-	refund: 'auto' | 'none';
+	refund: 'auto' | 'none' | 'override';
+	override_amount?: number;
 }
 
 export const POST: RequestHandler = async ({ locals, request }) => {
@@ -87,8 +88,17 @@ export const POST: RequestHandler = async ({ locals, request }) => {
 	}
 
 	const body = (await request.json()) as Partial<CancelPostBody>;
-	if (!body.id || (body.refund !== 'auto' && body.refund !== 'none')) {
-		return json({ error: 'id and refund (auto|none) required' }, { status: 400 });
+	if (!body.id || !body.refund || !['auto', 'none', 'override'].includes(body.refund)) {
+		return json({ error: 'id and refund (auto|none|override) required' }, { status: 400 });
+	}
+
+	if (body.refund === 'override') {
+		if (typeof body.override_amount !== 'number' || !Number.isFinite(body.override_amount) || body.override_amount <= 0) {
+			return json({ error: 'override_amount must be a positive number' }, { status: 400 });
+		}
+		if (!body.reason || !body.reason.trim()) {
+			return json({ error: 'reason is required when overriding the policy' }, { status: 400 });
+		}
 	}
 
 	const preview = await loadBookingForCancel(body.id);
@@ -99,6 +109,7 @@ export const POST: RequestHandler = async ({ locals, request }) => {
 			booking: preview.booking,
 			quote: preview.quote,
 			refundChoice: body.refund,
+			overrideAmount: body.refund === 'override' ? body.override_amount : undefined,
 			reason: body.reason,
 			source: 'admin',
 			userId: locals.user.id

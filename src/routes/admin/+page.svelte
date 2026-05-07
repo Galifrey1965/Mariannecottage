@@ -155,8 +155,17 @@
 	let cancelLoading = $state(false);
 	let cancelExecuting = $state(false);
 	let cancelReason = $state('');
-	let cancelChoice = $state<'auto' | 'none'>('auto');
+	let cancelChoice = $state<'auto' | 'none' | 'override'>('auto');
+	let cancelOverrideAmount = $state<number | null>(null);
 	let cancelError = $state('');
+	// Treat any policy whose every schedule row refunds 0% as non-refundable.
+	// Catches the seeded "Non-refundable" row plus any future custom policy
+	// the owner might create with the same effect, without name-coupling.
+	const isNonRefundablePolicy = $derived.by(() => {
+		if (!cancelPreview) return false;
+		const sched = cancelPreview.policy.schedule;
+		return sched.length > 0 && sched.every((r) => r.refund_pct === 0);
+	});
 	let absorbedFeeTotal = $state(data.absorbedFeeTotal ?? 0);
 	let absorbedFeeRefundCount = $state(data.absorbedFeeRefundCount ?? 0);
 
@@ -379,6 +388,7 @@
 		cancelError = '';
 		cancelReason = '';
 		cancelChoice = 'auto';
+		cancelOverrideAmount = null;
 		try {
 			const res = await fetch(`/api/admin/bookings/cancel?id=${encodeURIComponent(b.id)}`);
 			if (!res.ok) {
@@ -402,6 +412,23 @@
 
 	async function executeCancel() {
 		if (!cancelPreview) return;
+		// Override gate: amount must be positive, ≤ booking total, with a reason.
+		// Server re-validates so this is purely a UX guard — no point letting
+		// the click hit the API when we know it'll 400.
+		if (cancelChoice === 'override') {
+			if (!cancelOverrideAmount || cancelOverrideAmount <= 0) {
+				cancelError = 'Enter a positive override refund amount';
+				return;
+			}
+			if (cancelOverrideAmount > cancelPreview.booking.total_cost) {
+				cancelError = 'Override amount cannot exceed the booking total';
+				return;
+			}
+			if (!cancelReason.trim()) {
+				cancelError = 'A reason is required when overriding the cancellation policy';
+				return;
+			}
+		}
 		cancelExecuting = true;
 		cancelError = '';
 		try {
@@ -411,6 +438,7 @@
 				body: JSON.stringify({
 					id: cancelPreview.booking.id,
 					refund: cancelChoice,
+					override_amount: cancelChoice === 'override' ? cancelOverrideAmount : undefined,
 					reason: cancelReason.trim() || undefined
 				})
 			});
@@ -1049,7 +1077,7 @@
 					<div class="cancel-actions">
 						<button onclick={closeCancelLinkDialog} class="btn-outline">
 							<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-							Done
+							Close
 						</button>
 						{#if cancelLinkUrl && selectedBooking}
 							<button
@@ -1088,8 +1116,11 @@
 						<div>
 							<p class="mono sub-text" style="color: var(--color-sage);">{cancelPreview.booking.booking_reference}</p>
 							<h3 class="detail-title">Cancel & Refund</h3>
+							{#if isNonRefundablePolicy}
+								<p class="nonref-badge" role="status">⚠ Non-refundable rate plan</p>
+							{/if}
 						</div>
-						<button onclick={closeCancelDialog} class="close-btn" disabled={cancelExecuting}>✕</button>
+						<button onclick={closeCancelDialog} class="close-btn" disabled={cancelExecuting} aria-label="Close">✕</button>
 					</div>
 
 					<div class="detail-section">
@@ -1151,16 +1182,50 @@
 							/>
 							<span>Cancel without refund</span>
 						</label>
+						<label class="cancel-radio">
+							<input
+								type="radio"
+								name="cancel-choice"
+								value="override"
+								bind:group={cancelChoice}
+								disabled={!cancelPreview.booking.payment_intent_id || cancelPreview.booking.status !== 'confirmed' || cancelExecuting}
+							/>
+							<span>Override policy — issue custom refund</span>
+						</label>
+						{#if cancelChoice === 'override'}
+							<div class="override-input">
+								<label for="override-amount" class="detail-label">Refund amount (€)</label>
+								<input
+									id="override-amount"
+									type="number"
+									min="0.01"
+									max={cancelPreview.booking.total_cost}
+									step="0.01"
+									bind:value={cancelOverrideAmount}
+									disabled={cancelExecuting}
+									class="form-input"
+									placeholder={`Up to ${cancelPreview.booking.total_cost.toFixed(2)}`}
+								/>
+								<p class="override-hint">
+									Booking total: {formatCurrency(cancelPreview.booking.total_cost)}.
+									Reason field below is required for an override.
+								</p>
+							</div>
+						{/if}
 					</div>
 
 					<div class="detail-section">
-						<label for="cancel-reason" class="detail-label">Reason (admin notes)</label>
+						<label for="cancel-reason" class="detail-label">
+							{cancelChoice === 'override' ? 'Reason (required)' : 'Reason (admin notes)'}
+						</label>
 						<textarea
 							id="cancel-reason"
 							bind:value={cancelReason}
 							class="form-input"
 							rows="2"
-							placeholder="Optional — why this booking is being cancelled"
+							placeholder={cancelChoice === 'override'
+								? 'Why is the cancellation policy being overridden?'
+								: 'Optional — why this booking is being cancelled'}
 							disabled={cancelExecuting}
 						></textarea>
 					</div>
@@ -1172,15 +1237,32 @@
 					<div class="cancel-actions">
 						<button onclick={closeCancelDialog} class="btn-outline" disabled={cancelExecuting}>
 							<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-							Cancel
+							Close
 						</button>
 						<button
 							onclick={executeCancel}
 							class="btn-primary"
-							disabled={cancelExecuting || (cancelChoice === 'auto' && !cancelPreview.can_refund)}
+							disabled={
+								cancelExecuting ||
+								(cancelChoice === 'auto' && !cancelPreview.can_refund) ||
+								(cancelChoice === 'override' && (
+									!cancelOverrideAmount ||
+									cancelOverrideAmount <= 0 ||
+									cancelOverrideAmount > cancelPreview.booking.total_cost ||
+									!cancelReason.trim()
+								))
+							}
 						>
 							<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M3 21v-5h5"/></svg>
-							{cancelExecuting ? 'Processing…' : (cancelChoice === 'auto' ? `Refund ${formatCurrency(cancelPreview.quote.refund_amount)} & cancel` : 'Cancel without refund')}
+							{#if cancelExecuting}
+								Processing…
+							{:else if cancelChoice === 'auto'}
+								Refund {formatCurrency(cancelPreview.quote.refund_amount)} & cancel
+							{:else if cancelChoice === 'override'}
+								Override · refund {formatCurrency(cancelOverrideAmount ?? 0)} & cancel
+							{:else}
+								Cancel without refund
+							{/if}
 						</button>
 					</div>
 				</div>
@@ -1851,4 +1933,25 @@
 	.cancel-radio input[type="radio"]:disabled { cursor: not-allowed; }
 	.cancel-error { color: var(--color-error-text); background: var(--color-error-bg); padding: 0.625rem 0.75rem; border-radius: 8px; font-size: 0.875rem; margin: 0; }
 	.cancel-actions { display: flex; justify-content: flex-end; gap: 0.5rem; }
+	.nonref-badge {
+		display: inline-block;
+		margin: 0.4rem 0 0;
+		padding: 0.2rem 0.6rem;
+		font-size: 0.75rem;
+		font-weight: 600;
+		letter-spacing: 0.02em;
+		color: #8a1a1a;
+		background: #fde8e8;
+		border: 1px solid #f5b5b5;
+		border-radius: 9999px;
+	}
+	.override-input {
+		margin-top: 0.6rem;
+		padding: 0.75rem;
+		background: var(--color-cream);
+		border: 1px dashed var(--color-cream-dark);
+		border-radius: 8px;
+	}
+	.override-input .form-input { width: 100%; max-width: 12rem; }
+	.override-hint { font-size: 0.78rem; color: var(--color-text-muted); margin: 0.4rem 0 0; }
 </style>
