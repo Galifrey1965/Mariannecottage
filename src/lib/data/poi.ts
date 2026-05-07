@@ -3,7 +3,7 @@
 // + Mont Saint-Michel exception (~71km, culturally unmissable)
 //
 // Images: populated by `node scripts/download-poi-images.mjs`
-// Distances: Haversine straight-line from 49.1728, -0.9887
+// Distances: Haversine straight-line from COTTAGE.location (see ./cottage.ts)
 // popularityScore: internal only — used for sorting, never shown in UI
 
 export type PoiCategory = 'ww2' | 'heritage' | 'towns' | 'museums';
@@ -505,5 +505,8 @@ export const POIS: Poi[] = [
 	}
 ];
 
-// Cottage origin — used for Haversine and map centering
-export const COTTAGE_ORIGIN = { lat: 49.172937, lng: -0.988765 };
+// Cottage origin — re-exported from the canonical COTTAGE constant
+// for back-compat. New code should import COTTAGE from $lib/data/cottage
+// directly.
+import { COTTAGE } from './cottage';
+export const COTTAGE_ORIGIN = COTTAGE.location;

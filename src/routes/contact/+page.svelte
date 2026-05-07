@@ -2,6 +2,7 @@
 	import { t } from '$lib/i18n';
 	import EnquiryForm from '$lib/components/EnquiryForm.svelte';
 	import GoogleMap from '$lib/components/GoogleMap.svelte';
+	import { COTTAGE } from '$lib/data/cottage';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -82,9 +83,9 @@
 		<div class="map-wrapper">
 			<GoogleMap
 				markers={[
-					{ lat: 49.1728, lng: -0.9887, title: 'Marianne Cottage', description: '1 La Haye, 50680 Couvains, France', type: 'cottage' }
+					{ lat: COTTAGE.location.lat, lng: COTTAGE.location.lng, title: COTTAGE.shortName, description: COTTAGE.address.formattedSingleLine, type: 'cottage' }
 				]}
-				center={[49.1728, -0.9887]}
+				center={[COTTAGE.location.lat, COTTAGE.location.lng]}
 				zoom={13}
 				height="400px"
 				{messages}

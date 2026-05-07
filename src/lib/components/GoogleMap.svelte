@@ -3,6 +3,7 @@
 	import { env } from '$env/dynamic/public';
 	import { getConsent, setConsent, clearConsent, onConsentChange } from '$lib/consent';
 	import { t } from '$lib/i18n';
+	import { COTTAGE } from '$lib/data/cottage';
 	import type { Messages } from '$lib/i18n';
 
 	interface Marker {
@@ -32,7 +33,7 @@
 
 	let {
 		markers,
-		center = [49.172937, -0.988765],
+		center = [COTTAGE.location.lat, COTTAGE.location.lng],
 		zoom = 10,
 		height = '500px',
 		fitBounds = false,

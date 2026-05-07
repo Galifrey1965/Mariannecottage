@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { t } from '$lib/i18n';
+	import { COTTAGE } from '$lib/data/cottage';
 	import type { Messages, Locale } from '$lib/i18n';
 
 	interface GoogleRating {
@@ -71,23 +72,23 @@
 		const base: Record<string, unknown> = {
 			'@context': 'https://schema.org',
 			'@type': 'BedAndBreakfast',
-			name: 'Marianne Cottage Bed and Breakfast',
+			name: COTTAGE.name,
 			description: t(messages, 'home.about.p1'),
 			url: SITE_BASE,
 			address: {
 				'@type': 'PostalAddress',
-				streetAddress: '1 La Haye',
-				addressLocality: 'Couvains',
-				postalCode: '50680',
-				addressCountry: 'FR'
+				streetAddress: COTTAGE.address.streetAddress,
+				addressLocality: COTTAGE.address.locality,
+				postalCode: COTTAGE.address.postalCode,
+				addressCountry: COTTAGE.address.countryCode
 			},
 			geo: {
 				'@type': 'GeoCoordinates',
-				latitude: 49.172937,
-				longitude: -0.988765
+				latitude: COTTAGE.location.lat,
+				longitude: COTTAGE.location.lng
 			},
-			telephone: '+33 7 80 73 17 04',
-			email: 'booking@mariannecottage.fr',
+			telephone: COTTAGE.contact.telephone,
+			email: COTTAGE.contact.email,
 			priceRange: '€€',
 			image: [image],
 			amenityFeature: [

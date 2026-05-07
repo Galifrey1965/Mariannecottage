@@ -26,6 +26,10 @@ const KEY =
 	process.env.GOOGLE_STATIC_MAPS ??
 	process.env.GOOGLE_MAPS_API_KEY ??
 	process.env.PUBLIC_GOOGLE_MAPS_API_KEY;
+// Keep in lockstep with COTTAGE.location in src/lib/data/cottage.ts.
+// Build-time .mjs scripts can't import the TS module via the $lib path
+// alias, so the value is duplicated here. Update both if the cottage
+// coordinates ever change.
 const LAT = 49.172937;
 const LNG = -0.988765;
 const OUT_1X = resolve(process.cwd(), 'static/images/cottage-static-map.png');
