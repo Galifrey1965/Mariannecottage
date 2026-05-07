@@ -33,16 +33,6 @@
 	</article>
 
 	<article class="info-block">
-		<h2>{t(messages, 'house_rules.events_heading')}</h2>
-		<p>{t(messages, 'house_rules.events_body')}</p>
-	</article>
-
-	<article class="info-block">
-		<h2>{t(messages, 'house_rules.rubbish_heading')}</h2>
-		<p>{t(messages, 'house_rules.rubbish_body')}</p>
-	</article>
-
-	<article class="info-block">
 		<h2>{t(messages, 'house_rules.damages_heading')}</h2>
 		<p>{t(messages, 'house_rules.damages_body')}</p>
 	</article>
