@@ -291,7 +291,10 @@
 		"classic_fallback": "Vous préférez sélectionner sur un calendrier ?",
 		"classic_link": "Utiliser la page de réservation classique →",
 		"windows_fallback": "Vous préférez voir les périodes réservables d'un coup d'œil ?",
-		"windows_link": "Utiliser la vue simplifiée par périodes →"
+		"windows_link": "Utiliser la vue simplifiée par périodes →",
+		"stay_rules_title": "Règles de réservation",
+		"stay_rules_min_nights": "Séjour minimum de {n} nuits",
+		"stay_rules_lead_time": "{h} heures de préavis requises"
 	},
 	"windows": {
 		"lede": "{count} séjours réservables dans les 90 prochains jours. Cliquez sur une fenêtre pour réserver toute la durée, ou raccourcissez-la.",

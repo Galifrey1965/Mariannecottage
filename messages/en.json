@@ -291,7 +291,10 @@
 		"classic_fallback": "Prefer to pick on a calendar?",
 		"classic_link": "Use the classic booking page →",
 		"windows_fallback": "Prefer to see bookable windows at a glance?",
-		"windows_link": "Use the simpler windows view →"
+		"windows_link": "Use the simpler windows view →",
+		"stay_rules_title": "Booking rules",
+		"stay_rules_min_nights": "{n}-night minimum stay",
+		"stay_rules_lead_time": "{h} hours notice required"
 	},
 	"windows": {
 		"lede": "{count} bookable stays in the next 90 days. Click any window to book the whole length, or shorten it.",

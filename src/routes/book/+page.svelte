@@ -444,9 +444,6 @@
 			{#if step === 1}
 				<div>
 					<h2 class="section-heading">{t(messages, 'book.heading')}</h2>
-					<p class="stay-rules">
-						{MIN_NIGHTS} nights minimum · {MIN_LEAD_HOURS} hours notice
-					</p>
 					<AvailableWindowsPicker
 						{messages}
 						{lang}
@@ -653,6 +650,19 @@
 					{t(messages, 'book.error_no_rate_plan')}
 				</div>
 			{/if}
+			<div class="rules-box">
+				<h3 class="rates-title">{t(messages, 'book.stay_rules_title')}</h3>
+				<ul class="rules-list">
+					<li class="rule-row">
+						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+						<span>{t(messages, 'book.stay_rules_min_nights', { n: String(MIN_NIGHTS) })}</span>
+					</li>
+					<li class="rule-row">
+						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+						<span>{t(messages, 'book.stay_rules_lead_time', { h: String(MIN_LEAD_HOURS) })}</span>
+					</li>
+				</ul>
+			</div>
 			<BookingSummary
 				{messages}
 				{lang}
@@ -750,7 +760,11 @@
 	/* Form card */
 	.form-card { background: var(--color-cream); border-radius: var(--md-shape-corner-medium); padding: 1.5rem; }
 	.section-heading { font-family: 'Lora', serif; font-size: 1.25rem; font-weight: 600; color: var(--color-text); margin: 0 0 1.5rem; }
-	.stay-rules { margin: -1rem 0 1rem; font-size: 0.85rem; color: var(--color-text-muted); }
+
+	.rules-box { background: var(--color-cream); border-radius: var(--md-shape-corner-medium); padding: 1rem; }
+	.rules-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.5rem; }
+	.rule-row { display: flex; align-items: center; gap: 0.6rem; font-size: 0.8125rem; color: var(--color-text); }
+	.rule-row svg { flex-shrink: 0; color: var(--color-sage); }
 
 	.view-switch {
 		display: flex;

@@ -291,7 +291,10 @@
 		"classic_fallback": "Lieber im Kalender auswählen?",
 		"classic_link": "Klassische Buchungsseite verwenden →",
 		"windows_fallback": "Lieber buchbare Zeiträume auf einen Blick sehen?",
-		"windows_link": "Einfache Zeitraumansicht verwenden →"
+		"windows_link": "Einfache Zeitraumansicht verwenden →",
+		"stay_rules_title": "Buchungsregeln",
+		"stay_rules_min_nights": "Mindestaufenthalt {n} Nächte",
+		"stay_rules_lead_time": "{h} Stunden Vorlaufzeit erforderlich"
 	},
 	"windows": {
 		"lede": "{count} buchbare Aufenthalte in den nächsten 90 Tagen. Klicken Sie auf ein Fenster, um die volle Länge zu buchen, oder kürzen Sie es.",
