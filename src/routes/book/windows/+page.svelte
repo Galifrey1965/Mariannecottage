@@ -2,11 +2,12 @@
 	import { onDestroy } from 'svelte';
 	import { env as publicEnv } from '$env/dynamic/public';
 	import { localePath, t, formatDate, formatCurrency, plural } from '$lib/i18n';
-	import BookingCalendar from '$lib/components/BookingCalendar.svelte';
+	import AvailableWindowsPicker from '$lib/components/AvailableWindowsPicker.svelte';
 	import BookingSummary from '$lib/components/BookingSummary.svelte';
 	import BookingConfirmed from '$lib/components/BookingConfirmed.svelte';
-	import { MIN_NIGHTS, MIN_LEAD_HOURS, getEarliestCheckInDate } from '$lib/booking-policy';
+	import { MIN_NIGHTS, MIN_LEAD_HOURS } from '$lib/booking-policy';
 	import { findSeason, seasonHasNonref } from '$lib/booking-windows';
+	import type { BookingWindow } from '$lib/booking-windows';
 	import type { PageData } from './$types';
 	import type { Season, SeasonKind, RatePlan } from '$lib/server/supabase';
 	import type { Stripe, StripeElements, StripePaymentElement } from '@stripe/stripe-js';
@@ -23,6 +24,11 @@
 	// Rate plan picker state lives up here so the cancellation-copy
 	// derived (below) can read it before the picker is wired further down.
 	let ratePlan = $state<RatePlan>('refundable');
+	// Cancellation copy varies by chosen rate plan. Refundable shows the
+	// schedule (14 / 2 / 0); non-refundable shows "no refunds, applies
+	// regardless of when you cancel". The booking summary in the sidebar
+	// always shows the refundable copy because it's set before the user
+	// has seen the rate-plan picker.
 	const cancellationPolicy = $derived(t(messages, 'book.cancellation_policy'));
 	const stepCancellationCopy = $derived(
 		ratePlan === 'non_refundable'
@@ -72,11 +78,8 @@
 
 	let formError = $state('');
 	let fieldErrors = $state<Record<string, string>>({});
-	let calendarRef: { goToToday: () => void } | undefined = $state();
 
-	const realAvailability: Record<string, boolean> = data.availability || {};
-	const testBlockedDates: string[] = data.testBlockedDates || [];
-	const checkoutOnlyDates: string[] = data.checkoutOnlyDates || [];
+	const windows: BookingWindow[] = data.windows ?? [];
 
 	function discardPendingBooking() {
 		// Called when the user changes dates after a booking row was already
@@ -108,63 +111,22 @@
 		step = 2;
 	};
 
-	let orphanDate = $state<Date | null>(null);
-	const handleOrphanClick = (date: Date) => { orphanDate = date; };
-	const closeOrphanDialog = () => { orphanDate = null; };
-	const orphanDateLabel = $derived(
-		orphanDate ? formatDate(lang, orphanDate, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) : ''
-	);
-
 	const nights = $derived(
 		checkInDate && checkOutDate
 			? Math.ceil((checkOutDate.getTime() - checkInDate.getTime()) / (1000 * 60 * 60 * 24))
 			: 0
 	);
 
-	// Cap the calendar at the last covered season's end so guests can't
-	// wander into months with no coverage (which silently rejects at the
-	// Continue button). Picks the latest end_date across active seasons;
-	// absent any active season, leaves the cap unset.
-	const maxBookableDate = $derived.by<Date | undefined>(() => {
-		const active = (seasons ?? []).filter((s) => s.is_active);
-		if (active.length === 0) return undefined;
-		const latest = active.reduce((acc, s) => (s.end_date > acc ? s.end_date : acc), active[0].end_date);
-		const [y, m, d] = latest.split('-').map(Number);
-		return new Date(y, m - 1, d);
-	});
-
 	const matchingSeason = $derived(
 		checkInDate ? findSeason(seasons, formatDateISO(checkInDate)) : null
 	);
 
-	// Rate plan picker companion state — `ratePlan` itself is declared
-	// near the top of the script (cancellation-copy derived needs it).
-	const offersNonref = $derived(Boolean(matchingSeason && seasonHasNonref(matchingSeason)));
-	$effect(() => {
-		if (!offersNonref && ratePlan === 'non_refundable') ratePlan = 'refundable';
-	});
-	function setRatePlan(plan: RatePlan) {
-		if (plan === ratePlan) return;
-		if (bookingRef) discardPendingBooking();
-		nonRefundableAcknowledged = false;
-		nonRefundableAcknowledgedAt = null;
-		ratePlan = plan;
-	}
-
-	const nightly_rate = $derived(matchingSeason ? rateFor(matchingSeason, guests, ratePlan) : 0);
-	const refundableNightly = $derived(matchingSeason ? rateFor(matchingSeason, guests, 'refundable') : 0);
-	const nonrefNightly = $derived(matchingSeason && offersNonref ? rateFor(matchingSeason, guests, 'non_refundable') : 0);
-	const noRatePlan = $derived(Boolean(checkInDate) && !matchingSeason);
-	const totalCost = $derived(nights * nightly_rate);
-	const refundableTotal = $derived(nights * refundableNightly);
-	const nonrefTotal = $derived(nights * nonrefNightly);
-	const nonrefSavings = $derived(refundableTotal - nonrefTotal);
-	const totalCostLabel = $derived(formatCurrency(lang, totalCost));
-
-	// Sidebar rates panel — see /book/+page.svelte for the rationale.
-	// Prefers upcoming seasons; falls back to past-but-active when no
-	// upcoming row of that kind exists, so the panel keeps a stable
-	// 3-row layout while Mark sets up the next year's seasons.
+	// Sidebar rates panel — derive one row per kind from active seasons.
+	// Prefer upcoming seasons (end_date ≥ today) so the cheapest rate
+	// reflects what a visitor could actually book; if a kind has no
+	// upcoming season but has a past-but-still-active one, fall back to
+	// it so the panel keeps a stable 3-row layout while Mark sets up the
+	// next year's seasons.
 	type RateRow = { kind: SeasonKind; label: string; minRate: number };
 	const KIND_ORDER: SeasonKind[] = ['low', 'high', 'peak'];
 	const todayISO = formatDateISO(new Date());
@@ -188,6 +150,41 @@
 		}
 		return out;
 	});
+	// Rate plan picker companion state — `ratePlan` itself is declared
+	// near the top of this script so the cancellation-copy derived can
+	// read it. The picker is hidden when the matching season has no
+	// non-refundable rates and the booking implicitly uses 'refundable'.
+	const offersNonref = $derived(Boolean(matchingSeason && seasonHasNonref(matchingSeason)));
+	// If the season changes (different check-in) and the new season doesn't
+	// offer non-refundable, snap back to refundable so we don't ship a
+	// stale picker selection through to the API.
+	$effect(() => {
+		if (!offersNonref && ratePlan === 'non_refundable') ratePlan = 'refundable';
+	});
+
+	function setRatePlan(plan: RatePlan) {
+		if (plan === ratePlan) return;
+		// If a pending booking row was already created (user is bouncing
+		// between Pay and Details), discard it — the next "Continue to Pay"
+		// must POST a fresh row so the chosen rate_plan + cancellation
+		// policy snapshot are correct.
+		if (bookingRef) discardPendingBooking();
+		// Picking a plan also clears the non-ref ack — guest must re-tick
+		// it if they re-select non_refundable later.
+		nonRefundableAcknowledged = false;
+		nonRefundableAcknowledgedAt = null;
+		ratePlan = plan;
+	}
+
+	const nightly_rate = $derived(matchingSeason ? rateFor(matchingSeason, guests, ratePlan) : 0);
+	const refundableNightly = $derived(matchingSeason ? rateFor(matchingSeason, guests, 'refundable') : 0);
+	const nonrefNightly = $derived(matchingSeason && offersNonref ? rateFor(matchingSeason, guests, 'non_refundable') : 0);
+	const noRatePlan = $derived(Boolean(checkInDate) && !matchingSeason);
+	const totalCost = $derived(nights * nightly_rate);
+	const refundableTotal = $derived(nights * refundableNightly);
+	const nonrefTotal = $derived(nights * nonrefNightly);
+	const nonrefSavings = $derived(refundableTotal - nonrefTotal);
+	const totalCostLabel = $derived(formatCurrency(lang, totalCost));
 
 	function validate(): boolean {
 		const errors: Record<string, string> = {};
@@ -214,6 +211,10 @@
 	// PaymentIntent endpoint so it lands on bookings.terms_accepted_at.
 	let termsAccepted = $state(false);
 	let termsAcceptedAt = $state<string | null>(null);
+	// Non-refundable acknowledgement — when ratePlan === 'non_refundable',
+	// the guest must explicitly tick "I understand this booking can't be
+	// refunded" alongside the T&Cs before Pay enables. Reset whenever the
+	// rate plan changes to force a fresh acknowledgement.
 	let nonRefundableAcknowledged = $state(false);
 	let nonRefundableAcknowledgedAt = $state<string | null>(null);
 
@@ -528,27 +529,18 @@
 
 			{#if step === 1}
 				<div>
-					<h2 class="section-heading">{t(messages, 'book.heading')}</h2>
-					<BookingCalendar
-						bind:this={calendarRef}
+					<AvailableWindowsPicker
 						{messages}
 						{lang}
-						availability={realAvailability}
-						{testBlockedDates}
-						{checkoutOnlyDates}
-						{seasons}
-						onDateRangeSelect={handleDateRangeSelect}
-						onOrphanClick={handleOrphanClick}
-						minDate={getEarliestCheckInDate()}
-						maxDate={maxBookableDate}
+						{windows}
 						minNights={MIN_NIGHTS}
-						disablePastMonths
+						onPick={handleDateRangeSelect}
 					/>
 					<div class="view-switch">
-						<p class="view-switch-label">{t(messages, 'book.windows_fallback')}</p>
+						<p class="view-switch-label">{t(messages, 'book.classic_fallback')}</p>
 						<a href={localePath(lang, '/book')} class="btn-outline view-switch-btn">
-							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
-							{t(messages, 'book.windows_link')}
+							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+							{t(messages, 'book.classic_link')}
 						</a>
 					</div>
 				</div>
@@ -854,25 +846,6 @@
 	</div>
 </section>
 
-{#if orphanDate}
-	<div class="orphan-overlay" role="dialog" aria-modal="true" aria-labelledby="orphan-title">
-		<button onclick={closeOrphanDialog} class="orphan-backdrop" aria-label="Close"></button>
-		<div class="orphan-dialog">
-			<h3 id="orphan-title" class="orphan-title">{orphanDateLabel}</h3>
-			<p class="orphan-body">
-				The cottage is free this night, but it sits between other bookings — too short
-				a gap for our online {MIN_NIGHTS}-night minimum. We're happy to take this one
-				directly.
-			</p>
-			<p class="orphan-contact">{t(messages, 'book.contact_info')}</p>
-			<div class="orphan-actions">
-				<button onclick={closeOrphanDialog} class="btn-outline">Close</button>
-				<a href="{localePath(lang, '/contact')}{orphanDate ? `?date=${formatDateISO(orphanDate)}` : ''}" class="btn-primary">{t(messages, 'book.contact_us')}</a>
-			</div>
-		</div>
-	</div>
-{/if}
-
 <style>
 	.page-section { max-width: 1440px; margin: 0 auto; padding: 4rem 1rem; }
 	@media (min-width: 600px) { .page-section { padding: 4rem 1.5rem; } }
@@ -965,6 +938,7 @@
 	.rate-plan-total { margin: 0.25rem 0 0; font-size: 0.82rem; color: var(--color-text); }
 	.rate-plan-savings { color: var(--color-sage); font-weight: 600; margin-left: 0.4rem; }
 	.section-heading { font-family: 'Lora', serif; font-size: 1.25rem; font-weight: 600; color: var(--color-text); margin: 0 0 1.5rem; }
+
 	.rules-box { background: var(--color-cream); border-radius: var(--md-shape-corner-medium); padding: 1rem; }
 	.rules-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.5rem; }
 	.rule-row { display: flex; align-items: center; gap: 0.6rem; font-size: 0.8125rem; color: var(--color-text); }
@@ -980,31 +954,6 @@
 	.view-switch-label { margin: 0; font-size: 0.8rem; color: var(--color-text-muted); }
 	.view-switch-btn { text-decoration: none; }
 
-	.orphan-overlay {
-		position: fixed; inset: 0; z-index: 100;
-		display: flex; align-items: center; justify-content: center;
-		padding: 1rem;
-	}
-	.orphan-backdrop {
-		position: absolute; inset: 0;
-		background: rgba(0, 0, 0, 0.45);
-		border: none; padding: 0; cursor: pointer;
-	}
-	.orphan-dialog {
-		position: relative;
-		background: var(--color-bg, white);
-		border-radius: 16px;
-		max-width: 440px; width: 100%;
-		padding: 1.5rem;
-		box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
-	}
-	.orphan-title {
-		font-family: 'Lora', serif; font-size: 1.25rem; font-weight: 600;
-		margin: 0 0 0.75rem; color: var(--color-text);
-	}
-	.orphan-body { margin: 0 0 1rem; line-height: 1.5; color: var(--color-text); }
-	.orphan-contact { margin: 0 0 1.25rem; font-size: 0.9rem; color: var(--color-text-muted); }
-	.orphan-actions { display: flex; gap: 0.75rem; justify-content: flex-end; flex-wrap: wrap; }
 	.form-fields { display: flex; flex-direction: column; gap: 1.25rem; }
 	.field-label { display: block; font-size: 0.875rem; font-weight: 500; color: var(--color-text); margin-bottom: 0.375rem; }
 	@media (max-width: 599px) { .field-label { font-size: 1rem; } }
@@ -1111,9 +1060,9 @@
 
 	/* Rates */
 	.rates-box { background: var(--color-cream); border-radius: var(--md-shape-corner-medium); padding: 1rem; }
-	.rates-title { font-size: 0.875rem; font-weight: 600; color: var(--color-text); margin: 0 0 0.75rem; }
+	.rates-title { font-size: 1rem; font-weight: 600; color: var(--color-text); margin: 0 0 0.75rem; }
 	.rates-list { display: flex; flex-direction: column; gap: 0.5rem; }
-	.rate-row { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--color-text-muted); }
+	.rate-row { display: flex; justify-content: space-between; font-size: 0.875rem; color: var(--color-text-muted); }
 	.rate-value { font-weight: 500; }
 	.rate-row.peak { color: var(--color-sage); }
 	.rate-row.peak .rate-value { font-weight: 700; }

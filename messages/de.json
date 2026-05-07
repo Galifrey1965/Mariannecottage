@@ -211,7 +211,6 @@
 		"contact_us": "Kontaktieren Sie Uns",
 		"contact_info": "Fragen? Kontaktieren Sie uns unter booking@mariannecottage.fr oder +33 (0)7 80 73 17 04",
 		"booking_com_link": "Auf Booking.com Buchen",
-		"heading": "Wählen Sie Ihre Daten",
 		"guests": "Anzahl der Gäste",
 		"rate_plan": "Tarif",
 		"summary": "Zusammenfassung",
@@ -362,7 +361,6 @@
 		"by_arrangement": "Verfügbar — bitte kontaktieren",
 		"cottage_closed": "Cottage geschlossen",
 		"checkout_only": "Nur Abreisetag (vormittags)",
-		"pick_dates_hint": "Wählen Sie Ihr Anreisedatum und dann Ihren Abreisemorgen. Ihr Aufenthalt umfasst die Nächte dazwischen.",
 		"checkout_morning_caption": "Abreise am Morgen des {date}."
 	},
 	"booking_summary": {
@@ -375,7 +373,7 @@
 		"tax": "Kurtaxe",
 		"total": "Gesamtbetrag",
 		"cancellation": "Stornierung:",
-		"empty": "Wählen Sie An- und Abreisedaten um die Preise zu sehen"
+		"empty": "Wählen Sie Ihr Anreisedatum und dann Ihren Abreisemorgen. Ihr Aufenthalt umfasst die Nächte dazwischen."
 	},
 	"enquiry_form": {
 		"all_fields_required": "Alle Felder sind erforderlich",

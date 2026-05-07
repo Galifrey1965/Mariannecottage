@@ -211,7 +211,6 @@
 		"contact_us": "Contact Us",
 		"contact_info": "Questions? Contact us at booking@mariannecottage.fr or +33 (0)7 80 73 17 04",
 		"booking_com_link": "Book on Booking.com",
-		"heading": "Select Your Dates",
 		"guests": "Number of Guests",
 		"rate_plan": "Rate Plan",
 		"summary": "Summary",
@@ -362,7 +361,6 @@
 		"by_arrangement": "Available — contact us",
 		"cottage_closed": "Cottage closed",
 		"checkout_only": "Check-out morning only",
-		"pick_dates_hint": "Pick your check-in date, then your check-out morning. Your stay covers the nights in between.",
 		"checkout_morning_caption": "You check out the morning of {date}."
 	},
 	"booking_summary": {
@@ -375,7 +373,7 @@
 		"tax": "Tourist tax",
 		"total": "Total",
 		"cancellation": "Cancellation:",
-		"empty": "Select check-in and check-out dates to see pricing"
+		"empty": "Pick your check-in date, then your check-out morning. Your stay covers the nights in between."
 	},
 	"enquiry_form": {
 		"all_fields_required": "All fields are required",

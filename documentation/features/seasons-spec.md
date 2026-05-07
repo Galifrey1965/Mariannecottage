@@ -99,7 +99,7 @@ discount overlays.
 ### Public booking
 - `src/routes/book/+page.server.ts` + `+page.svelte` — `ratePlans` → `seasons`,
   rates panel becomes data-driven (group by `kind`, show min nightly)
-- `src/routes/book/classic/+page.server.ts` + `+page.svelte` — same
+- `src/routes/book/windows/+page.server.ts` + `+page.svelte` — same
 - `src/lib/components/BookingCalendar.svelte` — render closed days (no season)
   with a distinct visual treatment
 

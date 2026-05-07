@@ -427,9 +427,6 @@
 		</button>
 	</div>
 
-	{#if !isClickMode && !selectedStart}
-		<div class="explainer">{t(messages, 'calendar.pick_dates_hint')}</div>
-	{/if}
 	{#if selectedStart && !selectedEnd}
 		<div class="hint">{t(messages, 'calendar.select_checkout')}</div>
 	{/if}
@@ -461,12 +458,12 @@
 	{#if showLegend}
 		<div class="legend">
 			<div class="legend-item"><div class="legend-swatch available"></div><span>{t(messages, 'calendar.available')}</span></div>
+			{#if onOrphanClick}
+				<div class="legend-item"><div class="legend-swatch orphan"></div><span>{t(messages, 'calendar.by_arrangement')}</span></div>
+			{/if}
 			<div class="legend-item"><div class="legend-swatch unavailable"></div><span>{t(messages, 'calendar.unavailable')}</span></div>
 			{#if seasons && seasons.length > 0}
 				<div class="legend-item"><div class="legend-swatch closed"></div><span>{t(messages, 'calendar.cottage_closed')}</span></div>
-			{/if}
-			{#if onOrphanClick}
-				<div class="legend-item"><div class="legend-swatch orphan"></div><span>{t(messages, 'calendar.by_arrangement')}</span></div>
 			{/if}
 			{#if checkoutOnlyDates.length > 0}
 				<div class="legend-item"><div class="legend-swatch checkout-only"></div><span>{t(messages, 'calendar.checkout_only')}</span></div>
@@ -507,7 +504,6 @@
 	.month-title { font-family: 'Lora', serif; font-size: 1.375rem; font-weight: 600; margin: 0; }
 
 	.hint { text-align: center; font-size: 0.8rem; color: var(--color-sage); font-weight: 500; margin-bottom: 0.75rem; animation: fadeIn 0.2s ease; }
-	.explainer { text-align: center; font-size: 0.8rem; color: var(--color-text-muted); margin: 0 0 0.75rem; line-height: 1.4; }
 	.checkout-explainer { margin: 0.5rem 0 0; font-size: 0.78rem; color: var(--color-text-muted); text-align: center; line-height: 1.4; }
 
 	.weekdays { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.5rem; }

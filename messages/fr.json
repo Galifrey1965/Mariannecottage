@@ -211,7 +211,6 @@
 		"contact_us": "Nous Contacter",
 		"contact_info": "Des questions? Contactez-nous à booking@mariannecottage.fr ou +33 (0)7 80 73 17 04",
 		"booking_com_link": "Réserver sur Booking.com",
-		"heading": "Sélectionnez Vos Dates",
 		"guests": "Nombre de Clients",
 		"rate_plan": "Forfait Tarifaire",
 		"summary": "Résumé",
@@ -362,7 +361,6 @@
 		"by_arrangement": "Disponible — nous contacter",
 		"cottage_closed": "Gîte fermé",
 		"checkout_only": "Départ le matin uniquement",
-		"pick_dates_hint": "Choisissez votre date d'arrivée, puis votre matinée de départ. Votre séjour couvre les nuits entre les deux.",
 		"checkout_morning_caption": "Vous partez le matin du {date}."
 	},
 	"booking_summary": {
@@ -375,7 +373,7 @@
 		"tax": "Taxe de séjour",
 		"total": "Total",
 		"cancellation": "Annulation :",
-		"empty": "Sélectionnez les dates d'arrivée et de départ pour voir les tarifs"
+		"empty": "Choisissez votre date d'arrivée, puis votre matinée de départ. Votre séjour couvre les nuits entre les deux."
 	},
 	"enquiry_form": {
 		"all_fields_required": "Tous les champs sont obligatoires",

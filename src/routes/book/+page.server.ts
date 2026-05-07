@@ -1,7 +1,5 @@
 import { adminClient, getAvailability, getTaxSettings, getSeasons, getTestBlockedDates, getCheckInDates } from '$lib/server/supabase';
 import { runBcSyncLazyIfStale } from '$lib/server/bc-sync';
-import { computeBookableWindows } from '$lib/booking-windows';
-import { MIN_NIGHTS, getEarliestCheckInDate } from '$lib/booking-policy';
 import type { PageServerLoad } from './$types';
 import type { Season } from '$lib/server/supabase';
 
@@ -54,38 +52,5 @@ export const load: PageServerLoad = async () => {
 
 	const taxRate = taxSettings?.taxe_de_sejour_per_person_per_night ?? 0.68;
 
-	// Pre-compute the bookable-windows list server-side so the windows
-	// picker on step 1 has zero further round-trips. Bounded by the
-	// latest active season's end date — anything past that is
-	// closed-by-absence anyway, no point surfacing it. Capped to a
-	// 90-day raw horizon so the page doesn't try to render a year of
-	// windows on first paint.
-	const earliestCheckIn = getEarliestCheckInDate(today);
-	const activeSeasons = (seasonsResult ?? []).filter((s) => s.is_active);
-	const latestSeasonDateISO =
-		activeSeasons.length > 0
-			? activeSeasons.reduce((acc, s) => (s.end_date > acc ? s.end_date : acc), activeSeasons[0].end_date)
-			: endStr;
-	const latestCheckIn = new Date(latestSeasonDateISO + 'T00:00:00Z');
-	const horizonCap = new Date(today);
-	horizonCap.setDate(horizonCap.getDate() + 90);
-	const effectiveLatest = latestCheckIn < horizonCap ? latestCheckIn : horizonCap;
-
-	const windows = computeBookableWindows({
-		availability: availabilityMap,
-		checkoutOnlyDates,
-		seasons: seasonsResult,
-		earliestCheckIn,
-		latestCheckIn: effectiveLatest,
-		minNights: MIN_NIGHTS
-	});
-
-	return {
-		availability: availabilityMap,
-		taxRate,
-		seasons: seasonsResult,
-		testBlockedDates,
-		checkoutOnlyDates,
-		windows
-	};
+	return { availability: availabilityMap, taxRate, seasons: seasonsResult, testBlockedDates, checkoutOnlyDates };
 };
