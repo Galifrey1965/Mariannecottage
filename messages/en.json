@@ -289,7 +289,9 @@
 		"error_lead_time": "Bookings need at least {h} hours notice. Please pick a later check-in date.",
 		"savings_hint": "Save 5% vs Booking.com",
 		"classic_fallback": "Prefer to pick on a calendar?",
-		"classic_link": "Use the classic booking page →"
+		"classic_link": "Use the classic booking page →",
+		"windows_fallback": "Prefer to see bookable windows at a glance?",
+		"windows_link": "Use the simpler windows view →"
 	},
 	"windows": {
 		"lede": "{count} bookable stays in the next 90 days. Click any window to book the whole length, or shorten it.",

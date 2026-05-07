@@ -7,7 +7,7 @@ import type Stripe from 'stripe';
 const mocks = vi.hoisted(() => {
 	return {
 		getStripe: vi.fn(),
-		getWebhookSecret: vi.fn(() => 'whsec_dummy'),
+		getWebhookSecret: vi.fn<() => string | null>(() => 'whsec_dummy'),
 		constructEvent: vi.fn(),
 		refundsCreate: vi.fn(),
 		rpc: vi.fn(),

@@ -12,10 +12,6 @@ export default defineConfig({
 		__BUILD_DATE__: JSON.stringify(buildDate)
 	},
 	test: {
-		define: {
-			__APP_VERSION__: JSON.stringify(pkg.version),
-			__BUILD_DATE__: JSON.stringify(buildDate)
-		},
 		include: ['src/**/*.{test,spec}.{js,ts}'],
 		environment: 'happy-dom',
 		setupFiles: ['src/tests/setup.ts'],

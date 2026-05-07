@@ -78,6 +78,18 @@
 		onPick(fromISO(refineFromISO), fromISO(refineToISO));
 		expandedIdx = null;
 	}
+
+	function openPicker(e: FocusEvent) {
+		// Native calendar icon is easy to miss — pop the picker as soon as the
+		// field gets focus. showPicker() throws if not user-activated; the
+		// initial keyboard-tab focus has no activation so we swallow that case.
+		const el = e.currentTarget as HTMLInputElement;
+		try {
+			el.showPicker?.();
+		} catch {
+			// no-op — falls back to the native icon-click affordance
+		}
+	}
 </script>
 
 <div class="windows-wrap">
@@ -115,6 +127,7 @@
 					</div>
 					<div class="card-actions">
 						<button class="btn-primary" onclick={() => commitFullWindow(idx)}>
+							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="m9 16 2 2 4-4"/></svg>
 							{t(messages, 'windows.book_full', { nights: String(w.nights) })}
 						</button>
 						{#if w.nights > minNights}
@@ -122,7 +135,13 @@
 								class="btn-outline"
 								onclick={() => (expandedIdx === idx ? cancelShorten() : startShorten(idx))}
 							>
-								{expandedIdx === idx ? t(messages, 'windows.cancel') : t(messages, 'windows.shorten')}
+								{#if expandedIdx === idx}
+									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+									{t(messages, 'windows.cancel')}
+								{:else}
+									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="21" x2="14" y1="4" y2="4"/><line x1="10" x2="3" y1="4" y2="4"/><line x1="21" x2="12" y1="12" y2="12"/><line x1="8" x2="3" y1="12" y2="12"/><line x1="21" x2="16" y1="20" y2="20"/><line x1="12" x2="3" y1="20" y2="20"/><line x1="14" x2="14" y1="2" y2="6"/><line x1="8" x2="8" y1="10" y2="14"/><line x1="16" x2="16" y1="18" y2="22"/></svg>
+									{t(messages, 'windows.shorten')}
+								{/if}
 							</button>
 						{/if}
 					</div>
@@ -137,6 +156,7 @@
 										bind:value={refineFromISO}
 										min={w.from}
 										max={isoAddDays(w.to, -minNights)}
+										onfocus={openPicker}
 									/>
 								</label>
 								<label class="refine-field">
@@ -146,6 +166,7 @@
 										bind:value={refineToISO}
 										min={isoAddDays(refineFromISO || w.from, minNights)}
 										max={w.to}
+										onfocus={openPicker}
 									/>
 								</label>
 							</div>
@@ -168,6 +189,7 @@
 								{/if}
 							</div>
 							<button class="btn-primary" disabled={!refineValid} onclick={commitShortened}>
+								<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
 								{t(messages, 'windows.confirm')}
 							</button>
 						</div>
@@ -211,7 +233,7 @@
 	.card-actions { display: flex; gap: 0.6rem; margin-top: 0.85rem; flex-wrap: wrap; }
 	.btn-primary {
 		flex: 1 1 auto;
-		display: inline-flex; align-items: center; justify-content: center;
+		display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
 		padding: 0.6rem 1rem; background: var(--color-sage); color: white;
 		font-weight: 600; border-radius: 9999px; border: none; cursor: pointer;
 		font-size: 0.875rem; transition: opacity 0.2s;
@@ -219,7 +241,7 @@
 	.btn-primary:hover { opacity: 0.9; }
 	.btn-primary:disabled { opacity: 0.45; cursor: not-allowed; }
 	.btn-outline {
-		display: inline-flex; align-items: center; justify-content: center;
+		display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;
 		padding: 0.6rem 0.95rem; border: 1px solid var(--color-sage);
 		color: var(--color-sage); border-radius: 9999px; background: transparent;
 		cursor: pointer; font-weight: 500; font-size: 0.85rem;
@@ -237,11 +259,22 @@
 	@media (min-width: 480px) { .refine-fields { grid-template-columns: 1fr 1fr; } }
 	.refine-field { display: flex; flex-direction: column; gap: 0.25rem; font-size: 0.82rem; color: var(--color-text-muted); }
 	.refine-field input {
-		padding: 0.5rem 0.7rem;
+		width: 100%;
+		padding: 0.75rem 1rem;
 		border: 1px solid var(--color-cream-dark);
 		border-radius: var(--md-shape-corner-small);
-		font-size: 0.92rem; min-height: 40px;
+		background: var(--color-bg);
+		color: var(--color-text);
+		font-size: 0.875rem; min-height: 44px;
 		font-family: inherit;
+		box-sizing: border-box;
+		color-scheme: light;
+		transition: border-color 0.2s;
+	}
+	.refine-field input:focus {
+		outline: none;
+		border-color: var(--color-sage);
+		box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-sage) 20%, transparent);
 	}
 	.refine-summary { display: flex; gap: 0.85rem; margin-bottom: 0.7rem; flex-wrap: wrap; align-items: center; }
 	.refine-nights { background: color-mix(in srgb, var(--color-sage) 14%, transparent); color: var(--color-sage); padding: 0.15rem 0.6rem; border-radius: 999px; font-weight: 600; font-size: 0.82rem; }

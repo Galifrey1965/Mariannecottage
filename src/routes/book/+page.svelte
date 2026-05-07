@@ -454,10 +454,13 @@
 						minNights={MIN_NIGHTS}
 						onPick={handleDateRangeSelect}
 					/>
-					<p class="classic-fallback">
-						{t(messages, 'book.classic_fallback')}
-						<a href={localePath(lang, '/book/classic')}>{t(messages, 'book.classic_link')}</a>
-					</p>
+					<div class="view-switch">
+						<p class="view-switch-label">{t(messages, 'book.classic_fallback')}</p>
+						<a href={localePath(lang, '/book/classic')} class="btn-outline view-switch-btn">
+							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+							{t(messages, 'book.classic_link')}
+						</a>
+					</div>
 				</div>
 			{/if}
 
@@ -749,9 +752,15 @@
 	.section-heading { font-family: 'Lora', serif; font-size: 1.25rem; font-weight: 600; color: var(--color-text); margin: 0 0 1.5rem; }
 	.stay-rules { margin: -1rem 0 1rem; font-size: 0.85rem; color: var(--color-text-muted); }
 
-	.classic-fallback { margin: 1.25rem 0 0; font-size: 0.8rem; color: var(--color-text-muted); text-align: center; }
-	.classic-fallback a { color: var(--color-sage); text-decoration: underline; margin-left: 0.25rem; }
-	.classic-fallback a:hover { text-decoration: none; }
+	.view-switch {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 0.5rem;
+		margin: 1.5rem 0 0;
+	}
+	.view-switch-label { margin: 0; font-size: 0.8rem; color: var(--color-text-muted); }
+	.view-switch-btn { text-decoration: none; }
 
 	.form-fields { display: flex; flex-direction: column; gap: 1.25rem; }
 	.field-label { display: block; font-size: 0.875rem; font-weight: 500; color: var(--color-text); margin-bottom: 0.375rem; }

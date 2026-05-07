@@ -289,7 +289,9 @@
 		"error_lead_time": "Les réservations nécessitent un préavis de {h} heures. Veuillez choisir une date d'arrivée ultérieure.",
 		"savings_hint": "Économisez 5% vs Booking.com",
 		"classic_fallback": "Vous préférez sélectionner sur un calendrier ?",
-		"classic_link": "Utiliser la page de réservation classique →"
+		"classic_link": "Utiliser la page de réservation classique →",
+		"windows_fallback": "Vous préférez voir les périodes réservables d'un coup d'œil ?",
+		"windows_link": "Utiliser la vue simplifiée par périodes →"
 	},
 	"windows": {
 		"lede": "{count} séjours réservables dans les 90 prochains jours. Cliquez sur une fenêtre pour réserver toute la durée, ou raccourcissez-la.",

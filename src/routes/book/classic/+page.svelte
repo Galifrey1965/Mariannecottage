@@ -482,6 +482,13 @@
 						minNights={MIN_NIGHTS}
 						disablePastMonths
 					/>
+					<div class="view-switch">
+						<p class="view-switch-label">{t(messages, 'book.windows_fallback')}</p>
+						<a href={localePath(lang, '/book')} class="btn-outline view-switch-btn">
+							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
+							{t(messages, 'book.windows_link')}
+						</a>
+					</div>
 				</div>
 			{/if}
 
@@ -791,6 +798,16 @@
 	.form-card { background: var(--color-cream); border-radius: var(--md-shape-corner-medium); padding: 1.5rem; }
 	.section-heading { font-family: 'Lora', serif; font-size: 1.25rem; font-weight: 600; color: var(--color-text); margin: 0 0 1.5rem; }
 	.stay-rules { margin: -1rem 0 1rem; font-size: 0.85rem; color: var(--color-text-muted); }
+
+	.view-switch {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 0.5rem;
+		margin: 1.5rem 0 0;
+	}
+	.view-switch-label { margin: 0; font-size: 0.8rem; color: var(--color-text-muted); }
+	.view-switch-btn { text-decoration: none; }
 
 	.orphan-overlay {
 		position: fixed; inset: 0; z-index: 100;
