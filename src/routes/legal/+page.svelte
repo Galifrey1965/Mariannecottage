@@ -1,10 +1,23 @@
 <script lang="ts">
 	import { t } from '$lib/i18n';
 	import { COTTAGE } from '$lib/data/cottage';
+	import { formatPolicyScheduleLines } from '$lib/cancellation-format';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
 	const messages = $derived(data.messages);
+	// Schedule lines derived from the active default policy. When the DB
+	// lookup fell through (rare), keep the historical 14/7/0 wording so
+	// the page never goes silent.
+	const cancellationLines = $derived(
+		data.cancellationPolicy
+			? formatPolicyScheduleLines(data.cancellationPolicy, messages)
+			: [
+					t(messages, 'legal.cancellation_schedule_14'),
+					t(messages, 'legal.cancellation_schedule_7'),
+					t(messages, 'legal.cancellation_schedule_0')
+				]
+	);
 
 	// Mark's SIRET is registered against "1 Impasse de la Haye" — keep it
 	// here verbatim for the legal mentions, separate from cottage.ts which
@@ -144,9 +157,9 @@
 		<h2>{t(messages, 'legal.cancellation_heading')}</h2>
 		<p>{t(messages, 'legal.cancellation_intro')}</p>
 		<ul class="prose-list">
-			<li>{t(messages, 'legal.cancellation_schedule_14')}</li>
-			<li>{t(messages, 'legal.cancellation_schedule_7')}</li>
-			<li>{t(messages, 'legal.cancellation_schedule_0')}</li>
+			{#each cancellationLines as line}
+				<li>{line}</li>
+			{/each}
 		</ul>
 		<p class="muted">{t(messages, 'legal.cancellation_note')}</p>
 	</article>

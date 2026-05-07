@@ -7,6 +7,7 @@
 	import BookingConfirmed from '$lib/components/BookingConfirmed.svelte';
 	import { MIN_NIGHTS, MIN_LEAD_HOURS } from '$lib/booking-policy';
 	import { findSeason, seasonHasNonref } from '$lib/booking-windows';
+	import { formatPolicySummary } from '$lib/cancellation-format';
 	import type { BookingWindow } from '$lib/booking-windows';
 	import type { PageData } from './$types';
 	import type { Season, SeasonKind, RatePlan } from '$lib/server/supabase';
@@ -24,12 +25,17 @@
 	// Rate plan picker state lives up here so the cancellation-copy
 	// derived (below) can read it before the picker is wired further down.
 	let ratePlan = $state<RatePlan>('refundable');
-	// Cancellation copy varies by chosen rate plan. Refundable shows the
-	// schedule (14 / 2 / 0); non-refundable shows "no refunds, applies
-	// regardless of when you cancel". The booking summary in the sidebar
-	// always shows the refundable copy because it's set before the user
-	// has seen the rate-plan picker.
-	const cancellationPolicy = $derived(t(messages, 'book.cancellation_policy'));
+	// Cancellation copy varies by chosen rate plan. Refundable derives
+	// from the active default policy (so admin edits show through);
+	// non-refundable stays as a fixed sentence — its schedule is just
+	// 0% and not worth rendering as a list. The booking summary in the
+	// sidebar always shows the refundable copy because it's set before
+	// the user has seen the rate-plan picker.
+	const cancellationPolicy = $derived(
+		data.cancellationPolicy
+			? formatPolicySummary(data.cancellationPolicy, messages)
+			: t(messages, 'book.cancellation_policy')
+	);
 	const stepCancellationCopy = $derived(
 		ratePlan === 'non_refundable'
 			? t(messages, 'book.cancellation_policy_nonref')

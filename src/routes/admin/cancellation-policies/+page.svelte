@@ -2,10 +2,12 @@
 	import type { CancellationPolicy, CancellationPolicySchedule } from '$lib/server/supabase';
 	import type { PageData } from './$types';
 	import { modalA11y } from '$lib/actions/modal-a11y';
+	import { formatPolicyScheduleLines } from '$lib/cancellation-format';
 
 	let { data }: { data: PageData } = $props();
 
 	let policies = $state<CancellationPolicy[]>(data.policies);
+	const messages = $derived(data.messages);
 
 	// Edit/create dialog state. `editing.id === null` means "creating".
 	let editing = $state<{
@@ -28,6 +30,22 @@
 			.map((r) => `≥${r.days_before_check_in}d → ${r.refund_pct}%`)
 			.join('  ·  ');
 	}
+
+	// What guests will actually read on /legal and /book — derived live
+	// from `editing.schedule` so a typo in the description (e.g. saying
+	// "7 days" when the schedule says 2) is visible at edit time.
+	const editingScheduleLines = $derived.by(() => {
+		if (!editing) return [] as string[];
+		const fakePolicy = {
+			id: 'preview',
+			name: editing.name || 'preview',
+			schedule: editing.schedule,
+			is_default: editing.is_default,
+			created_at: '',
+			updated_at: ''
+		} satisfies CancellationPolicy;
+		return formatPolicyScheduleLines(fakePolicy, messages);
+	});
 
 	function openCreate() {
 		editing = {
@@ -249,6 +267,21 @@
 				Add window
 			</button>
 
+			{#if editingScheduleLines.length > 0}
+				<div class="preview-box">
+					<p class="preview-label">Guest-facing preview</p>
+					<ul class="preview-list">
+						{#each editingScheduleLines as line}
+							<li>{line}</li>
+						{/each}
+					</ul>
+					<p class="preview-hint">
+						This is what shows on /legal and inside the booking flow. Compare it
+						against the description above — if they disagree, fix one.
+					</p>
+				</div>
+			{/if}
+
 			<label class="form-checkbox">
 				<input type="checkbox" bind:checked={editing.is_default} />
 				<span>Default policy (applied to new bookings)</span>
@@ -361,6 +394,35 @@
 	.form-checkbox input { width: 1.1rem; height: 1.1rem; }
 
 	.modal-actions { display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1.5rem; }
+
+	.preview-box {
+		margin-top: 1.25rem;
+		padding: 0.75rem 1rem;
+		background: var(--color-cream);
+		border: 1px dashed var(--color-cream-dark);
+		border-radius: 8px;
+	}
+	.preview-label {
+		margin: 0 0 0.4rem;
+		font-size: 0.7rem;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		color: var(--color-text-muted);
+	}
+	.preview-list {
+		list-style: disc;
+		padding-left: 1.25rem;
+		margin: 0 0 0.5rem;
+		font-size: 0.85rem;
+		color: var(--color-text);
+	}
+	.preview-list li { margin: 0.1rem 0; }
+	.preview-hint {
+		margin: 0.25rem 0 0;
+		font-size: 0.75rem;
+		color: var(--color-text-muted);
+	}
 
 	code { font-family: ui-monospace, monospace; font-size: 0.8125rem; background: var(--color-cream); padding: 0.05rem 0.3rem; border-radius: 3px; }
 </style>

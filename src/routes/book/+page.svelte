@@ -7,6 +7,7 @@
 	import BookingConfirmed from '$lib/components/BookingConfirmed.svelte';
 	import { MIN_NIGHTS, MIN_LEAD_HOURS, getEarliestCheckInDate } from '$lib/booking-policy';
 	import { findSeason, seasonHasNonref } from '$lib/booking-windows';
+	import { formatPolicySummary } from '$lib/cancellation-format';
 	import type { PageData } from './$types';
 	import type { Season, SeasonKind, RatePlan } from '$lib/server/supabase';
 	import type { Stripe, StripeElements, StripePaymentElement } from '@stripe/stripe-js';
@@ -23,7 +24,14 @@
 	// Rate plan picker state lives up here so the cancellation-copy
 	// derived (below) can read it before the picker is wired further down.
 	let ratePlan = $state<RatePlan>('refundable');
-	const cancellationPolicy = $derived(t(messages, 'book.cancellation_policy'));
+	// Refundable copy is derived from the live default policy so admin
+	// edits propagate; non-refundable stays as a fixed sentence (the
+	// schedule has nothing to render — always 0%).
+	const cancellationPolicy = $derived(
+		data.cancellationPolicy
+			? formatPolicySummary(data.cancellationPolicy, messages)
+			: t(messages, 'book.cancellation_policy')
+	);
 	const stepCancellationCopy = $derived(
 		ratePlan === 'non_refundable'
 			? t(messages, 'book.cancellation_policy_nonref')

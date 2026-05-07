@@ -54,6 +54,13 @@
 	"banner": {
 		"construction": "This site is under construction. Bookings are not yet live — please check back soon."
 	},
+	"cancellation": {
+		"tier_top": "{days} or more days before check-in — {outcome}",
+		"tier_middle": "{from} to {to} days before check-in — {outcome}",
+		"tier_bottom": "Less than {days} days before check-in — {outcome}",
+		"refund_pct": "{pct}% refund",
+		"no_refund": "no refund"
+	},
 	"cookies": {
 		"title": "We value your privacy",
 		"body": "We use essential cookies to keep the site running and to remember your language preference. With your consent we also use Google Maps for location features and email tracking pixels for delivery confirmation.",

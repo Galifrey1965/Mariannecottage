@@ -54,6 +54,13 @@
 	"banner": {
 		"construction": "Ce site est en cours de construction. Les réservations ne sont pas encore disponibles — merci de revenir bientôt."
 	},
+	"cancellation": {
+		"tier_top": "{days} jours ou plus avant l'arrivée — {outcome}",
+		"tier_middle": "{from} à {to} jours avant l'arrivée — {outcome}",
+		"tier_bottom": "Moins de {days} jours avant l'arrivée — {outcome}",
+		"refund_pct": "remboursement à {pct}%",
+		"no_refund": "aucun remboursement"
+	},
 	"cookies": {
 		"title": "Nous respectons votre vie privée",
 		"body": "Nous utilisons des cookies essentiels au fonctionnement du site et à la mémorisation de votre langue. Avec votre consentement, nous utilisons aussi Google Maps pour les fonctionnalités de localisation et des pixels de suivi pour la confirmation de livraison des e-mails.",

@@ -54,6 +54,13 @@
 	"banner": {
 		"construction": "Diese Website befindet sich im Aufbau. Buchungen sind noch nicht verfügbar — bitte schauen Sie bald wieder vorbei."
 	},
+	"cancellation": {
+		"tier_top": "{days} oder mehr Tage vor Anreise — {outcome}",
+		"tier_middle": "{from} bis {to} Tage vor Anreise — {outcome}",
+		"tier_bottom": "Weniger als {days} Tage vor Anreise — {outcome}",
+		"refund_pct": "{pct}% Erstattung",
+		"no_refund": "keine Erstattung"
+	},
 	"cookies": {
 		"title": "Wir schätzen Ihre Privatsphäre",
 		"body": "Wir verwenden notwendige Cookies, damit die Website funktioniert und Ihre Sprache merkt. Mit Ihrer Einwilligung nutzen wir außerdem Google Maps für Standortfunktionen sowie Tracking-Pixel zur Zustellbestätigung von E-Mails.",

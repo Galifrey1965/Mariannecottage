@@ -1,4 +1,4 @@
-import { adminClient, getAvailability, getTaxSettings, getSeasons, getTestBlockedDates, getCheckInDates } from '$lib/server/supabase';
+import { adminClient, getAvailability, getTaxSettings, getSeasons, getTestBlockedDates, getCheckInDates, getDefaultCancellationPolicy } from '$lib/server/supabase';
 import { runBcSyncLazyIfStale } from '$lib/server/bc-sync';
 import { computeBookableWindows } from '$lib/booking-windows';
 import { MIN_NIGHTS, getEarliestCheckInDate } from '$lib/booking-policy';
@@ -37,12 +37,13 @@ export const load: PageServerLoad = async () => {
 	// Run the Supabase calls in parallel — they're independent. Each
 	// .catch returns a sane fallback so one failed lookup doesn't break
 	// the page; matches the prior per-query try/catch behaviour.
-	const [availability, taxSettings, seasonsResult, testBlockedDates, checkoutOnlyDates] = await Promise.all([
+	const [availability, taxSettings, seasonsResult, testBlockedDates, checkoutOnlyDates, cancellationPolicy] = await Promise.all([
 		getAvailability(startStr, endStr).catch(() => null),
 		getTaxSettings().catch(() => null),
 		getSeasons().catch((): Season[] => []),
 		getTestBlockedDates(startStr).catch((): string[] => []),
-		getCheckInDates(startStr).catch((): string[] => [])
+		getCheckInDates(startStr).catch((): string[] => []),
+		getDefaultCancellationPolicy().catch(() => null)
 	]);
 
 	const availabilityMap: Record<string, boolean> = {};
@@ -86,6 +87,7 @@ export const load: PageServerLoad = async () => {
 		seasons: seasonsResult,
 		testBlockedDates,
 		checkoutOnlyDates,
-		windows
+		windows,
+		cancellationPolicy
 	};
 };
