@@ -557,12 +557,15 @@
 	/* Checkout-only — the date is the check-in afternoon of an existing
 	   booking, so the cottage is taken from midday onwards but a new guest
 	   can still leave that morning. Half-shaded cell (left = morning free,
-	   right = afternoon booked) reading LTR like a clock: the empty half is
-	   the time the cottage is actually available. */
+	   right = afternoon booked). The right half deliberately matches the
+	   calendar background so it reads as a visual continuation of the
+	   neighbouring unavailable days (which use a transparent fill on the
+	   calendar bg) — picking it up with a coloured fill instead would make
+	   the lone half-circle look louder than the booked stretch it belongs to. */
 	.day.checkout-only {
 		background: linear-gradient(90deg,
 			var(--md-sys-color-surface-container-lowest) 0 50%,
-			color-mix(in srgb, var(--color-sage) 40%, var(--color-cream-dark)) 50% 100%);
+			var(--color-cream) 50% 100%);
 		color: var(--color-text);
 		cursor: pointer;
 		font-weight: 500;
@@ -652,7 +655,7 @@
 	.legend-swatch.checkout-only {
 		background: linear-gradient(90deg,
 			var(--md-sys-color-surface-container-lowest) 0 50%,
-			color-mix(in srgb, var(--color-sage) 40%, var(--color-cream-dark)) 50% 100%);
+			var(--color-cream) 50% 100%);
 		border: 1px solid var(--color-cream-dark);
 	}
 
