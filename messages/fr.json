@@ -292,7 +292,17 @@
 		"windows_link": "Utiliser la vue simplifiée par périodes →",
 		"stay_rules_title": "Règles de réservation",
 		"stay_rules_min_nights": "Séjour minimum de {n} nuits",
-		"stay_rules_lead_time": "{h} heures de préavis requises"
+		"stay_rules_lead_time": "{h} heures de préavis requises",
+		"rate_plan_heading": "Choisissez votre tarif",
+		"rate_plan_refundable": "Remboursable",
+		"rate_plan_refundable_sub": "Remboursement intégral jusqu'à 14 jours avant l'arrivée, 50% jusqu'à 2 jours avant, aucun remboursement dans les 2 derniers jours.",
+		"rate_plan_non_refundable": "Non remboursable",
+		"rate_plan_non_refundable_sub": "Aucun remboursement — quelle que soit la date d'annulation.",
+		"rate_plan_total": "Total {price} · {nights} nuits",
+		"rate_plan_savings": "Économisez {price}",
+		"cancellation_policy_nonref": "Cette réservation est non remboursable — aucun remboursement ne sera effectué en cas d'annulation, quelle que soit la date.",
+		"nonref_ack_label": "Je comprends que cette réservation est non remboursable et qu'aucun remboursement ne sera effectué en cas d'annulation.",
+		"nonref_ack_required": "Veuillez confirmer que vous comprenez les conditions non remboursables avant de payer."
 	},
 	"windows": {
 		"lede": "{count} séjours réservables dans les 90 prochains jours. Cliquez sur une fenêtre pour réserver toute la durée, ou raccourcissez-la.",

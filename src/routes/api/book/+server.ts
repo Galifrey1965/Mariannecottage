@@ -5,7 +5,9 @@ import {
 	createBookingAtomic,
 	BookingDatesTakenError,
 	generateBookingReference,
-	getRateForBooking
+	getRateForBooking,
+	getCancellationPolicyForRatePlan,
+	type RatePlan
 } from '$lib/server/supabase';
 import { detectLocale, isValidLocale } from '$lib/i18n';
 import { MIN_NIGHTS, MIN_LEAD_HOURS, getEarliestCheckInDate } from '$lib/booking-policy';
@@ -91,9 +93,16 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
 		);
 	}
 
-	// B-01 / PR 4: rate is determined server-side by check-in date + guest count.
-	// Reject if no active plan covers the check-in (no silent 120 fallback).
-	const rate = await getRateForBooking(body.check_in_date, num_guests);
+	// Rate plan: 'refundable' (default) or 'non_refundable'. Validates against
+	// the season's available rates (getRateForBooking returns null if
+	// non_refundable was requested but the season has no nonref rates set).
+	const rate_plan: RatePlan =
+		body.rate_plan === 'non_refundable' ? 'non_refundable' : 'refundable';
+
+	// Rate is determined server-side by check-in date + guest count + plan.
+	// Reject if no active season covers the check-in OR if non_refundable was
+	// requested on a season without nonref rates configured (no silent fallback).
+	const rate = await getRateForBooking(body.check_in_date, num_guests, rate_plan);
 	if (!rate) {
 		return json(
 			{ success: false, error_code: 'no_rate_plan', error: 'No rate plan covers those dates' },
@@ -102,6 +111,19 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
 	}
 	const nightly_rate = rate.nightly_rate;
 	const subtotal = Math.round(num_nights * nightly_rate * 100) / 100;
+
+	// Snapshot the cancellation policy that matches the chosen rate plan.
+	// Refund logic downstream (webhook / admin cancel) reads from the
+	// snapshot, so attaching the right one here is the only thing that
+	// makes "non_refundable means no refund" actually take effect.
+	const policy = await getCancellationPolicyForRatePlan(rate_plan);
+	if (!policy) {
+		console.error(`[/api/book] cancellation policy missing for rate_plan=${rate_plan}`);
+		return json(
+			{ success: false, error: 'Failed to create booking' },
+			{ status: 500 }
+		);
+	}
 
 	// Tourist tax is included in the per-night rate Mark quotes, so we don't
 	// add it on top — `tax` stays 0 and total === subtotal.
@@ -131,7 +153,9 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
 			status: 'pending_payment',
 			booking_reference,
 			source: 'web',
-			guest_locale
+			guest_locale,
+			rate_plan,
+			cancellation_policy_id: policy.id
 		});
 
 		return json({ success: true, booking });

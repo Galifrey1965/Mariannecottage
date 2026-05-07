@@ -74,6 +74,19 @@ function nightsBetween(aISO: string, bISO: string): number {
 	return Math.round((b - a) / (1000 * 60 * 60 * 24));
 }
 
+// True iff a season has a complete set of non-refundable rates and is
+// therefore eligible to offer the rate-plan picker. Mirrors the
+// server-side helper of the same name in $lib/server/supabase — kept
+// here so client code can call it without dragging in server modules.
+// All-or-none is enforced by a DB CHECK constraint, but we test all
+// four to satisfy type narrowing.
+export function seasonHasNonref(s: Season): boolean {
+	return s.rate_per_night_nonref !== null
+		&& s.rate_2_guests_nonref !== null
+		&& s.rate_3_guests_nonref !== null
+		&& s.rate_4_guests_nonref !== null;
+}
+
 // Smallest-span wins on overlap; tie-break newest created_at.
 export function findSeason(seasons: Season[], dateISO: string): Season | null {
 	const matches = seasons.filter(

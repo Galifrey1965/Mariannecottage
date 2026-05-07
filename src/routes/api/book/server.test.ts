@@ -29,12 +29,30 @@ vi.mock('$lib/server/supabase', () => {
 				rate_2_guests: 120,
 				rate_3_guests: 140,
 				rate_4_guests: 160,
+				rate_per_night_nonref: null,
+				rate_2_guests_nonref: null,
+				rate_3_guests_nonref: null,
+				rate_4_guests_nonref: null,
 				start_date: '2026-01-01',
 				end_date: '2026-12-31',
 				is_active: true,
 				reviewed_by_admin: true
 			},
 			nightly_rate: [100, 120, 140, 160][num_guests - 1] ?? 120
+		})),
+		// Default cancellation policy mock — /api/book now snapshots a
+		// policy onto every booking via getCancellationPolicyForRatePlan.
+		getCancellationPolicyForRatePlan: vi.fn(async () => ({
+			id: 'policy-default',
+			name: 'Moderate',
+			schedule: [
+				{ refund_pct: 100, days_before_check_in: 14 },
+				{ refund_pct: 50, days_before_check_in: 2 },
+				{ refund_pct: 0, days_before_check_in: 0 }
+			],
+			is_default: true,
+			created_at: '2026-01-01T00:00:00Z',
+			updated_at: '2026-01-01T00:00:00Z'
 		}))
 	};
 });

@@ -292,7 +292,17 @@
 		"windows_link": "Einfache Zeitraumansicht verwenden →",
 		"stay_rules_title": "Buchungsregeln",
 		"stay_rules_min_nights": "Mindestaufenthalt {n} Nächte",
-		"stay_rules_lead_time": "{h} Stunden Vorlaufzeit erforderlich"
+		"stay_rules_lead_time": "{h} Stunden Vorlaufzeit erforderlich",
+		"rate_plan_heading": "Wählen Sie Ihren Tarif",
+		"rate_plan_refundable": "Erstattbar",
+		"rate_plan_refundable_sub": "Volle Erstattung bis 14 Tage vor Anreise, 50% bis 2 Tage vor, keine Erstattung in den letzten 2 Tagen.",
+		"rate_plan_non_refundable": "Nicht erstattbar",
+		"rate_plan_non_refundable_sub": "Keine Erstattung — unabhängig vom Stornierungszeitpunkt.",
+		"rate_plan_total": "{price} gesamt · {nights} Nächte",
+		"rate_plan_savings": "Sparen Sie {price}",
+		"cancellation_policy_nonref": "Dies ist eine nicht erstattbare Buchung — bei Stornierung erfolgt keine Erstattung, unabhängig vom Zeitpunkt.",
+		"nonref_ack_label": "Ich verstehe, dass diese Buchung nicht erstattbar ist und bei Stornierung keine Erstattung erfolgt.",
+		"nonref_ack_required": "Bitte bestätigen Sie, dass Sie die nicht erstattbaren Bedingungen verstehen, bevor Sie bezahlen."
 	},
 	"windows": {
 		"lede": "{count} buchbare Aufenthalte in den nächsten 90 Tagen. Klicken Sie auf ein Fenster, um die volle Länge zu buchen, oder kürzen Sie es.",

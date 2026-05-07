@@ -67,6 +67,7 @@ export interface Booking {
 	external_ref?: string;
 	cancellation_token_used_at?: string;
 	guest_locale?: 'en' | 'fr' | 'de';
+	rate_plan?: RatePlan;
 }
 
 // B-06 Phase 2 (2026-05-03): cancellation policy catalogue.
@@ -97,6 +98,7 @@ export interface Availability {
 }
 
 export type SeasonKind = 'low' | 'high' | 'peak';
+export type RatePlan = 'refundable' | 'non_refundable';
 
 export interface Season {
 	id: string;
@@ -109,6 +111,13 @@ export interface Season {
 	rate_2_guests: number;
 	rate_3_guests: number;
 	rate_4_guests: number;
+	// Non-refundable plan rates. NULL on the row → this season has no
+	// non-refundable option (the booking flow hides the rate-plan picker).
+	// All-or-none enforced by a CHECK constraint at the DB level.
+	rate_per_night_nonref: number | null;
+	rate_2_guests_nonref: number | null;
+	rate_3_guests_nonref: number | null;
+	rate_4_guests_nonref: number | null;
 	start_date: string;
 	end_date: string;
 	created_by?: string;
@@ -124,11 +133,21 @@ export interface SeasonInput {
 	rate_2_guests: number;
 	rate_3_guests: number;
 	rate_4_guests: number;
+	rate_per_night_nonref?: number | null;
+	rate_2_guests_nonref?: number | null;
+	rate_3_guests_nonref?: number | null;
+	rate_4_guests_nonref?: number | null;
 	start_date: string;
 	end_date: string;
 	is_active?: boolean;
 	reviewed_by_admin?: boolean;
 }
+
+// seasonHasNonref lives in $lib/booking-windows so client code can use
+// it without dragging in server modules. Re-imported + re-exported here
+// for callers already pulling helpers from $lib/server/supabase.
+import { seasonHasNonref } from '$lib/booking-windows';
+export { seasonHasNonref };
 
 export interface TaxSettings {
 	id: number;
@@ -414,8 +433,28 @@ export function resolveSeason(rows: Season[]): Season | null {
 }
 
 // Per-guest rate selector. num_guests must be 1..4 (matches
-// bookings.num_guests CHECK).
-export function rateForGuestCount(season: Season, num_guests: number): number {
+// bookings.num_guests CHECK). rate_plan defaults to 'refundable' so
+// callers that don't yet thread the picker through still work.
+// Throws if 'non_refundable' is requested on a season that has no
+// non-refundable rates configured — caller should validate via
+// seasonHasNonref first.
+export function rateForGuestCount(
+	season: Season,
+	num_guests: number,
+	rate_plan: RatePlan = 'refundable'
+): number {
+	if (rate_plan === 'non_refundable') {
+		if (!seasonHasNonref(season)) {
+			throw new Error('non_refundable rate requested on season with no non-refundable rates');
+		}
+		switch (num_guests) {
+			case 1: return Number(season.rate_per_night_nonref);
+			case 2: return Number(season.rate_2_guests_nonref);
+			case 3: return Number(season.rate_3_guests_nonref);
+			case 4: return Number(season.rate_4_guests_nonref);
+			default: throw new Error(`num_guests out of range: ${num_guests}`);
+		}
+	}
 	switch (num_guests) {
 		case 1: return Number(season.rate_per_night);
 		case 2: return Number(season.rate_2_guests);
@@ -427,11 +466,13 @@ export function rateForGuestCount(season: Season, num_guests: number): number {
 
 export async function getRateForBooking(
 	date: string,
-	num_guests: number
+	num_guests: number,
+	rate_plan: RatePlan = 'refundable'
 ): Promise<{ season: Season; nightly_rate: number } | null> {
 	const season = await getSeasonForDate(date);
 	if (!season) return null;
-	return { season, nightly_rate: rateForGuestCount(season, num_guests) };
+	if (rate_plan === 'non_refundable' && !seasonHasNonref(season)) return null;
+	return { season, nightly_rate: rateForGuestCount(season, num_guests, rate_plan) };
 }
 
 // Admin season helpers (service-role only).
@@ -505,6 +546,27 @@ export async function getDefaultCancellationPolicy(): Promise<CancellationPolicy
 		.maybeSingle();
 	if (error) {
 		console.error('getDefaultCancellationPolicy failed:', error);
+		return null;
+	}
+	return (data as CancellationPolicy | null) ?? null;
+}
+
+// Picks the right cancellation policy for a guest's chosen rate plan.
+// Refundable → the default policy. Non-refundable → the row named
+// 'Non-refundable' (seeded by migration 2026-05-07-03). Returns null
+// only if the expected policy is missing — which is a config error
+// the caller should surface.
+export async function getCancellationPolicyForRatePlan(
+	rate_plan: RatePlan
+): Promise<CancellationPolicy | null> {
+	if (rate_plan === 'refundable') return getDefaultCancellationPolicy();
+	const { data, error } = await adminClient
+		.from('cancellation_policies')
+		.select('*')
+		.eq('name', 'Non-refundable')
+		.maybeSingle();
+	if (error) {
+		console.error('getCancellationPolicyForRatePlan(non_refundable) failed:', error);
 		return null;
 	}
 	return (data as CancellationPolicy | null) ?? null;

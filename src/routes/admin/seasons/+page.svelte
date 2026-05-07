@@ -143,10 +143,30 @@
 								</td>
 								<td><span class="kind-pill kind-{s.kind}">{KIND_LABEL[s.kind]}</span></td>
 								<td>{formatDate(s.start_date)} → {formatDate(s.end_date)}</td>
-								<td>{formatCurrency(s.rate_per_night)}</td>
-								<td>{formatCurrency(s.rate_2_guests)}</td>
-								<td>{formatCurrency(s.rate_3_guests)}</td>
-								<td>{formatCurrency(s.rate_4_guests)}</td>
+								<td>
+									{formatCurrency(s.rate_per_night)}
+									{#if s.rate_per_night_nonref !== null}
+										<div class="nonref-cell">{formatCurrency(s.rate_per_night_nonref)}</div>
+									{/if}
+								</td>
+								<td>
+									{formatCurrency(s.rate_2_guests)}
+									{#if s.rate_2_guests_nonref !== null}
+										<div class="nonref-cell">{formatCurrency(s.rate_2_guests_nonref)}</div>
+									{/if}
+								</td>
+								<td>
+									{formatCurrency(s.rate_3_guests)}
+									{#if s.rate_3_guests_nonref !== null}
+										<div class="nonref-cell">{formatCurrency(s.rate_3_guests_nonref)}</div>
+									{/if}
+								</td>
+								<td>
+									{formatCurrency(s.rate_4_guests)}
+									{#if s.rate_4_guests_nonref !== null}
+										<div class="nonref-cell">{formatCurrency(s.rate_4_guests_nonref)}</div>
+									{/if}
+								</td>
 								<td class="row-actions">
 									<a href="/admin/seasons/{s.id}" class="link-btn">
 										<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
@@ -191,10 +211,30 @@
 								<td>{s.name}</td>
 								<td><span class="kind-pill kind-{s.kind}">{KIND_LABEL[s.kind]}</span></td>
 								<td>{formatDate(s.start_date)} → {formatDate(s.end_date)}</td>
-								<td>{formatCurrency(s.rate_per_night)}</td>
-								<td>{formatCurrency(s.rate_2_guests)}</td>
-								<td>{formatCurrency(s.rate_3_guests)}</td>
-								<td>{formatCurrency(s.rate_4_guests)}</td>
+								<td>
+									{formatCurrency(s.rate_per_night)}
+									{#if s.rate_per_night_nonref !== null}
+										<div class="nonref-cell">{formatCurrency(s.rate_per_night_nonref)}</div>
+									{/if}
+								</td>
+								<td>
+									{formatCurrency(s.rate_2_guests)}
+									{#if s.rate_2_guests_nonref !== null}
+										<div class="nonref-cell">{formatCurrency(s.rate_2_guests_nonref)}</div>
+									{/if}
+								</td>
+								<td>
+									{formatCurrency(s.rate_3_guests)}
+									{#if s.rate_3_guests_nonref !== null}
+										<div class="nonref-cell">{formatCurrency(s.rate_3_guests_nonref)}</div>
+									{/if}
+								</td>
+								<td>
+									{formatCurrency(s.rate_4_guests)}
+									{#if s.rate_4_guests_nonref !== null}
+										<div class="nonref-cell">{formatCurrency(s.rate_4_guests_nonref)}</div>
+									{/if}
+								</td>
 								<td class="row-actions">
 									<a href="/admin/seasons/{s.id}" class="link-btn">View</a>
 								</td>
@@ -246,6 +286,7 @@
 	.plan-link { color: var(--color-text); font-weight: 500; text-decoration: none; }
 	.plan-link:hover { color: var(--color-sage); text-decoration: underline; }
 	.sub { font-size: 0.75rem; color: var(--color-text-muted); margin: 0.125rem 0 0; }
+	.nonref-cell { font-size: 0.78rem; color: var(--color-text-muted); margin-top: 0.15rem; font-style: italic; }
 
 	.kind-pill {
 		display: inline-block;

@@ -9,17 +9,42 @@
 	let rate_2_guests = $state<number | ''>('');
 	let rate_3_guests = $state<number | ''>('');
 	let rate_4_guests = $state<number | ''>('');
+	// Non-refundable rates — all-or-none. Validated client-side before
+	// submit; the DB CHECK constraint backstops it server-side.
+	let rate_per_night_nonref = $state<number | ''>('');
+	let rate_2_guests_nonref = $state<number | ''>('');
+	let rate_3_guests_nonref = $state<number | ''>('');
+	let rate_4_guests_nonref = $state<number | ''>('');
 	let start_date = $state('');
 	let end_date = $state('');
 
 	let submitting = $state(false);
 	let formError = $state('');
 
+	const nonrefValues = $derived([rate_per_night_nonref, rate_2_guests_nonref, rate_3_guests_nonref, rate_4_guests_nonref]);
+	const nonrefSetCount = $derived(nonrefValues.filter((v) => v !== '' && v !== null).length);
+	const nonrefAllOrNone = $derived(nonrefSetCount === 0 || nonrefSetCount === 4);
+
 	async function submit(ev: SubmitEvent) {
 		ev.preventDefault();
+		if (!nonrefAllOrNone) {
+			formError = 'Non-refundable rates must be all set or all empty.';
+			return;
+		}
 		submitting = true;
 		formError = '';
 		try {
+			const nonrefPayload = nonrefSetCount === 4 ? {
+				rate_per_night_nonref,
+				rate_2_guests_nonref,
+				rate_3_guests_nonref,
+				rate_4_guests_nonref
+			} : {
+				rate_per_night_nonref: null,
+				rate_2_guests_nonref: null,
+				rate_3_guests_nonref: null,
+				rate_4_guests_nonref: null
+			};
 			const res = await fetch('/api/admin/seasons', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
@@ -31,6 +56,7 @@
 					rate_2_guests,
 					rate_3_guests,
 					rate_4_guests,
+					...nonrefPayload,
 					start_date,
 					end_date
 				})
@@ -89,7 +115,7 @@
 			</div>
 
 			<fieldset class="rates">
-				<legend class="label">Per-guest rates (€ / night)</legend>
+				<legend class="label">Refundable rates (€ / night)</legend>
 				<div class="rates-grid">
 					<label class="field"><span class="sub">1 guest</span>
 						<input class="input" type="number" min="0" step="0.01" bind:value={rate_per_night} required />
@@ -104,6 +130,28 @@
 						<input class="input" type="number" min="0" step="0.01" bind:value={rate_4_guests} required />
 					</label>
 				</div>
+			</fieldset>
+
+			<fieldset class="rates">
+				<legend class="label">Non-refundable rates (€ / night) — optional</legend>
+				<p class="sub">Leave all four blank to skip the non-refundable plan for this season. If any are set, all four must be set; partial entries are rejected.</p>
+				<div class="rates-grid">
+					<label class="field"><span class="sub">1 guest</span>
+						<input class="input" type="number" min="0" step="0.01" bind:value={rate_per_night_nonref} />
+					</label>
+					<label class="field"><span class="sub">2 guests</span>
+						<input class="input" type="number" min="0" step="0.01" bind:value={rate_2_guests_nonref} />
+					</label>
+					<label class="field"><span class="sub">3 guests</span>
+						<input class="input" type="number" min="0" step="0.01" bind:value={rate_3_guests_nonref} />
+					</label>
+					<label class="field"><span class="sub">4 guests</span>
+						<input class="input" type="number" min="0" step="0.01" bind:value={rate_4_guests_nonref} />
+					</label>
+				</div>
+				{#if !nonrefAllOrNone}
+					<p class="error">Set all four or leave all four empty.</p>
+				{/if}
 			</fieldset>
 		</div>
 

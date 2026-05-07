@@ -6,9 +6,9 @@
 	import BookingSummary from '$lib/components/BookingSummary.svelte';
 	import BookingConfirmed from '$lib/components/BookingConfirmed.svelte';
 	import { MIN_NIGHTS, MIN_LEAD_HOURS, getEarliestCheckInDate } from '$lib/booking-policy';
-	import { findSeason } from '$lib/booking-windows';
+	import { findSeason, seasonHasNonref } from '$lib/booking-windows';
 	import type { PageData } from './$types';
-	import type { Season, SeasonKind } from '$lib/server/supabase';
+	import type { Season, SeasonKind, RatePlan } from '$lib/server/supabase';
 	import type { Stripe, StripeElements, StripePaymentElement } from '@stripe/stripe-js';
 
 	let { data }: { data: PageData } = $props();
@@ -20,7 +20,15 @@
 
 	let checkInDate: Date | undefined = $state();
 	let checkOutDate: Date | undefined = $state();
+	// Rate plan picker state lives up here so the cancellation-copy
+	// derived (below) can read it before the picker is wired further down.
+	let ratePlan = $state<RatePlan>('refundable');
 	const cancellationPolicy = $derived(t(messages, 'book.cancellation_policy'));
+	const stepCancellationCopy = $derived(
+		ratePlan === 'non_refundable'
+			? t(messages, 'book.cancellation_policy_nonref')
+			: cancellationPolicy
+	);
 
 	const seasons: Season[] = data.seasons ?? [];
 
@@ -35,7 +43,16 @@
 		return `${y}-${m}-${day}`;
 	}
 
-	function rateFor(season: Season, n: number): number {
+	function rateFor(season: Season, n: number, plan: RatePlan = 'refundable'): number {
+		if (plan === 'non_refundable' && seasonHasNonref(season)) {
+			switch (n) {
+				case 1: return Number(season.rate_per_night_nonref);
+				case 2: return Number(season.rate_2_guests_nonref);
+				case 3: return Number(season.rate_3_guests_nonref);
+				case 4: return Number(season.rate_4_guests_nonref);
+				default: return Number(season.rate_per_night_nonref);
+			}
+		}
 		switch (n) {
 			case 1: return Number(season.rate_per_night);
 			case 2: return Number(season.rate_2_guests);
@@ -119,9 +136,29 @@
 	const matchingSeason = $derived(
 		checkInDate ? findSeason(seasons, formatDateISO(checkInDate)) : null
 	);
-	const nightly_rate = $derived(matchingSeason ? rateFor(matchingSeason, guests) : 0);
+
+	// Rate plan picker companion state — `ratePlan` itself is declared
+	// near the top of the script (cancellation-copy derived needs it).
+	const offersNonref = $derived(Boolean(matchingSeason && seasonHasNonref(matchingSeason)));
+	$effect(() => {
+		if (!offersNonref && ratePlan === 'non_refundable') ratePlan = 'refundable';
+	});
+	function setRatePlan(plan: RatePlan) {
+		if (plan === ratePlan) return;
+		if (bookingRef) discardPendingBooking();
+		nonRefundableAcknowledged = false;
+		nonRefundableAcknowledgedAt = null;
+		ratePlan = plan;
+	}
+
+	const nightly_rate = $derived(matchingSeason ? rateFor(matchingSeason, guests, ratePlan) : 0);
+	const refundableNightly = $derived(matchingSeason ? rateFor(matchingSeason, guests, 'refundable') : 0);
+	const nonrefNightly = $derived(matchingSeason && offersNonref ? rateFor(matchingSeason, guests, 'non_refundable') : 0);
 	const noRatePlan = $derived(Boolean(checkInDate) && !matchingSeason);
 	const totalCost = $derived(nights * nightly_rate);
+	const refundableTotal = $derived(nights * refundableNightly);
+	const nonrefTotal = $derived(nights * nonrefNightly);
+	const nonrefSavings = $derived(refundableTotal - nonrefTotal);
 	const totalCostLabel = $derived(formatCurrency(lang, totalCost));
 
 	// Sidebar rates panel — see /book/+page.svelte for the rationale.
@@ -177,6 +214,8 @@
 	// PaymentIntent endpoint so it lands on bookings.terms_accepted_at.
 	let termsAccepted = $state(false);
 	let termsAcceptedAt = $state<string | null>(null);
+	let nonRefundableAcknowledged = $state(false);
+	let nonRefundableAcknowledgedAt = $state<string | null>(null);
 
 	let confirmedBooking = $state<{
 		booking_reference: string;
@@ -215,6 +254,7 @@
 						num_guests: guests,
 						check_in_date: formatDateISO(checkInDate),
 						check_out_date: formatDateISO(checkOutDate),
+						rate_plan: ratePlan,
 						special_requests:
 							(eveningMeal
 								? t(messages, 'rooms.evening_meal.request_line') +
@@ -339,6 +379,10 @@
 		if (!stripe || !elements || !bookingRef) return;
 		if (!termsAccepted) {
 			formError = t(messages, 'book.terms_required');
+			return;
+		}
+		if (ratePlan === 'non_refundable' && !nonRefundableAcknowledged) {
+			formError = t(messages, 'book.nonref_ack_required');
 			return;
 		}
 		submitting = true;
@@ -511,6 +555,52 @@
 			{/if}
 
 			{#if step === 2}
+				{#if offersNonref && matchingSeason}
+					<div class="form-card rate-plan-card">
+						<h2 class="section-heading">{t(messages, 'book.rate_plan_heading')}</h2>
+						<div class="rate-plan-options" role="radiogroup" aria-label={t(messages, 'book.rate_plan_heading')}>
+							<button
+								type="button"
+								class="rate-plan-option"
+								class:selected={ratePlan === 'refundable'}
+								role="radio"
+								aria-checked={ratePlan === 'refundable'}
+								onclick={() => setRatePlan('refundable')}
+							>
+								<div class="rate-plan-head">
+									<span class="rate-plan-name">{t(messages, 'book.rate_plan_refundable')}</span>
+									<span class="rate-plan-price">{formatCurrency(lang, refundableNightly)}<span class="rate-plan-per-night">/{t(messages, 'book.night')}</span></span>
+								</div>
+								<p class="rate-plan-sub">{t(messages, 'book.rate_plan_refundable_sub')}</p>
+								{#if nights > 0}
+									<p class="rate-plan-total">{t(messages, 'book.rate_plan_total', { price: formatCurrency(lang, refundableTotal), nights: String(nights) })}</p>
+								{/if}
+							</button>
+							<button
+								type="button"
+								class="rate-plan-option"
+								class:selected={ratePlan === 'non_refundable'}
+								role="radio"
+								aria-checked={ratePlan === 'non_refundable'}
+								onclick={() => setRatePlan('non_refundable')}
+							>
+								<div class="rate-plan-head">
+									<span class="rate-plan-name">{t(messages, 'book.rate_plan_non_refundable')}</span>
+									<span class="rate-plan-price">{formatCurrency(lang, nonrefNightly)}<span class="rate-plan-per-night">/{t(messages, 'book.night')}</span></span>
+								</div>
+								<p class="rate-plan-sub">{t(messages, 'book.rate_plan_non_refundable_sub')}</p>
+								{#if nights > 0}
+									<p class="rate-plan-total">
+										{t(messages, 'book.rate_plan_total', { price: formatCurrency(lang, nonrefTotal), nights: String(nights) })}
+										{#if nonrefSavings > 0}
+											<span class="rate-plan-savings">{t(messages, 'book.rate_plan_savings', { price: formatCurrency(lang, nonrefSavings) })}</span>
+										{/if}
+									</p>
+								{/if}
+							</button>
+						</div>
+					</div>
+				{/if}
 				<div class="form-card">
 					<h2 class="section-heading">{t(messages, 'book.guest_details')}</h2>
 
@@ -661,12 +751,29 @@
 						<span class="terms-label">{@html t(messages, 'book.terms_label_html')}</span>
 					</label>
 
+					{#if ratePlan === 'non_refundable'}
+						<label class="terms-row nonref-ack">
+							<input
+								type="checkbox"
+								bind:checked={nonRefundableAcknowledged}
+								onchange={() => {
+									if (nonRefundableAcknowledged && !nonRefundableAcknowledgedAt) {
+										nonRefundableAcknowledgedAt = new Date().toISOString();
+									}
+								}}
+								class="terms-check"
+								required
+							/>
+							<span class="terms-label">{t(messages, 'book.nonref_ack_label')}</span>
+						</label>
+					{/if}
+
 					<div class="actions">
 						<button onclick={() => { step = 2; discardPendingBooking(); }} disabled={submitting} class="btn-outline">
 							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
 							{t(messages, 'book.back')}
 						</button>
-						<button onclick={submitPayment} disabled={submitting || !paymentReady || !termsAccepted} class="btn-primary flex-1">
+						<button onclick={submitPayment} disabled={submitting || !paymentReady || !termsAccepted || (ratePlan === 'non_refundable' && !nonRefundableAcknowledged)} class="btn-primary flex-1">
 							{#if submitting}
 								{t(messages, 'book.pay_processing')}
 							{:else}
@@ -676,7 +783,7 @@
 						</button>
 					</div>
 
-					<p class="cancel-note">{cancellationPolicy}</p>
+					<p class="cancel-note" class:cancel-note-nonref={ratePlan === 'non_refundable'}>{stepCancellationCopy}</p>
 				</div>
 			{/if}
 
@@ -832,6 +939,31 @@
 
 	/* Form card */
 	.form-card { background: var(--color-cream); border-radius: var(--md-shape-corner-medium); padding: 1.5rem; }
+	.rate-plan-card { margin-bottom: 1.5rem; }
+	.rate-plan-options { display: grid; grid-template-columns: 1fr; gap: 0.75rem; }
+	@media (min-width: 600px) { .rate-plan-options { grid-template-columns: 1fr 1fr; } }
+	.rate-plan-option {
+		display: flex; flex-direction: column; gap: 0.4rem;
+		padding: 1rem 1.1rem;
+		text-align: left;
+		background: var(--color-bg);
+		border: 1.5px solid var(--color-cream-dark);
+		border-radius: var(--md-shape-corner-medium);
+		cursor: pointer;
+		transition: border-color 0.15s, box-shadow 0.15s;
+	}
+	.rate-plan-option:hover { border-color: var(--color-sage); }
+	.rate-plan-option.selected {
+		border-color: var(--color-sage);
+		box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-sage) 25%, transparent);
+	}
+	.rate-plan-head { display: flex; justify-content: space-between; align-items: baseline; gap: 0.5rem; flex-wrap: wrap; }
+	.rate-plan-name { font-family: 'Lora', serif; font-weight: 600; font-size: 1rem; color: var(--color-text); }
+	.rate-plan-price { font-weight: 700; font-size: 1.05rem; color: var(--color-sage); }
+	.rate-plan-per-night { font-weight: 500; font-size: 0.78rem; color: var(--color-text-muted); margin-left: 0.15rem; }
+	.rate-plan-sub { margin: 0; font-size: 0.8rem; color: var(--color-text-muted); line-height: 1.45; }
+	.rate-plan-total { margin: 0.25rem 0 0; font-size: 0.82rem; color: var(--color-text); }
+	.rate-plan-savings { color: var(--color-sage); font-weight: 600; margin-left: 0.4rem; }
 	.section-heading { font-family: 'Lora', serif; font-size: 1.25rem; font-weight: 600; color: var(--color-text); margin: 0 0 1.5rem; }
 	.rules-box { background: var(--color-cream); border-radius: var(--md-shape-corner-medium); padding: 1rem; }
 	.rules-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.5rem; }
@@ -920,6 +1052,8 @@
 	.error-box { padding: 1rem; margin-bottom: 1rem; background: var(--color-error-bg); color: var(--color-error-text); border-radius: var(--md-shape-corner-small); font-size: 0.875rem; }
 	.warning-banner { padding: 0.875rem 1rem; background: var(--color-warning-bg); color: var(--color-warning-text); border-radius: var(--md-shape-corner-small); font-size: 0.8125rem; }
 	.cancel-note { font-size: 0.75rem; color: var(--color-text-muted); margin: 1rem 0 0; text-align: center; }
+	.cancel-note-nonref { color: var(--color-text); font-weight: 500; }
+	.nonref-ack { background: color-mix(in srgb, #fbbf24 12%, transparent); padding: 0.5rem 0.75rem; border-radius: 8px; border: 1px solid #fbbf24; }
 	.terms-row {
 		display: flex;
 		align-items: flex-start;

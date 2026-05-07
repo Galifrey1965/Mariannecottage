@@ -292,7 +292,17 @@
 		"windows_link": "Use the simpler windows view →",
 		"stay_rules_title": "Booking rules",
 		"stay_rules_min_nights": "{n}-night minimum stay",
-		"stay_rules_lead_time": "{h} hours notice required"
+		"stay_rules_lead_time": "{h} hours notice required",
+		"rate_plan_heading": "Choose your rate",
+		"rate_plan_refundable": "Refundable",
+		"rate_plan_refundable_sub": "Full refund up to 14 days before check-in, 50% up to 2 days before, no refund within the last 2 days.",
+		"rate_plan_non_refundable": "Non-refundable",
+		"rate_plan_non_refundable_sub": "No refunds — applies regardless of when you cancel.",
+		"rate_plan_total": "{price} total · {nights} nights",
+		"rate_plan_savings": "Save {price}",
+		"cancellation_policy_nonref": "This is a non-refundable booking — no refund will be issued if you cancel, regardless of timing.",
+		"nonref_ack_label": "I understand this booking is non-refundable and no refund will be issued if I cancel.",
+		"nonref_ack_required": "Please confirm you understand the non-refundable terms before paying."
 	},
 	"windows": {
 		"lede": "{count} bookable stays in the next 90 days. Click any window to book the whole length, or shorten it.",

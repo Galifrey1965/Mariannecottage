@@ -38,6 +38,11 @@ CREATE TABLE bookings (
   -- B-06 Phase 2 (2026-05-03): cancellation policy snapshot taken at booking time.
   -- FK added after cancellation_policies table is created below (forward ref avoidance).
   cancellation_policy_id UUID,
+  -- Rate plan the guest picked at checkout. Drives which cancellation
+  -- policy gets snapshotted into cancellation_policy_id; refund logic
+  -- still reads from that snapshot, not this column.
+  rate_plan TEXT NOT NULL DEFAULT 'refundable'
+    CHECK (rate_plan IN ('refundable','non_refundable')),
   admin_notes TEXT,
   CONSTRAINT check_dates CHECK (check_out_date > check_in_date)
 );
@@ -81,11 +86,26 @@ CREATE TABLE seasons (
   rate_2_guests DECIMAL(10,2) NOT NULL,
   rate_3_guests DECIMAL(10,2) NOT NULL,
   rate_4_guests DECIMAL(10,2) NOT NULL,
+  -- Non-refundable plan rates. NULL means this season has no
+  -- non-refundable option — the booking flow hides the rate-plan picker.
+  -- Constraint enforces all-or-none so a half-set row can't silently
+  -- drop a guest tier.
+  rate_per_night_nonref DECIMAL(10,2),
+  rate_2_guests_nonref DECIMAL(10,2),
+  rate_3_guests_nonref DECIMAL(10,2),
+  rate_4_guests_nonref DECIMAL(10,2),
   start_date DATE NOT NULL,
   end_date DATE NOT NULL,
   created_by TEXT,
   is_active BOOLEAN DEFAULT TRUE,
-  reviewed_by_admin BOOLEAN NOT NULL DEFAULT FALSE
+  reviewed_by_admin BOOLEAN NOT NULL DEFAULT FALSE,
+  CONSTRAINT seasons_nonref_all_or_none CHECK (
+    (rate_per_night_nonref IS NULL AND rate_2_guests_nonref IS NULL
+      AND rate_3_guests_nonref IS NULL AND rate_4_guests_nonref IS NULL)
+    OR
+    (rate_per_night_nonref IS NOT NULL AND rate_2_guests_nonref IS NOT NULL
+      AND rate_3_guests_nonref IS NOT NULL AND rate_4_guests_nonref IS NOT NULL)
+  )
 );
 
 CREATE INDEX seasons_date_idx ON seasons(start_date, end_date);
@@ -197,6 +217,7 @@ DECLARE
   v_reference       TEXT;
   v_pending_until   TIMESTAMPTZ;
   v_policy_id       UUID;
+  v_rate_plan       TEXT := COALESCE(p_booking->>'rate_plan', 'refundable');
 BEGIN
   PERFORM pg_advisory_xact_lock(73656452);
 
@@ -224,7 +245,7 @@ BEGIN
     num_guests, check_in_date, check_out_date, num_nights,
     special_requests, nightly_rate, subtotal, tax, total_cost,
     status, booking_reference,
-    pending_until, cancellation_policy_id
+    pending_until, cancellation_policy_id, rate_plan
   ) VALUES (
     p_booking->>'guest_name',
     p_booking->>'guest_email',
@@ -242,7 +263,8 @@ BEGIN
     v_status,
     p_booking->>'booking_reference',
     v_pending_until,
-    v_policy_id
+    v_policy_id,
+    v_rate_plan
   )
   RETURNING id, booking_reference INTO v_id, v_reference;
 
@@ -258,7 +280,8 @@ BEGIN
     'id', v_id,
     'booking_reference', v_reference,
     'pending_until', v_pending_until,
-    'cancellation_policy_id', v_policy_id
+    'cancellation_policy_id', v_policy_id,
+    'rate_plan', v_rate_plan
   );
 END;
 $$;
