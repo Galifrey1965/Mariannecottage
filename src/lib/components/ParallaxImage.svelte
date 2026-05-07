@@ -3,7 +3,7 @@
 
 	interface Props {
 		src: string;
-		depth: string;
+		depth?: string;
 		alt: string;
 		strength?: number;
 		easing?: number;
@@ -14,7 +14,7 @@
 	let imgEl: HTMLImageElement;
 
 	onMount(() => {
-		if (!imgEl) return;
+		if (!depth || !imgEl) return;
 		const container = imgEl.parentElement;
 		if (!container) return;
 

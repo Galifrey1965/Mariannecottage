@@ -19,13 +19,9 @@
 </script>
 
 <div class="hero">
-	{#if depthImage}
-		<div class="hero-image">
-			<ParallaxImage src={image} depth={depthImage} alt={title} />
-		</div>
-	{:else}
-		<img src={image} alt={title} class="hero-image" />
-	{/if}
+	<div class="hero-image">
+		<ParallaxImage src={image} depth={depthImage} alt={title} />
+	</div>
 	<div class="hero-gradient"></div>
 	<div class="hero-content">
 		<h1 class="hero-title">{title}</h1>
