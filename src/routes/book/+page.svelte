@@ -99,25 +99,26 @@
 		checkInDate ? findSeason(seasons, formatDateISO(checkInDate)) : null
 	);
 
-	// Sidebar rates panel — derive one row per kind from active seasons
-	// whose end_date is on/after today. We show the cheapest 1-guest rate
-	// per kind so the panel always reflects the lowest the visitor could
-	// pay if they came for the shortest stay. Mark sees changes to admin
-	// rates here within one server load.
+	// Sidebar rates panel — derive one row per kind from active seasons.
+	// Prefer upcoming seasons (end_date ≥ today) so the cheapest rate
+	// reflects what a visitor could actually book; if a kind has no
+	// upcoming season but has a past-but-still-active one, fall back to
+	// it so the panel keeps a stable 3-row layout while Mark sets up the
+	// next year's seasons.
 	type RateRow = { kind: SeasonKind; label: string; minRate: number };
 	const KIND_ORDER: SeasonKind[] = ['low', 'high', 'peak'];
 	const todayISO = formatDateISO(new Date());
 	const rateRows: RateRow[] = $derived.by(() => {
-		const activeFuture = seasons.filter(
-			(s) => s.is_active && s.end_date >= todayISO
-		);
+		const active = seasons.filter((s) => s.is_active);
 		const out: RateRow[] = [];
 		for (const kind of KIND_ORDER) {
-			const ofKind = activeFuture.filter((s) => s.kind === kind);
+			const ofKind = active.filter((s) => s.kind === kind);
 			if (ofKind.length === 0) continue;
-			const minRate = ofKind.reduce(
+			const upcoming = ofKind.filter((s) => s.end_date >= todayISO);
+			const pool = upcoming.length > 0 ? upcoming : ofKind;
+			const minRate = pool.reduce(
 				(acc, s) => Math.min(acc, Number(s.rate_per_night)),
-				Number(ofKind[0].rate_per_night)
+				Number(pool[0].rate_per_night)
 			);
 			out.push({
 				kind,

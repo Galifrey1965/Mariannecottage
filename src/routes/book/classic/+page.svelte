@@ -124,22 +124,24 @@
 	const totalCost = $derived(nights * nightly_rate);
 	const totalCostLabel = $derived(formatCurrency(lang, totalCost));
 
-	// Sidebar rates panel — derive one row per kind from active seasons
-	// whose end_date is on/after today. Cheapest 1-guest rate per kind.
+	// Sidebar rates panel — see /book/+page.svelte for the rationale.
+	// Prefers upcoming seasons; falls back to past-but-active when no
+	// upcoming row of that kind exists, so the panel keeps a stable
+	// 3-row layout while Mark sets up the next year's seasons.
 	type RateRow = { kind: SeasonKind; label: string; minRate: number };
 	const KIND_ORDER: SeasonKind[] = ['low', 'high', 'peak'];
 	const todayISO = formatDateISO(new Date());
 	const rateRows: RateRow[] = $derived.by(() => {
-		const activeFuture = seasons.filter(
-			(s) => s.is_active && s.end_date >= todayISO
-		);
+		const active = seasons.filter((s) => s.is_active);
 		const out: RateRow[] = [];
 		for (const kind of KIND_ORDER) {
-			const ofKind = activeFuture.filter((s) => s.kind === kind);
+			const ofKind = active.filter((s) => s.kind === kind);
 			if (ofKind.length === 0) continue;
-			const minRate = ofKind.reduce(
+			const upcoming = ofKind.filter((s) => s.end_date >= todayISO);
+			const pool = upcoming.length > 0 ? upcoming : ofKind;
+			const minRate = pool.reduce(
 				(acc, s) => Math.min(acc, Number(s.rate_per_night)),
-				Number(ofKind[0].rate_per_night)
+				Number(pool[0].rate_per_night)
 			);
 			out.push({
 				kind,
