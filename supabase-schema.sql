@@ -63,24 +63,33 @@ CREATE TABLE availability (
 CREATE INDEX availability_date_idx ON availability(date);
 CREATE INDEX availability_available_idx ON availability(available);
 
-CREATE TABLE rate_plans (
+-- Seasons (renamed from rate_plans 2026-05-07). Each row is one
+-- pricing period — kind drives the sidebar grouping, dates drive both
+-- the rate covering each night AND the cottage's open period (a date is
+-- bookable iff covered by at least one active season; gaps are closed).
+CREATE TYPE season_kind AS ENUM ('low', 'high', 'peak');
+
+CREATE TABLE seasons (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW(),
   name TEXT NOT NULL,
   description TEXT,
+  kind season_kind NOT NULL,
   rate_per_night DECIMAL(10,2) NOT NULL,
-  -- B-01 / PR 4: per-guest tier rates. rate_per_night is the 1-guest base.
+  -- Per-guest tier rates. rate_per_night is the 1-guest base.
   rate_2_guests DECIMAL(10,2) NOT NULL,
   rate_3_guests DECIMAL(10,2) NOT NULL,
   rate_4_guests DECIMAL(10,2) NOT NULL,
-  valid_from DATE NOT NULL,
-  valid_until DATE NOT NULL,
+  start_date DATE NOT NULL,
+  end_date DATE NOT NULL,
   created_by TEXT,
-  is_active BOOLEAN DEFAULT TRUE
+  is_active BOOLEAN DEFAULT TRUE,
+  reviewed_by_admin BOOLEAN NOT NULL DEFAULT FALSE
 );
 
-CREATE INDEX rate_plans_date_idx ON rate_plans(valid_from, valid_until);
+CREATE INDEX seasons_date_idx ON seasons(start_date, end_date);
+CREATE INDEX seasons_kind_idx ON seasons(kind, is_active);
 
 CREATE TABLE tax_settings (
   id INT PRIMARY KEY DEFAULT 1,

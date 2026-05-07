@@ -11,7 +11,7 @@
 	interface NavItem { href: string; label: string; exact?: boolean }
 	const navItems: NavItem[] = [
 		{ href: '/admin',                       label: 'Bookings', exact: true },
-		{ href: '/admin/rate-plans',            label: 'Rate plans' },
+		{ href: '/admin/seasons',               label: 'Seasons' },
 		{ href: '/admin/cancellation-policies', label: 'Policies' },
 		{ href: '/admin/banners',               label: 'Banners' },
 		{ href: '/admin/gallery',               label: 'Gallery' },

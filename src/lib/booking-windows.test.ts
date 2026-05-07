@@ -1,23 +1,31 @@
 // @vitest-environment node
 import { describe, it, expect } from 'vitest';
-import { computeBookableWindows } from './booking-windows';
-import type { RatePlan } from '$lib/server/supabase';
+import { computeBookableWindows, findSeason } from './booking-windows';
+import type { Season } from '$lib/server/supabase';
 
-// A stub rate plan covering the whole test horizon. Exercises the price
-// computation without coupling tests to any real plan structure.
-const stubPlan: RatePlan = {
-	id: 'stub',
-	created_at: '2026-01-01',
-	updated_at: '2026-01-01',
-	name: 'Stub',
-	rate_per_night: 100,
-	rate_2_guests: 110,
-	rate_3_guests: 120,
-	rate_4_guests: 130,
-	valid_from: '2026-01-01',
-	valid_until: '2026-12-31',
-	is_active: true
-};
+// A stub season covering the whole test horizon. Exercises the price
+// computation without coupling tests to any real season structure. Note
+// the wide span (Jan-Dec) means it loses to any narrower overlapping
+// season under smallest-span resolution.
+function mkSeason(over: Partial<Season> = {}): Season {
+	return {
+		id: 'stub',
+		created_at: '2026-01-01T00:00:00Z',
+		updated_at: '2026-01-01T00:00:00Z',
+		name: 'Stub',
+		kind: 'high',
+		rate_per_night: 100,
+		rate_2_guests: 110,
+		rate_3_guests: 120,
+		rate_4_guests: 130,
+		start_date: '2026-01-01',
+		end_date: '2026-12-31',
+		is_active: true,
+		reviewed_by_admin: true,
+		...over
+	};
+}
+const stubSeason: Season = mkSeason();
 
 const earliest = new Date(2026, 4, 6); // 6 May 2026
 const latest = new Date(2026, 6, 5); // 5 Jul 2026 — 60 day horizon
@@ -39,7 +47,7 @@ describe('computeBookableWindows', () => {
 		const windows = computeBookableWindows({
 			availability: {},
 			checkoutOnlyDates: [],
-			ratePlans: [stubPlan],
+			seasons: [stubSeason],
 			earliestCheckIn: earliest,
 			latestCheckIn: latest,
 			minNights: 2
@@ -56,7 +64,7 @@ describe('computeBookableWindows', () => {
 		const windows = computeBookableWindows({
 			availability: buildAvailability([['2026-05-16', '2026-05-18']]),
 			checkoutOnlyDates: ['2026-05-16'],
-			ratePlans: [stubPlan],
+			seasons: [stubSeason],
 			earliestCheckIn: earliest,
 			latestCheckIn: latest,
 			minNights: 2
@@ -78,7 +86,7 @@ describe('computeBookableWindows', () => {
 		const windows = computeBookableWindows({
 			availability: buildAvailability([['2026-05-18', '2026-05-22']]),
 			checkoutOnlyDates: ['2026-05-18'],
-			ratePlans: [stubPlan],
+			seasons: [stubSeason],
 			earliestCheckIn: earliest,
 			latestCheckIn: latest,
 			minNights: 2
@@ -99,7 +107,7 @@ describe('computeBookableWindows', () => {
 				['2026-05-16', '2026-05-18']
 			]),
 			checkoutOnlyDates: ['2026-05-12', '2026-05-16'],
-			ratePlans: [stubPlan],
+			seasons: [stubSeason],
 			earliestCheckIn: earliest,
 			latestCheckIn: latest,
 			minNights: 2
@@ -112,14 +120,14 @@ describe('computeBookableWindows', () => {
 	});
 
 	it('prices each window with the floor price = 1-guest nightly × minNights', () => {
-		// Floor advertising price: a 3-night window at £100/night with a
-		// 2-night minimum reads "from £200" — the cheapest stay possible,
+		// Floor advertising price: a 3-night window at €100/night with a
+		// 2-night minimum reads "from €200" — the cheapest stay possible,
 		// not the full-window total. Stops the card mis-quoting longer
 		// stays as their starting price.
 		const windows = computeBookableWindows({
 			availability: buildAvailability([['2026-05-09', '2026-05-11']]),
 			checkoutOnlyDates: ['2026-05-09'],
-			ratePlans: [stubPlan],
+			seasons: [stubSeason],
 			earliestCheckIn: earliest,
 			latestCheckIn: latest,
 			minNights: 2
@@ -132,17 +140,40 @@ describe('computeBookableWindows', () => {
 		expect(w1.floorPrice).toBe(200); // 100 × minNights(2)
 	});
 
-	it('returns no price when no rate plan covers the window', () => {
+	it('returns no price when no season covers the window', () => {
+		// With no seasons, every date is closed (gap = closed). So there
+		// shouldn't be any windows at all — the closed-period gate should
+		// reject the entire horizon.
 		const windows = computeBookableWindows({
 			availability: {},
 			checkoutOnlyDates: [],
-			ratePlans: [], // no plans at all
+			seasons: [],
 			earliestCheckIn: earliest,
 			latestCheckIn: latest,
 			minNights: 2
 		});
-		expect(windows[0].floorPrice).toBeNull();
-		expect(windows[0].nightlyFromPrice).toBeNull();
+		expect(windows).toEqual([]);
+	});
+
+	it('treats dates outside any active season as closed', () => {
+		// A High season covers May only. June dates are outside any season
+		// → closed, so no June window should be returned even though those
+		// dates are otherwise free in the availability map.
+		const mayOnly = mkSeason({ id: 'may', start_date: '2026-05-01', end_date: '2026-05-31' });
+		const windows = computeBookableWindows({
+			availability: {},
+			checkoutOnlyDates: [],
+			seasons: [mayOnly],
+			earliestCheckIn: earliest,
+			latestCheckIn: latest,
+			minNights: 2
+		});
+		// Only one window, ending 31 May (last covered day + 1 = 1 Jun is the
+		// first closed day, and the run terminates there).
+		expect(windows).toHaveLength(1);
+		expect(windows[0].from).toBe('2026-05-06');
+		// Window's "to" is the first closed day — June 1.
+		expect(windows[0].to).toBe('2026-06-01');
 	});
 
 	it('returns an empty list when the whole horizon is blocked', () => {
@@ -154,11 +185,36 @@ describe('computeBookableWindows', () => {
 		const windows = computeBookableWindows({
 			availability: blocked,
 			checkoutOnlyDates: checkoutOnly,
-			ratePlans: [stubPlan],
+			seasons: [stubSeason],
 			earliestCheckIn: earliest,
 			latestCheckIn: latest,
 			minNights: 2
 		});
 		expect(windows).toEqual([]);
+	});
+});
+
+describe('findSeason — smallest-span resolution', () => {
+	it('returns null when no season covers the date', () => {
+		const may = mkSeason({ start_date: '2026-05-01', end_date: '2026-05-31' });
+		expect(findSeason([may], '2026-06-15')).toBeNull();
+	});
+
+	it('returns the only matching season', () => {
+		const may = mkSeason({ id: 'may', start_date: '2026-05-01', end_date: '2026-05-31' });
+		expect(findSeason([may], '2026-05-15')?.id).toBe('may');
+	});
+
+	it('picks the smaller-span season on overlap (premium overlay)', () => {
+		const high = mkSeason({ id: 'high', start_date: '2026-04-01', end_date: '2026-10-31' });
+		const peak = mkSeason({ id: 'peak', kind: 'peak', start_date: '2026-05-14', end_date: '2026-05-17' });
+		expect(findSeason([high, peak], '2026-05-15')?.id).toBe('peak');
+	});
+
+	it('skips inactive seasons', () => {
+		const high = mkSeason({ id: 'high', start_date: '2026-05-01', end_date: '2026-05-31' });
+		const peak = mkSeason({ id: 'peak', kind: 'peak', start_date: '2026-05-14', end_date: '2026-05-17', is_active: false });
+		// Peak overlay would normally win, but it's archived — High picks up.
+		expect(findSeason([high, peak], '2026-05-15')?.id).toBe('high');
 	});
 });

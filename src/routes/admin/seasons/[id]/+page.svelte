@@ -1,18 +1,20 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import type { PageData } from './$types';
+	import type { SeasonKind } from '$lib/server/supabase';
 
 	let { data }: { data: PageData } = $props();
 
-	let name = $state(data.plan.name);
-	let description = $state(data.plan.description ?? '');
-	let rate_per_night = $state<number | ''>(Number(data.plan.rate_per_night));
-	let rate_2_guests = $state<number | ''>(Number(data.plan.rate_2_guests));
-	let rate_3_guests = $state<number | ''>(Number(data.plan.rate_3_guests));
-	let rate_4_guests = $state<number | ''>(Number(data.plan.rate_4_guests));
-	let valid_from = $state(data.plan.valid_from);
-	let valid_until = $state(data.plan.valid_until);
-	let is_active = $state(data.plan.is_active);
+	let name = $state(data.season.name);
+	let description = $state(data.season.description ?? '');
+	let kind = $state<SeasonKind>(data.season.kind);
+	let rate_per_night = $state<number | ''>(Number(data.season.rate_per_night));
+	let rate_2_guests = $state<number | ''>(Number(data.season.rate_2_guests));
+	let rate_3_guests = $state<number | ''>(Number(data.season.rate_3_guests));
+	let rate_4_guests = $state<number | ''>(Number(data.season.rate_4_guests));
+	let start_date = $state(data.season.start_date);
+	let end_date = $state(data.season.end_date);
+	let is_active = $state(data.season.is_active);
 
 	let submitting = $state(false);
 	let archiving = $state(false);
@@ -23,28 +25,29 @@
 		submitting = true;
 		formError = '';
 		try {
-			const res = await fetch('/api/admin/rate-plans', {
+			const res = await fetch('/api/admin/seasons', {
 				method: 'PATCH',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({
-					id: data.plan.id,
+					id: data.season.id,
 					name,
 					description: description || null,
+					kind,
 					rate_per_night,
 					rate_2_guests,
 					rate_3_guests,
 					rate_4_guests,
-					valid_from,
-					valid_until,
+					start_date,
+					end_date,
 					is_active
 				})
 			});
 			const result = await res.json();
 			if (!result.success) {
-				formError = result.error || 'Failed to update rate plan';
+				formError = result.error || 'Failed to update season';
 				return;
 			}
-			goto('/admin/rate-plans');
+			goto('/admin/seasons');
 		} catch {
 			formError = 'Network error';
 		} finally {
@@ -53,16 +56,16 @@
 	}
 
 	async function archive() {
-		if (!confirm('Archive this rate plan? It will stop being used for new bookings.')) return;
+		if (!confirm('Archive this season? Dates inside it will close on the public calendar.')) return;
 		archiving = true;
 		try {
-			const res = await fetch('/api/admin/rate-plans', {
+			const res = await fetch('/api/admin/seasons', {
 				method: 'DELETE',
 				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ id: data.plan.id })
+				body: JSON.stringify({ id: data.season.id })
 			});
 			const result = await res.json();
-			if (result.success) goto('/admin/rate-plans');
+			if (result.success) goto('/admin/seasons');
 			else formError = result.error || 'Failed to archive';
 		} finally {
 			archiving = false;
@@ -72,9 +75,12 @@
 
 <div class="page">
 	<header class="page-header">
-		<a href="/admin/rate-plans" class="back-link">← Rate plans</a>
-		<h2 class="page-title">{data.plan.name}</h2>
+		<a href="/admin/seasons" class="back-link">← Seasons</a>
+		<h2 class="page-title">{data.season.name}</h2>
 		{#if !is_active}<span class="archived-pill">Archived</span>{/if}
+		{#if !data.season.reviewed_by_admin}
+			<span class="review-pill">Review pending — confirm dates and prices, save to clear.</span>
+		{/if}
 	</header>
 
 	<form class="card" onsubmit={save}>
@@ -89,14 +95,23 @@
 				<input class="input" type="text" bind:value={description} maxlength="200" />
 			</label>
 
+			<label class="field">
+				<span class="label">Kind</span>
+				<select class="input" bind:value={kind} required>
+					<option value="low">Low</option>
+					<option value="high">High</option>
+					<option value="peak">Peak</option>
+				</select>
+			</label>
+
 			<div class="row">
 				<label class="field">
-					<span class="label">Valid from</span>
-					<input class="input" type="date" bind:value={valid_from} required />
+					<span class="label">Start date</span>
+					<input class="input" type="date" bind:value={start_date} required />
 				</label>
 				<label class="field">
-					<span class="label">Valid until</span>
-					<input class="input" type="date" bind:value={valid_until} required />
+					<span class="label">End date</span>
+					<input class="input" type="date" bind:value={end_date} required />
 				</label>
 			</div>
 
@@ -134,7 +149,7 @@
 				</button>
 			{/if}
 			<div class="actions-right">
-				<a class="btn-outline" href="/admin/rate-plans">
+				<a class="btn-outline" href="/admin/seasons">
 					<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
 					Cancel
 				</a>
@@ -157,6 +172,12 @@
 		display: inline-block; align-self: flex-start;
 		padding: 0.125rem 0.625rem; background: var(--color-cream); color: var(--color-text-muted);
 		border-radius: 9999px; font-size: 0.75rem; font-weight: 500;
+	}
+	.review-pill {
+		display: inline-block; align-self: flex-start;
+		padding: 0.25rem 0.75rem; background: #fef3c7; color: #78350f;
+		border-radius: 8px; font-size: 0.75rem; font-weight: 500;
+		border: 1px solid #fbbf24;
 	}
 
 	.card { background: var(--color-bg); border: 1px solid var(--color-cream-dark); border-radius: 12px; padding: 1.5rem; display: flex; flex-direction: column; gap: 1.25rem; }

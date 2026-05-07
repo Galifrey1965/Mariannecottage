@@ -1,14 +1,16 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import type { SeasonKind } from '$lib/server/supabase';
 
 	let name = $state('');
 	let description = $state('');
+	let kind = $state<SeasonKind>('high');
 	let rate_per_night = $state<number | ''>('');
 	let rate_2_guests = $state<number | ''>('');
 	let rate_3_guests = $state<number | ''>('');
 	let rate_4_guests = $state<number | ''>('');
-	let valid_from = $state('');
-	let valid_until = $state('');
+	let start_date = $state('');
+	let end_date = $state('');
 
 	let submitting = $state(false);
 	let formError = $state('');
@@ -18,26 +20,27 @@
 		submitting = true;
 		formError = '';
 		try {
-			const res = await fetch('/api/admin/rate-plans', {
+			const res = await fetch('/api/admin/seasons', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({
 					name,
 					description: description || null,
+					kind,
 					rate_per_night,
 					rate_2_guests,
 					rate_3_guests,
 					rate_4_guests,
-					valid_from,
-					valid_until
+					start_date,
+					end_date
 				})
 			});
 			const result = await res.json();
 			if (!result.success) {
-				formError = result.error || 'Failed to create rate plan';
+				formError = result.error || 'Failed to create season';
 				return;
 			}
-			goto('/admin/rate-plans');
+			goto('/admin/seasons');
 		} catch {
 			formError = 'Network error';
 		} finally {
@@ -48,15 +51,15 @@
 
 <div class="page">
 	<header class="page-header">
-		<a href="/admin/rate-plans" class="back-link">← Rate plans</a>
-		<h2 class="page-title">New rate plan</h2>
+		<a href="/admin/seasons" class="back-link">← Seasons</a>
+		<h2 class="page-title">New season</h2>
 	</header>
 
 	<form class="card" onsubmit={submit}>
 		<div class="grid">
 			<label class="field">
 				<span class="label">Name</span>
-				<input class="input" type="text" bind:value={name} required maxlength="80" />
+				<input class="input" type="text" bind:value={name} required maxlength="80" placeholder="e.g. High season 2027" />
 			</label>
 
 			<label class="field">
@@ -64,14 +67,24 @@
 				<input class="input" type="text" bind:value={description} maxlength="200" />
 			</label>
 
+			<label class="field">
+				<span class="label">Kind</span>
+				<select class="input" bind:value={kind} required>
+					<option value="low">Low</option>
+					<option value="high">High</option>
+					<option value="peak">Peak</option>
+				</select>
+				<span class="sub">Drives the sidebar grouping. Smallest-span season wins on overlap, so a Peak overlay inside a longer High season takes precedence on its own dates.</span>
+			</label>
+
 			<div class="row">
 				<label class="field">
-					<span class="label">Valid from</span>
-					<input class="input" type="date" bind:value={valid_from} required />
+					<span class="label">Start date</span>
+					<input class="input" type="date" bind:value={start_date} required />
 				</label>
 				<label class="field">
-					<span class="label">Valid until</span>
-					<input class="input" type="date" bind:value={valid_until} required />
+					<span class="label">End date</span>
+					<input class="input" type="date" bind:value={end_date} required />
 				</label>
 			</div>
 
@@ -97,13 +110,13 @@
 		{#if formError}<p class="error" role="alert">{formError}</p>{/if}
 
 		<div class="actions">
-			<a class="btn-outline" href="/admin/rate-plans">
+			<a class="btn-outline" href="/admin/seasons">
 				<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
 				Cancel
 			</a>
 			<button class="btn-primary" type="submit" disabled={submitting}>
 				<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
-				{submitting ? 'Saving…' : 'Create rate plan'}
+				{submitting ? 'Saving…' : 'Create season'}
 			</button>
 		</div>
 	</form>

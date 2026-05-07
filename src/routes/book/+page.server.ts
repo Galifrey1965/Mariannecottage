@@ -1,9 +1,9 @@
-import { adminClient, getAvailability, getTaxSettings, getRatePlans, getTestBlockedDates, getCheckInDates } from '$lib/server/supabase';
+import { adminClient, getAvailability, getTaxSettings, getSeasons, getTestBlockedDates, getCheckInDates } from '$lib/server/supabase';
 import { runBcSyncLazyIfStale } from '$lib/server/bc-sync';
 import { computeBookableWindows } from '$lib/booking-windows';
 import { MIN_NIGHTS, getEarliestCheckInDate } from '$lib/booking-policy';
 import type { PageServerLoad } from './$types';
-import type { RatePlan } from '$lib/server/supabase';
+import type { Season } from '$lib/server/supabase';
 
 export const load: PageServerLoad = async () => {
 	// Background: clear any soft-reserves whose 20-min TTL has elapsed
@@ -37,10 +37,10 @@ export const load: PageServerLoad = async () => {
 	// Run the Supabase calls in parallel — they're independent. Each
 	// .catch returns a sane fallback so one failed lookup doesn't break
 	// the page; matches the prior per-query try/catch behaviour.
-	const [availability, taxSettings, ratePlansResult, testBlockedDates, checkoutOnlyDates] = await Promise.all([
+	const [availability, taxSettings, seasonsResult, testBlockedDates, checkoutOnlyDates] = await Promise.all([
 		getAvailability(startStr, endStr).catch(() => null),
 		getTaxSettings().catch(() => null),
-		getRatePlans().catch((): RatePlan[] => []),
+		getSeasons().catch((): Season[] => []),
 		getTestBlockedDates(startStr).catch((): string[] => []),
 		getCheckInDates(startStr).catch((): string[] => [])
 	]);
@@ -55,19 +55,18 @@ export const load: PageServerLoad = async () => {
 	const taxRate = taxSettings?.taxe_de_sejour_per_person_per_night ?? 0.68;
 
 	// Pre-compute the bookable-windows list server-side so the windows
-	// picker on step 1 has zero further round-trips. Bounded by the same
-	// rate-plan horizon the calendar uses — windows after the latest
-	// active plan would silently fail at "Continue to Pay" with
-	// "no rate plan covers those dates", so we don't bother surfacing
-	// them. If no active plan exists we fall back to the 90-day raw
-	// horizon so the page still renders something coherent.
+	// picker on step 1 has zero further round-trips. Bounded by the
+	// latest active season's end date — anything past that is
+	// closed-by-absence anyway, no point surfacing it. Capped to a
+	// 90-day raw horizon so the page doesn't try to render a year of
+	// windows on first paint.
 	const earliestCheckIn = getEarliestCheckInDate(today);
-	const activePlans = (ratePlansResult ?? []).filter((p) => p.is_active);
-	const latestPlanDateISO =
-		activePlans.length > 0
-			? activePlans.reduce((acc, p) => (p.valid_until > acc ? p.valid_until : acc), activePlans[0].valid_until)
+	const activeSeasons = (seasonsResult ?? []).filter((s) => s.is_active);
+	const latestSeasonDateISO =
+		activeSeasons.length > 0
+			? activeSeasons.reduce((acc, s) => (s.end_date > acc ? s.end_date : acc), activeSeasons[0].end_date)
 			: endStr;
-	const latestCheckIn = new Date(latestPlanDateISO + 'T00:00:00Z');
+	const latestCheckIn = new Date(latestSeasonDateISO + 'T00:00:00Z');
 	const horizonCap = new Date(today);
 	horizonCap.setDate(horizonCap.getDate() + 90);
 	const effectiveLatest = latestCheckIn < horizonCap ? latestCheckIn : horizonCap;
@@ -75,7 +74,7 @@ export const load: PageServerLoad = async () => {
 	const windows = computeBookableWindows({
 		availability: availabilityMap,
 		checkoutOnlyDates,
-		ratePlans: ratePlansResult,
+		seasons: seasonsResult,
 		earliestCheckIn,
 		latestCheckIn: effectiveLatest,
 		minNights: MIN_NIGHTS
@@ -84,7 +83,7 @@ export const load: PageServerLoad = async () => {
 	return {
 		availability: availabilityMap,
 		taxRate,
-		ratePlans: ratePlansResult,
+		seasons: seasonsResult,
 		testBlockedDates,
 		checkoutOnlyDates,
 		windows

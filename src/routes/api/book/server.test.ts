@@ -21,16 +21,18 @@ vi.mock('$lib/server/supabase', () => {
 			updated_at: '2026-05-03T00:00:00Z'
 		})),
 		getRateForBooking: vi.fn(async (_date: string, num_guests: number) => ({
-			plan: {
-				id: 'plan-1',
+			season: {
+				id: 'season-1',
 				name: 'Test',
+				kind: 'high',
 				rate_per_night: 100,
 				rate_2_guests: 120,
 				rate_3_guests: 140,
 				rate_4_guests: 160,
-				valid_from: '2026-01-01',
-				valid_until: '2026-12-31',
-				is_active: true
+				start_date: '2026-01-01',
+				end_date: '2026-12-31',
+				is_active: true,
+				reviewed_by_admin: true
 			},
 			nightly_rate: [100, 120, 140, 160][num_guests - 1] ?? 120
 		}))

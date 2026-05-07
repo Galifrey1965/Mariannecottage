@@ -96,32 +96,38 @@ export interface Availability {
 	notes?: string;
 }
 
-export interface RatePlan {
+export type SeasonKind = 'low' | 'high' | 'peak';
+
+export interface Season {
 	id: string;
 	created_at: string;
 	updated_at: string;
 	name: string;
 	description?: string;
+	kind: SeasonKind;
 	rate_per_night: number;
 	rate_2_guests: number;
 	rate_3_guests: number;
 	rate_4_guests: number;
-	valid_from: string;
-	valid_until: string;
+	start_date: string;
+	end_date: string;
 	created_by?: string;
 	is_active: boolean;
+	reviewed_by_admin: boolean;
 }
 
-export interface RatePlanInput {
+export interface SeasonInput {
 	name: string;
 	description?: string | null;
+	kind: SeasonKind;
 	rate_per_night: number;
 	rate_2_guests: number;
 	rate_3_guests: number;
 	rate_4_guests: number;
-	valid_from: string;
-	valid_until: string;
+	start_date: string;
+	end_date: string;
 	is_active?: boolean;
+	reviewed_by_admin?: boolean;
 }
 
 export interface TaxSettings {
@@ -364,43 +370,57 @@ export async function setAvailability(date: string, available: boolean, nightly_
 	return data;
 }
 
-// Rate plan operations
-export async function getRatePlans(): Promise<RatePlan[]> {
+// Season operations (renamed from rate_plans 2026-05-07).
+export async function getSeasons(): Promise<Season[]> {
 	const { data, error } = await anonClient
-		.from('rate_plans')
+		.from('seasons')
 		.select('*')
 		.eq('is_active', true)
-		.order('valid_from', { ascending: true });
+		.order('start_date', { ascending: true });
 
 	if (error) throw error;
-	return (data as RatePlan[] | null) ?? [];
+	return (data as Season[] | null) ?? [];
 }
 
-// B-01 / PR 4: returns the active rate plan covering `date`, picking the
-// highest base rate on overlap (matches the legacy ordering).
-export async function getRatePlanForDate(date: string): Promise<RatePlan | null> {
+// Returns the active season covering `date`. On overlap the smallest-span
+// season wins — supports both premium overlays (e.g. Ascension Weekend
+// Peak on top of High) and discount overlays (a 1-week last-minute sale
+// inside Low) without an explicit priority field.
+export async function getSeasonForDate(date: string): Promise<Season | null> {
 	const { data, error } = await anonClient
-		.from('rate_plans')
+		.from('seasons')
 		.select('*')
 		.eq('is_active', true)
-		.lte('valid_from', date)
-		.gte('valid_until', date)
-		.order('rate_per_night', { ascending: false })
-		.limit(1)
-		.maybeSingle();
+		.lte('start_date', date)
+		.gte('end_date', date);
 
 	if (error) return null;
-	return (data as RatePlan | null) ?? null;
+	const rows = (data as Season[] | null) ?? [];
+	return resolveSeason(rows);
 }
 
-// B-01 / PR 4: per-guest rate selector. num_guests must be 1..4 (matches
-// bookings.num_guests CHECK). Returns null when no active plan covers the date.
-export function rateForGuestCount(plan: RatePlan, num_guests: number): number {
+// Pick the smallest-span season from a list, breaking ties on most-recent
+// created_at. Exported so callers that already have the active-seasons
+// list (e.g. /book server load) can resolve without re-querying.
+export function resolveSeason(rows: Season[]): Season | null {
+	if (rows.length === 0) return null;
+	const span = (s: Season) =>
+		new Date(s.end_date).getTime() - new Date(s.start_date).getTime();
+	return [...rows].sort((a, b) => {
+		const ds = span(a) - span(b);
+		if (ds !== 0) return ds;
+		return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+	})[0];
+}
+
+// Per-guest rate selector. num_guests must be 1..4 (matches
+// bookings.num_guests CHECK).
+export function rateForGuestCount(season: Season, num_guests: number): number {
 	switch (num_guests) {
-		case 1: return Number(plan.rate_per_night);
-		case 2: return Number(plan.rate_2_guests);
-		case 3: return Number(plan.rate_3_guests);
-		case 4: return Number(plan.rate_4_guests);
+		case 1: return Number(season.rate_per_night);
+		case 2: return Number(season.rate_2_guests);
+		case 3: return Number(season.rate_3_guests);
+		case 4: return Number(season.rate_4_guests);
 		default: throw new Error(`num_guests out of range: ${num_guests}`);
 	}
 }
@@ -408,54 +428,58 @@ export function rateForGuestCount(plan: RatePlan, num_guests: number): number {
 export async function getRateForBooking(
 	date: string,
 	num_guests: number
-): Promise<{ plan: RatePlan; nightly_rate: number } | null> {
-	const plan = await getRatePlanForDate(date);
-	if (!plan) return null;
-	return { plan, nightly_rate: rateForGuestCount(plan, num_guests) };
+): Promise<{ season: Season; nightly_rate: number } | null> {
+	const season = await getSeasonForDate(date);
+	if (!season) return null;
+	return { season, nightly_rate: rateForGuestCount(season, num_guests) };
 }
 
-// Admin rate-plan helpers (service-role only).
-export async function listRatePlansAdmin(includeInactive = true): Promise<RatePlan[]> {
-	let query = adminClient.from('rate_plans').select('*');
+// Admin season helpers (service-role only).
+export async function listSeasonsAdmin(includeInactive = true): Promise<Season[]> {
+	let query = adminClient.from('seasons').select('*');
 	if (!includeInactive) query = query.eq('is_active', true);
-	const { data, error } = await query.order('valid_from', { ascending: true });
+	const { data, error } = await query.order('start_date', { ascending: true });
 	if (error) throw error;
-	return (data as RatePlan[] | null) ?? [];
+	return (data as Season[] | null) ?? [];
 }
 
-export async function getRatePlanByIdAdmin(id: string): Promise<RatePlan | null> {
+export async function getSeasonByIdAdmin(id: string): Promise<Season | null> {
 	const { data, error } = await adminClient
-		.from('rate_plans')
+		.from('seasons')
 		.select('*')
 		.eq('id', id)
 		.maybeSingle();
 	if (error) return null;
-	return (data as RatePlan | null) ?? null;
+	return (data as Season | null) ?? null;
 }
 
-export async function createRatePlan(input: RatePlanInput): Promise<RatePlan> {
+export async function createSeason(input: SeasonInput): Promise<Season> {
 	const { data, error } = await adminClient
-		.from('rate_plans')
-		.insert([{ ...input, is_active: input.is_active ?? true }])
+		.from('seasons')
+		.insert([{
+			...input,
+			is_active: input.is_active ?? true,
+			reviewed_by_admin: input.reviewed_by_admin ?? true
+		}])
 		.select()
 		.single();
 	if (error) throw error;
-	return data as RatePlan;
+	return data as Season;
 }
 
-export async function updateRatePlan(id: string, patch: Partial<RatePlanInput>): Promise<RatePlan> {
+export async function updateSeason(id: string, patch: Partial<SeasonInput>): Promise<Season> {
 	const { data, error } = await adminClient
-		.from('rate_plans')
+		.from('seasons')
 		.update({ ...patch, updated_at: new Date().toISOString() })
 		.eq('id', id)
 		.select()
 		.single();
 	if (error) throw error;
-	return data as RatePlan;
+	return data as Season;
 }
 
-export async function archiveRatePlan(id: string): Promise<RatePlan> {
-	return updateRatePlan(id, { is_active: false });
+export async function archiveSeason(id: string): Promise<Season> {
+	return updateSeason(id, { is_active: false });
 }
 
 // PR 4 / B-06 (admin slice): cancellation policy helpers.

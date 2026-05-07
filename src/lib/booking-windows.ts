@@ -8,8 +8,15 @@
 // floor (cheapest guest tier × nights) so cards can render "from €X" without
 // further round-trips. Pure / no Supabase coupling so it's unit-testable
 // and reusable from a future homepage teaser.
+//
+// Season model (2026-05-07): a date is bookable iff it falls inside at
+// least one active season. Gaps between seasons = closed (the cottage's
+// yearly Nov–Mar shutdown is expressed as an absence of seasons there,
+// not an explicit "closed" record). On overlap (e.g. Ascension Weekend
+// Peak overlay on top of High Season), smallest-span wins — supports
+// both premium AND discount overlays without a priority field.
 
-import type { RatePlan } from '$lib/server/supabase';
+import type { Season } from '$lib/server/supabase';
 
 export interface BookingWindow {
 	from: string;
@@ -20,7 +27,7 @@ export interface BookingWindow {
 	 * the absolute minimum a guest could pay if they took the shortest
 	 * possible stay in this window with one person. The card shows
 	 * "From €X" using this; the actual total adjusts up as the guest
-	 * picks a longer stay or larger party. Null if no rate plan covers.
+	 * picks a longer stay or larger party. Null if no season covers.
 	 */
 	floorPrice: number | null;
 	/**
@@ -37,8 +44,9 @@ export interface WindowsInput {
 	/** ISO check-in dates of active bookings — same set surfaced as
 	 *  `checkoutOnlyDates` to the calendar. */
 	checkoutOnlyDates: string[];
-	/** Active rate plans, used to price each window. */
-	ratePlans: RatePlan[];
+	/** Active seasons, used to (a) gate which dates are bookable and
+	 *  (b) price each window. */
+	seasons: Season[];
 	/** Earliest selectable check-in date (= getEarliestCheckInDate()). */
 	earliestCheckIn: Date;
 	/** Latest selectable check-in date. */
@@ -66,13 +74,19 @@ function nightsBetween(aISO: string, bISO: string): number {
 	return Math.round((b - a) / (1000 * 60 * 60 * 24));
 }
 
-function findRatePlan(plans: RatePlan[], dateISO: string): RatePlan | null {
-	const matches = plans.filter(
-		(p) => p.is_active && p.valid_from <= dateISO && p.valid_until >= dateISO
+// Smallest-span wins on overlap; tie-break newest created_at.
+export function findSeason(seasons: Season[], dateISO: string): Season | null {
+	const matches = seasons.filter(
+		(s) => s.is_active && s.start_date <= dateISO && s.end_date >= dateISO
 	);
 	if (matches.length === 0) return null;
-	// Highest rate wins on overlap — same tie-break as /book/+page.svelte.
-	matches.sort((a, b) => Number(b.rate_per_night) - Number(a.rate_per_night));
+	const span = (s: Season) =>
+		new Date(s.end_date).getTime() - new Date(s.start_date).getTime();
+	matches.sort((a, b) => {
+		const ds = span(a) - span(b);
+		if (ds !== 0) return ds;
+		return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+	});
 	return matches[0];
 }
 
@@ -80,15 +94,21 @@ export function computeBookableWindows(input: WindowsInput): BookingWindow[] {
 	const {
 		availability,
 		checkoutOnlyDates,
-		ratePlans,
+		seasons,
 		earliestCheckIn,
 		latestCheckIn,
 		minNights
 	} = input;
 
 	const checkoutSet = new Set(checkoutOnlyDates);
+	// A date is "free" for windowing iff:
+	//   - not blocked in availability,
+	//   - not the check-in of an existing booking (those are checkout-only),
+	//   - AND covered by at least one active season (gap = closed).
 	const isFree = (iso: string) =>
-		availability[iso] !== false && !checkoutSet.has(iso);
+		availability[iso] !== false &&
+		!checkoutSet.has(iso) &&
+		findSeason(seasons, iso) !== null;
 
 	const out: BookingWindow[] = [];
 
@@ -119,8 +139,8 @@ export function computeBookableWindows(input: WindowsInput): BookingWindow[] {
 		const nights = nightsBetween(fromISO, checkoutISO);
 
 		if (nights >= minNights) {
-			const plan = findRatePlan(ratePlans, fromISO);
-			const nightly = plan ? Number(plan.rate_per_night) : null;
+			const season = findSeason(seasons, fromISO);
+			const nightly = season ? Number(season.rate_per_night) : null;
 			out.push({
 				from: fromISO,
 				to: checkoutISO,

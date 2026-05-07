@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { t, formatDate } from '$lib/i18n';
+	import { findSeason } from '$lib/booking-windows';
 	import type { Messages, Locale } from '$lib/i18n';
+	import type { Season } from '$lib/server/supabase';
 
 	export interface BookingDayInfo {
 		id: string;
@@ -50,6 +52,11 @@
 		// Only emitted in non-click-mode (the public booking flow); the
 		// admin calendar opts out by leaving this undefined.
 		onOrphanClick?: (date: Date) => void;
+		// Active seasons. When provided, dates not covered by any active
+		// season render as closed (cottage shut for that period — Mark's
+		// yearly Nov–Mar shutdown). Leave undefined on the admin calendar
+		// where season-coverage is informational, not a booking gate.
+		seasons?: Season[];
 	}
 
 	let {
@@ -66,8 +73,17 @@
 		showLegend = true,
 		disablePastMonths = false,
 		minNights = 1,
-		onOrphanClick
+		onOrphanClick,
+		seasons
 	}: Props = $props();
+
+	// Treat a date as closed iff seasons are provided AND no active season
+	// covers it. When seasons is undefined we don't gate on this — admin
+	// calendar keeps showing every day as it always has.
+	const isClosed = (date: Date): boolean => {
+		if (!seasons || seasons.length === 0) return false;
+		return findSeason(seasons, toISODate(date)) === null;
+	};
 
 	const isClickMode = $derived(onDayClick !== undefined);
 
@@ -108,7 +124,8 @@
 	// map says it's open, and no test fixture is blocking it. Used by the
 	// orphan detector to count contiguous bookable runs.
 	const isFree = (date: Date) =>
-		!isPast(date) && !isAfterMax(date) && isAvailable(date) && !testBlockedSet.has(toISODate(date));
+		!isPast(date) && !isAfterMax(date) && isAvailable(date)
+		&& !testBlockedSet.has(toISODate(date)) && !isClosed(date);
 
 	// Orphan day: a free day where no run of `minNights` consecutive free
 	// days containing it exists, so the minimum-stay rule blocks every
@@ -155,7 +172,7 @@
 		const end = a < b ? b : a;
 		const d = new Date(start);
 		while (d < end) {
-			if (!isAvailable(d) || isPast(d) || testBlockedSet.has(toISODate(d)) || isCheckoutOnly(d)) return false;
+			if (!isAvailable(d) || isPast(d) || testBlockedSet.has(toISODate(d)) || isCheckoutOnly(d) || isClosed(d)) return false;
 			d.setDate(d.getDate() + 1);
 		}
 		return true;
@@ -358,6 +375,11 @@
 			}
 			return 'day available' + outside;
 		}
+		// Closed (outside any active season — the cottage's annual Nov–Mar
+		// shutdown) wins over both test fixtures and availability so guests
+		// see a distinct "cottage closed" treatment rather than a generic
+		// "unavailable" cell.
+		if (isClosed(date)) return 'day closed' + outside;
 		// Test-blocked takes precedence — even if the availability table
 		// hasn't been written for this date (the test fixture seeds bookings
 		// directly without touching availability), we want the orange
@@ -440,6 +462,9 @@
 		<div class="legend">
 			<div class="legend-item"><div class="legend-swatch available"></div><span>{t(messages, 'calendar.available')}</span></div>
 			<div class="legend-item"><div class="legend-swatch unavailable"></div><span>{t(messages, 'calendar.unavailable')}</span></div>
+			{#if seasons && seasons.length > 0}
+				<div class="legend-item"><div class="legend-swatch closed"></div><span>{t(messages, 'calendar.cottage_closed')}</span></div>
+			{/if}
 			{#if onOrphanClick}
 				<div class="legend-item"><div class="legend-swatch orphan"></div><span>{t(messages, 'calendar.by_arrangement')}</span></div>
 			{/if}
@@ -511,6 +536,17 @@
 	}
 	.day.orphan:hover { filter: brightness(0.95); }
 	.day.unavailable { background: transparent; color: var(--color-text-muted); opacity: 0.3; cursor: default; }
+	/* Closed — date falls outside any active season. Visually distinct
+	   from "unavailable" (which usually means a specific booking) so the
+	   guest reads it as "cottage shut" rather than "someone's there". */
+	.day.closed {
+		background: repeating-linear-gradient(135deg,
+			var(--color-cream) 0 6px,
+			var(--color-cream-dark) 6px 12px);
+		color: var(--color-text-muted);
+		cursor: not-allowed;
+		opacity: 0.7;
+	}
 	/* Checkout-only — the date is the check-in afternoon of an existing
 	   booking, so the cottage is taken from midday onwards but a new guest
 	   can still leave that morning. Half-shaded cell (left = morning free,
@@ -595,6 +631,12 @@
 	.legend-swatch.unavailable { background: var(--color-disabled); opacity: 0.3; }
 	.legend-swatch.past { background: var(--color-disabled); opacity: 0.3; }
 	.legend-swatch.test-blocked { background: repeating-linear-gradient(45deg, #f5b942, #f5b942 3px, #e89c1c 3px, #e89c1c 6px); }
+	.legend-swatch.closed {
+		background: repeating-linear-gradient(135deg,
+			var(--color-cream) 0 3px,
+			var(--color-cream-dark) 3px 6px);
+		border: 1px solid var(--color-cream-dark);
+	}
 	.legend-swatch.orphan {
 		background: repeating-linear-gradient(135deg,
 			var(--md-sys-color-surface-container-lowest) 0 3px,

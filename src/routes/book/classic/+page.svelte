@@ -6,8 +6,9 @@
 	import BookingSummary from '$lib/components/BookingSummary.svelte';
 	import BookingConfirmed from '$lib/components/BookingConfirmed.svelte';
 	import { MIN_NIGHTS, MIN_LEAD_HOURS, getEarliestCheckInDate } from '$lib/booking-policy';
+	import { findSeason } from '$lib/booking-windows';
 	import type { PageData } from './$types';
-	import type { RatePlan } from '$lib/server/supabase';
+	import type { Season, SeasonKind } from '$lib/server/supabase';
 	import type { Stripe, StripeElements, StripePaymentElement } from '@stripe/stripe-js';
 
 	let { data }: { data: PageData } = $props();
@@ -21,7 +22,7 @@
 	let checkOutDate: Date | undefined = $state();
 	const cancellationPolicy = $derived(t(messages, 'book.cancellation_policy'));
 
-	const ratePlans: RatePlan[] = data.ratePlans ?? [];
+	const seasons: Season[] = data.seasons ?? [];
 
 	function formatDateISO(d: Date): string {
 		// Local-time, not toISOString — toISOString shifts to UTC, which in
@@ -34,22 +35,13 @@
 		return `${y}-${m}-${day}`;
 	}
 
-	function findRatePlan(plans: RatePlan[], dateISO: string): RatePlan | null {
-		const matches = plans.filter(
-			(p) => p.is_active && p.valid_from <= dateISO && p.valid_until >= dateISO
-		);
-		if (matches.length === 0) return null;
-		matches.sort((a, b) => Number(b.rate_per_night) - Number(a.rate_per_night));
-		return matches[0];
-	}
-
-	function rateFor(plan: RatePlan, n: number): number {
+	function rateFor(season: Season, n: number): number {
 		switch (n) {
-			case 1: return Number(plan.rate_per_night);
-			case 2: return Number(plan.rate_2_guests);
-			case 3: return Number(plan.rate_3_guests);
-			case 4: return Number(plan.rate_4_guests);
-			default: return Number(plan.rate_per_night);
+			case 1: return Number(season.rate_per_night);
+			case 2: return Number(season.rate_2_guests);
+			case 3: return Number(season.rate_3_guests);
+			case 4: return Number(season.rate_4_guests);
+			default: return Number(season.rate_per_night);
 		}
 	}
 
@@ -112,25 +104,51 @@
 			: 0
 	);
 
-	// Cap the calendar at the last covered rate plan so guests can't wander
-	// into months with no rate (which silently rejects at the Continue button
-	// with "no rate plan covers those dates"). Picks the latest valid_until
-	// across active plans; absent any active plan, leaves the cap unset.
+	// Cap the calendar at the last covered season's end so guests can't
+	// wander into months with no coverage (which silently rejects at the
+	// Continue button). Picks the latest end_date across active seasons;
+	// absent any active season, leaves the cap unset.
 	const maxBookableDate = $derived.by<Date | undefined>(() => {
-		const active = (ratePlans ?? []).filter((p) => p.is_active);
+		const active = (seasons ?? []).filter((s) => s.is_active);
 		if (active.length === 0) return undefined;
-		const latest = active.reduce((acc, p) => (p.valid_until > acc ? p.valid_until : acc), active[0].valid_until);
+		const latest = active.reduce((acc, s) => (s.end_date > acc ? s.end_date : acc), active[0].end_date);
 		const [y, m, d] = latest.split('-').map(Number);
 		return new Date(y, m - 1, d);
 	});
 
-	const matchingPlan = $derived(
-		checkInDate ? findRatePlan(ratePlans, formatDateISO(checkInDate)) : null
+	const matchingSeason = $derived(
+		checkInDate ? findSeason(seasons, formatDateISO(checkInDate)) : null
 	);
-	const nightly_rate = $derived(matchingPlan ? rateFor(matchingPlan, guests) : 0);
-	const noRatePlan = $derived(Boolean(checkInDate) && !matchingPlan);
+	const nightly_rate = $derived(matchingSeason ? rateFor(matchingSeason, guests) : 0);
+	const noRatePlan = $derived(Boolean(checkInDate) && !matchingSeason);
 	const totalCost = $derived(nights * nightly_rate);
 	const totalCostLabel = $derived(formatCurrency(lang, totalCost));
+
+	// Sidebar rates panel — derive one row per kind from active seasons
+	// whose end_date is on/after today. Cheapest 1-guest rate per kind.
+	type RateRow = { kind: SeasonKind; label: string; minRate: number };
+	const KIND_ORDER: SeasonKind[] = ['low', 'high', 'peak'];
+	const todayISO = formatDateISO(new Date());
+	const rateRows: RateRow[] = $derived.by(() => {
+		const activeFuture = seasons.filter(
+			(s) => s.is_active && s.end_date >= todayISO
+		);
+		const out: RateRow[] = [];
+		for (const kind of KIND_ORDER) {
+			const ofKind = activeFuture.filter((s) => s.kind === kind);
+			if (ofKind.length === 0) continue;
+			const minRate = ofKind.reduce(
+				(acc, s) => Math.min(acc, Number(s.rate_per_night)),
+				Number(ofKind[0].rate_per_night)
+			);
+			out.push({
+				kind,
+				label: t(messages, `book.rate_${kind}`),
+				minRate
+			});
+		}
+		return out;
+	});
 
 	function validate(): boolean {
 		const errors: Record<string, string> = {};
@@ -472,6 +490,7 @@
 						availability={realAvailability}
 						{testBlockedDates}
 						{checkoutOnlyDates}
+						{seasons}
 						onDateRangeSelect={handleDateRangeSelect}
 						onOrphanClick={handleOrphanClick}
 						minDate={getEarliestCheckInDate()}
@@ -701,14 +720,19 @@
 				cancellationPolicy={cancellationPolicy}
 			/>
 
-			<div class="rates-box">
-				<h3 class="rates-title">{t(messages, 'book.seasonal_rates')}</h3>
-				<div class="rates-list">
-					<div class="rate-row"><span>{t(messages, 'book.rate_low')}</span><span class="rate-value">{t(messages, 'book.rate_low_price')}</span></div>
-					<div class="rate-row"><span>{t(messages, 'book.rate_high')}</span><span class="rate-value">{t(messages, 'book.rate_high_price')}</span></div>
-					<div class="rate-row peak"><span>{t(messages, 'book.rate_peak')}</span><span class="rate-value">{t(messages, 'book.rate_peak_price')}</span></div>
+			{#if rateRows.length > 0}
+				<div class="rates-box">
+					<h3 class="rates-title">{t(messages, 'book.seasonal_rates')}</h3>
+					<div class="rates-list">
+						{#each rateRows as row}
+							<div class="rate-row" class:peak={row.kind === 'peak'}>
+								<span>{row.label}</span>
+								<span class="rate-value">{t(messages, 'book.rate_from_per_night', { price: formatCurrency(lang, row.minRate) })}</span>
+							</div>
+						{/each}
+					</div>
 				</div>
-			</div>
+			{/if}
 		</div>
 
 		<div class="support-section">

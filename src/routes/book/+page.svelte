@@ -6,9 +6,10 @@
 	import BookingSummary from '$lib/components/BookingSummary.svelte';
 	import BookingConfirmed from '$lib/components/BookingConfirmed.svelte';
 	import { MIN_NIGHTS, MIN_LEAD_HOURS } from '$lib/booking-policy';
+	import { findSeason } from '$lib/booking-windows';
 	import type { BookingWindow } from '$lib/booking-windows';
 	import type { PageData } from './$types';
-	import type { RatePlan } from '$lib/server/supabase';
+	import type { Season, SeasonKind } from '$lib/server/supabase';
 	import type { Stripe, StripeElements, StripePaymentElement } from '@stripe/stripe-js';
 
 	let { data }: { data: PageData } = $props();
@@ -22,7 +23,7 @@
 	let checkOutDate: Date | undefined = $state();
 	const cancellationPolicy = $derived(t(messages, 'book.cancellation_policy'));
 
-	const ratePlans: RatePlan[] = data.ratePlans ?? [];
+	const seasons: Season[] = data.seasons ?? [];
 
 	function formatDateISO(d: Date): string {
 		// Local-time, not toISOString — toISOString shifts to UTC, which in
@@ -35,22 +36,13 @@
 		return `${y}-${m}-${day}`;
 	}
 
-	function findRatePlan(plans: RatePlan[], dateISO: string): RatePlan | null {
-		const matches = plans.filter(
-			(p) => p.is_active && p.valid_from <= dateISO && p.valid_until >= dateISO
-		);
-		if (matches.length === 0) return null;
-		matches.sort((a, b) => Number(b.rate_per_night) - Number(a.rate_per_night));
-		return matches[0];
-	}
-
-	function rateFor(plan: RatePlan, n: number): number {
+	function rateFor(season: Season, n: number): number {
 		switch (n) {
-			case 1: return Number(plan.rate_per_night);
-			case 2: return Number(plan.rate_2_guests);
-			case 3: return Number(plan.rate_3_guests);
-			case 4: return Number(plan.rate_4_guests);
-			default: return Number(plan.rate_per_night);
+			case 1: return Number(season.rate_per_night);
+			case 2: return Number(season.rate_2_guests);
+			case 3: return Number(season.rate_3_guests);
+			case 4: return Number(season.rate_4_guests);
+			default: return Number(season.rate_per_night);
 		}
 	}
 
@@ -103,11 +95,40 @@
 			: 0
 	);
 
-	const matchingPlan = $derived(
-		checkInDate ? findRatePlan(ratePlans, formatDateISO(checkInDate)) : null
+	const matchingSeason = $derived(
+		checkInDate ? findSeason(seasons, formatDateISO(checkInDate)) : null
 	);
-	const nightly_rate = $derived(matchingPlan ? rateFor(matchingPlan, guests) : 0);
-	const noRatePlan = $derived(Boolean(checkInDate) && !matchingPlan);
+
+	// Sidebar rates panel — derive one row per kind from active seasons
+	// whose end_date is on/after today. We show the cheapest 1-guest rate
+	// per kind so the panel always reflects the lowest the visitor could
+	// pay if they came for the shortest stay. Mark sees changes to admin
+	// rates here within one server load.
+	type RateRow = { kind: SeasonKind; label: string; minRate: number };
+	const KIND_ORDER: SeasonKind[] = ['low', 'high', 'peak'];
+	const todayISO = formatDateISO(new Date());
+	const rateRows: RateRow[] = $derived.by(() => {
+		const activeFuture = seasons.filter(
+			(s) => s.is_active && s.end_date >= todayISO
+		);
+		const out: RateRow[] = [];
+		for (const kind of KIND_ORDER) {
+			const ofKind = activeFuture.filter((s) => s.kind === kind);
+			if (ofKind.length === 0) continue;
+			const minRate = ofKind.reduce(
+				(acc, s) => Math.min(acc, Number(s.rate_per_night)),
+				Number(ofKind[0].rate_per_night)
+			);
+			out.push({
+				kind,
+				label: t(messages, `book.rate_${kind}`),
+				minRate
+			});
+		}
+		return out;
+	});
+	const nightly_rate = $derived(matchingSeason ? rateFor(matchingSeason, guests) : 0);
+	const noRatePlan = $derived(Boolean(checkInDate) && !matchingSeason);
 	const totalCost = $derived(nights * nightly_rate);
 	const totalCostLabel = $derived(formatCurrency(lang, totalCost));
 
@@ -673,14 +694,19 @@
 				cancellationPolicy={cancellationPolicy}
 			/>
 
-			<div class="rates-box">
-				<h3 class="rates-title">{t(messages, 'book.seasonal_rates')}</h3>
-				<div class="rates-list">
-					<div class="rate-row"><span>{t(messages, 'book.rate_low')}</span><span class="rate-value">{t(messages, 'book.rate_low_price')}</span></div>
-					<div class="rate-row"><span>{t(messages, 'book.rate_high')}</span><span class="rate-value">{t(messages, 'book.rate_high_price')}</span></div>
-					<div class="rate-row peak"><span>{t(messages, 'book.rate_peak')}</span><span class="rate-value">{t(messages, 'book.rate_peak_price')}</span></div>
+			{#if rateRows.length > 0}
+				<div class="rates-box">
+					<h3 class="rates-title">{t(messages, 'book.seasonal_rates')}</h3>
+					<div class="rates-list">
+						{#each rateRows as row}
+							<div class="rate-row" class:peak={row.kind === 'peak'}>
+								<span>{row.label}</span>
+								<span class="rate-value">{t(messages, 'book.rate_from_per_night', { price: formatCurrency(lang, row.minRate) })}</span>
+							</div>
+						{/each}
+					</div>
 				</div>
-			</div>
+			{/if}
 		</div>
 
 		<div class="support-section">
