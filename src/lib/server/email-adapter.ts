@@ -43,7 +43,17 @@ export function buildCancelMagicLink(booking: Pick<Booking, 'id' | 'booking_refe
 			ref: booking.booking_reference,
 			exp: expSec
 		});
-		const base = publicEnv.PUBLIC_SITE_URL || 'http://localhost:5173';
+		const base = publicEnv.PUBLIC_SITE_URL;
+		if (!base) {
+			// Same handling as missing CANCEL_TOKEN_SECRET — return null so
+			// the confirmation email goes out without a cancel link rather
+			// than embedding a localhost URL the guest can't open. The
+			// admin can re-mint the link via /api/admin/bookings/cancel-link
+			// if needed. PUBLIC_SITE_URL is set on Netlify production; this
+			// path should only fire in misconfigured environments.
+			console.warn('[email-adapter] PUBLIC_SITE_URL not set — cancel link omitted from confirmation email');
+			return null;
+		}
 		return `${base.replace(/\/$/, '')}/book/cancel?token=${encodeURIComponent(token)}`;
 	} catch (err) {
 		if (err instanceof CancelTokenError && err.reason === 'no_secret') {

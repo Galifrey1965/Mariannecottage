@@ -1,10 +1,8 @@
-// PR 4: admin-only helper that mints a guest cancellation magic link.
-//
-// While PR 5 (email infrastructure) is not yet shipped, the cancel link can't
-// be auto-injected into a booking-confirmed email. This endpoint lets an admin
-// generate the link on demand and copy-paste it (or read it out by phone).
-// When PR 5 ships, the same engine will produce the same link inside the
-// transactional email.
+// Admin-only helper that mints a guest cancellation magic link on
+// demand. The same link is auto-injected into the booking-confirmed
+// email (see lib/server/email-adapter.ts), so this endpoint is for
+// admin re-issue paths — the guest lost the email, the admin wants to
+// read the link out by phone, etc.
 //
 // GET ?id=<bookingId> → { url, token, expires_at } (admin-auth-gated)
 
@@ -40,7 +38,15 @@ export const GET: RequestHandler = async ({ locals, url }) => {
 		exp: expSec
 	});
 
-	const base = publicEnv.PUBLIC_SITE_URL || 'http://localhost:5173';
+	const base = publicEnv.PUBLIC_SITE_URL;
+	if (!base) {
+		// Hard fail rather than embed a localhost link the admin would then
+		// read out to a guest by phone. PUBLIC_SITE_URL is set on Netlify
+		// production; if it's missing, something is wrong with the deploy
+		// config and the right fix is to set it, not to paper over it.
+		console.error('[cancel-link] PUBLIC_SITE_URL not configured');
+		return json({ error: 'PUBLIC_SITE_URL not configured' }, { status: 503 });
+	}
 	const fullUrl = `${base.replace(/\/$/, '')}/book/cancel?token=${encodeURIComponent(token)}`;
 
 	return json({

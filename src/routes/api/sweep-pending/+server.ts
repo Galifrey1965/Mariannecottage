@@ -62,9 +62,8 @@ export const POST: RequestHandler = async ({ request }) => {
 		if (auditError) {
 			console.error('[sweep-pending] audit insert failed:', auditError);
 		}
-		console.log(
-			`[sweep-pending] expired ${expired.length} booking(s), freed ${totalFreed} availability row(s)`
-		);
+		// Detail row is captured in agent_events above (action =
+		// soft_reserve_swept) — no need for a separate console line.
 	}
 
 	return json({ expired: expired.length, dates_freed: expired.reduce((a, r) => a + r.freed_dates, 0) });
