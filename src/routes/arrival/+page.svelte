@@ -29,12 +29,12 @@
 
 	<article class="info-block">
 		<h2>{t(messages, 'arrival.parking_heading')}</h2>
-		<p><span class="pending">{t(messages, 'arrival.pending')}</span></p>
+		<p>{t(messages, 'arrival.parking_body')}</p>
 	</article>
 
 	<article class="info-block">
 		<h2>{t(messages, 'arrival.key_heading')}</h2>
-		<p><span class="pending">{t(messages, 'arrival.pending')}</span></p>
+		<p>{t(messages, 'arrival.key_body')}</p>
 	</article>
 
 	<article class="info-block">
@@ -84,16 +84,4 @@
 		margin: 0 0 0.6rem;
 	}
 	.info-block p { margin: 0; }
-	.pending {
-		display: inline-block;
-		font-size: 0.75rem;
-		font-weight: 600;
-		letter-spacing: 0.04em;
-		text-transform: uppercase;
-		color: #8a5a00;
-		background: #fff4d6;
-		border: 1px solid #f5b942;
-		border-radius: 9999px;
-		padding: 0.1rem 0.55rem;
-	}
 </style>

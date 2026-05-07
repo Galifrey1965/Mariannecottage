@@ -5,20 +5,16 @@
 	let { data }: { data: PageData } = $props();
 	const messages = $derived(data.messages);
 
-	// Items with hardcoded answers in `a` are answered. Items with `pending: true`
-	// surface as a clear "Pending" pill so the gap is visible on the live site.
-	type Faq =
-		| { qKey: string; aKey: string }
-		| { qKey: string; pending: true };
+	type Faq = { qKey: string; aKey: string };
 	const items: Faq[] = [
-		{ qKey: 'faq.q1', pending: true },
+		{ qKey: 'faq.q1', aKey: 'faq.a1' },
 		{ qKey: 'faq.q2', aKey: 'faq.a2' },
 		{ qKey: 'faq.q3', aKey: 'faq.a3' },
-		{ qKey: 'faq.q4', pending: true },
-		{ qKey: 'faq.q5', pending: true },
+		{ qKey: 'faq.q4', aKey: 'faq.a4' },
+		{ qKey: 'faq.q5', aKey: 'faq.a5' },
 		{ qKey: 'faq.q6', aKey: 'faq.a6' },
 		{ qKey: 'faq.q7', aKey: 'faq.a7' },
-		{ qKey: 'faq.q8', pending: true }
+		{ qKey: 'faq.q8', aKey: 'faq.a8' }
 	];
 </script>
 
@@ -33,11 +29,7 @@
 			<details class="faq-item">
 				<summary>{t(messages, item.qKey)}</summary>
 				<div class="faq-answer">
-					{#if 'aKey' in item}
-						<p>{t(messages, item.aKey)}</p>
-					{:else}
-						<p><span class="pending">{t(messages, 'faq.pending')}</span></p>
-					{/if}
+					<p>{t(messages, item.aKey)}</p>
 				</div>
 			</details>
 		{/each}
@@ -97,16 +89,4 @@
 		line-height: 1.7;
 	}
 	.faq-answer p { margin: 0; }
-	.pending {
-		display: inline-block;
-		font-size: 0.75rem;
-		font-weight: 600;
-		letter-spacing: 0.04em;
-		text-transform: uppercase;
-		color: #8a5a00;
-		background: #fff4d6;
-		border: 1px solid #f5b942;
-		border-radius: 9999px;
-		padding: 0.1rem 0.55rem;
-	}
 </style>
