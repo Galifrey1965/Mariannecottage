@@ -92,17 +92,43 @@ the existing CSP allowlists (Stripe, Google Maps, Supabase Storage, fonts).
 
 ---
 
-## After — _pending deploy_
-
-Will populate once the headers change is deployed to <https://mariannecottage.fr>.
+## After — 2026-05-08 (post-deploy, commit `15a3e26`)
 
 ### TLS / certificate — Qualys SSL Labs
 
-_pending_
+**Grade: A+** (unchanged — TLS config wasn't the issue)
+
+| Check | Result |
+|---|---|
+| Protocols | TLS 1.2 + TLS 1.3 only |
+| HSTS | `max-age=31536000; includeSubDomains` ← **improved** (was missing `includeSubDomains`) |
+| Vulnerabilities | Heartbleed ✗ · POODLE ✗ · FREAK ✗ · Logjam ✗ · BEAST ✗ |
 
 ### HTTP security headers (live response inspection)
 
-_pending_
+| Header | Before | After |
+|---|---|---|
+| `Strict-Transport-Security` | `max-age=31536000` | ✓ `max-age=31536000; includeSubDomains` |
+| `X-Content-Type-Options` | ✓ | ✓ `nosniff` |
+| `Content-Security-Policy` | ✗ missing | ✓ full policy with Stripe/Google/Supabase allowlists |
+| `X-Frame-Options` | ✗ missing | ✓ `SAMEORIGIN` |
+| `Referrer-Policy` | ✗ missing | ✓ `strict-origin-when-cross-origin` |
+| `Permissions-Policy` | ✗ missing | ✓ `camera=(), microphone=(), geolocation=(), interest-cohort=(), browsing-topics=()` |
+| `Cross-Origin-Opener-Policy` | ✗ missing | ✓ `same-origin` |
+
+**Estimated grade (Mozilla Observatory / securityheaders.com): A** — all baseline
+headers present; would jump to A+ once HSTS preload is submitted and CSP drops
+`'unsafe-inline'` / `'unsafe-eval'`.
+
+### Smoke test
+
+The site loaded normally with the new CSP — Stripe checkout iframe, Google
+Maps tiles, Supabase Storage gallery images, and Google Fonts all render under
+the allowlist. No CSP violations seen on the home page.
+
+If users hit anything that breaks (a third-party widget, an embedded video,
+an external CDN), the browser console will report it as a CSP violation —
+the allowlist can be extended in `src/hooks.server.ts` `SECURITY_HEADERS`.
 
 ---
 
