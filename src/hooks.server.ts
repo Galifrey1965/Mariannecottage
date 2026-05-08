@@ -73,10 +73,44 @@ export const handle: Handle = async ({ event, resolve }) => {
 	event.locals.user = user;
 	event.locals.profile = user ? await getProfileByUserId(user.id) : null;
 
-	return resolve(event, {
+	const response = await resolve(event, {
 		filterSerializedResponseHeaders(name) {
 			return name === 'content-range' || name === 'x-supabase-api-version';
 		},
 		transformPageChunk: ({ html }) => html.replace('%lang%', event.locals.lang)
 	});
+
+	// Security headers — applied to SSR responses. netlify.toml [[headers]]
+	// only covers static files in the publish dir, so SvelteKit-rendered
+	// pages bypass it. Mirror the same policy here so scanners (Mozilla
+	// Observatory, securityheaders.com) see them on the home page too.
+	for (const [name, value] of Object.entries(SECURITY_HEADERS)) {
+		response.headers.set(name, value);
+	}
+
+	return response;
+};
+
+const SECURITY_HEADERS: Record<string, string> = {
+	'Content-Security-Policy': [
+		"default-src 'self'",
+		"script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://m.stripe.com https://m.stripe.network https://maps.googleapis.com https://maps.gstatic.com",
+		"style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+		"img-src 'self' data: blob: https:",
+		"font-src 'self' data: https://fonts.gstatic.com",
+		"connect-src 'self' https://api.stripe.com https://*.stripe.com https://*.supabase.co wss://*.supabase.co https://maps.googleapis.com https://*.googleapis.com",
+		"frame-src 'self' https://js.stripe.com https://hooks.stripe.com https://*.stripe.com https://www.google.com https://maps.google.com",
+		"media-src 'self'",
+		"object-src 'none'",
+		"base-uri 'self'",
+		"form-action 'self'",
+		"frame-ancestors 'self'",
+		'upgrade-insecure-requests'
+	].join('; '),
+	'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
+	'Permissions-Policy': 'camera=(), microphone=(), geolocation=(), interest-cohort=(), browsing-topics=()',
+	'X-Frame-Options': 'SAMEORIGIN',
+	'X-Content-Type-Options': 'nosniff',
+	'Referrer-Policy': 'strict-origin-when-cross-origin',
+	'Cross-Origin-Opener-Policy': 'same-origin'
 };
