@@ -159,14 +159,14 @@
 		},
 		"breakfast": {
 			"heading": "Breakfast",
-			"description": "Enjoy a delicious buffet and continental breakfast each morning, featuring fresh croissants and baguettes baked by Mark, seasonal fruits, juice, yoghurt, and homemade jams. Special requests (such as eggs) are happily accommodated upon request."
+			"description": "Enjoy a delicious buffet and continental breakfast each morning, featuring fresh croissants and baguettes baked by Mark, seasonal fruits, juice, yoghurt, a selection of cheeses, meats and jams. Special requests (such as eggs from our own chickens) are happily accommodated upon request."
 		},
 		"evening_meal": {
 			"heading": "Evening Meal",
-			"description": "Available by arrangement. Mark prepares a home-cooked dinner from €20 per person. Let us know your preferences when you book!",
+			"description": "Available by arrangement. Mark prepares a home-cooked evening meal from €20 per person. Let us know your preferences when you book!",
 			"book_note": "Tick the evening meal option on the booking form to request it for your stay.",
 			"book_option_label": "Add an evening meal during my stay",
-			"book_option_hint": "Home-cooked dinner, paid in cash to Mark at the end of your stay (along with any beer or wine). Speak to Mark on arrival to arrange the details.",
+			"book_option_hint": "Home-cooked evening meal, paid in cash to Mark at the end of your stay (along with any beer or wine). Speak to Mark on arrival to arrange the details.",
 			"request_line": "Evening meal requested."
 		}
 	},
@@ -475,7 +475,7 @@
 		"check_out_heading": "Check-out",
 		"check_out_body": "Check-out is by 11:00 on the day of departure.",
 		"address_heading": "Finding the cottage",
-		"address_body": "In Couvains, Manche, Normandy — a quiet lane in the Norman countryside.",
+		"address_body": "In Couvains, Manche, Normandy — a quiet lane in the Normandy countryside. Set your satnav to the village of Couvains first to avoid a dirt farm road.",
 		"parking_heading": "Parking",
 		"parking_body": "Free parking is on-site at the cottage.",
 		"wifi_heading": "Wi-Fi",
@@ -511,7 +511,7 @@
 		"q6": "How do I pay?",
 		"a6": "Online by card via Stripe — Visa, Mastercard, American Express, Apple Pay and Google Pay all work. Bank transfer or cash on arrival can be arranged on request — get in touch via the contact page.",
 		"q7": "Where is the cottage exactly?",
-		"a7": "Couvains, in the Norman countryside near Bayeux and the D-Day beaches. The full address is sent with your booking confirmation.",
+		"a7": "Couvains, in the Normandy countryside near Bayeux and the D-Day beaches. The full address is sent with your booking confirmation.",
 		"q8": "Is the cottage accessible?",
 		"a8": "The cottage is two-storey, so it isn't fully step-free — bedrooms are reached by a staircase. If you have specific access needs, please contact us before booking and we'll do our best to help."
 	},

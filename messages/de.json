@@ -159,14 +159,14 @@
 		},
 		"breakfast": {
 			"heading": "Frühstück",
-			"description": "Genießen Sie jeden Morgen ein köstliches Buffet und kontinentales Frühstück mit frischen, von Mark gebackenen Croissants und Baguettes, saisonalen Früchten, Saft, Joghurt und hausgemachten Konfitüren. Spezielle Wünsche (wie Eier) werden gerne auf Anfrage erfüllt."
+			"description": "Genießen Sie jeden Morgen ein köstliches Buffet und kontinentales Frühstück mit frischen, von Mark gebackenen Croissants und Baguettes, saisonalen Früchten, Saft, Joghurt, einer Auswahl an Käse, Aufschnitt und Konfitüren. Spezielle Wünsche (wie Eier von unseren eigenen Hühnern) werden gerne auf Anfrage erfüllt."
 		},
 		"evening_meal": {
 			"heading": "Abendessen",
-			"description": "Nach Absprache erhältlich. Mark bereitet ein hausgemachtes Dinner ab 20€ pro Person zu. Teilen Sie uns Ihre Vorlieben bei der Buchung mit!",
+			"description": "Nach Absprache erhältlich. Mark bereitet ein hausgemachtes Abendessen ab 20€ pro Person zu. Teilen Sie uns Ihre Vorlieben bei der Buchung mit!",
 			"book_note": "Setzen Sie im Buchungsformular ein Häkchen, um das Abendessen für Ihren Aufenthalt zu bestellen.",
 			"book_option_label": "Abendessen während meines Aufenthalts hinzufügen",
-			"book_option_hint": "Hausgemachtes Dinner, am Ende Ihres Aufenthalts in bar an Mark zu zahlen (zusammen mit Bier oder Wein). Sprechen Sie bei Ihrer Ankunft mit Mark, um die Details zu klären.",
+			"book_option_hint": "Hausgemachtes Abendessen, am Ende Ihres Aufenthalts in bar an Mark zu zahlen (zusammen mit Bier oder Wein). Sprechen Sie bei Ihrer Ankunft mit Mark, um die Details zu klären.",
 			"request_line": "Abendessen gewünscht."
 		}
 	},
@@ -475,7 +475,7 @@
 		"check_out_heading": "Abreise",
 		"check_out_body": "Abreise bis 11:00 Uhr am Abreisetag.",
 		"address_heading": "Das Cottage finden",
-		"address_body": "In Couvains, Département Manche, Normandie — an einer ruhigen Straße in der ländlichen Normandie.",
+		"address_body": "In Couvains, Département Manche, Normandie — an einer ruhigen Straße in der ländlichen Normandie. Stellen Sie Ihr Navi zuerst auf das Dorf Couvains ein, um einen Feldweg zu vermeiden.",
 		"parking_heading": "Parken",
 		"parking_body": "Kostenlose Parkplätze direkt am Cottage.",
 		"wifi_heading": "WLAN",

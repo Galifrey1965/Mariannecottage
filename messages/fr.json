@@ -159,14 +159,14 @@
 		},
 		"breakfast": {
 			"heading": "Petit-Déjeuner",
-			"description": "Profitez d'un délicieux buffet et petit-déjeuner continental chaque matin, avec des croissants et baguettes frais cuits par Mark, des fruits de saison, du jus, du yaourt et des confitures maison. Les demandes spéciales (comme les œufs) sont volontiers accommodées sur demande."
+			"description": "Profitez d'un délicieux buffet et petit-déjeuner continental chaque matin, avec des croissants et baguettes frais cuits par Mark, des fruits de saison, du jus, du yaourt, une sélection de fromages, charcuteries et confitures. Les demandes spéciales (comme les œufs de nos propres poules) sont volontiers accommodées sur demande."
 		},
 		"evening_meal": {
 			"heading": "Repas du Soir",
-			"description": "Disponible sur arrangement. Mark prépare un dîner maison à partir de 20€ par personne. Faites-nous part de vos préférences lors de la réservation!",
+			"description": "Disponible sur arrangement. Mark prépare un repas du soir maison à partir de 20€ par personne. Faites-nous part de vos préférences lors de la réservation!",
 			"book_note": "Cochez l'option repas du soir sur le formulaire de réservation pour le demander.",
 			"book_option_label": "Ajouter un repas du soir pendant mon séjour",
-			"book_option_hint": "Dîner maison, réglé en espèces à Mark à la fin de votre séjour (avec la bière ou le vin). Parlez-en à Mark à votre arrivée pour les détails.",
+			"book_option_hint": "Repas du soir maison, réglé en espèces à Mark à la fin de votre séjour (avec la bière ou le vin). Parlez-en à Mark à votre arrivée pour les détails.",
 			"request_line": "Repas du soir demandé."
 		}
 	},
@@ -475,7 +475,7 @@
 		"check_out_heading": "Départ",
 		"check_out_body": "Départ avant 11h00 le jour du départ.",
 		"address_heading": "Trouver le cottage",
-		"address_body": "À Couvains, Manche, Normandie — sur une route tranquille dans la campagne normande.",
+		"address_body": "À Couvains, Manche, Normandie — sur une route tranquille dans la campagne normande. Réglez d'abord votre GPS sur le village de Couvains pour éviter un chemin de ferme en terre.",
 		"parking_heading": "Stationnement",
 		"parking_body": "Stationnement gratuit sur place au gîte.",
 		"wifi_heading": "Wi-Fi",
