@@ -95,7 +95,8 @@
 				{ '@type': 'LocationFeatureSpecification', name: 'Free WiFi', value: true },
 				{ '@type': 'LocationFeatureSpecification', name: 'Free Parking', value: true },
 				{ '@type': 'LocationFeatureSpecification', name: 'Breakfast Included', value: true },
-				{ '@type': 'LocationFeatureSpecification', name: 'Private Garden', value: true }
+				{ '@type': 'LocationFeatureSpecification', name: 'Private Garden', value: true },
+				{ '@type': 'LocationFeatureSpecification', name: 'Motorcycle Friendly', value: true }
 			],
 			numberOfRooms: 2,
 			petsAllowed: false

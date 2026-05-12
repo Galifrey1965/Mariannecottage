@@ -4,11 +4,11 @@
 		"description": "Charming 1800s farmhouse with 2 bedrooms in the heart of Normandy. Free WiFi, parking, and breakfast included.",
 		"home": {
 			"title": "Marianne Cottage - Bed & Breakfast in Normandy",
-			"description": "Charming 2-bedroom B&B in the heart of Normandy near Bayeux. Free WiFi, parking, and breakfast included. Book direct for the best rates."
+			"description": "Charming 2-bedroom B&B in the heart of Normandy near Bayeux. Biker friendly, free WiFi, parking, and breakfast included. Book direct for the best rates."
 		},
 		"rooms": {
 			"title": "Rooms - Marianne Cottage B&B Normandy",
-			"description": "Two ensuite bedrooms in our farmhouse B&B near Bayeux. Antique-style furnishings, garden views, and breakfast included with every stay."
+			"description": "Two ensuite bedrooms in our biker-friendly farmhouse B&B near Bayeux. Antique-style furnishings, garden views, and breakfast included with every stay."
 		},
 		"gallery": {
 			"title": "Gallery - Marianne Cottage Photos",
@@ -155,7 +155,8 @@
 			"garden_views": "Garden views",
 			"wifi": "Free high-speed WiFi",
 			"parking": "Free private parking",
-			"nonsmoke": "Non-smoking property"
+			"nonsmoke": "Non-smoking property",
+			"biker_friendly": "Biker friendly — motorcyclists welcome"
 		},
 		"breakfast": {
 			"heading": "Breakfast",

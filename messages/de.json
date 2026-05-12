@@ -4,11 +4,11 @@
 		"description": "Charmantes Bauernhaus aus dem 19. Jahrhundert mit 2 Schlafzimmern im Herzen der Normandie. Kostenlos WiFi, Parkplatz und Frühstück inbegriffen.",
 		"home": {
 			"title": "Marianne Cottage - Bed & Breakfast in der Normandie",
-			"description": "Charmante Pension mit 2 Zimmern im Herzen der Normandie, nahe Bayeux. WLAN, Parkplatz und Frühstück inklusive. Direkt buchen für beste Preise."
+			"description": "Charmante Pension mit 2 Zimmern im Herzen der Normandie, nahe Bayeux. Bikerfreundlich, WLAN, Parkplatz und Frühstück inklusive. Direkt buchen für beste Preise."
 		},
 		"rooms": {
 			"title": "Zimmer - Marianne Cottage B&B Normandie",
-			"description": "Zwei Zimmer mit eigenem Bad in unserer Pension nahe Bayeux. Antikes Mobiliar, Gartenblick und Frühstück bei jedem Aufenthalt inklusive."
+			"description": "Zwei Zimmer mit eigenem Bad in unserer bikerfreundlichen Pension nahe Bayeux. Antikes Mobiliar, Gartenblick und Frühstück bei jedem Aufenthalt inklusive."
 		},
 		"gallery": {
 			"title": "Galerie - Fotos von Marianne Cottage",
@@ -155,7 +155,8 @@
 			"garden_views": "Gartenausblick",
 			"wifi": "Kostenlos hochgeschwindigkeits-WiFi",
 			"parking": "Kostenlos privater Parkplatz",
-			"nonsmoke": "Nichtraucher-Anwesen"
+			"nonsmoke": "Nichtraucher-Anwesen",
+			"biker_friendly": "Bikerfreundlich - Motorradfahrer willkommen"
 		},
 		"breakfast": {
 			"heading": "Frühstück",

@@ -4,11 +4,11 @@
 		"description": "Charmante maison de ferme du 19ème siècle avec 2 chambres au cœur de la Normandie. WiFi gratuit, parking gratuit et petit-déjeuner inclus.",
 		"home": {
 			"title": "Marianne Cottage - Chambres d'Hôtes en Normandie",
-			"description": "Chambre d'hôtes de charme avec 2 chambres au cœur de la Normandie, près de Bayeux. WiFi, parking et petit-déjeuner inclus. Réservez en direct."
+			"description": "Chambre d'hôtes de charme avec 2 chambres au cœur de la Normandie, près de Bayeux. Accueil motards, WiFi, parking et petit-déjeuner inclus. Réservez en direct."
 		},
 		"rooms": {
 			"title": "Chambres - Marianne Cottage Normandie",
-			"description": "Deux chambres avec salle de bain privative dans notre chambre d'hôtes près de Bayeux. Mobilier ancien, vue sur jardin, petit-déjeuner inclus."
+			"description": "Deux chambres avec salle de bain privative dans notre chambre d'hôtes accueillant les motards près de Bayeux. Mobilier ancien, vue sur jardin, petit-déjeuner inclus."
 		},
 		"gallery": {
 			"title": "Galerie - Photos de Marianne Cottage",
@@ -155,7 +155,8 @@
 			"garden_views": "Vues sur le jardin",
 			"wifi": "WiFi haut débit gratuit",
 			"parking": "Parking privé gratuit",
-			"nonsmoke": "Propriété non-fumeurs"
+			"nonsmoke": "Propriété non-fumeurs",
+			"biker_friendly": "Accueil motards - motocyclistes bienvenus"
 		},
 		"breakfast": {
 			"heading": "Petit-Déjeuner",
