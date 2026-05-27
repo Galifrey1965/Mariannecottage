@@ -104,7 +104,7 @@
 {#if rating && rating.ratingCount > 0}
 	<section class="section-wide reviews-bg">
 		<h2 class="section-heading center">{t(messages, 'home.reviews.heading')}</h2>
-		<Reviews {messages} {lang} {rating} />
+		<Reviews {messages} {lang} {rating} featured={data.featuredReviews} />
 	</section>
 {/if}
 

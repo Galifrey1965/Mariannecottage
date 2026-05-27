@@ -139,8 +139,8 @@
 	.description { color: var(--theme-text-muted); font-size: 1.05rem; margin: 0 0 2rem; line-height: 1.7; }
 	.image-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; }
 	@media (min-width: 480px) { .image-grid { grid-template-columns: 1fr 1fr; } }
-	.room-image { width: 100%; height: 10rem; object-fit: cover; border-radius: var(--theme-radius-md); }
-	@media (min-width: 480px) { .room-image { height: 12rem; } }
+	.room-image { width: 100%; height: 20rem; object-fit: cover; border-radius: var(--theme-radius-md); }
+	@media (min-width: 480px) { .room-image { height: 24rem; } }
 	.amenities-grid { display: grid; grid-template-columns: 1fr; gap: 0.75rem; }
 	@media (min-width: 600px) { .amenities-grid { grid-template-columns: 1fr 1fr; } }
 	.amenity-item {

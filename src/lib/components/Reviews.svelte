@@ -22,24 +22,17 @@
 		messages: Messages;
 		lang: Locale;
 		rating: RatingData | null;
+		// Up to 2 reviews chosen at random server-side (see +page.server.ts).
+		// They flank the CTA so the row reads [review, CTA, review].
+		featured?: Review[];
 	}
 
-	let { messages, lang, rating }: Props = $props();
+	let { messages, lang, rating, featured = [] }: Props = $props();
 
-	const TARGET_CARDS = 3;
-	const MAX_VISIBLE = 5;
-
-	const reviews = $derived(rating?.reviews ?? []);
-	const visibleReviews = $derived(reviews.slice(0, MAX_VISIBLE));
-	// Place the "leave a review" CTA in the middle column of the 3-col grid.
-	// With ≥1 review, slot it at index 1 so row 1 reads [review, CTA, review];
-	// with 0 reviews, render it first and let the quiet placeholders pad out
-	// the row to TARGET_CARDS.
-	const placeholderIndex = $derived(visibleReviews.length === 0 ? 0 : 1);
-	const reviewsBefore = $derived(visibleReviews.slice(0, placeholderIndex));
-	const reviewsAfter = $derived(visibleReviews.slice(placeholderIndex));
-	const quietPlaceholderCount = $derived(Math.max(0, TARGET_CARDS - visibleReviews.length - 1));
-	const cardCount = $derived(visibleReviews.length + 1 + quietPlaceholderCount);
+	// One reviewer either side of the "leave a review" CTA. With <2 reviews the
+	// row simply has fewer cards; with 0 it's just the CTA.
+	const leftReview = $derived(featured[0] ?? null);
+	const rightReview = $derived(featured[1] ?? null);
 
 	function formatPublishDate(iso: string | null, fallback: string): string {
 		if (!iso) return fallback;
@@ -74,7 +67,7 @@
 			</div>
 		</header>
 
-		<div class="cards" style="--card-count: {cardCount}">
+		<div class="cards">
 			{#snippet reviewCard(review: Review)}
 				<article class="card review" lang={review.languageCode}>
 					<div class="card-stars" aria-label={t(messages, 'home.reviews.aria_stars', { rating: String(review.rating) })}>
@@ -100,9 +93,9 @@
 				</article>
 			{/snippet}
 
-			{#each reviewsBefore as review}
-				{@render reviewCard(review)}
-			{/each}
+			{#if leftReview}
+				{@render reviewCard(leftReview)}
+			{/if}
 
 			<a class="card placeholder" href={reviewUrl} target="_blank" rel="noopener noreferrer">
 				<div class="placeholder-icon" aria-hidden="true">
@@ -115,20 +108,12 @@
 				<span class="placeholder-cta">{t(messages, 'home.reviews.placeholder.cta')}</span>
 			</a>
 
-			{#each reviewsAfter as review}
-				{@render reviewCard(review)}
-			{/each}
-
-			{#each Array(quietPlaceholderCount) as _}
-				<div class="card placeholder-quiet" aria-hidden="true">
-					<svg class="quiet-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
-						<path d="M12 2l2.95 6.91L22 10l-5.5 4.78L18.18 22 12 18.27 5.82 22l1.68-7.22L2 10l7.05-1.09L12 2z" />
-					</svg>
-				</div>
-			{/each}
+			{#if rightReview}
+				{@render reviewCard(rightReview)}
+			{/if}
 		</div>
 
-		{#if rating.googleMapsUri && reviews.length > 0}
+		{#if rating.googleMapsUri && featured.length > 0}
 			<div class="reviews-footer">
 				<a class="see-all" href={rating.googleMapsUri} target="_blank" rel="noopener noreferrer">
 					{t(messages, 'home.reviews.see_all')}
@@ -203,12 +188,8 @@
 		gap: 1.5rem;
 		align-items: stretch;
 	}
-	@media (min-width: 720px) {
-		.cards {
-			grid-template-columns: repeat(2, 1fr);
-		}
-	}
-	@media (min-width: 1024px) {
+	/* review | leave-a-review | review, all on one line from tablet up */
+	@media (min-width: 768px) {
 		.cards {
 			grid-template-columns: repeat(3, 1fr);
 		}
@@ -350,21 +331,6 @@
 		text-transform: uppercase;
 		color: var(--theme-accent);
 		padding-top: 0.25rem;
-	}
-
-	.placeholder-quiet {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		opacity: 0.45;
-		background: transparent;
-		border-style: dashed;
-	}
-
-	.quiet-icon {
-		width: 2rem;
-		height: 2rem;
-		color: var(--theme-text-muted);
 	}
 
 	.reviews-footer {
