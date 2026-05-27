@@ -5,7 +5,7 @@
 	"type": "module",
 	"scripts": {
 		"dev": "vite dev",
-		"build": "node --env-file-if-exists=.env scripts/fetch-google-rating.mjs && node --env-file-if-exists=.env scripts/fetch-static-map.mjs && vite build",
+		"build": "node --env-file-if-exists=.env scripts/fetch-static-map.mjs && vite build",
 		"fetch-rating": "node --env-file-if-exists=.env scripts/fetch-google-rating.mjs",
 		"fetch-static-map": "node --env-file-if-exists=.env scripts/fetch-static-map.mjs",
 		"preview": "vite preview",

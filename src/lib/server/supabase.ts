@@ -703,6 +703,70 @@ export async function deleteSiteBanner(id: string): Promise<void> {
 	if (error) throw error;
 }
 
+// 2026-05-27: google_rating — daily-refreshed Google Business Profile snapshot
+// (issue #55). Single row (id = 1). Read on every page load by
+// +layout.server.ts; written by /api/refresh-google-rating via the daily cron.
+
+export interface GoogleReview {
+	authorName: string;
+	authorPhoto: string | null;
+	rating: number;
+	text: string;
+	languageCode: string;
+	publishTime: string | null;
+	relativeTime: string;
+}
+
+export interface GoogleRating {
+	ratingValue: number;
+	ratingCount: number;
+	googleMapsUri: string | null;
+	reviews: GoogleReview[];
+	placeId?: string;
+	name?: string;
+	fetchedAt?: string;
+}
+
+export async function getGoogleRating(): Promise<GoogleRating | null> {
+	const { data, error } = await anonClient
+		.from('google_rating')
+		.select('place_id, name, rating_value, rating_count, google_maps_uri, reviews, fetched_at')
+		.eq('id', 1)
+		.maybeSingle();
+	if (error) {
+		console.error('getGoogleRating failed:', error);
+		return null;
+	}
+	if (!data) return null;
+	return {
+		placeId: (data.place_id as string) ?? undefined,
+		name: (data.name as string) ?? undefined,
+		ratingValue: Number(data.rating_value) || 0,
+		ratingCount: Number(data.rating_count) || 0,
+		googleMapsUri: (data.google_maps_uri as string) ?? null,
+		reviews: ((data.reviews as GoogleReview[]) ?? []),
+		fetchedAt: (data.fetched_at as string) ?? undefined
+	};
+}
+
+export async function upsertGoogleRating(input: GoogleRating): Promise<void> {
+	const { error } = await adminClient.from('google_rating').upsert(
+		{
+			id: 1,
+			place_id: input.placeId ?? null,
+			name: input.name ?? null,
+			rating_value: input.ratingValue,
+			rating_count: input.ratingCount,
+			google_maps_uri: input.googleMapsUri ?? null,
+			reviews: input.reviews,
+			fetched_at: input.fetchedAt ?? new Date().toISOString(),
+			updated_at: new Date().toISOString()
+		},
+		{ onConflict: 'id' }
+	);
+	if (error) throw error;
+}
+
 // PR 4: cancellation_policies admin CRUD.
 
 export interface CancellationPolicyInput {

@@ -3,44 +3,26 @@ import { resolve } from 'node:path';
 import * as en from '../../messages/en.json';
 import * as fr from '../../messages/fr.json';
 import * as de from '../../messages/de.json';
-import { getActiveBanners } from '$lib/server/supabase';
+import { getActiveBanners, getGoogleRating, type GoogleRating } from '$lib/server/supabase';
 import type { LayoutServerLoad } from './$types';
 
 const allMessages = { en, fr, de };
 
-interface GoogleReview {
-	authorName: string;
-	authorPhoto: string | null;
-	rating: number;
-	text: string;
-	languageCode: string;
-	publishTime: string | null;
-	relativeTime: string;
-}
-
-interface GoogleRating {
-	ratingValue: number;
-	ratingCount: number;
-	googleMapsUri: string | null;
-	reviews: GoogleReview[];
-	placeId?: string;
-	name?: string;
-	fetchedAt?: string;
-}
-
-let cachedRating: GoogleRating | null | undefined;
-
+// Google rating now lives in the DB (issue #55), refreshed daily by the
+// fetch-google-rating cron so reviews update without a redeploy. We still fall
+// back to the committed static/google-rating.json if the DB row is missing
+// (e.g. first deploy before the migration seed, or a transient Supabase error)
+// so the rating block never silently disappears.
 async function loadRating(): Promise<GoogleRating | null> {
-	if (cachedRating !== undefined) return cachedRating;
+	const fromDb = await getGoogleRating();
+	if (fromDb) return fromDb;
 	try {
 		const path = resolve(process.cwd(), 'static/google-rating.json');
 		const raw = await readFile(path, 'utf-8');
-		const parsed = JSON.parse(raw) as GoogleRating;
-		cachedRating = parsed;
+		return JSON.parse(raw) as GoogleRating;
 	} catch {
-		cachedRating = null;
+		return null;
 	}
-	return cachedRating;
 }
 
 export const load: LayoutServerLoad = async ({ locals }) => {
