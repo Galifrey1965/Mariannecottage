@@ -11,21 +11,22 @@ Updated as services are added or changed.
 | Field | Value |
 |---|---|
 | **Provider** | Netlify |
-| **Plan** | **Personal** ($9/mo) — active since Apr 23, 2026 |
-| **Allowance** | 1,000 credits/month covering builds, deploys, bandwidth, function compute, AI inference combined |
-| **Recent usage** | ~0.8 credits used so far this billing period (Apr 23 – May 22) — site is essentially idle from a credit perspective |
-| **Forecast usage at full agent-network volume** | ~600 credits/month (~150 deploys + ~100 bandwidth + ~25 functions + ~330 AI). Comfortable headroom. |
-| **Add-on credits** | 0 |
-| **Auto-recharge** | Disabled — if we ever exceed 1,000 in a month it stops gracefully rather than racking up a surprise bill |
+| **Plan** | **Free** (`nf_team_dev`, account slug `galifrey1965`) — _was recorded here as "Personal ($9/mo) since Apr 23, 2026" until 2026-07-26; that was wrong, confirmed against the Netlify API_ |
+| **Allowance** | **300 credits/month** covering builds, deploys, bandwidth and function compute combined |
+| **Recent usage** | 0 credits used this billing period (checked 2026-07-26) — the site is idle from a credit perspective, and has not been rebuilt since the 2026-05-27 deploy |
+| **Forecast usage at full agent-network volume** | ~600 credits/month (~150 deploys + ~100 bandwidth + ~25 functions + ~330 AI) — **this exceeds the 300 cap.** The forecast was written assuming the 1,000-credit Personal allowance. Either the agent network needs re-sizing or the account needs upgrading before that volume arrives. |
+| **Add-on credits** | 0. Extra credits are bought manually as and when needed — this is the deliberate arrangement, not an oversight. |
+| **Overage behaviour** | `accumulate_overages: false`, `credit_rollover: false`, `block_builds_when_usage_exceeded: true`. So hitting 300 **blocks builds** rather than billing through — it fails safe, but a top-up is a manual purchase, so a busy month could stall deploys until someone acts. |
+| **Log retention** | **None.** Function logs are live-stream only (`log_type: socketeer`); there is no log-history API and no log drain configured. This is why the 2026-07-24 enquiry-loss incident could not be reconstructed from logs — see `features/enquiry-persistence-and-antibot.md`. |
 | **Account owner** | Mark |
 | **Auto-deploy from** | `develop` branch on `Galifrey1965/Mariannecottage` |
 | **Build command** | `npm run build` |
 | **Publish directory** | `build` |
-| **Cost** | $9/month (~£100/yr) — bundles hosting + AI Gateway + email-function compute + builds in a single bill |
-| **What this includes vs Free** | 1,000 credits (vs 300 hard-capped); smart secret detection (auto-scans for leaked API keys); 7-day analytics; priority email support; ability to purchase overage packs ($5 per 500 credits) |
+| **Cost** | **£0/month**, plus occasional manual credit top-ups if a month ever runs hot |
+| **What upgrading to Personal ($9/mo) would add** | 1,000 credits instead of 300; smart secret detection (auto-scans for leaked API keys); 7-day analytics; priority email support; overage packs at $5 per 500 credits. Not currently needed at real traffic levels. |
 | **Alternatives if we ever need to move** | Cloudflare Pages, Vercel, or a £3/mo VPS with Caddy |
 
-**Notes:** Mark already has the headroom we need for the full AI agent network. No upgrade required. The plan covers the entire modular stack's runtime — hosting + functions + AI inference — in one place.
+**Notes:** Free tier is the right call at current volume — actual usage is ~0 credits/month against a 300 allowance. The two things to watch: (1) the agent-network forecast above assumes an allowance we do not have, and (2) there is no log retention, so runtime incidents are invisible after the fact unless the app persists its own evidence.
 
 ---
 

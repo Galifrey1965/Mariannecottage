@@ -77,6 +77,7 @@ before disabling.
 | **Spam-flagged submissions are still stored** | Stored with `status='spam'` and never emailed. A false positive is recoverable; a silent discard is not. |
 | **No new env var** | The form token derives its key from the existing `CANCEL_TOKEN_SECRET` with a domain-separation string. Adding an env var would need Mark to set it in Netlify before deploy, re-blocking the work. |
 | **`enquiries` is service-role only** | It holds visitor PII. RLS on, zero policies, explicit `REVOKE` from `anon`/`authenticated`. |
+| **24-month retention, purged automatically** | Decided 2026-07-26 and **in scope** — not a question for the owner. Bookings are kept 10 years for French accounting; an enquiry has no accounting purpose, so 24 months is generous for "did we ever talk to this person". Enforced in code (§10a) so it cannot rot into an unkept promise. |
 
 **Honest limitation:** a honeypot plus a timing floor stops naive bots and form scrapers. It
 will not stop a determined or human-driven spammer. That is an accepted trade-off, not an
@@ -95,7 +96,9 @@ captcha SaaS.
 - D. `POST /api/contact` — reordered: persist → notify; honeypot + token checks
 - E. `EnquiryForm.svelte` — hidden honeypot field, token fetch
 - F. Supabase helpers in `src/lib/server/supabase.ts`
-- G. Tests
+- G. 24-month retention purge (§10a)
+- H. Legal-page disclosure of contact-form processing (§10b)
+- I. Tests
 
 **Explicitly out of scope** (note as follow-ups, do not build)
 
@@ -104,7 +107,6 @@ captcha SaaS.
 - A retry sweep for enquiries with `admin_notified_at IS NULL`
 - Any captcha service
 - Any change to Brevo settings (Mark's account)
-- Retention/erasure job for stored PII — see §12
 
 ---
 
@@ -317,6 +319,66 @@ can be verbose.
 
 ---
 
+## 10a. Change G — 24-month retention purge
+
+Add the purge to the **existing** `/api/sweep-pending` endpoint, which the
+`netlify/functions/sweep-pending.ts` cron already POSTs to daily with `SWEEP_SECRET`. No new
+scheduled function, no new secret, no new Netlify config — that is the whole reason for putting
+it there rather than standing up a `purge-enquiries` function.
+
+- New helper in `src/lib/server/supabase.ts`:
+
+  ```ts
+  // GDPR retention: enquiries have no accounting purpose (unlike bookings, kept
+  // 10 years), so they are deleted 24 months after submission. Disclosed on
+  // /legal — see legal.gdpr_processing_enquiry.
+  export async function purgeOldEnquiries(): Promise<number>;   // returns rows deleted
+  ```
+
+  `DELETE FROM enquiries WHERE created_at < NOW() - INTERVAL '24 months'` via `adminClient`,
+  returning the deleted count.
+- Call it from the sweep handler **after** the existing pending-booking sweep, in its own
+  try/catch. A purge failure must never abort the booking sweep — that is the load-bearing job.
+- Include the count in the endpoint's JSON response and `console.log` it, so the daily run
+  leaves a trace that retention is actually happening.
+- Purge spam rows on the same 24-month clock. Do not special-case them to a shorter window;
+  a misclassified genuine enquiry deserves the same recovery period.
+
+Add one unit test: rows older than 24 months are deleted, rows inside the window survive.
+
+## 10b. Change H — legal-page disclosure
+
+`src/routes/legal/+page.svelte` already renders a GDPR block from `messages/*.json` under the
+`legal.*` namespace. It currently discloses booking data, payments, transactional email and
+maps — but **says nothing about the contact form at all**, which is already a gap today (those
+enquiries sit in Mark's Gmail indefinitely). Storing them in Supabase makes fixing it
+non-optional.
+
+Two message changes, in `messages/en.json`, `fr.json` **and** `de.json`:
+
+1. New key `legal.gdpr_processing_enquiry`, placed alongside the existing
+   `gdpr_processing_booking` / `_payment` / `_email` / `_maps` keys. English:
+
+   > Contact-form enquiries (the name, email address and message you send us) are stored in our
+   > Supabase database hosted in the EU and emailed to us so that we can reply. We use them only
+   > to answer your enquiry. They are deleted automatically after 24 months.
+
+2. Extend `legal.gdpr_retention_body` with one clause:
+
+   > Contact-form enquiries: 24 months, then deleted automatically.
+
+Then render the new key in `+page.svelte` following the exact pattern of the sibling
+`gdpr_processing_*` entries — check how they are laid out before adding, don't invent a new
+structure.
+
+**Translation:** match the register of the surrounding FR/DE legal copy, which is already
+translated — read it first rather than translating in isolation. Do **not** route this through
+`src/lib/server/translate.ts`; that helper is for admin-entered gallery/banner text at runtime,
+not for static message files. Keep the wording plain and factual; this is a legal notice, not
+marketing.
+
+Bump `legal.last_updated` in all three locales.
+
 ## 11. Tests
 
 `src/routes/api/contact/server.test.ts` already exists — extend it rather than starting fresh,
@@ -383,10 +445,13 @@ with the anon key must not return rows).
 | `src/routes/api/contact/token/+server.ts` | new |
 | `src/routes/api/contact/+server.ts` | rewrite ordering + semantics |
 | `src/routes/api/contact/server.test.ts` | extend |
-| `src/lib/server/supabase.ts` | add `EnquiryInput` + 3 helpers |
+| `src/lib/server/supabase.ts` | add `EnquiryInput` + 3 helpers + `purgeOldEnquiries` |
 | `src/lib/components/EnquiryForm.svelte` | honeypot field, token fetch, body fields |
-| `documentation/infrastructure.md` | note the `enquiries` table under Database |
-| `documentation/outstanding-issues.md` | log the follow-ups from §4 and §14 |
+| `src/routes/api/sweep-pending/+server.ts` | call `purgeOldEnquiries` after the booking sweep |
+| `messages/en.json`, `fr.json`, `de.json` | `legal.gdpr_processing_enquiry`, extend `gdpr_retention_body`, bump `last_updated` |
+| `src/routes/legal/+page.svelte` | render the new GDPR key |
+| `documentation/infrastructure.md` | note the `enquiries` table under Database, with its 24-month retention |
+| `documentation/outstanding-issues.md` | log the follow-ups from §4 |
 
 ---
 
@@ -408,12 +473,15 @@ with the anon key must not return rows).
 - **Svelte 5 traps that have already cost time on this repo:** never destructure `data` in a
   component (use `$derived(data.x)`); avoid `value={...}` on form inputs, use `bind:value`;
   never put `<html>` inside `<svelte:head>`. All three are in project memory.
-- **Unresolved, worth raising with Mark:** the Netlify API reports this account as
-  `nf_team_dev` / `account_type: "Free"`, but `documentation/infrastructure.md:14` records
-  **Personal ($9/mo) since 2026-04-23**. One of the two is wrong. It matters — Free caps at
-  300 credits hard rather than 1,000, and has no log retention, which is part of why the
-  24 July logs were unrecoverable.
-- **GDPR follow-up:** this change starts storing visitor PII (name, email, free-text message)
-  indefinitely for the first time. A retention policy is needed — suggest deleting or
-  anonymising `enquiries` older than 24 months, and check whether the site's privacy notice
-  needs a line about contact-form retention. Raise it; don't silently decide it.
+- **Netlify plan — resolved 2026-07-26.** The account is **Free** (`nf_team_dev`, slug
+  `galifrey1965`): 300 credits/month, `accumulate_overages: false`, `credit_rollover: false`,
+  `block_builds_when_usage_exceeded: true`. Extra credits are bought manually when needed —
+  that is the intended arrangement. `documentation/infrastructure.md` previously claimed
+  Personal $9/mo and has been corrected. Two live consequences: hitting 300 **blocks builds**
+  until someone tops up, and there is **no log retention**, which is why the app must persist
+  its own evidence (this change) rather than relying on being able to read logs later.
+- **GDPR — decided, in scope, not an owner question.** 24-month retention on `enquiries`,
+  enforced by the daily purge in §10a, disclosed on `/legal` per §10b. Mark does not want to be
+  involved in this area, so do not park it pending his input — implement it as specified. If a
+  future change starts storing a *new* category of personal data, extend the same two places
+  (`legal.gdpr_processing_*` and a retention rule) in the same PR rather than deferring.
