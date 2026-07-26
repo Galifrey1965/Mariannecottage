@@ -894,6 +894,86 @@ export async function logAdminEvent(input: AgentEventInput): Promise<void> {
 	}
 }
 
+// 2026-07-26: enquiries — contact-form submissions persisted before the
+// notification email is attempted.
+//
+// Background: on 2026-07-24 a real enquiry was destroyed. Brevo's IP allow-list
+// rejected the send from a fresh Lambda egress IP, sendEnquiry threw out of the
+// admin notice, /api/contact returned 500 — and because nothing was ever
+// written down, the message was unrecoverable. The row is now the system of
+// record and the email is only a notification, so any future send failure
+// (outage, quota, bad sender) is non-destructive.
+//
+// Service-role only: the table holds visitor PII, RLS is on with no policies,
+// and anon/authenticated are explicitly REVOKEd. Always go through adminClient.
+
+export interface EnquiryInput {
+	name: string;
+	email: string;
+	message: string;
+	locale: string;
+	status: 'new' | 'spam';
+	spam_reason?: string | null;
+}
+
+// Brevo error bodies can be verbose; notify_error is for diagnosis, not archival.
+const NOTIFY_ERROR_MAX_CHARS = 500;
+
+// 24 months — enquiries have no accounting purpose (unlike bookings, kept 10
+// years for French accounting), so they are purged on a fixed clock. Disclosed
+// on /legal — see legal.gdpr_processing_enquiry.
+const ENQUIRY_RETENTION_MONTHS = 24;
+
+export async function createEnquiry(input: EnquiryInput): Promise<string> {
+	const { data, error } = await adminClient
+		.from('enquiries')
+		.insert({
+			name: input.name,
+			email: input.email,
+			message: input.message,
+			locale: input.locale,
+			status: input.status,
+			spam_reason: input.spam_reason ?? null
+		})
+		.select('id')
+		.single();
+	if (error) throw error;
+	return (data as { id: string }).id;
+}
+
+export async function markEnquiryNotified(id: string): Promise<void> {
+	const { error } = await adminClient
+		.from('enquiries')
+		.update({ admin_notified_at: new Date().toISOString() })
+		.eq('id', id);
+	if (error) throw error;
+}
+
+export async function markEnquiryNotifyFailed(id: string, error: string): Promise<void> {
+	const { error: updateError } = await adminClient
+		.from('enquiries')
+		.update({ notify_error: error.slice(0, NOTIFY_ERROR_MAX_CHARS) })
+		.eq('id', id);
+	if (updateError) throw updateError;
+}
+
+// GDPR retention: enquiries have no accounting purpose (unlike bookings, kept
+// 10 years), so they are deleted 24 months after submission. Disclosed on
+// /legal — see legal.gdpr_processing_enquiry. Called daily from
+// /api/sweep-pending. Spam rows share the same clock deliberately: a
+// misclassified genuine enquiry deserves the same recovery period.
+export async function purgeOldEnquiries(): Promise<number> {
+	const cutoff = new Date();
+	cutoff.setMonth(cutoff.getMonth() - ENQUIRY_RETENTION_MONTHS);
+	const { data, error } = await adminClient
+		.from('enquiries')
+		.delete()
+		.lt('created_at', cutoff.toISOString())
+		.select('id');
+	if (error) throw error;
+	return (data as { id: string }[] | null)?.length ?? 0;
+}
+
 // Utility: Generate booking reference
 export function generateBookingReference(): string {
 	const now = new Date();
