@@ -11,10 +11,27 @@
 
 	let { messages, lang = 'en' }: Props = $props();
 
-	let formData = $state({ name: '', email: '', message: '' });
+	// `website` is the anti-bot honeypot — never filled in by a human, since it
+	// is positioned off-screen and hidden from assistive tech.
+	let formData = $state({ name: '', email: '', message: '', website: '' });
 	let isSubmitting = $state(false);
 	let submitted = $state(false);
 	let error = $state('');
+
+	// Anti-bot timestamp token, fetched on mount and posted back with the
+	// enquiry so the server can apply a fill-time floor. Null is fine — the
+	// server treats a missing token as genuine rather than punishing visitors
+	// for a failure on our side.
+	let formToken = $state<string | null>(null);
+
+	onMount(async () => {
+		try {
+			const res = await fetch('/api/contact/token');
+			if (res.ok) formToken = (await res.json()).token ?? null;
+		} catch {
+			// Swallowed deliberately; see above.
+		}
+	});
 
 	// Pre-fill the message when arriving from an orphan-day click on the
 	// booking calendar. The /book page passes ?date=YYYY-MM-DD on the link
@@ -47,12 +64,12 @@
 			const response = await fetch('/api/contact', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify(formData)
+				body: JSON.stringify({ ...formData, token: formToken })
 			});
 
 			if (response.ok) {
 				submitted = true;
-				formData = { name: '', email: '', message: '' };
+				formData = { name: '', email: '', message: '', website: '' };
 				setTimeout(() => (submitted = false), 5000);
 			} else {
 				error = t(messages, 'contact.form.error');
@@ -122,6 +139,25 @@
 		></textarea>
 	</div>
 
+	<!-- Anti-bot honeypot: hidden from humans, irresistible to form bots.
+	     Any value submitted here flags the enquiry as spam server-side.
+	     Deliberately not translated — no human ever reads this label.
+
+	     Kept last on purpose. Placed before the real fields it shifts the DOM
+	     order of the visible inputs, which breaks positional selectors and gives
+	     browser autofill a URL-shaped field to aim at before it reaches Name. -->
+	<div class="honeypot" aria-hidden="true">
+		<label for="enq-website">Website</label>
+		<input
+			id="enq-website"
+			name="website"
+			type="text"
+			tabindex="-1"
+			autocomplete="off"
+			bind:value={formData.website}
+		/>
+	</div>
+
 	<button type="submit" class="submit-btn" disabled={isSubmitting}>
 		<!-- Lucide "send" (ISC) — https://lucide.dev/icons/send -->
 		<svg class="submit-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -153,6 +189,18 @@
 		background-color: var(--color-error-bg, #f6e4e4);
 		border: 1px solid var(--color-error-border, #d8b9b9);
 		color: var(--color-error-text, #7a2a2a);
+	}
+
+	/* Off-screen rather than display:none — some bots skip hidden inputs, which
+	   would defeat the point. aria-hidden + tabindex="-1" on the markup keep it
+	   away from screen readers and keyboard users: a bot filter must not become
+	   an accessibility trap. */
+	.honeypot {
+		position: absolute;
+		left: -9999px;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
 	}
 
 	.field {
