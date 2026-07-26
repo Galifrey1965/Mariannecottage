@@ -117,12 +117,15 @@ export class BrevoEmailService implements EmailService {
 		});
 	}
 
-	async sendEnquiry(enquiry: EnquiryDetails, guestLang: Locale): Promise<void> {
+	async sendEnquiry(
+		enquiry: EnquiryDetails,
+		guestLang: Locale,
+		options?: { includeGuestAck?: boolean }
+	): Promise<void> {
 		const adminMail = renderEnquiryAdminNotice(enquiry);
-		const guestAck = renderEnquiryAcknowledgement(enquiry, guestLang);
 
-		// Admin notification first — failure here surfaces as 500 to /api/contact
-		// because the enquiry would otherwise be lost (no DB row, no other channel).
+		// Admin notification first — a failure here is what the retry sweep
+		// exists to recover from, so it is still allowed to throw.
 		if (this.adminRecipients.length > 0) {
 			await this.send({
 				to: this.adminRecipients.map((email) => ({ email })),
@@ -135,6 +138,10 @@ export class BrevoEmailService implements EmailService {
 		} else {
 			console.warn('[email-brevo] ADMIN_NOTIFY_EMAIL not set; admin enquiry notification skipped');
 		}
+
+		if (options?.includeGuestAck === false) return;
+
+		const guestAck = renderEnquiryAcknowledgement(enquiry, guestLang);
 
 		// Guest acknowledgement is a courtesy — log + swallow so a hiccup here
 		// doesn't lose the message Mark already received.

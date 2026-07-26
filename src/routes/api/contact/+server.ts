@@ -149,7 +149,10 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
 				);
 			}
 
-			await markEnquiryNotifyFailed(enquiryId, detail).catch((updateError) =>
+			// Attempt 1 of RETRY_MAX_ATTEMPTS: this failure is what hands the row to
+			// the daily retry sweep, so the counter has to start here rather than at
+			// the sweep's first pass.
+			await markEnquiryNotifyFailed(enquiryId, detail, 1).catch((updateError) =>
 				console.error(`[contact] could not record notify_error on ${enquiryId}:`, updateError)
 			);
 		}

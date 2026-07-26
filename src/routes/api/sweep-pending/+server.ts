@@ -6,9 +6,10 @@
 // rows. Logs a single agent_events row per non-empty sweep summarising the
 // batch.
 //
-// Also carries the enquiries retention purge (2026-07-26) — it rides along here
-// rather than in its own scheduled function precisely because this cron already
-// exists and already has a secret, so retention needed no new Netlify config.
+// Also carries two enquiry jobs (2026-07-26) — the retention purge and the
+// un-notified retry sweep. Both ride along here rather than in their own
+// scheduled functions precisely because this cron already exists and already
+// has a secret, so neither needed new Netlify config.
 //
 // Spec: documentation/specs/phase-2-direct-booking.md PR 2
 
@@ -16,6 +17,7 @@ import type { RequestHandler } from './$types';
 import { json } from '@sveltejs/kit';
 import { env as privateEnv } from '$env/dynamic/private';
 import { adminClient, purgeOldEnquiries } from '$lib/server/supabase';
+import { retryUnnotifiedEnquiries, type EnquiryRetryResult } from '$lib/server/enquiry-retry';
 
 interface ExpiredRow {
 	booking_id: string;
@@ -76,6 +78,27 @@ export const POST: RequestHandler = async ({ request }) => {
 		// soft_reserve_swept) — no need for a separate console line.
 	}
 
+	// E-02: re-send notifications for enquiries nobody was ever told about. Own
+	// try/catch for the same reason as the other two jobs — this one makes
+	// outbound HTTP calls, so it is the most likely of the three to fail.
+	let enquiryRetry: EnquiryRetryResult | null = null;
+	try {
+		enquiryRetry = await retryUnnotifiedEnquiries();
+		if (enquiryRetry.sent > 0 || enquiryRetry.failed > 0 || enquiryRetry.abandoned > 0) {
+			const { error: retryAuditError } = await adminClient.from('agent_events').insert({
+				action: 'enquiry_notify_retried',
+				target_type: 'sweep',
+				target_id: null,
+				metadata: { ...enquiryRetry }
+			});
+			if (retryAuditError) {
+				console.error('[sweep-pending] retry audit insert failed:', retryAuditError);
+			}
+		}
+	} catch (retryError) {
+		console.error('[sweep-pending] enquiry notification retry failed:', retryError);
+	}
+
 	// GDPR retention purge, in its own try/catch. The count is returned and
 	// logged so the daily run leaves evidence that retention is actually
 	// happening rather than rotting into an unkept promise.
@@ -93,6 +116,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		expired: expired.length,
 		dates_freed: expired.reduce((a, r) => a + r.freed_dates, 0),
 		enquiries_purged: enquiriesPurged,
+		enquiry_notify_retry: enquiryRetry,
 		booking_sweep_failed: Boolean(error)
 	};
 

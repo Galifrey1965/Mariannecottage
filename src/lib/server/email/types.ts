@@ -77,9 +77,19 @@ export interface EmailService {
 	): Promise<void>;
 
 	/**
-	 * Sent on /api/contact submission. Sends BOTH the admin notification
-	 * (to ADMIN_NOTIFY_EMAIL, in English — internal) AND the guest
+	 * Sent on /api/contact submission. By default sends BOTH the admin
+	 * notification (to ADMIN_NOTIFY_EMAIL, in English — internal) AND the guest
 	 * acknowledgement (to enquiry.email, in their locale).
+	 *
+	 * Pass `{ includeGuestAck: false }` when re-sending a notification that
+	 * failed earlier (E-02's retry sweep). Two reasons: an acknowledgement
+	 * arriving days after someone filled in the form is confusing, and because
+	 * the ack may well have succeeded on the original attempt when only the
+	 * admin notice failed, so repeating it risks emailing the guest twice.
 	 */
-	sendEnquiry(enquiry: EnquiryDetails, guestLang: Locale): Promise<void>;
+	sendEnquiry(
+		enquiry: EnquiryDetails,
+		guestLang: Locale,
+		options?: { includeGuestAck?: boolean }
+	): Promise<void>;
 }

@@ -159,9 +159,12 @@ describe('POST /api/contact — Brevo failure is no longer destructive', () => {
 		expect(res.status).toBe(200);
 		expect((await res.json()).success).toBe(true);
 		expect(createEnquiry).toHaveBeenCalledWith(expect.objectContaining({ status: 'new' }));
+		// Third argument is E-02's attempt counter: this failure is attempt 1, so
+		// the daily retry sweep has four more before it gives up on the row.
 		expect(markEnquiryNotifyFailed).toHaveBeenCalledWith(
 			'enq-1',
-			expect.stringContaining('unauthorized IP address')
+			expect.stringContaining('unauthorized IP address'),
+			1
 		);
 		expect(markEnquiryNotified).not.toHaveBeenCalled();
 	});

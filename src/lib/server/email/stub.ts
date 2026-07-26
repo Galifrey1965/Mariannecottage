@@ -59,10 +59,18 @@ export class StubEmailService implements EmailService {
 		console.log(`[email-stub] sendRefundIssued ref=${booking.reference} (${lang}) :: ${subject}`);
 	}
 
-	async sendEnquiry(enquiry: EnquiryDetails, guestLang: Locale): Promise<void> {
+	async sendEnquiry(
+		enquiry: EnquiryDetails,
+		guestLang: Locale,
+		options?: { includeGuestAck?: boolean }
+	): Promise<void> {
 		const admin = renderEnquiryAdminNotice(enquiry);
-		const ack = renderEnquiryAcknowledgement(enquiry, guestLang);
 		console.log(`[email-stub] sendEnquiry admin :: ${admin.subject}`);
+		if (options?.includeGuestAck === false) {
+			console.log('[email-stub] sendEnquiry ack skipped (retry)');
+			return;
+		}
+		const ack = renderEnquiryAcknowledgement(enquiry, guestLang);
 		console.log(`[email-stub] sendEnquiry ack (${guestLang}) :: ${ack.subject}`);
 	}
 }

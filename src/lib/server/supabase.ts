@@ -930,10 +930,12 @@ export interface Enquiry {
 	admin_notified_at: string | null;
 	ack_sent_at: string | null;
 	notify_error: string | null;
+	notify_attempts: number;
+	last_notify_attempt_at: string | null;
 }
 
 const ENQUIRY_COLUMNS =
-	'id, created_at, name, email, message, locale, status, spam_reason, admin_notified_at, ack_sent_at, notify_error';
+	'id, created_at, name, email, message, locale, status, spam_reason, admin_notified_at, ack_sent_at, notify_error, notify_attempts, last_notify_attempt_at';
 
 // Brevo error bodies can be verbose; notify_error is for diagnosis, not archival.
 const NOTIFY_ERROR_MAX_CHARS = 500;
@@ -960,18 +962,36 @@ export async function createEnquiry(input: EnquiryInput): Promise<string> {
 	return (data as { id: string }).id;
 }
 
-export async function markEnquiryNotified(id: string): Promise<void> {
-	const { error } = await adminClient
-		.from('enquiries')
-		.update({ admin_notified_at: new Date().toISOString() })
-		.eq('id', id);
+// `attempts` is the running total from E-02's counter. It is optional so the
+// original /api/contact call sites keep working unchanged; the retry sweep
+// passes the incremented value it read off the row.
+export async function markEnquiryNotified(id: string, attempts?: number): Promise<void> {
+	const now = new Date().toISOString();
+	const patch: Record<string, unknown> = { admin_notified_at: now };
+	if (attempts !== undefined) {
+		patch.notify_attempts = attempts;
+		patch.last_notify_attempt_at = now;
+		// A row that finally succeeded should not keep showing the error that
+		// stopped it last time.
+		patch.notify_error = null;
+	}
+	const { error } = await adminClient.from('enquiries').update(patch).eq('id', id);
 	if (error) throw error;
 }
 
-export async function markEnquiryNotifyFailed(id: string, error: string): Promise<void> {
+export async function markEnquiryNotifyFailed(
+	id: string,
+	error: string,
+	attempts?: number
+): Promise<void> {
+	const patch: Record<string, unknown> = { notify_error: error.slice(0, NOTIFY_ERROR_MAX_CHARS) };
+	if (attempts !== undefined) {
+		patch.notify_attempts = attempts;
+		patch.last_notify_attempt_at = new Date().toISOString();
+	}
 	const { error: updateError } = await adminClient
 		.from('enquiries')
-		.update({ notify_error: error.slice(0, NOTIFY_ERROR_MAX_CHARS) })
+		.update(patch)
 		.eq('id', id);
 	if (updateError) throw updateError;
 }
@@ -1047,6 +1067,48 @@ export async function updateEnquiryStatus(id: string, status: EnquiryStatus): Pr
 		.single();
 	if (error) throw error;
 	return data as unknown as Enquiry;
+}
+
+// E-02: candidates for the notification retry sweep — genuine enquiries nobody
+// was ever told about. Served by the partial index enquiries_unnotified_idx.
+//
+// Oldest first: if the batch limit bites, the enquiry that has been waiting
+// longest is the one that gets sent, not the one that happens to be newest.
+export async function listUnnotifiedEnquiries(options: {
+	maxAttempts: number;
+	maxAgeDays: number;
+	limit: number;
+}): Promise<Enquiry[]> {
+	const cutoff = new Date(Date.now() - options.maxAgeDays * 86_400_000).toISOString();
+	const { data, error } = await adminClient
+		.from('enquiries')
+		.select(ENQUIRY_COLUMNS)
+		.eq('status', 'new')
+		.is('admin_notified_at', null)
+		.lt('notify_attempts', options.maxAttempts)
+		.gte('created_at', cutoff)
+		.order('created_at', { ascending: true })
+		.limit(options.limit);
+	if (error) throw error;
+	return (data ?? []) as unknown as Enquiry[];
+}
+
+// Rows the sweep will never pick up again: too many failed attempts, or older
+// than the age ceiling. Counted so the daily run can say so out loud instead of
+// quietly narrowing its own workload — these still need a human.
+export async function countAbandonedEnquiries(options: {
+	maxAttempts: number;
+	maxAgeDays: number;
+}): Promise<number> {
+	const cutoff = new Date(Date.now() - options.maxAgeDays * 86_400_000).toISOString();
+	const { count, error } = await adminClient
+		.from('enquiries')
+		.select('id', { count: 'exact', head: true })
+		.eq('status', 'new')
+		.is('admin_notified_at', null)
+		.or(`notify_attempts.gte.${options.maxAttempts},created_at.lt.${cutoff}`);
+	if (error) throw error;
+	return count ?? 0;
 }
 
 // Head-count queries so the admin header can show what needs attention without
