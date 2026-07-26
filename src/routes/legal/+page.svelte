@@ -41,7 +41,7 @@
 		<p class="page-intro">{t(messages, 'legal.intro')}</p>
 		<p class="page-meta">
 			<span class="meta-label">{t(messages, 'legal.last_updated')}:</span>
-			<time datetime="2026-05-07">2026-05-07</time>
+			<time datetime="2026-07-26">2026-07-26</time>
 		</p>
 	</header>
 
@@ -104,6 +104,7 @@
 		<h3>{t(messages, 'legal.gdpr_processing_heading')}</h3>
 		<ul class="prose-list">
 			<li>{t(messages, 'legal.gdpr_processing_booking')}</li>
+			<li>{t(messages, 'legal.gdpr_processing_enquiry')}</li>
 			<li>{t(messages, 'legal.gdpr_processing_payment')}</li>
 			<li>{t(messages, 'legal.gdpr_processing_email')}</li>
 			<li>{t(messages, 'legal.gdpr_processing_maps')}</li>
