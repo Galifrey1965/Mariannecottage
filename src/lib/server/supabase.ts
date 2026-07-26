@@ -907,6 +907,8 @@ export async function logAdminEvent(input: AgentEventInput): Promise<void> {
 // Service-role only: the table holds visitor PII, RLS is on with no policies,
 // and anon/authenticated are explicitly REVOKEd. Always go through adminClient.
 
+export type EnquiryStatus = 'new' | 'spam' | 'replied' | 'archived';
+
 export interface EnquiryInput {
 	name: string;
 	email: string;
@@ -915,6 +917,23 @@ export interface EnquiryInput {
 	status: 'new' | 'spam';
 	spam_reason?: string | null;
 }
+
+export interface Enquiry {
+	id: string;
+	created_at: string;
+	name: string;
+	email: string;
+	message: string;
+	locale: string;
+	status: EnquiryStatus;
+	spam_reason: string | null;
+	admin_notified_at: string | null;
+	ack_sent_at: string | null;
+	notify_error: string | null;
+}
+
+const ENQUIRY_COLUMNS =
+	'id, created_at, name, email, message, locale, status, spam_reason, admin_notified_at, ack_sent_at, notify_error';
 
 // Brevo error bodies can be verbose; notify_error is for diagnosis, not archival.
 const NOTIFY_ERROR_MAX_CHARS = 500;
@@ -972,6 +991,94 @@ export async function purgeOldEnquiries(): Promise<number> {
 		.select('id');
 	if (error) throw error;
 	return (data as { id: string }[] | null)?.length ?? 0;
+}
+
+// E-01: admin read + status transitions.
+//
+// Persisting enquiries stopped them being destroyed; it did not make anyone
+// look at them. Until this landed, a row whose notification failed sat in the
+// table with notify_error populated and nothing anywhere surfaced it.
+
+export interface EnquiryListOptions {
+	status?: EnquiryStatus | 'all';
+	page?: number;
+	pageSize?: number;
+}
+
+export async function listEnquiriesAdmin(
+	options: EnquiryListOptions = {}
+): Promise<{ enquiries: Enquiry[]; total: number }> {
+	const page = Math.max(0, options.page ?? 0);
+	const pageSize = options.pageSize ?? 25;
+
+	let q = adminClient
+		.from('enquiries')
+		.select(ENQUIRY_COLUMNS, { count: 'exact' })
+		.order('created_at', { ascending: false });
+
+	if (options.status && options.status !== 'all') {
+		q = q.eq('status', options.status);
+	}
+
+	const start = page * pageSize;
+	q = q.range(start, start + pageSize - 1);
+
+	const { data, error, count } = await q;
+	if (error) throw error;
+	return { enquiries: (data ?? []) as unknown as Enquiry[], total: count ?? 0 };
+}
+
+export async function getEnquiry(id: string): Promise<Enquiry | null> {
+	const { data, error } = await adminClient
+		.from('enquiries')
+		.select(ENQUIRY_COLUMNS)
+		.eq('id', id)
+		.maybeSingle();
+	if (error) throw error;
+	return (data as unknown as Enquiry | null) ?? null;
+}
+
+export async function updateEnquiryStatus(id: string, status: EnquiryStatus): Promise<Enquiry> {
+	const { data, error } = await adminClient
+		.from('enquiries')
+		.update({ status })
+		.eq('id', id)
+		.select(ENQUIRY_COLUMNS)
+		.single();
+	if (error) throw error;
+	return data as unknown as Enquiry;
+}
+
+// Head-count queries so the admin header can show what needs attention without
+// pulling rows. `unnotified` is the number Mark was never told about — the
+// count that would have been 1 on 2026-07-24 and told us something was wrong.
+export async function getEnquiryCounts(): Promise<{
+	newCount: number;
+	spamCount: number;
+	unnotifiedCount: number;
+}> {
+	const [newRes, spamRes, unnotifiedRes] = await Promise.all([
+		adminClient.from('enquiries').select('id', { count: 'exact', head: true }).eq('status', 'new'),
+		adminClient.from('enquiries').select('id', { count: 'exact', head: true }).eq('status', 'spam'),
+		adminClient
+			.from('enquiries')
+			.select('id', { count: 'exact', head: true })
+			.eq('status', 'new')
+			.is('admin_notified_at', null)
+	]);
+
+	for (const res of [newRes, spamRes, unnotifiedRes]) {
+		if (res.error) {
+			console.error('getEnquiryCounts failed:', res.error);
+			return { newCount: 0, spamCount: 0, unnotifiedCount: 0 };
+		}
+	}
+
+	return {
+		newCount: newRes.count ?? 0,
+		spamCount: spamRes.count ?? 0,
+		unnotifiedCount: unnotifiedRes.count ?? 0
+	};
 }
 
 // Utility: Generate booking reference

@@ -51,7 +51,7 @@ Updated as services are added or changed.
 - **Access:** service-role only. Holds visitor PII, so RLS is on with **no policies** and `anon`/`authenticated` are explicitly `REVOKE`d — both reads and writes fail with `42501` on the public API. All access goes through `adminClient`.
 - **Retention:** rows are deleted **24 months** after `created_at` by `purgeOldEnquiries()`, called from `/api/sweep-pending` on the existing `@daily` cron. Spam-flagged rows share the same clock deliberately, so a misclassified genuine enquiry keeps the full recovery period. Disclosed on `/legal` via `legal.gdpr_processing_enquiry` and `legal.gdpr_retention_body`.
 - **Spam handling:** honeypot / timing-token failures are stored with `status='spam'` and never emailed, rather than discarded — a false positive stays recoverable.
-- **Not yet built:** nothing surfaces these rows in the admin UI, so `notify_error` rows are currently invisible unless someone queries the table. See `documentation/outstanding-issues.md`.
+- **Admin surface:** `/admin/enquiries` (added 2026-07-26) lists them newest-first with a status filter, shows `notify_error` inline, and puts the count of never-emailed enquiries in a warning strip at the top of the page. Status moves go through `PATCH /api/admin/enquiries` against an explicit transition table and are recorded in `agent_events`. There is no delete affordance — retention is the disclosed 24-month clock, and `archived` is how a row leaves the inbox.
 
 ---
 
