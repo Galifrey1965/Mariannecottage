@@ -48,22 +48,29 @@ Corroborating evidence that it was the contact form and nothing else:
 
 ---
 
-## 2. Prerequisite that is NOT part of this change
+## 2. Prerequisite — DONE
 
-**Mark must deactivate Brevo's IP blocking for API keys** (Brevo → Security → Authorized IPs
-→ "Deactivate for API keys"). Rotating Lambda IPs cannot be enumerated, so an allow-list
-guarantees recurring silent failures. **Do not** click "authorize the new IP address" in the
-alert email — that entrenches the restriction.
+**Brevo IP blocking for API keys has been deactivated** (Rob, 2026-07-26). Delivery is
+restored, so sends from rotating Lambda egress IPs no longer get blocked at the gate. Nothing
+in this section is outstanding.
 
-This code change makes a blocked send **non-destructive** (the enquiry survives), but it does
-**not** fix delivery. Both are needed.
+Keep the reasoning on record in case anyone is tempted to switch it back on: Netlify Lambda
+egress IPs rotate on every cold start and cannot be enumerated, so an allow-list guarantees
+recurring silent failures. If a future Brevo alert offers it, **do not** click "authorize the
+new IP address" — that re-entrenches the restriction one IP at a time, which is how 22 stale
+`/24` ranges accumulated in the first place.
 
-Related, also Mark's call, also out of scope here: the single Brevo key `xkeysib-…4ifQ==`
-(named `BREVO_API_KEY`, created 2026-05-05) is **MCP-tagged**. Nothing in this repo uses Brevo
-MCP — the only Brevo call anywhere is `POST https://api.brevo.com/v3/smtp/email`
-(`brevo.ts:32`). Turning MCP off on that key shrinks the blast radius for free, **but** a
-separate `BREVO_MCP_API_KEY` exists in the local `.env`, so confirm nothing local depends on it
-before disabling.
+Note that this change was still needed after the fix: restoring delivery stops enquiries being
+destroyed *by that particular cause*. Persisting the row first is what makes **any** future
+send failure — Brevo outage, quota, bad sender, network — non-destructive.
+
+Still open, and Mark's call rather than a code task: the single Brevo key `xkeysib-…4ifQ==`
+(named `BREVO_API_KEY`, created 2026-05-05) is **MCP-tagged**, which turns the same secret into
+a credential capable of driving the whole Brevo account. Nothing needs that — the only Brevo
+call anywhere in this repo is `POST https://api.brevo.com/v3/smtp/email` (`brevo.ts:32`), and
+`.mcp.json` declares **only** a Supabase MCP server, no Brevo one. A `BREVO_MCP_API_KEY` sits
+in the local `.env` but nothing in the repo reads it (`grep` it before acting). So disabling
+MCP on that key looks free; confirm the grep, then it's a one-click change in Brevo.
 
 ---
 
@@ -172,10 +179,17 @@ ON CONFLICT (filename) DO NOTHING;
 ```
 
 **Applying it:** per project memory, committed migrations are applied by Claude via
-`mcp__supabase__apply_migration` — Rob does not run the Supabase CLI. **That MCP server was
-not available in the session that drafted this**, so confirm the tool exists before promising
-to apply it; if it is absent, say so and hand the SQL to Rob rather than improvising another
-write path.
+`mcp__supabase__apply_migration` — Rob does not run the Supabase CLI.
+
+`.mcp.json` declares the Supabase MCP server (`@supabase/mcp-server-supabase`,
+`--project-ref=oedjdndmcjbqfhyixqdu`, `--features=database`), so the `mcp__supabase__*` tools
+*should* be present. **They were not available in the session that drafted this** — if they are
+missing again, the server failed to start rather than being absent by design; the likely cause
+is `SUPABASE_ACCESS_TOKEN` not being exported into the environment, since `.mcp.json`
+interpolates `${SUPABASE_ACCESS_TOKEN}` and a value living only in `.env` will not satisfy it.
+Diagnose that rather than improvising another write path. Falling back to a direct
+service-role REST call works for *reads*, but do not hand-apply schema changes that way — say
+so and give Rob the SQL.
 
 ---
 
