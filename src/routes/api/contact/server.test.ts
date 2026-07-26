@@ -58,6 +58,9 @@ beforeEach(() => {
 	vi.clearAllMocks();
 	_resetRateLimitState();
 	vi.mocked(createEnquiry).mockResolvedValue('enq-1');
+	// Default: both legs of the send succeeded. Tests that care about a partial
+	// outcome override this.
+	vi.mocked(emailService.sendEnquiry).mockResolvedValue({ adminNotified: true, ackSent: true });
 });
 
 describe('POST /api/contact — validation (unchanged, still 400)', () => {
@@ -121,7 +124,9 @@ describe('POST /api/contact — happy path', () => {
 			expect.objectContaining({ name: 'Jane Doe', email: 'jane@example.com' }),
 			expect.stringMatching(/^(en|fr|de)$/)
 		);
-		expect(markEnquiryNotified).toHaveBeenCalledWith('enq-1');
+		// ack_sent_at is now populated from the send result (E-03) rather than
+		// left permanently NULL.
+		expect(markEnquiryNotified).toHaveBeenCalledWith('enq-1', { ackSent: true });
 		expect(markEnquiryNotifyFailed).not.toHaveBeenCalled();
 	});
 
@@ -133,6 +138,7 @@ describe('POST /api/contact — happy path', () => {
 		});
 		vi.mocked(emailService.sendEnquiry).mockImplementationOnce(async () => {
 			order.push('send');
+			return { adminNotified: true, ackSent: true };
 		});
 		await POST(makeRequest(validBody));
 		expect(order).toEqual(['insert', 'send']);
@@ -143,6 +149,58 @@ describe('POST /api/contact — happy path', () => {
 		expect(res.status).toBe(200);
 		expect(createEnquiry).toHaveBeenCalledWith(expect.objectContaining({ locale: 'fr' }));
 		expect(emailService.sendEnquiry).toHaveBeenCalledWith(expect.any(Object), 'fr');
+	});
+});
+
+// E-03: the route now reads the sendEnquiry result instead of inferring
+// success from the absence of a throw.
+describe('POST /api/contact — send result drives the timestamps', () => {
+	it('stamps ack_sent_at when the acknowledgement went out', async () => {
+		vi.mocked(emailService.sendEnquiry).mockResolvedValueOnce({
+			adminNotified: true,
+			ackSent: true
+		});
+
+		const res = await POST(makeRequest(validBody));
+
+		expect(res.status).toBe(200);
+		expect(markEnquiryNotified).toHaveBeenCalledWith('enq-1', { ackSent: true });
+	});
+
+	it('leaves ack_sent_at alone when only the acknowledgement failed', async () => {
+		vi.mocked(emailService.sendEnquiry).mockResolvedValueOnce({
+			adminNotified: true,
+			ackSent: false
+		});
+
+		const res = await POST(makeRequest(validBody));
+
+		expect(res.status).toBe(200);
+		// Still notified — a failed courtesy email must not discard the admin
+		// notice that already went out.
+		expect(markEnquiryNotified).toHaveBeenCalledWith('enq-1', { ackSent: false });
+		expect(markEnquiryNotifyFailed).not.toHaveBeenCalled();
+	});
+
+	it('does not claim the admin was notified when there were no recipients', async () => {
+		// The misconfiguration case: sendEnquiry resolves without throwing but
+		// nothing was actually sent. Previously this stamped admin_notified_at,
+		// making a broken ADMIN_NOTIFY_EMAIL look exactly like a delivered notice
+		// and hiding the row from the retry sweep.
+		vi.mocked(emailService.sendEnquiry).mockResolvedValueOnce({
+			adminNotified: false,
+			ackSent: true
+		});
+
+		const res = await POST(makeRequest(validBody));
+
+		expect(res.status).toBe(200);
+		expect(markEnquiryNotified).not.toHaveBeenCalled();
+		expect(markEnquiryNotifyFailed).toHaveBeenCalledWith(
+			'enq-1',
+			expect.stringContaining('no recipients configured'),
+			{ attempts: 1, ackSent: true }
+		);
 	});
 });
 
@@ -164,7 +222,7 @@ describe('POST /api/contact — Brevo failure is no longer destructive', () => {
 		expect(markEnquiryNotifyFailed).toHaveBeenCalledWith(
 			'enq-1',
 			expect.stringContaining('unauthorized IP address'),
-			1
+			{ attempts: 1 }
 		);
 		expect(markEnquiryNotified).not.toHaveBeenCalled();
 	});

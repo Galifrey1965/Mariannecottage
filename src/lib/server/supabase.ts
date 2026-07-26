@@ -962,18 +962,29 @@ export async function createEnquiry(input: EnquiryInput): Promise<string> {
 	return (data as { id: string }).id;
 }
 
-// `attempts` is the running total from E-02's counter. It is optional so the
-// original /api/contact call sites keep working unchanged; the retry sweep
-// passes the incremented value it read off the row.
-export async function markEnquiryNotified(id: string, attempts?: number): Promise<void> {
+// `attempts` is the running total from E-02's counter; `ackSent` comes from
+// E-03's sendEnquiry result. Both optional, and both applied in the same write
+// so a submission costs one round trip rather than three.
+export interface EnquiryNotifyOptions {
+	attempts?: number;
+	ackSent?: boolean;
+}
+
+export async function markEnquiryNotified(
+	id: string,
+	options: EnquiryNotifyOptions = {}
+): Promise<void> {
 	const now = new Date().toISOString();
 	const patch: Record<string, unknown> = { admin_notified_at: now };
-	if (attempts !== undefined) {
-		patch.notify_attempts = attempts;
+	if (options.attempts !== undefined) {
+		patch.notify_attempts = options.attempts;
 		patch.last_notify_attempt_at = now;
 		// A row that finally succeeded should not keep showing the error that
 		// stopped it last time.
 		patch.notify_error = null;
+	}
+	if (options.ackSent) {
+		patch.ack_sent_at = now;
 	}
 	const { error } = await adminClient.from('enquiries').update(patch).eq('id', id);
 	if (error) throw error;
@@ -982,12 +993,18 @@ export async function markEnquiryNotified(id: string, attempts?: number): Promis
 export async function markEnquiryNotifyFailed(
 	id: string,
 	error: string,
-	attempts?: number
+	options: EnquiryNotifyOptions = {}
 ): Promise<void> {
+	const now = new Date().toISOString();
 	const patch: Record<string, unknown> = { notify_error: error.slice(0, NOTIFY_ERROR_MAX_CHARS) };
-	if (attempts !== undefined) {
-		patch.notify_attempts = attempts;
-		patch.last_notify_attempt_at = new Date().toISOString();
+	if (options.attempts !== undefined) {
+		patch.notify_attempts = options.attempts;
+		patch.last_notify_attempt_at = now;
+	}
+	// The acknowledgement can succeed while the admin notice fails — they are
+	// separate sends — so record it even on the failure path.
+	if (options.ackSent) {
+		patch.ack_sent_at = now;
 	}
 	const { error: updateError } = await adminClient
 		.from('enquiries')

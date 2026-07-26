@@ -19,6 +19,7 @@ import type {
 	BookingDetails,
 	EmailService,
 	EnquiryDetails,
+	EnquirySendResult,
 	Locale,
 	RefundSummary
 } from './types';
@@ -121,8 +122,9 @@ export class BrevoEmailService implements EmailService {
 		enquiry: EnquiryDetails,
 		guestLang: Locale,
 		options?: { includeGuestAck?: boolean }
-	): Promise<void> {
+	): Promise<EnquirySendResult> {
 		const adminMail = renderEnquiryAdminNotice(enquiry);
+		let adminNotified = false;
 
 		// Admin notification first — a failure here is what the retry sweep
 		// exists to recover from, so it is still allowed to throw.
@@ -135,11 +137,16 @@ export class BrevoEmailService implements EmailService {
 				replyTo: enquiry.email,
 				tag: 'enquiry-admin'
 			});
+			adminNotified = true;
 		} else {
+			// Reported rather than thrown, but adminNotified stays false so the
+			// caller does not stamp admin_notified_at on an email that was never
+			// sent — a misconfigured ADMIN_NOTIFY_EMAIL would otherwise look
+			// identical to a delivered notice.
 			console.warn('[email-brevo] ADMIN_NOTIFY_EMAIL not set; admin enquiry notification skipped');
 		}
 
-		if (options?.includeGuestAck === false) return;
+		if (options?.includeGuestAck === false) return { adminNotified, ackSent: false };
 
 		const guestAck = renderEnquiryAcknowledgement(enquiry, guestLang);
 
@@ -153,9 +160,11 @@ export class BrevoEmailService implements EmailService {
 				text: guestAck.text,
 				tag: 'enquiry-ack'
 			});
+			return { adminNotified, ackSent: true };
 		} catch (err) {
 			const message = err instanceof Error ? err.message : 'unknown';
 			console.warn(`[email-brevo] enquiry acknowledgement failed (admin notice already sent): ${message}`);
+			return { adminNotified, ackSent: false };
 		}
 	}
 

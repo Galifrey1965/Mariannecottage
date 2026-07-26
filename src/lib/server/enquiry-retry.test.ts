@@ -9,7 +9,7 @@ vi.mock('./supabase', () => ({
 }));
 
 vi.mock('./email', () => ({
-	emailService: { sendEnquiry: vi.fn(async () => undefined) }
+	emailService: { sendEnquiry: vi.fn(async () => ({ adminNotified: true, ackSent: false })) }
 }));
 
 import {
@@ -48,7 +48,7 @@ function row(overrides: Record<string, unknown> = {}) {
 beforeEach(() => {
 	vi.clearAllMocks();
 	vi.mocked(countAbandonedEnquiries).mockResolvedValue(0);
-	vi.mocked(emailService.sendEnquiry).mockResolvedValue(undefined);
+	vi.mocked(emailService.sendEnquiry).mockResolvedValue({ adminNotified: true, ackSent: false });
 });
 
 describe('retryUnnotifiedEnquiries — selection', () => {
@@ -83,7 +83,7 @@ describe('retryUnnotifiedEnquiries — successful resend', () => {
 		const result = await retryUnnotifiedEnquiries();
 
 		expect(result).toMatchObject({ considered: 1, sent: 1, failed: 0 });
-		expect(markEnquiryNotified).toHaveBeenCalledWith('enq-1', 3);
+		expect(markEnquiryNotified).toHaveBeenCalledWith('enq-1', { attempts: 3 });
 		expect(markEnquiryNotifyFailed).not.toHaveBeenCalled();
 	});
 
@@ -102,7 +102,7 @@ describe('retryUnnotifiedEnquiries — successful resend', () => {
 			row({ notify_attempts: null })
 		] as any);
 		await retryUnnotifiedEnquiries();
-		expect(markEnquiryNotified).toHaveBeenCalledWith('enq-1', 1);
+		expect(markEnquiryNotified).toHaveBeenCalledWith('enq-1', { attempts: 1 });
 	});
 
 	it('passes the guest locale through, falling back to en on junk', async () => {
@@ -124,7 +124,7 @@ describe('retryUnnotifiedEnquiries — failure handling', () => {
 		const result = await retryUnnotifiedEnquiries();
 
 		expect(result).toMatchObject({ considered: 1, sent: 0, failed: 1 });
-		expect(markEnquiryNotifyFailed).toHaveBeenCalledWith('enq-1', 'Brevo error 401: bad IP', 4);
+		expect(markEnquiryNotifyFailed).toHaveBeenCalledWith('enq-1', 'Brevo error 401: bad IP', { attempts: 4 });
 		expect(markEnquiryNotified).not.toHaveBeenCalled();
 	});
 
@@ -136,8 +136,8 @@ describe('retryUnnotifiedEnquiries — failure handling', () => {
 		] as any);
 		vi.mocked(emailService.sendEnquiry)
 			.mockRejectedValueOnce(new Error('transient'))
-			.mockResolvedValueOnce(undefined)
-			.mockResolvedValueOnce(undefined);
+			.mockResolvedValueOnce({ adminNotified: true, ackSent: false })
+			.mockResolvedValueOnce({ adminNotified: true, ackSent: false });
 
 		const result = await retryUnnotifiedEnquiries();
 
@@ -162,7 +162,7 @@ describe('retryUnnotifiedEnquiries — failure handling', () => {
 		vi.mocked(listUnnotifiedEnquiries).mockResolvedValueOnce([row()] as any);
 		vi.mocked(emailService.sendEnquiry).mockRejectedValueOnce('plain string failure');
 		await retryUnnotifiedEnquiries();
-		expect(markEnquiryNotifyFailed).toHaveBeenCalledWith('enq-1', 'plain string failure', 2);
+		expect(markEnquiryNotifyFailed).toHaveBeenCalledWith('enq-1', 'plain string failure', { attempts: 2 });
 	});
 });
 

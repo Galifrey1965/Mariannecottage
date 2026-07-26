@@ -125,14 +125,27 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
 		}
 
 		try {
-			await emailService.sendEnquiry(enquiry, locale);
+			const sendResult = await emailService.sendEnquiry(enquiry, locale);
 			if (enquiryId) {
-				// ack_sent_at is deliberately left NULL: sendEnquiry swallows
-				// guest-acknowledgement failures internally, so this route cannot
-				// tell "ack sent" from "ack failed" without a wider refactor.
-				await markEnquiryNotified(enquiryId).catch((error) =>
-					console.error(`[contact] could not mark enquiry ${enquiryId} notified:`, error)
-				);
+				if (sendResult.adminNotified) {
+					await markEnquiryNotified(enquiryId, { ackSent: sendResult.ackSent }).catch((error) =>
+						console.error(`[contact] could not mark enquiry ${enquiryId} notified:`, error)
+					);
+				} else {
+					// sendEnquiry resolved without actually notifying anyone — the only
+					// way that happens is no configured recipients. Stamping
+					// admin_notified_at here would make a misconfiguration
+					// indistinguishable from a delivered notice, and would hide the row
+					// from the retry sweep. Record it as a failure instead.
+					const reason = 'admin notification skipped: no recipients configured';
+					console.error(`[contact] ${reason} (enquiry ${enquiryId})`);
+					await markEnquiryNotifyFailed(enquiryId, reason, {
+						attempts: 1,
+						ackSent: sendResult.ackSent
+					}).catch((updateError) =>
+						console.error(`[contact] could not record notify_error on ${enquiryId}:`, updateError)
+					);
+				}
 			}
 		} catch (error) {
 			const detail = error instanceof Error ? error.message : String(error);
@@ -151,8 +164,9 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
 
 			// Attempt 1 of RETRY_MAX_ATTEMPTS: this failure is what hands the row to
 			// the daily retry sweep, so the counter has to start here rather than at
-			// the sweep's first pass.
-			await markEnquiryNotifyFailed(enquiryId, detail, 1).catch((updateError) =>
+			// the sweep's first pass. The throw came from the admin notice, so
+			// nothing is known about the acknowledgement.
+			await markEnquiryNotifyFailed(enquiryId, detail, { attempts: 1 }).catch((updateError) =>
 				console.error(`[contact] could not record notify_error on ${enquiryId}:`, updateError)
 			);
 		}

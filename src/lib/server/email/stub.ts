@@ -12,6 +12,7 @@ import type {
 	BookingDetails,
 	EmailService,
 	EnquiryDetails,
+	EnquirySendResult,
 	Locale,
 	RefundSummary
 } from './types';
@@ -63,14 +64,15 @@ export class StubEmailService implements EmailService {
 		enquiry: EnquiryDetails,
 		guestLang: Locale,
 		options?: { includeGuestAck?: boolean }
-	): Promise<void> {
+	): Promise<EnquirySendResult> {
 		const admin = renderEnquiryAdminNotice(enquiry);
 		console.log(`[email-stub] sendEnquiry admin :: ${admin.subject}`);
 		if (options?.includeGuestAck === false) {
 			console.log('[email-stub] sendEnquiry ack skipped (retry)');
-			return;
+			return { adminNotified: true, ackSent: false };
 		}
 		const ack = renderEnquiryAcknowledgement(enquiry, guestLang);
 		console.log(`[email-stub] sendEnquiry ack (${guestLang}) :: ${ack.subject}`);
+		return { adminNotified: true, ackSent: true };
 	}
 }

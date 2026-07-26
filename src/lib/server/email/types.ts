@@ -31,6 +31,18 @@ export interface EnquiryDetails {
 	message: string;
 }
 
+/**
+ * Outcome of a sendEnquiry call. The two legs succeed or fail independently:
+ * the guest acknowledgement is a courtesy that must never take down the admin
+ * notification, and the admin notification is skipped entirely when no
+ * recipients are configured. Reporting both is what lets /api/contact stamp
+ * admin_notified_at and ack_sent_at honestly instead of assuming.
+ */
+export interface EnquirySendResult {
+	adminNotified: boolean;
+	ackSent: boolean;
+}
+
 export interface EmailService {
 	/**
 	 * Sent on payment_intent.succeeded → booking confirmed.
@@ -91,5 +103,5 @@ export interface EmailService {
 		enquiry: EnquiryDetails,
 		guestLang: Locale,
 		options?: { includeGuestAck?: boolean }
-	): Promise<void>;
+	): Promise<EnquirySendResult>;
 }

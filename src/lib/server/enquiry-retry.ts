@@ -75,7 +75,7 @@ export async function retryUnnotifiedEnquiries(): Promise<EnquiryRetryResult> {
 				// No acknowledgement on a retry — see the EmailService docstring.
 				{ includeGuestAck: false }
 			);
-			await markEnquiryNotified(enquiry.id, attempts);
+			await markEnquiryNotified(enquiry.id, { attempts });
 			result.sent += 1;
 		} catch (error) {
 			const detail = error instanceof Error ? error.message : String(error);
@@ -86,7 +86,7 @@ export async function retryUnnotifiedEnquiries(): Promise<EnquiryRetryResult> {
 			// One row's failure must not abandon the rest of the batch, and the
 			// bookkeeping write is what stops this row being retried forever — so
 			// its own failure is logged and swallowed too.
-			await markEnquiryNotifyFailed(enquiry.id, detail, attempts).catch((updateError) =>
+			await markEnquiryNotifyFailed(enquiry.id, detail, { attempts }).catch((updateError) =>
 				console.error(`[enquiry-retry] could not record attempt on ${enquiry.id}:`, updateError)
 			);
 		}

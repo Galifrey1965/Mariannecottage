@@ -204,7 +204,9 @@ Each issue has: a short ID, where it lives in the code (when applicable), what's
 - **Fix:** have `sendEnquiry` return a small result object (`{ adminNotified: boolean; ackSent: boolean }`) instead of `void`, and stamp both columns from it. Touches the `EmailService` interface and both implementations plus the dry-run stub.
 - **Severity:** 🟢 low — cosmetic; no decision depends on the column today
 - **Added:** 2026-07-26
-- **Status:** open
+- **Status:** ✅ fixed 2026-07-26 — `sendEnquiry` now returns `EnquirySendResult { adminNotified, ackSent }` across the interface, `BrevoEmailService`, `StubEmailService` and the retry sweep. `/api/contact` stamps `ack_sent_at` from `ackSent` in the same write that sets `admin_notified_at`, so a submission still costs one round trip (`markEnquiryNotified` / `markEnquiryNotifyFailed` took an options object rather than growing more positional arguments). The acknowledgement is still swallowed internally on failure — that behaviour was correct and is unchanged; the route can now simply *tell*.
+- **Not cosmetic after all — it caught a live bug.** `BrevoEmailService.sendEnquiry` skips the admin notice entirely, without throwing, when `ADMIN_NOTIFY_EMAIL` yields no recipients. The old route inferred success from the absence of a throw, so it stamped `admin_notified_at` on a notification that was never sent: a misconfigured recipient list would have looked *identical to a delivered notice* and, worse, would have hidden the row from E-02's retry sweep (which keys on `admin_notified_at IS NULL`). It now records that case as a notify failure instead. This is the same class of fault as the original incident — something failing silently and leaving no evidence — so the "low value" label was wrong.
+- `ack_sent_at` is populated but deliberately not yet displayed in `/admin/enquiries`; the admin needs to know whether *Mark* was told, not whether the guest got a courtesy receipt. Available for the retry sweep to use later, so a rescued row can skip an acknowledgement it already sent.
 
 ---
 
