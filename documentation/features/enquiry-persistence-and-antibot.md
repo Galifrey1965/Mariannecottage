@@ -64,7 +64,7 @@ Note that this change was still needed after the fix: restoring delivery stops e
 destroyed *by that particular cause*. Persisting the row first is what makes **any** future
 send failure — Brevo outage, quota, bad sender, network — non-destructive.
 
-Still open, and Mark's call rather than a code task: the single Brevo key `xkeysib-…4ifQ==`
+Still open, and Mark's call rather than a code task: the single Brevo key
 (named `BREVO_API_KEY`, created 2026-05-05) is **MCP-tagged**, which turns the same secret into
 a credential capable of driving the whole Brevo account. Nothing needs that — the only Brevo
 call anywhere in this repo is `POST https://api.brevo.com/v3/smtp/email` (`brevo.ts:32`), and
