@@ -36,7 +36,7 @@ Updated as services are added or changed.
 |---|---|
 | **Provider** | Supabase |
 | **Plan** | Free tier |
-| **What we use** | Postgres database + Storage bucket. Tables: `bookings`, `availability`, `rate_plans`, `site_banners`, `gallery_categories`, `rooms`, `gallery_images` (+ planned `subscribers`). Storage bucket: `gallery` (public read, service-role write; 10 MB per-object limit; JPEG/PNG/WebP only). |
+| **What we use** | Postgres database + Storage bucket. Tables: `bookings`, `availability`, `rate_plans`, `site_banners`, `gallery_categories`, `rooms`, `gallery_images`, `enquiries` (+ planned `subscribers`). Storage bucket: `gallery` (public read, service-role write; 10 MB per-object limit; JPEG/PNG/WebP only). |
 | **Limits** | 500 MB DB · 1 GB file storage · 5 GB egress/month |
 | **Account owner** | Mark |
 | **Region** | _check Supabase dashboard — should be EU for GDPR alignment_ |
@@ -45,6 +45,13 @@ Updated as services are added or changed.
 | **Alternatives if we ever need to move** | Neon (cleaner Postgres-only); Pocketbase self-hosted on a VPS (£3/mo, single Go binary, owns auth + file storage + realtime); Turso (SQLite, edge) |
 
 **Notes:** The app talks to a Postgres database via `src/lib/server/supabase.ts`. The "Supabase" specifics are confined to that file — swapping to Neon or self-hosted Postgres would change one client config, not the app code.
+
+**`enquiries` (added 2026-07-26).** Contact-form submissions, persisted by `/api/contact` *before* the notification email is attempted. Added after a real enquiry was destroyed on 2026-07-24: Brevo's IP allow-list rejected the send from a fresh Lambda egress IP, the route returned 500, and because nothing had been written down the message was unrecoverable (no row, no Brevo transactional log entry, and Netlify retains no function logs). The row is now the system of record and the email is only a notification.
+
+- **Access:** service-role only. Holds visitor PII, so RLS is on with **no policies** and `anon`/`authenticated` are explicitly `REVOKE`d — both reads and writes fail with `42501` on the public API. All access goes through `adminClient`.
+- **Retention:** rows are deleted **24 months** after `created_at` by `purgeOldEnquiries()`, called from `/api/sweep-pending` on the existing `@daily` cron. Spam-flagged rows share the same clock deliberately, so a misclassified genuine enquiry keeps the full recovery period. Disclosed on `/legal` via `legal.gdpr_processing_enquiry` and `legal.gdpr_retention_body`.
+- **Spam handling:** honeypot / timing-token failures are stored with `status='spam'` and never emailed, rather than discarded — a false positive stays recoverable.
+- **Not yet built:** nothing surfaces these rows in the admin UI, so `notify_error` rows are currently invisible unless someone queries the table. See `documentation/outstanding-issues.md`.
 
 ---
 

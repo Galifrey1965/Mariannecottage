@@ -92,6 +92,21 @@ Each issue has: a short ID, where it lives in the code (when applicable), what's
 - ~~Where: new admin route, `/admin/import-bookings`. What: import past BC reservations from CSV.~~
 - **Status:** ❌ **dropped 2026-05-02** — Mark confirmed he can't get the CSV export from BC's extranet (Q9 in `questions-for-mark.md`). No historical data to import. Dynamic pricing agent works from competitor data + going-forward bookings only; email list grows organically.
 
+### B-08 — `expire_pending_bookings()` throws 42702; the daily sweep has been failing
+- **Where:** the `expire_pending_bookings()` Postgres function; called by `src/routes/api/sweep-pending/+server.ts:40`
+- **What:** Calling the function fails outright:
+  ```
+  code:    42702
+  message: column reference "booking_reference" is ambiguous
+  details: It could refer to either a PL/pgSQL variable or a table column.
+  ```
+  A PL/pgSQL local variable (or `RETURNS TABLE` output column) named `booking_reference` collides with `bookings.booking_reference`, so Postgres refuses to resolve the reference. Found 2026-07-26 while verifying the enquiries retention purge against the real database — **not** introduced by that change.
+- **Impact:** the `@daily` TTL sweep has been erroring rather than expiring stale soft-reserves. Largely masked because the `/book` server load also calls `expire_pending_bookings`… which means that path is failing too, and stale `pending_payment` rows are only cleared by whatever else touches them. Worth checking whether any availability is currently held by a long-dead reservation.
+- **Fix:** qualify the ambiguous reference inside the function — either rename the local/output variable (e.g. `v_booking_reference`, or prefix all `OUT` params) or table-qualify every use as `bookings.booking_reference`. Needs a new migration; the function body is not in `supabase/migrations/` under a name I could find, so retrieve the current definition first (`SELECT prosrc FROM pg_proc WHERE proname = 'expire_pending_bookings'`) rather than rewriting it from memory.
+- **Severity:** 🟠 high — a scheduled job has been silently failing, and it gates availability release
+- **Added:** 2026-07-26
+- **Status:** open — deliberately **not** fixed alongside the enquiries work (unrelated concern, touches booking logic). The sweep endpoint was restructured so this failure no longer prevents the enquiries retention purge from running.
+
 ---
 
 ## Booking.com sync
@@ -155,6 +170,34 @@ Each issue has: a short ID, where it lives in the code (when applicable), what's
 - **Severity:** 🟢 low — harmless; bloats the build but doesn't break anything
 - **Added:** 2026-05-02
 - **Status:** ✅ fixed 2026-05-03 — `src/routes/(demo)/` and the demo-only `/api/historian-chat` deleted entirely. Decision (c) prune. Pre-cleanup before Phase 1 visual-direction work.
+
+---
+
+## Contact / enquiries
+
+### E-01 — No admin UI for enquiries; `notify_error` rows are invisible
+- **Where:** `enquiries` table (migration `2026-07-26-01-enquiries.sql`); no route surfaces it
+- **What:** `/api/contact` now persists every enquiry before attempting the notification email, so a Brevo failure no longer destroys the message. But nothing in the admin UI reads the table. If a send fails, the row is saved with `notify_error` populated and **nobody finds out** — the visitor got a success message, and the only trace is a `console.error` in a Netlify log stream that is not retained. That is strictly better than the old behaviour (the enquiry survives) but it is not yet a closed loop.
+- **Fix:** an admin list view — newest first, showing `status`, `spam_reason`, `admin_notified_at`, `notify_error` — with a mailto/reply affordance and the ability to move `new` → `replied` / `archived`. The `enquiries_created_at_idx` index exists for exactly this query. A `spam` filter matters too, so false positives can be rescued.
+- **Severity:** 🟠 high — the persistence half of the 2026-07-24 fix landed; the "somebody notices" half did not
+- **Added:** 2026-07-26
+- **Status:** open
+
+### E-02 — No retry sweep for un-notified enquiries
+- **Where:** `src/routes/api/sweep-pending/+server.ts`; `enquiries_unnotified_idx`
+- **What:** When the notification email fails, the row is kept but the send is never retried. The partial index `enquiries_unnotified_idx` (`status = 'new' AND admin_notified_at IS NULL`) was created in anticipation of this and is currently unused.
+- **Fix:** in the existing daily sweep, re-attempt `sendEnquiry` for rows matching that index, stamping `admin_notified_at` on success. Needs an attempt counter or an age ceiling so a permanently-bad row is not retried forever, and should stay well inside Brevo's free-tier daily send limit.
+- **Severity:** 🟡 medium — E-01 (someone actually looking) is the higher-value half; a retry without a viewer just fails silently more often
+- **Added:** 2026-07-26
+- **Status:** open
+
+### E-03 — `ack_sent_at` is never populated
+- **Where:** `src/lib/server/email/brevo.ts:141-150`; `src/routes/api/contact/+server.ts`
+- **What:** `sendEnquiry` swallows guest-acknowledgement failures internally (deliberately — a failed courtesy email must not lose the admin notice that already went out), so `/api/contact` cannot tell "ack sent" from "ack failed". The `enquiries.ack_sent_at` column therefore exists but stays NULL. Left that way on purpose rather than widening this change into an email-layer refactor.
+- **Fix:** have `sendEnquiry` return a small result object (`{ adminNotified: boolean; ackSent: boolean }`) instead of `void`, and stamp both columns from it. Touches the `EmailService` interface and both implementations plus the dry-run stub.
+- **Severity:** 🟢 low — cosmetic; no decision depends on the column today
+- **Added:** 2026-07-26
+- **Status:** open
 
 ---
 
