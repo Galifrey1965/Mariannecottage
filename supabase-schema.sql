@@ -440,19 +440,25 @@ DECLARE
 BEGIN
   PERFORM pg_advisory_xact_lock(73656452);
 
+  -- Every column qualified with the `b` alias: unqualified booking_reference /
+  -- check_in_date / check_out_date collide with this function's OUT parameters
+  -- and raise 42702 (B-08, fixed 2026-07-26).
   FOR v_expired IN
-    SELECT id, booking_reference AS ref, check_in_date AS cid, check_out_date AS cod
-    FROM bookings
-    WHERE status = 'pending_payment'
-      AND pending_until IS NOT NULL
-      AND pending_until < NOW()
+    SELECT b.id            AS id,
+           b.booking_reference AS ref,
+           b.check_in_date  AS cid,
+           b.check_out_date AS cod
+    FROM bookings AS b
+    WHERE b.status = 'pending_payment'
+      AND b.pending_until IS NOT NULL
+      AND b.pending_until < NOW()
     FOR UPDATE
   LOOP
-    UPDATE bookings
+    UPDATE bookings AS b
        SET status = 'expired',
            pending_until = NULL,
            updated_at = NOW()
-     WHERE id = v_expired.id;
+     WHERE b.id = v_expired.id;
 
     UPDATE availability AS a
        SET available   = true,
@@ -462,11 +468,11 @@ BEGIN
        AND a.date <  v_expired.cod
        AND NOT EXISTS (
              SELECT 1
-             FROM bookings b
-             WHERE b.id <> v_expired.id
-               AND b.status IN ('pending', 'pending_payment', 'confirmed')
-               AND a.date >= b.check_in_date
-               AND a.date <  b.check_out_date
+             FROM bookings b2
+             WHERE b2.id <> v_expired.id
+               AND b2.status IN ('pending', 'pending_payment', 'confirmed')
+               AND a.date >= b2.check_in_date
+               AND a.date <  b2.check_out_date
            );
 
     GET DIAGNOSTICS v_freed = ROW_COUNT;
